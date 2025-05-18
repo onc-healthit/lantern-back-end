@@ -31,70 +31,8 @@ resourcemodule <- function(  #nolint
   ns <- session$ns
 
   select_operations <- reactive({
-    if (length(sel_operations()) >= 1) {
-      # get the selected operation
-      first_elem <- sel_operations()[1]
-      res <- isolate(get_fhir_resource_by_op(db_connection, first_elem))
-      # get the data for each selected operation and then bind them together
-      # in one data frame
-      loopList <- isolate(as.list(sel_operations()))
-      count <- 0
-      for (op in loopList) {
-        if (count != 0) {
-          item <- isolate(get_fhir_resource_by_op(db_connection, op))
-          res <- rbind(res, item)
-        }
-        count <- count + 1
-      }
-    } else {
-       # If no operation is selected, then just get the resource list since it's
-      # too complicated to get it with the operation_resource field
-      res <- isolate(app_data$endpoint_resource_types())
-    }
-
     req(sel_fhir_version(), sel_vendor(), sel_resources())
-    # Filter data by selected FHIR version
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    # Then filter data by selected vendor
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-    if (length(sel_operations()) >= 1) {
-      # e.g. type is a string, it equals ["Allergy", "Binary", etc.]
-      # The type array is formatted as a string, so remove the []
-      # then split the string by `, `
-      # then remove the " " around each element in the array
-      res <- res %>%
-        mutate(type = str_sub(type, 2, -2)) %>%
-        separate_rows(type, sep = ", ") %>%
-        mutate(type = str_sub(type, 2, -2))
-      # Then filter by the current resources selected
-      if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
-        res <- res %>% filter(type %in% sel_resources())
-      }
-
-      # Filter by the current operations selected, then group by and count the resource
-      # per endpoint. If the count of the resource is equal to the number of selected
-      # operations, then the resource exists for all operations and we keep that resource
-      # Then group by and count all resources left
-      res <- res %>%
-        group_by(endpoint_id, fhir_version, type) %>%
-        count() %>%
-        filter(n == length(sel_operations())) %>%
-        ungroup() %>%
-        select(-n) %>%
-        group_by(type, fhir_version) %>%
-        count()
-    } else {
-      # Then filter by the current resources selected
-      if (!(ui_special_values$ALL_RESOURCES %in% sel_resources())) {
-        res <- res %>% filter(type %in% sel_resources())
-      }
-        res <- res %>%
-        group_by(type, fhir_version) %>%
-        count()
-    }
-    res
+    get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()))
   })
 
   number_resources <- reactive({
@@ -150,7 +88,8 @@ resourcemodule <- function(  #nolint
 
   select_operations_count <- reactive({
     select_operations() %>%
-    rename("Endpoints" = n, "Resource" = type)
+    rename("Endpoints" = n, "Resource" = type)  %>%
+    mutate(Endpoints = as.numeric(Endpoints))
   })
 
 
@@ -187,7 +126,7 @@ resourcemodule <- function(  #nolint
   }
 
   output$resource_bar_plot <- renderCachedPlot({
-    ggplot(select_operations_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = get_fill(fhir_version))) +
+    ggplot(select_operations_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = as.factor(fhir_version))) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
       theme(legend.position = "top") +
@@ -202,6 +141,6 @@ resourcemodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), now("UTC"))
     })
 }

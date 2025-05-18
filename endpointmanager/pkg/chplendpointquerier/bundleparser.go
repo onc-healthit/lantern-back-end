@@ -41,16 +41,16 @@ type Address struct {
 	PostalCode string `json:"postalCode"`
 }
 
-func BundleToLanternFormat(bundle []byte) []LanternEntry {
+func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var lanternEntryList []LanternEntry
 	var organizationZip = make(map[string]string)
 
 	var structBundle FHIRBundle
 	err := json.Unmarshal(bundle, &structBundle)
 	if err != nil {
-		log.Fatal(err)
+		log.Warn("Handler is required for url ", chplURL)
+		log.Fatal("More details about the error: ", err)
 	}
-
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
 			if bundleEntry.Resource.Address != nil {

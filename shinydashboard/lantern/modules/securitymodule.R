@@ -46,27 +46,33 @@ securitymodule <- function(
 
   # url requested version is default set to None since this table filters on requested_version = 'None'
   selected_endpoints <- reactive({
-    if (is.null(securityPageSizeNum())) {
-      securityPageSizeNum(10)
-    }
-    res <- isolate(app_data$security_endpoints_tbl())
-    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-
-    res <- res %>%
+  # Set default page size if needed
+  if (is.null(securityPageSizeNum())) {
+    securityPageSizeNum(10)
+  }
+  # Ensure required reactive values are available
+  req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
+  # Query the materialized view directly
+  res <- tbl(db_connection, sql("SELECT url_modal as url, 
+                                 condensed_organization_names, 
+                                 vendor_name, 
+                                 capability_fhir_version, 
+                                 fhir_version, 
+                                 tls_version, 
+                                 code 
+                          FROM selected_security_endpoints_mv")) %>%
+    collect()
+  # Apply filters based on user selections
+  res <- res %>% filter(fhir_version %in% sel_fhir_version())
+  if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+    res <- res %>% filter(vendor_name == sel_vendor())
+  }
+  res <- res %>%
     filter(code == sel_auth_type_code()) %>%
-    rowwise() %>%
-    mutate(condensed_organization_names = ifelse(length(organization_names) > 0, ifelse(length(strsplit(organization_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(organization_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", url, "&quot,{priority: \'event\'});\"> Click For More... </a>")), organization_names), organization_names))
-
-    res <- res %>%
     distinct(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
     select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
-    res
-  })
+  return(res)
+})
 
   output$security_endpoints <-  reactable::renderReactable({
     reactable(selected_endpoints(),

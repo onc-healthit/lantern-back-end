@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS get_value_versions_mv CASCADE;
+
+DROP MATERIALIZED VIEW IF EXISTS selected_fhir_endpoints_values_mv CASCADE;
+
+COMMIT;

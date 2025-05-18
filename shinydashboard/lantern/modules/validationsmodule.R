@@ -67,54 +67,97 @@ validationsmodule <- function(
     HTML("<p>See additional validation details and failure information <a class=\"lantern-url\" href='#anchorid'>below</a></p>")
   })
 
+  # Function to directly query validation results plot data from materialized view
+  get_validation_plot_data <- function() {
+    # Direct query to the materialized view
+    tbl(db_connection, sql("SELECT * FROM mv_validation_results_plot")) %>%
+      collect()
+  }
+
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
-    res <- selected_validations() %>% distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>% select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
-    res <- res %>%
-           distinct(rule_name) %>%
-           arrange(rule_name)
-    res
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    
+    # Build filtering conditions for the SQL query
+    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      paste0("AND vendor_name = '", sel_vendor(), "'")
+    } else {
+      ""
+    }
+    
+    validation_group_filter <- if(sel_validation_group() != "All Groups") {
+      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
+      paste0("AND reference IN (", references, ")")
+    } else {
+      ""
+    }
+    
+    # Query to get rule names based on filters
+    query <- paste0("
+      SELECT DISTINCT rule_name
+      FROM mv_validation_results_plot
+      WHERE fhir_version IN (", fhir_versions, ")
+      ", vendor_filter, "
+      ", validation_group_filter, "
+      ORDER BY rule_name
+    ")
+    
+    # Execute the query
+    res <- dbGetQuery(db_connection, query)
+    
+    return(res)
   })
 
   # Create table for validation rule details table
   validation_details <- reactive({
     res <- validation_rules()
-
+    
     fhir_version_filter <- FALSE
     req(sel_fhir_version())
     if (length(sel_fhir_version()) != 1 || sel_fhir_version() == "Unknown") {
-      versions <- get_validation_versions()
+      # Get version information directly from the materialized view
+      query <- paste0("
+        SELECT rule_name, fhir_version_names
+        FROM mv_validation_details
+        WHERE rule_name IN ('", paste(res$rule_name, collapse = "','"), "')
+      ")
+      
+      versions <- dbGetQuery(db_connection, query)
+      
       res <- res %>%
-      left_join(versions %>% select(validation_name, fhir_version_names),
-        by = c("rule_name" = "validation_name")) %>%
-      mutate(versions_line = paste("Versions:", fhir_version_names))
-
+        left_join(versions, by = "rule_name") %>%
+        mutate(versions_line = paste("Versions:", fhir_version_names))
+      
       fhir_version_filter <- TRUE
     }
-
+    
     res <- res %>%
       mutate(comment_line = paste("Comment:", validation_rules_descriptions[rule_name])) %>%
       mutate(rule_name_line = paste("Name:", rule_name)) %>%
       mutate(num = paste(row_number(), "."))
-
-      if (fhir_version_filter) {
-        res <- res %>%
+    
+    if (fhir_version_filter) {
+      res <- res %>%
         distinct(num, rule_name_line, comment_line, versions_line) %>%
-        mutate(entry = paste(num,  rule_name_line, versions_line, comment_line, sep = "<br>")) %>%
+        mutate(entry = paste(num, rule_name_line, versions_line, comment_line, sep = "<br>")) %>%
         select(entry)
-      } else {
-        res <- res %>%
+    } else {
+      res <- res %>%
         distinct(num, rule_name_line, comment_line) %>%
-        mutate(entry = paste(num,  rule_name_line, comment_line, sep = "<br>")) %>%
+        mutate(entry = paste(num, rule_name_line, comment_line, sep = "<br>")) %>%
         select(entry)
-      }
-
+    }
+    
     res
   })
 
-  # Create table containing all the validations that pass current selected filtering criteria
+  # Create table containing all the validations that match current selected filtering criteria
   selected_validations <- reactive({
-    res <- isolate(app_data$validation_tbl())
+    # Get validation data directly from the validation_tbl function
+    query <- paste0("SELECT * FROM mv_validation_results_plot")
+    res <- dbGetQuery(db_connection, query)
+    
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
     if (sel_validation_group() != "All Groups") {
@@ -125,67 +168,102 @@ validationsmodule <- function(
     }
 
     res <- res %>%
-    mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+      mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
-  get_validation_versions <- reactive({
-    res <- isolate(app_data$validation_tbl())
-    res <- res %>%
-    filter(fhir_version != "Unknown", fhir_version != "No Cap Stat") %>%
-    group_by(rule_name) %>%
-    rename(validation_name = rule_name) %>%
-    arrange(fhir_version, .by_group = TRUE) %>%
-    mutate(fhir_version_name = case_when(
-      fhir_version %in% dstu2 ~ "DSTU2",
-      fhir_version %in% stu3 ~ "STU3",
-      fhir_version %in% r4 ~ "R4",
-      TRUE ~ "DSTU2"
-    )) %>%
-    summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
-    res
-  })
-
-  # Creates table containing the filtered validation's rule name, if its valid, and it'c count
+  # Creates table containing the filtered validation's rule name, if its valid, and it's count
   select_validation_results <- reactive({
-    res <- selected_validations() %>% distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>% select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
-    res <- res %>%
-      group_by(rule_name, valid) %>%
-      count() %>%
-      rename(count = n) %>%
-      select(rule_name, valid, count) %>%
-      mutate(valid = if_else(valid == TRUE, "Success", "Failure"))
-    res
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    
+    # Build query with filters
+    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      paste0("AND vendor_name = '", sel_vendor(), "'")
+    } else {
+      ""
+    }
+    
+    validation_group_filter <- if(sel_validation_group() != "All Groups") {
+      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
+      paste0("AND reference IN (", references, ")")
+    } else {
+      ""
+    }
+    
+    # Execute the filtered query
+    query <- paste0("
+      SELECT rule_name, valid, COUNT(*) as count
+      FROM mv_validation_results_plot
+      WHERE fhir_version IN (", fhir_versions, ")
+      ", vendor_filter, "
+      ", validation_group_filter, "
+      GROUP BY rule_name, valid
+      ORDER BY rule_name
+    ")
+    
+    res <- dbGetQuery(db_connection, query) %>%
+      mutate(valid = if_else(valid == TRUE, "Success", "Failure")) %>%
+      mutate(count = as.double(count))
+    
+    return(res)
   })
 
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
   failed_validation_results <- reactive({
-    res <- selected_validations() %>%
-    mutate(url = linkURL) %>%
-    distinct(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference) %>%
-    select(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference)
-    if (!is.null(getReactableState("validation_details_table")) && !is.null(getReactableState("validation_details_table")$selected)) {
-      selected_rule <- deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
-      res <- res %>%
-        filter(rule_name == selected_rule)
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    
+    # Get the selected rule if available
+    selected_rule <- if (!is.null(getReactableState("validation_details_table")) && !is.null(getReactableState("validation_details_table")$selected)) {
+      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
     } else {
-      res <- res %>%
-        filter(rule_name == "NO_RULES")
+      "NO_RULES"  # Default when no rule is selected
     }
+    
+    # Build filtering conditions
+    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      paste0("AND vendor_name = '", sel_vendor(), "'")
+    } else {
+      ""
+    }
+    
+    validation_group_filter <- if(sel_validation_group() != "All Groups") {
+      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
+      paste0("AND reference IN (", references, ")")
+    } else {
+      ""
+    }
+    
+    # Query to get failed validations for the selected rule
+    query <- paste0("
+      SELECT fhir_version, url, expected, actual, vendor_name
+      FROM mv_validation_failures
+      WHERE rule_name = '", selected_rule, "'
+      AND fhir_version IN (", fhir_versions, ")
+      ", vendor_filter, "
+      ", validation_group_filter, "
+    ")
+    
+    # Execute query
+    res <- dbGetQuery(db_connection, query)
+    
+    # Add clickable URL links
     res <- res %>%
-        filter(valid == FALSE)
-    res %>% select(fhir_version, url, expected, actual, vendor_name)
+      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+    
+    return(res)
   })
 
-   output$validation_details_table <-  reactable::renderReactable({
+  output$validation_details_table <-  reactable::renderReactable({
     reactable(validation_details() %>% select(entry),
-                columns = list(
-                  entry = colDef(name = "Validation Rules", html = TRUE)
-                ),
-                selection = "single",
-                onClick = "select",
-                defaultSelected = c(1),
-                pagination = FALSE,
-                height = 500
+              columns = list(
+                entry = colDef(name = "Validation Rules", html = TRUE)
+              ),
+              selection = "single",
+              onClick = "select",
+              defaultSelected = c(1),
+              pagination = FALSE,
+              height = 500
     )
   })
 
@@ -224,22 +302,22 @@ validationsmodule <- function(
       coord_flip()
   },
     sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 400,
-                                  growthRate = 1.2),
+                                 height = 400,
+                                 growthRate = 1.2),
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), app_data$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), now("UTC"))
     })
 
   # Renders an empty validation result count chart when no data available
   output$validation_bar_empty_plot <- renderPlot({
     ggplot(select_validation_results()) +
-    geom_col(width = 0.8) +
-    labs(x = "", y = "") +
-    theme(axis.text.x = element_blank(),
-    axis.text.y = element_blank(), axis.ticks = element_blank()) +
-    annotate("text", label = "There are no validation results for the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+      geom_col(width = 0.8) +
+      labs(x = "", y = "") +
+      theme(axis.text.x = element_blank(),
+            axis.text.y = element_blank(), axis.ticks = element_blank()) +
+      annotate("text", label = "There are no validation results for the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 
   cap_stat_icon <- function(fhir_version) {
@@ -267,19 +345,18 @@ validationsmodule <- function(
               ),
               columns = list(
                 fhir_version = colDef(name = "FHIR Version",
-                    cell = function(value, index) {
-                        image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
-                        tagList(
-                          div(style = list(display = "inline-block", width = "45px"), image),
-                          value
-                        )
-                }),
+                                      cell = function(value, index) {
+                                        image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
+                                        tagList(
+                                          div(style = list(display = "inline-block", width = "45px"), image),
+                                          value
+                                        )
+                                      }),
                 url = colDef(name = "URL", html = TRUE, minWidth = 300),
                 expected = colDef(name = "Expected Value"),
                 actual = colDef(name = "Actual Value"),
                 vendor_name = colDef(name = "Certified API Developer Name")
-
               )
-            )
+    )
   })
 }

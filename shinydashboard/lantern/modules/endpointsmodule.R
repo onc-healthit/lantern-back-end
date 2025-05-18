@@ -1,6 +1,7 @@
 library(DT)
 library(purrr)
 library(reactable)
+library(glue)
 
 endpointsmodule_UI <- function(id) {
 
@@ -41,44 +42,42 @@ endpointsmodule <- function(
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version)))
   })
 
-  selected_fhir_endpoints <- reactive({
-    res <- get_fhir_endpoints_tbl()
-    req(sel_fhir_version(), sel_vendor(), sel_availability())
-
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
+selected_fhir_endpoints <- reactive({
+    # Ensure all required reactive values are available
+    req(sel_fhir_version())
+    req(sel_vendor())
+    req(sel_availability())
+    req(sel_is_chpl())
+    
+    query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
+    params <- list(vals = sel_fhir_version())
 
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
+        query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+        params$vendor <- sel_vendor()
     }
 
     if (sel_is_chpl() != "All") {
-      res <- res %>% filter(is_chpl == toupper(sel_is_chpl()))
+        query_str <- paste0(query_str, " AND is_chpl = {chpl}")
+        params$chpl <- toupper(sel_is_chpl())
     }
 
     if (sel_availability() != "0-100") {
-      if (sel_availability() == "0" || sel_availability() == "100") {
-        availability_filter_num <- as.numeric(sel_availability()) / 100
-        availability_filter <- as.character(availability_filter_num)
-        res <- res %>% filter(availability == availability_filter)
-      } else {
-        availability_upper_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][2]) / 100
-        availability_lower_num <- as.numeric(strsplit(sel_availability(), "-")[[1]][1]) / 100
-        availability_lower <- as.character(availability_lower_num)
-        availability_upper <- as.character(availability_upper_num)
-
-        res <- res %>% filter(availability >= availability_lower, availability <= availability_upper)
-      }
+        if (sel_availability() == "0" || sel_availability() == "100") {
+            query_str <- paste0(query_str, " AND availability = {availability}")
+            params$availability <- as.numeric(sel_availability())
+        } else {
+            availability_range <- strsplit(sel_availability(), "-")[[1]]
+            query_str <- paste0(query_str, " AND availability BETWEEN {low} AND {high}")
+            params$low <- as.numeric(availability_range[1])
+            params$high <- as.numeric(availability_range[2])
+        }
     }
 
-    res <- res %>%
-    mutate(urlModal = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-    rowwise() %>%
-    mutate(condensed_endpoint_names = ifelse(length(endpoint_names) > 0, ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',\'", url, "\',{priority: \'event\'});\"> Click For More... </a>")), endpoint_names), endpoint_names)) %>%
-    mutate(urlModal = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
-
-    res <- res %>% mutate(availability = availability * 100)
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    res <- tbl(db_connection, sql(query)) %>% collect()
     res
-  })
+})
 
   # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
@@ -137,8 +136,10 @@ endpointsmodule <- function(
   # Create the format for the csv
   csv_format <- reactive({
     res <- selected_fhir_endpoints() %>%
-      select(-label, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
+      select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
+      rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
+      ungroup() %>%
       rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)

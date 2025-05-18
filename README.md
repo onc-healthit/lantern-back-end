@@ -222,7 +222,6 @@ There are three types of tests for Lantern and three corresponding commands:
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |
 |  `make lint_R` | Runs the R lintr |
-| `make json_export file=<export file name> exportType=<month/30days/all>` | Exports the history of the endpoint data to a JSON file specified by the 'file' parameter. This 'file' parameter must only be a file name with the appropriate `.json` file extension, not a file path. Setting exportType equal to "month" creates the export file using only the last months history data, setting it to "30days" or leaving it blank will create the export file with all the history information from the last 30 days, and setting it to "all" will create an export file using all of the history data Lantern has stored. |
 | `make history_pruning` | Prunes the fhir_endpoint_info_history table to remove duplicate entries |
 | `make create_archive start=<start date> end=<end date> file=<archive file name>` | Creates an archive of the data in the database between the given dates in a JSON format and saves it to the given 'file' name. The dates format is '2021-01-31' (year, month, date). Example: `make create_archive start=2020-06-01 end=2021-06-01 file=archive_file.json`. Note: If the archive period includes any time between the current date and the LANTERN_PRUNING_THRESHOLD, then the given number of updates might be higher than expected because the history pruning algorithm is only run on data older than the threshold. |
 |  `make migrate_validations direction=<up/down>` | Runs validation migrations when direction is set to up. If direction is set to down, undos validation migrations |
@@ -316,34 +315,17 @@ To configure this script to run using cron, do:
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 
- # Configure Monthly JSON Export System
 
-You can configure a system to run the json export process and create a json export file of the past month's data using cron and the save_monthly_json_export.sh script located in the scripts directory. This system will send an email notification if the json export process fails. It then moves the JSON monthly file to the directory as defined below, which zips the file and pushes it to the git repo at that directory.
+# Configure History Pruning System
 
-To set up the script for this backup system, you must insert the correct information into the following variables located at the beginning of the save_monthly_json_export script.
-  * Set the EMAIL variable to the email you want to send json export failure alerts to
-  * Set the DIRECTORY variable to the git repo where the monthly file is pushed to.
-
+You can configure a system to run the history pruning using cron and the history_prune.sh script located in the scripts directory to prune the fhir_endpoints_info_history table.
+    * NOTE: The history pruning process already runs automatically by the endpoint manager every query interval after it finishes sending all the endpoints to the capability querier.
 To configure this script to run using cron, do:
  * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
- * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) <Full Path to save_monthly_json_export.sh>` to the crontab file
+ * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full Path to script directory> && ./history_prune.sh` to the crontab file
   * A `*` can be added to any field in the crontab expression to mean always
   * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
-  * Example: Add `0 */23 * * * <Full Path to save_monthly_json_export.sh>` to run the script at minute 0 of every 23rd hour
- * To display all scheduled cron jobs for the current user, you can use `crontab -l`
- * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
-
-
-# Configure History Pruning and JSON Export System
-
-You can configure a system to run the history pruning and json export processes using cron and the history_prune_json_export.sh script located in the scripts directory to first prune the fhir_endpoints_info_history table and then create the JSON fhir endpoint export file. 
-    * NOTE: The history pruning and json export processes already run automatically by the endpoint manager every query interval after it finishes sending all the endpoints to the capability querier.
-To configure this script to run using cron, do:
- * Use `crontab -e` to open up and edit the current user’s cron jobs in the crontab file
- * Add `Minute(0-59) Hour(0-24) Day_of_month(1-31) Month(1-12) Day_of_week(0-6) cd <Full Path to script directory> && ./history_prune_json_export.sh` to the crontab file
-  * A `*` can be added to any field in the crontab expression to mean always
-  * A `*/` can be added before a number in any field to execute the script to run every certain amount of time
-  * Example: Add `0 */23 * * * cd <Full Path to script directory> && ./history_prune_json_export.sh` to run the script at minute 0 of every 23rd hour
+  * Example: Add `0 */23 * * * cd <Full Path to script directory> && ./history_prune.sh` to run the script at minute 0 of every 23rd hour
  * To display all scheduled cron jobs for the current user, you can use `crontab -l`
  * You can halt the cron job by opening up the crontab file and commenting out the job with `#` or delete the crontab expression from the crontab file
 

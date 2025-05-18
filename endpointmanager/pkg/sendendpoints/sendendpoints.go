@@ -9,7 +9,6 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/historypruning"
 
-	//"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/jsonexport"
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	log "github.com/sirupsen/logrus"
@@ -30,6 +29,35 @@ func GetEnptsAndSend(
 	defer wg.Done()
 
 	for {
+		now := time.Now()
+		log.Info("Current Time: ", now)
+
+		targetTime := time.Date(now.Year(), now.Month(), now.Day(), 23, 0, 0, 0, now.Location())
+
+		// If the current time is after the target time, set the target time to the next day
+		if now.After(targetTime) {
+			targetTime = targetTime.Add(24 * time.Hour)
+		}
+
+		durationToSleep := time.Until(targetTime)
+
+		// Set the process completion status to true to ensure that the status has not remained false in the case previous process was interrupted and terminated.
+		err := store.UpdateProcessCompletionStatus(ctx, "true")
+		if err != nil {
+			log.Errorf("Failed to set process completion status: %v", err)
+		}
+
+		log.Infof("Waiting for %d minutes before processing endpoints", int(durationToSleep.Minutes()))
+		time.Sleep(durationToSleep)
+
+		log.Info("Starting daily querying process")
+
+		// Set the process completion status to false to indicate that the process is in progress
+		err = store.UpdateProcessCompletionStatus(ctx, "false")
+		if err != nil {
+			log.Errorf("Failed to set process completion status: %v", err)
+		}
+
 		listOfEndpoints, err := store.GetAllDistinctFHIREndpoints(ctx)
 		if err != nil {
 			errs <- err
@@ -58,7 +86,15 @@ func GetEnptsAndSend(
 				errs <- err
 			}
 		}
-		log.Info("Waiting 30 minutes to start history pruning and json export")
+
+		// Set the process completion status to true to indicate that the process has completed
+		err = store.UpdateProcessCompletionStatus(ctx, "true")
+		if err != nil {
+			log.Errorf("Failed to set process completion status: %v", err)
+		}
+
+		log.Info("Daily querying process complete")
+
 		// Wait 30 minutes to ensure querier is done before starting history pruning and json export
 		// time.Sleep(time.Duration(30) * time.Minute)
 		//log.Info("Starting json export")
@@ -70,9 +106,6 @@ func GetEnptsAndSend(
 		//	time.Sleep(time.Duration(qInterval) * time.Minute)
 		//	errs <- err
 		//}
-
-		log.Infof("Waiting %d minutes", qInterval)
-		time.Sleep(time.Duration(qInterval) * time.Minute)
 	}
 }
 

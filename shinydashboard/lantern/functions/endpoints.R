@@ -4,6 +4,8 @@ library(purrr)
 # Package that makes it easier to work with dates and times for getting avg response times # nolint
 library(lubridate)
 
+library(glue)
+
 time_until_next_run <- function() {
   current_time <- Sys.time()
   message("current_time ", current_time)
@@ -18,35 +20,12 @@ time_until_next_run <- function() {
 
 time_duration <- time_until_next_run()
 timer <- reactiveTimer(time_duration * 1000)
+
 # Get the Endpoint export table and clean up for UI
 get_endpoint_export_tbl <- function(db_tables) {
-
-  endpoint_organization_tbl <- get_endpoint_organizations(db_connection)
-
-  endpoint_export_tbl <- db_tables$endpoint_export %>%
-  collect() %>%
-  mutate(vendor_name = na_if(vendor_name, "")) %>%
-  tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-  mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-  rename(capability_fhir_version = fhir_version) %>%
-  mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-  mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
-  left_join(endpoint_organization_tbl) %>%
-  mutate(endpoint_names = gsub("^c\\(|\\)$", "", as.character(endpoint_names_list))) %>%
-  mutate(endpoint_names = gsub("(\", )", "\"; ", as.character(endpoint_names))) %>%
-  mutate(endpoint_names = gsub("NULL", "", as.character(endpoint_names))) %>%
-  mutate(endpoint_names = gsub("(\")", "", as.character(endpoint_names))) %>%
-  mutate(format = gsub("(\"|\"|\\[|\\])", "", as.character(format)))
+  endpoint_export_tbl <- db_tables$endpoint_export_mv %>%
+    collect()
   endpoint_export_tbl
-}
-
-get_endpoint_organizations <- function(db_connection) {
-  res <- tbl(db_connection,
-  sql("SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export ORDER BY endpoint_names_list")) %>%
-  collect() %>%
-  group_by(url) %>%
-  summarise(endpoint_names_list = list(endpoint_names_list))
-  res
 }
 
 get_endpoint_organization_list <- function(endpoint) {
@@ -73,89 +52,68 @@ vendor_short_names <- data.frame(
 # - all registered endpoints
 # - indexed endpoints that have been queried
 # - non-indexed endpoints yet to be queried
+# Get Endpoint Totals
+# Return list of counts of:
+# - all registered endpoints
+# - indexed endpoints that have been queried
+# - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
-  all <- db_tables$fhir_endpoints %>% distinct(url) %>% count() %>% pull(n)
-  indexed <- db_tables$fhir_endpoints_info %>% filter(requested_fhir_version == "None") %>% distinct(url) %>% count() %>% pull(n)
+  totals_data <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1)
+  
   fhir_endpoint_totals <- list(
-    "all_endpoints"     = all,
-    "indexed_endpoints" = indexed,
-    "nonindexed_endpoints" = max(all - indexed, 0)
+    "all_endpoints"     = totals_data$all_endpoints,
+    "indexed_endpoints" = totals_data$indexed_endpoints,
+    "nonindexed_endpoints" = totals_data$nonindexed_endpoints
   )
+  
+  return(fhir_endpoint_totals)
 }
 
 # create a join to get more detailed table of fhir_endpoint information
 get_fhir_endpoints_tbl <- function() {
-  ret_tbl <- app$endpoint_export_tbl() %>%
-    distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version, is_chpl) %>%
-    left_join(app$http_response_code_tbl() %>% select(code, label),
-    by = c("http_response" = "code")) %>%
-    mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
-    mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
-    mutate(cap_stat_exists = case_when(
-      kind != "instance" ~ "true*",
-      TRUE ~ cap_stat_exists
-    ))
+  res <- tbl(db_connection,
+    sql("SELECT url, endpoint_names, info_created, info_updated, list_source, 
+                vendor_name, capability_fhir_version, fhir_version, format, 
+                http_response, response_time_seconds, smart_http_response, errors, 
+                availability, cap_stat_exists, kind, 
+                requested_fhir_version, is_chpl, status 
+         FROM fhir_endpoint_comb_mv")) %>%
+    collect()
+  
+  res
 }
 
-# get the endpoint tally by http_response received
-get_response_tally_list <- function(db_tables) {
-  curr_tally <- db_tables$fhir_endpoints_info %>%
-    filter(requested_fhir_version == "None") %>%
-    select(metadata_id) %>%
-    left_join(db_tables$fhir_endpoints_metadata %>% select(http_response, id),
-    by = c("metadata_id" = "id")) %>%
-    select(http_response) %>%
-    group_by(http_response) %>%
-    tally()
 
-  # Get the list of most recent HTTP responses when requesting the capability statement from the
-  # fhir_endpoints
-  list(
-    "http_200" = max((curr_tally %>% filter(http_response == 200)) %>% pull(n), 0),
-    "http_non200" = max((curr_tally %>% filter(http_response != 200)) %>% pull(n), 0),
-    "http_404" = max((curr_tally %>% filter(http_response == 404)) %>% pull(n), 0),
-    "http_503" = max((curr_tally %>% filter(http_response == 503)) %>% pull(n), 0)
-  )
-}
-
-# get the date of the most recently updated fhir_endpoint
 get_endpoint_last_updated <- function(db_tables) {
-  as.character.Date(isolate(app_data$last_updated()))
+  last_updated <- db_tables$mv_endpoint_totals %>%
+    as.data.frame() %>%
+    slice(1) %>%
+    pull(last_updated)
+  
+  as.character.Date(last_updated)
 }
 
-# Compute the percentage of each response code for all responses received
-get_http_response_summary_tbl <- function(db_tables) {
-  db_tables$fhir_endpoints_info %>%
-    collect() %>%
-    filter(requested_fhir_version == "None") %>%
-    left_join(app$endpoint_export_tbl() %>%
-    select(url, vendor_name, http_response, fhir_version), by = c("url" = "url")) %>%
-    select(url, id, http_response, vendor_name, fhir_version) %>%
-    mutate(code = as.character(http_response)) %>%
-    group_by(id, url, code, http_response, vendor_name, fhir_version) %>%
-    summarise(Percentage = n()) %>%
-    ungroup() %>%
-    group_by(id) %>%
-    mutate(Percentage = Percentage / sum(Percentage, na.rm = TRUE) * 100) %>%
-    ungroup() %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown"))
+
+# LANTERN-831
+get_http_response_tbl <- function(vendor_name) {
+  query <- glue_sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = {vendor_name} ORDER BY http_code", .con = db_connection)
+
+  res <- tbl(db_connection,
+    sql(query)) %>%
+    collect()
+    res
 }
 
-# Get the count of endpoints by vendor
-get_fhir_version_vendor_count <- function(endpoint_tbl) {
-  tbl <- endpoint_tbl %>%
-    distinct(vendor_name, url, fhir_version) %>%
-    group_by(vendor_name, fhir_version) %>%
-    tally() %>%
-    ungroup() %>%
-    select(vendor_name, fhir_version, n) %>%
-    left_join(vendor_short_names) %>%
-    mutate(short_name = ifelse(is.na(short_name), vendor_name, short_name))
-
-    tbl
+# LANTERN-831
+get_http_response_tbl_all <- function() {
+  res <- tbl(db_connection,
+    sql("SELECT http_code, code_label, count_endpoints FROM mv_http_responses WHERE vendor_name = 'ALL_DEVELOPERS' ORDER BY http_code")) %>%
+    collect()
+  res
 }
+
 
 get_fhir_version_factors <- function(endpoint_tbl) {
   mutate(endpoint_tbl,
@@ -289,23 +247,35 @@ get_fhir_resource_types <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
-# Return list of resources for the given operation field by
-# endpoint_id, vendor and fhir_version
-get_fhir_resource_by_op <- function(db_connection, field) {
+# Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
+get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name) {
+  
+  # Create the base query string
+  query_str <- "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n 
+            FROM mv_resource_interactions
+            WHERE fhir_version IN ({fhir_versions_vec*})
+            AND resource_type IN ({resource_types_vec*})"
+
+  # Add a filter for operations if they are selected
+  if(length(operations_vec) >= 1){
+    query_str <- paste0(query_str, " AND operations @> ARRAY[{operations_vec*}]") 
+  }
+
+  # Add a filter for vendor name if a specific vendor is selected
+  if(vendor_name != 'All Developers'){
+    query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
+  }
+  
+  query_str <- paste0(query_str, " GROUP BY (resource_type, fhir_version)
+            ORDER BY resource_type")
+
+  query <- glue_sql(query_str, .con = db_connection)
+
   res <- tbl(db_connection,
-    sql(paste0("SELECT f.id as endpoint_id,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      operation_resource->>'", field, "' as type
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE requested_fhir_version = 'None'"))) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+    sql(query)) %>%
+  collect()
+
+  res
 }
 
 get_endpoint_resource_by_op <- function(db_connection, endpointURL, requestedFhirVersion, field) {
@@ -340,24 +310,10 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
   table
 }
 
-
 get_capstat_fields <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      json_array_elements(included_fields::json) ->> 'Field' as field,
-      json_array_elements(included_fields::json) ->> 'Exists' as exist,
-      json_array_elements(included_fields::json) ->> 'Extension' as extension
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE included_fields != 'null' AND requested_fhir_version = 'None'
-      ORDER BY field")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+  res <- tbl(db_connection, sql("SELECT * FROM get_capstat_fields_mv")) %>% 
+    collect()
+  return(res)
 }
 
 get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, extensionBool) {
@@ -377,23 +333,7 @@ get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhi
 }
 
 get_supported_profiles <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      f.url,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      json_array_elements(supported_profiles::json) ->> 'Resource' as resource,
-      json_array_elements(supported_profiles::json) ->> 'ProfileURL' as profileurl,
-      json_array_elements(supported_profiles::json) ->> 'ProfileName' as profilename
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE supported_profiles != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+  res <- tbl(db_connection, "endpoint_supported_profiles_mv") %>% collect()
 }
 
 get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion) {
@@ -409,89 +349,6 @@ get_endpoint_supported_profiles <- function(db_connection, endpointURL, requeste
     res
 }
 
-# Summarize count of implementation guides by implementation_guide, fhir_version
-get_implementation_guide_count <- function(fhir_resources_tbl) {
-  res <- fhir_resources_tbl %>%
-    group_by(implementation_guide, fhir_version) %>%
-    filter(implementation_guide != "None") %>%
-    count() %>%
-    rename(Implementation = implementation_guide, Endpoints = n)
-}
-
-get_capstat_fields_count <- function(capstat_fields_tbl, extensionBool) {
-  res <- capstat_fields_tbl %>%
-    group_by(field, exist, fhir_version, extension) %>%
-    count() %>%
-    filter(exist == "true") %>%
-    filter(extension == extensionBool) %>%
-    ungroup() %>%
-    select(-exist) %>%
-    select(-extension) %>%
-    rename(Fields = field, Endpoints = n)
-}
-
-# get contact information
-get_contact_information <- function(db_connection) {
-
-  contacts_tbl <- tbl(db_connection,
-    sql("SELECT DISTINCT
-				  url,
-				  json_array_elements((capability_statement->>'contact')::json)->>'name' as contact_name,
-        	json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'system' as contact_type,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'value' as contact_value,
-          json_array_elements((json_array_elements((capability_statement->>'contact')::json)->>'telecom')::json)->>'rank' as contact_preference
-          FROM fhir_endpoints_info
-          WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect()
-
-
-    res <- app$endpoint_export_tbl() %>%
-        distinct(url, vendor_name, fhir_version, endpoint_names, .keep_all = TRUE) %>%
-        select(url, vendor_name, fhir_version, endpoint_names, requested_fhir_version) %>%
-        filter(requested_fhir_version == "None") %>%
-        left_join(contacts_tbl, by = c("url" = "url"))
-
-    res
-}
-
-# get values from specific fields we're interested in displaying
-# get two fhir version fields, one for fhir version filter and one for field filter
-# this is necessary when choosing fhir version as the field value as the selected field’s column gets renamed to field_value when selected
-get_capstat_values <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id as endpoint_id,
-      vendor_id,
-      vendors.name as vendor_name,
-      capability_fhir_version as fhir_version,
-      capability_fhir_version as filter_fhir_version,
-      capability_statement->>'url' as url,
-      capability_statement->>'version' as version,
-      capability_statement->>'name' as name,
-      capability_statement->>'title' as title,
-      capability_statement->>'date' as date,
-      capability_statement->>'publisher' as publisher,
-      capability_statement->>'description' as description,
-      capability_statement->>'purpose' as purpose,
-      capability_statement->>'copyright' as copyright,
-      capability_statement->'software'->>'name' as software_name,
-      capability_statement->'software'->>'version' as software_version,
-      capability_statement->'software'->>'releaseDate' as software_release_date,
-      capability_statement->'implementation'->>'description' as implementation_description,
-      capability_statement->'implementation'->>'url' as implementation_url,
-      capability_statement->'implementation'->>'custodian' as implementation_custodian
-      from fhir_endpoints_info f
-      LEFT JOIN vendors on f.vendor_id = vendors.id
-      WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(filter_fhir_version = if_else(grepl("-", filter_fhir_version, fixed = TRUE), sub("-.*", "", filter_fhir_version), filter_fhir_version)) %>%
-    mutate(filter_fhir_version = if_else(filter_fhir_version %in% valid_fhir_versions, filter_fhir_version, "Unknown"))
-}
-
-get_capstat_values_list <- function(capstat_values_tbl) {
-  res <- capstat_values_tbl
-}
 
 get_avg_response_time <- function(db_connection, date) {
   # get time series of response time metrics for all endpoints
@@ -563,57 +420,6 @@ get_security_endpoints <- function(db_connection) {
 
 }
 
-# get tibble of endpoints which include a security service attribute
-# in their capability statement, each service coding as a row
-# for display in table of endpoints, with organization name and URL
-get_security_endpoints_tbl <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT a.url,
-            a.endpoint_names as organization_names,
-            a.vendor_name,
-            a.capability_fhir_version,
-            a.tls_version,
-            a.code
-        FROM
-          (SELECT e.url,
-            e.endpoint_names,
-            e.fhir_version as capability_fhir_version,
-            e.tls_version,
-            e.vendor_name,
-            json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as code
-          FROM endpoint_export e,fhir_endpoints_info f
-          WHERE e.url = f.url AND f.requested_fhir_version = 'None') a")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
-    mutate(organization_names = gsub("(\\{|\\})", "", as.character(organization_names))) %>%
-    mutate(organization_names = gsub("(\",\")", "; ", as.character(organization_names))) %>%
-    mutate(organization_names = gsub("(\")", "", as.character(organization_names)))
-}
-
-# Get list of SMART Core Capabilities supported by endpoints returning http 200
-get_smart_response_capabilities <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-      f.id,
-      m.smart_http_response,
-      v.name as vendor_name,
-      f.capability_fhir_version as fhir_version,
-      json_array_elements_text((smart_response->'capabilities')::json) as capability
-    FROM fhir_endpoints_info f
-    LEFT JOIN vendors v ON f.vendor_id = v.id
-    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    WHERE vendor_id = v.id AND f.metadata_id = m.id AND f.requested_fhir_version = 'None'
-    AND m.smart_http_response=200")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
-
 get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
@@ -635,62 +441,6 @@ get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersi
         collect() %>%
     select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
   res
-}
-
-# Summarize the count of capabilities reported in SMART Core Capabilities JSON doc
-get_smart_response_capability_count <- function(endpoints_tbl) {
-  res <- endpoints_tbl %>%
-    group_by(fhir_version, capability) %>%
-    count() %>%
-    rename("FHIR Version" = fhir_version, Capability = capability, Endpoints = n)
-  res
-}
-
-# Query fhir endpoints and return list of endpoints that have
-# returned a valid JSON document at /.well-known/smart-configuration
-# This implies a smart_http_response of 200.
-#
-get_well_known_endpoints_tbl <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT e.url, e.endpoint_names as organization_names, e.vendor_name,
-      e.fhir_version as capability_fhir_version
-    FROM endpoint_export e
-    LEFT JOIN fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    LEFT JOIN vendors v on f.vendor_id = v.id
-    ON e.url = f.url
-    WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
-    AND jsonb_typeof(f.smart_response::jsonb) = 'object'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(capability_fhir_version = if_else(capability_fhir_version == "", "No Cap Stat", capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", capability_fhir_version, fixed = TRUE), sub("-.*", "", capability_fhir_version), capability_fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown")) %>%
-    mutate(organization_names = gsub("(\\{|\\})", "", as.character(organization_names))) %>%
-    mutate(organization_names = gsub("(\",\")", "; ", as.character(organization_names))) %>%
-    mutate(organization_names = gsub("(\")", "", as.character(organization_names)))
-}
-
-# Find any endpoints which have returned a smart_http_response of 200
-# at the well known endpoint url /.well-known/smart-configuration
-# but did NOT return a valid JSON document when queried
-get_well_known_endpoints_no_doc <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT f.id, e.url, f.vendor_id, e.endpoint_names as organization_names, e.vendor_name,
-      e.fhir_version,
-      m.smart_http_response,
-      f.smart_response
-    FROM endpoint_export e
-    LEFT JOIN fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
-    ON e.url = f.url
-    WHERE m.smart_http_response = 200 AND f.requested_fhir_version = 'None'
-    AND jsonb_typeof(f.smart_response::jsonb) <> 'object'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
 # Get counts of authorization types supported by FHIR Version
@@ -724,75 +474,14 @@ get_endpoint_security_counts <- function(db_connection) {
   )
 }
 
-get_organization_locations <- function(db_connection) {
-  res <- tbl(db_connection,
-      sql("SELECT id, name, left(location->>'zipcode',5) as zipcode from npi_organizations")
-  ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat))
-  res
+get_response_tally_list <- function(db_tables) {
+  response_tally <- db_tables$mv_response_tally %>%
+                    as.data.frame() %>%
+                    slice(1)
+  
+  return(response_tally)
 }
 
-get_endpoint_locations <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          distinct(url),
-          endpoint_names[1] as endpoint_name,
-          organization_name,
-          fhir_version,
-          vendor_name,
-          match_score,
-          left(zipcode,5) as zipcode,
-          npi_id
-        FROM organization_location")
-    ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat)) %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-  res
-}
-
-get_single_endpoint_locations <- function(db_connection, endpointURL, requestedFhirVersion) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
-          url,
-          organization_name,
-          npi_id,
-          match_score,
-          left(zipcode,5) as zipcode
-        FROM organization_location where url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
-    ) %>%
-    collect() %>%
-    left_join(app$zip_to_zcta(), by = c("zipcode" = "zipcode")) %>%
-    filter(!is.na(lng), !is.na(lat)) %>%
-    distinct(organization_name, match_score, zipcode, lat, lng, npi_id)
-  res
-}
-
-
-# get implementation guides stored in capability statement
-get_implementation_guide <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.url as url,
-          capability_fhir_version as fhir_version,
-          json_array_elements(capability_statement::json#>'{implementationGuide}') as implementation_guide,
-          vendors.name as vendor_name
-          FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id
-          WHERE requested_fhir_version = 'None'")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    tidyr::replace_na(list(implementation_guide = "None")) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
 
 get_endpoint_implementation_guide <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
@@ -805,67 +494,28 @@ get_endpoint_implementation_guide <- function(db_connection, endpointURL, reques
   res
 }
 
-get_cap_stat_sizes <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT
-          f.url as url,
-          pg_column_size(capability_statement::text) as size,
-          capability_fhir_version as fhir_version,
-          vendors.name as vendor_name
-          FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id WHERE capability_fhir_version != ''
-          AND requested_fhir_version = 'None'")) %>%
+get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+  # Start with base query
+  query <- tbl(db_connection, "mv_endpoint_list_organizations")
+
+  # Apply filters in SQL before collecting data
+  if (!is.null(fhir_version) && length(fhir_version) > 0) {
+    query <- query %>% filter(fhir_version %in% !!fhir_version)
+  }
+
+  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+    query <- query %>% filter(vendor_name == !!vendor)
+  }
+
+  # Collect the data after applying filters in SQL
+  result <- query %>%
     collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
+    tidyr::replace_na(list(organization_name = "Unknown")) %>%
+    mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
+
+  return(result)
 }
 
-get_validation_results <- function(db_connection) {
-  res <- tbl(db_connection,
-    sql("SELECT vendors.name as vendor_name,
-          f.url as url,
-          capability_fhir_version as fhir_version,
-          rule_name,
-          valid,
-          expected,
-          actual,
-          comment,
-          reference,
-          validations.validation_result_id as id,
-          requested_fhir_version
-        FROM fhir_endpoints_info f
-          LEFT JOIN vendors on f.vendor_id = vendors.id
-          INNER JOIN validations on f.validation_result_id = validations.validation_result_id
-        ORDER BY validations.validation_result_id, rule_name")) %>%
-    collect() %>%
-    tidyr::replace_na(list(vendor_name = "Unknown")) %>%
-    mutate(fhir_version = if_else(fhir_version == "", "No Cap Stat", fhir_version)) %>%
-    mutate(fhir_version = if_else(grepl("-", fhir_version, fixed = TRUE), sub("-.*", "", fhir_version), fhir_version)) %>%
-    mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
-}
-
-get_endpoint_list_matches <- function() {
-    el <- app$endpoint_export_tbl() %>%
-          separate_rows(endpoint_names, sep = ";") %>%
-          select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
-          rename(organization_name = endpoint_names) %>%
-          tidyr::replace_na(list(organization_name = "Unknown")) %>%
-          mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
-    el
-}
-
-get_npi_organization_matches <- function(db_tables) {
-  nl <- db_tables$organization_location %>%
-    select(url, organization_name, organization_secondary_name, npi_id, fhir_version, vendor_name, match_score, zipcode, requested_fhir_version) %>%
-    collect() %>%
-    mutate(match_score = match_score * 100)  %>%
-    filter(match_score >= 97) %>%
-    tidyr::replace_na(list(organization_name = "Unknown", organization_secondary_name = "Unknown", npi_id = "Unknown")) %>%
-    mutate(organization_secondary_name = if_else(organization_secondary_name == "", "Unknown", organization_secondary_name))
-  nl
-}
 
 get_capability_and_smart_response <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
@@ -952,29 +602,14 @@ database_fetcher <- reactive({
   start_time <- Sys.time()
   message("database_fetcher ***************************************")
   safe_execute("app_data$fhir_endpoint_totals", app_data$fhir_endpoint_totals(get_endpoint_totals_list(db_tables)))
-  safe_execute("app_data$vendor_count_tbl", app_data$vendor_count_tbl(get_fhir_version_vendor_count(app$endpoint_export_tbl())))
   safe_execute("app_data$response_tally", app_data$response_tally(get_response_tally_list(db_tables)))
-  safe_execute("app_data$http_pct", app_data$http_pct(get_http_response_summary_tbl(db_tables)))
   safe_execute("app_data$endpoint_resource_types", app_data$endpoint_resource_types(get_fhir_resource_types(db_connection)))
-  safe_execute("app_data$capstat_fields", app_data$capstat_fields(get_capstat_fields(db_connection)))
-  safe_execute("app_data$capstat_values", app_data$capstat_values(get_capstat_values(db_connection)))
-  safe_execute("app_data$supported_profiles", app_data$supported_profiles(get_supported_profiles(db_connection)))
-  safe_execute("app_data$last_updated", app_data$last_updated(now("UTC")))
   safe_execute("app_data$security_endpoints", app_data$security_endpoints(get_security_endpoints(db_connection)))
-  safe_execute("app_data$security_endpoints_tbl", app_data$security_endpoints_tbl(get_security_endpoints_tbl(db_connection)))
   safe_execute("app_data$auth_type_counts", app_data$auth_type_counts(get_auth_type_count(isolate(app_data$security_endpoints()))))
   safe_execute("app_data$security_code_list", app_data$security_code_list(isolate(app_data$security_endpoints()) %>%
     distinct(code) %>%
     pull(code)))
-  safe_execute("app_data$smart_response_capabilities", app_data$smart_response_capabilities(get_smart_response_capabilities(db_connection)))
-  safe_execute("app_data$well_known_endpoints_tbl", app_data$well_known_endpoints_tbl(get_well_known_endpoints_tbl(db_connection)))
-  safe_execute("app_data$contact_info_tbl", app_data$contact_info_tbl(get_contact_information(db_connection)))
-  safe_execute("app_data$well_known_endpoints_no_doc", app_data$well_known_endpoints_no_doc(get_well_known_endpoints_no_doc(db_connection)))
   safe_execute("app_data$endpoint_security_counts", app_data$endpoint_security_counts(get_endpoint_security_counts(db_connection)))
-  safe_execute("app_data$implementation_guide", app_data$implementation_guide(get_implementation_guide(db_connection)))
-  safe_execute("app_data$endpoint_locations", app_data$endpoint_locations(get_endpoint_locations(db_connection)))
-  safe_execute("app_data$capstat_sizes_tbl", app_data$capstat_sizes_tbl(get_cap_stat_sizes(db_connection)))
-  safe_execute("app_data$validation_tbl", app_data$validation_tbl(get_validation_results(db_connection)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message(" database_fetcher execution time ******************************************:", time_difference, "seconds\n")

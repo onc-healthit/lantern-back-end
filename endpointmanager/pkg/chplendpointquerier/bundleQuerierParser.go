@@ -11,14 +11,16 @@ func BundleQuerierParser(CHPLURL string, fileToWriteTo string) {
 
 	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
+		log.Info("Error for the URL: ", CHPLURL)
 		log.Fatal(err)
 	}
 
 	// convert bundle data to lantern format
-	endpointEntryList.Endpoints = BundleToLanternFormat(respBody)
+	endpointEntryList.Endpoints = BundleToLanternFormat(respBody, CHPLURL)
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
+		log.Info("Error for the URL: ", CHPLURL)
 		log.Fatal(err)
 	}
 }

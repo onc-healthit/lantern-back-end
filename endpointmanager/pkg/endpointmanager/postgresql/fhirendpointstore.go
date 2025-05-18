@@ -22,6 +22,7 @@ var getFHIREndpointOrganizationByInfoStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
 var deleteFHIREndpointOrganizationMapStatementConditional *sql.Stmt
 var updateFHIREndpointOrganizationsUpdateTime *sql.Stmt
+var updateProcessCompletionStatusStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
@@ -649,6 +650,19 @@ func organizationInformationValid(organizationName sql.NullString, organizationZ
 	return organizationNameString, organizationZipCodeString, organizationNPIIDString
 }
 
+// UpdateProcessCompletionStatus updates the completion status of the daily querying process.
+func (s *Store) UpdateProcessCompletionStatus(ctx context.Context, status string) error {
+	var err error
+
+	_, err = updateProcessCompletionStatusStatement.ExecContext(ctx, status)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func prepareFHIREndpointStatements(s *Store) error {
 	var err error
 	addFHIREndpointStatement, err = s.DB.Prepare(`
@@ -726,6 +740,11 @@ func prepareFHIREndpointStatements(s *Store) error {
 	}
 	updateFHIREndpointOrganizationsUpdateTime, err = s.DB.Prepare(`
 	UPDATE fhir_endpoint_organizations SET updated_at = now() WHERE id = $1`)
+	if err != nil {
+		return err
+	}
+	updateProcessCompletionStatusStatement, err = s.DB.Prepare(`
+	UPDATE daily_querying_status SET status = $1`)
 	if err != nil {
 		return err
 	}
