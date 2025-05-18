@@ -6,25 +6,46 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_history$
-    BEGIN
-        --
-        -- Create a row in fhir_endpoints_info_history to reflect the operation performed on fhir_endpoints_info,
-        -- make use of the special variable TG_OP to work out the operation.
-        --
-        IF (TG_OP = 'DELETE') THEN
-            INSERT INTO fhir_endpoints_info_history SELECT 'D', now(), user, OLD.*;
-            RETURN OLD;
-        ELSIF (TG_OP = 'UPDATE') THEN
-            INSERT INTO fhir_endpoints_info_history SELECT 'U', now(), user, NEW.*;
-            RETURN NEW;
-        ELSIF (TG_OP = 'INSERT') THEN
-            INSERT INTO fhir_endpoints_info_history SELECT 'I', now(), user, NEW.*;
-            RETURN NEW;
-        END IF;
-        RETURN NULL; -- result is ignored since this is an AFTER trigger
-    END;
-$fhir_endpoints_info_history$ LANGUAGE plpgsql;
+-- LANTERN-825: Add history trigger and function
+-- Update the history trigger
+CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_historys$
+BEGIN
+    -- For INSERT/DELETE operations, always create history
+    IF (TG_OP = 'DELETE') THEN
+        INSERT INTO fhir_endpoints_info_history 
+        SELECT 'D', now(), user, OLD.*;
+        RETURN OLD;
+    ELSIF (TG_OP = 'INSERT') THEN
+        INSERT INTO fhir_endpoints_info_history 
+        SELECT 'I', now(), user, NEW.*;
+        RETURN NEW;
+    END IF;
+
+    -- For UPDATE operations, check if anything significant changed
+    IF (
+        NEW.id IS DISTINCT FROM OLD.id OR
+        NEW.healthit_mapping_id IS DISTINCT FROM OLD.healthit_mapping_id OR
+        NEW.vendor_id IS DISTINCT FROM OLD.vendor_id OR
+        NEW.url IS DISTINCT FROM OLD.url OR
+        NEW.tls_version IS DISTINCT FROM OLD.tls_version OR
+        NEW.mime_types IS DISTINCT FROM OLD.mime_types OR
+        NEW.capability_statement::text IS DISTINCT FROM OLD.capability_statement::text OR
+        NEW.validation_result_id IS DISTINCT FROM OLD.validation_result_id OR
+        NEW.included_fields::text IS DISTINCT FROM OLD.included_fields::text OR
+        NEW.operation_resource::text IS DISTINCT FROM OLD.operation_resource::text OR
+        NEW.supported_profiles::text IS DISTINCT FROM OLD.supported_profiles::text OR
+        NEW.created_at IS DISTINCT FROM OLD.created_at OR
+        NEW.smart_response::text IS DISTINCT FROM OLD.smart_response::text OR
+        NEW.requested_fhir_version IS DISTINCT FROM OLD.requested_fhir_version OR
+        NEW.capability_fhir_version IS DISTINCT FROM OLD.capability_fhir_version
+    ) THEN
+        INSERT INTO fhir_endpoints_info_history 
+        SELECT 'U', now(), user, NEW.*;
+    END IF;
+
+    RETURN NEW;
+END;
+$fhir_endpoints_info_historys$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
     DECLARE
