@@ -2,9 +2,15 @@ BEGIN;
 
 DROP TABLE IF EXISTS fhir_endpoint_organization_active;
 
+DROP INDEX IF EXISTS idx_fhir_endpoint_organization_active_org_id;
+
 DROP TABLE IF EXISTS fhir_endpoint_organization_addresses;
 
+DROP INDEX IF EXISTS idx_fhir_endpoint_organization_addresses_org_id;
+
 DROP TABLE IF EXISTS fhir_endpoint_organization_identifiers;
+
+DROP INDEX IF EXISTS idx_fhir_endpoint_organization_identifiers_org_id;
 
 DROP VIEW IF EXISTS joined_export_tables CASCADE;
 

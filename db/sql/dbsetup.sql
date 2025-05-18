@@ -2349,3 +2349,9 @@ CREATE TABLE fhir_endpoint_organization_identifiers (
 	org_id INT,
 	identifier VARCHAR(500)
 );
+
+CREATE INDEX idx_fhir_endpoint_organization_active_org_id ON fhir_endpoint_organization_active (org_id);
+
+CREATE INDEX idx_fhir_endpoint_organization_addresses_org_id ON fhir_endpoint_organization_addresses (org_id);
+
+CREATE INDEX idx_fhir_endpoint_organization_identifiers_org_id ON fhir_endpoint_organization_identifiers (org_id);

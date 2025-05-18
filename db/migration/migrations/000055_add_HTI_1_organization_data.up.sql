@@ -7,6 +7,10 @@ CREATE TABLE fhir_endpoint_organization_active (
 	active VARCHAR(500)
 );
 
+DROP INDEX IF EXISTS idx_fhir_endpoint_organization_active_org_id;
+
+CREATE INDEX idx_fhir_endpoint_organization_active_org_id ON fhir_endpoint_organization_active (org_id);
+
 DROP TABLE IF EXISTS fhir_endpoint_organization_addresses;
 
 CREATE TABLE fhir_endpoint_organization_addresses (
@@ -14,12 +18,20 @@ CREATE TABLE fhir_endpoint_organization_addresses (
 	address VARCHAR(500)
 );
 
+DROP INDEX IF EXISTS idx_fhir_endpoint_organization_addresses_org_id;
+
+CREATE INDEX idx_fhir_endpoint_organization_addresses_org_id ON fhir_endpoint_organization_addresses (org_id);
+
 DROP TABLE IF EXISTS fhir_endpoint_organization_identifiers;
 
 CREATE TABLE fhir_endpoint_organization_identifiers (
 	org_id INT,
 	identifier VARCHAR(500)
 );
+
+DROP INDEX IF EXISTS idx_fhir_endpoint_organization_identifiers_org_id;
+
+CREATE INDEX idx_fhir_endpoint_organization_identifiers_org_id ON fhir_endpoint_organization_identifiers (org_id);
 
 DROP VIEW IF EXISTS joined_export_tables CASCADE;
 
