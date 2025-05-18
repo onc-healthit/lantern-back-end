@@ -377,6 +377,7 @@ EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
 CREATE or REPLACE VIEW joined_export_tables AS
 SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
+    endpt_orgnames.organization_ids AS endpoint_ids,
     vendors.name as vendor_name,
     endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
     endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
@@ -394,14 +395,15 @@ FROM fhir_endpoints AS endpts
 LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
 LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
-LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names 
+LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
 GROUP BY fom.id) as endpt_orgnames ON endpts.id = endpt_orgnames.id;
 
 CREATE or REPLACE VIEW endpoint_export AS
 SELECT export_tables.url, export_tables.list_source, export_tables.endpoint_names,
-    export_tables.vendor_name,
+    export_tables.endpoint_ids,
+	export_tables.vendor_name,
     export_tables.tls_version, export_tables.mime_types, export_tables.http_response,
     export_tables.response_time_seconds, export_tables.smart_http_response, export_tables.errors,
     export_tables.cap_stat_exists,
@@ -1494,30 +1496,47 @@ CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoint
 CREATE TABLE daily_querying_status (status VARCHAR(500));
 
 -- Lantern-839
- CREATE MATERIALIZED VIEW mv_endpoint_list_organizations AS
+CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
+AS
 SELECT DISTINCT
-  url,
-  UNNEST(COALESCE(NULLIF(processed_names.cleaned_names, '{}'::text[]), ARRAY['Unknown'])) AS organization_name,
-  CASE
-	WHEN endpoint_export.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
-	ELSE endpoint_export.fhir_version
-  END AS fhir_version,
-  COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
-  requested_fhir_version
-FROM endpoint_export,
-LATERAL(
-  SELECT
+    endpoint_export.url,
+    COALESCE(
+        NULLIF(
+            btrim(
+                regexp_replace(name_id.cleaned_name, '\s+', ' ', 'g')
+            ), 
+        ''), 
+    'Unknown') AS organization_name,
+    
+    COALESCE(
+        name_id.cleaned_id::text,  -- Just cast to text
+        'Unknown'
+    ) AS organization_id,
+    
     CASE
-      WHEN endpoint_names IS NULL THEN ARRAY['Unknown']
-      ELSE ARRAY(
-        SELECT btrim(regexp_replace(unnest(string_to_array(regexp_replace(elem.elem::text, '["]', '', 'g'),';')),'\s+',' ','g'))
-        	FROM unnest(endpoint_names) elem(elem))
-    END AS cleaned_names
-) AS processed_names
-ORDER BY organization_name;
+        WHEN endpoint_export.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
+        ELSE endpoint_export.fhir_version
+    END AS fhir_version,
+    
+    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
+    endpoint_export.requested_fhir_version
+
+FROM
+    endpoint_export
+LEFT JOIN LATERAL (
+    SELECT
+        name_elem AS cleaned_name,
+        id_elem AS cleaned_id
+    FROM
+        unnest(endpoint_export.endpoint_names, endpoint_export.endpoint_ids) AS u(name_elem, id_elem)
+) AS name_id ON TRUE
+
+ORDER BY
+    organization_name
+WITH DATA;
 
  -- Create indexes for endpoint list organizations materialized view
- CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, requested_fhir_version);
+ CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, organization_id, requested_fhir_version);
  CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
  CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
  CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
@@ -2154,3 +2173,206 @@ ORDER BY field_version;
 CREATE UNIQUE INDEX idx_mv_capstat_values_extension_unique ON mv_capstat_values_extension(fhir_version, field_version);
 CREATE INDEX idx_mv_capstat_values_extension_field_version ON mv_capstat_values_extension(field_version);
 CREATE INDEX idx_mv_capstat_values_extension_fhir ON mv_capstat_values_extension(fhir_version);
+
+-- LANTERN-863
+-- Create materialized view for removing resource fetcher
+
+CREATE MATERIALIZED VIEW mv_endpoint_resource_types AS
+SELECT 
+    f.id AS endpoint_id,
+    f.vendor_id,
+    COALESCE(vendors.name, 'Unknown') AS vendor_name,
+    CASE 
+        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+        WHEN position('-' in f.capability_fhir_version) > 0 THEN substring(f.capability_fhir_version from 1 for position('-' in f.capability_fhir_version) - 1)
+        WHEN f.capability_fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') 
+            THEN f.capability_fhir_version
+        ELSE 'Unknown'
+    END AS fhir_version,
+    json_array_elements(capability_statement::json#>'{rest,0,resource}') ->> 'type' AS type
+FROM fhir_endpoints_info f
+LEFT JOIN vendors ON f.vendor_id = vendors.id
+WHERE f.requested_fhir_version = 'None'
+ORDER BY type;
+
+-- Create indexes for better performance
+CREATE UNIQUE INDEX idx_mv_endpoint_resource_types_unique ON mv_endpoint_resource_types(endpoint_id, vendor_id, fhir_version, type);
+CREATE INDEX idx_mv_endpoint_resource_types_vendor ON mv_endpoint_resource_types(vendor_name);
+CREATE INDEX idx_mv_endpoint_resource_types_fhir ON mv_endpoint_resource_types(fhir_version);
+CREATE INDEX idx_mv_endpoint_resource_types_type ON mv_endpoint_resource_types(type);
+
+-- LANTERN-864
+CREATE MATERIALIZED VIEW mv_get_security_endpoints AS
+SELECT
+  f.id,
+  f.vendor_id,
+  COALESCE(v.name, 'Unknown') AS name,
+  CASE 
+    WHEN capability_fhir_version = '' THEN 'No Cap Stat'
+    WHEN position('-' in capability_fhir_version) > 0 THEN 
+      CASE
+        WHEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) IN 
+            ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
+             '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', 'No Cap Stat')
+        THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
+        ELSE 'Unknown'
+      END
+    WHEN capability_fhir_version IN 
+        ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
+         '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', 'No Cap Stat')
+    THEN capability_fhir_version
+    ELSE 'Unknown'
+  END AS fhir_version,
+  json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code,
+  json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' AS text
+FROM fhir_endpoints_info f 
+LEFT JOIN vendors v ON f.vendor_id = v.id
+WHERE requested_fhir_version = 'None';
+
+-- Create indexes for performance
+CREATE UNIQUE INDEX idx_mv_get_security_endpoints ON mv_get_security_endpoints(id, code);
+CREATE INDEX idx_mv_get_security_endpoints_name ON mv_get_security_endpoints(name);
+CREATE INDEX idx_mv_get_security_endpoints_fhir ON mv_get_security_endpoints(fhir_version);
+
+CREATE MATERIALIZED VIEW mv_auth_type_count AS
+WITH endpoints_by_version AS (
+  -- Get total count of distinct IDs per FHIR version
+  SELECT 
+    fhir_version,
+    COUNT(DISTINCT id) AS tc
+  FROM 
+    mv_get_security_endpoints
+  GROUP BY 
+    fhir_version
+),
+endpoints_by_version_code AS (
+  -- Count endpoints for each code within each FHIR version
+  SELECT 
+    s.fhir_version,
+    s.code,
+    e.tc,
+    COUNT(DISTINCT s.id) AS endpoints
+  FROM 
+    mv_get_security_endpoints s
+  JOIN 
+    endpoints_by_version e ON s.fhir_version = e.fhir_version
+  GROUP BY 
+    s.fhir_version, s.code, e.tc
+)
+-- Calculate final results with percentages
+SELECT 
+  code AS "Code",
+  fhir_version AS "FHIR Version",
+  endpoints::integer AS "Endpoints",
+  ROUND(endpoints::numeric * 100 / tc)::integer || '%' AS "Percent"
+FROM 
+  endpoints_by_version_code
+ORDER BY 
+  "FHIR Version",  
+  "Code"; 
+
+-- Create indexes for performance
+CREATE UNIQUE INDEX idx_mv_auth_type_count ON mv_auth_type_count("Code", "FHIR Version");
+CREATE INDEX idx_mv_auth_type_count_fhir ON mv_auth_type_count("FHIR Version");
+CREATE INDEX idx_mv_auth_type_count_endpoints ON mv_auth_type_count("Endpoints"); 
+
+CREATE MATERIALIZED VIEW mv_endpoint_security_counts AS
+WITH 
+-- Get total indexed endpoints from mv_endpoint_totals
+total_endpoints AS (
+  SELECT 
+    'Total Indexed Endpoints' AS status,
+    all_endpoints::integer AS endpoints,
+    1 AS sort_order
+  FROM mv_endpoint_totals
+  ORDER BY aggregation_date DESC
+  LIMIT 1
+),
+-- Get HTTP 200 responses from mv_response_tally
+http_200_endpoints AS (
+  SELECT 
+    'Endpoints with successful response (HTTP 200)' AS status,
+    http_200::integer AS endpoints,
+    2 AS sort_order
+  FROM mv_response_tally
+  LIMIT 1
+),
+-- Get non-200 responses from mv_response_tally
+http_non200_endpoints AS (
+  SELECT 
+    'Endpoints with unsuccessful response' AS status,
+    http_non200::integer AS endpoints,
+    3 AS sort_order
+  FROM mv_response_tally
+  LIMIT 1
+),
+-- Get count of endpoints without valid capability statement
+no_cap_statement AS (
+  SELECT 
+    'Endpoints without valid CapabilityStatement / Conformance Resource' AS status,
+    COUNT(*)::integer AS endpoints,
+    4 AS sort_order
+  FROM fhir_endpoints_info 
+  WHERE jsonb_typeof(capability_statement::jsonb) <> 'object' 
+    AND requested_fhir_version = 'None'
+),
+-- Get count of endpoints with valid security resource
+security_endpoints AS (
+  SELECT 
+    'Endpoints with valid security resource' AS status,
+    COUNT(DISTINCT id)::integer AS endpoints,
+    5 AS sort_order
+  FROM mv_get_security_endpoints
+),
+-- Combine all results
+combined_results AS (
+  SELECT status, endpoints, sort_order FROM total_endpoints
+  UNION ALL
+  SELECT status, endpoints, sort_order FROM http_200_endpoints
+  UNION ALL
+  SELECT status, endpoints, sort_order FROM http_non200_endpoints
+  UNION ALL
+  SELECT status, endpoints, sort_order FROM no_cap_statement
+  UNION ALL
+  SELECT status, endpoints, sort_order FROM security_endpoints
+)
+-- Final select with ordering
+SELECT 
+  status AS "Status",
+  endpoints AS "Endpoints"
+FROM combined_results
+ORDER BY sort_order;
+
+-- Create a unique index
+CREATE UNIQUE INDEX idx_mv_endpoint_security_counts ON mv_endpoint_security_counts("Status");
+
+-- LANTERN-838: Validation cleanup 
+CREATE INDEX fhir_endpoints_info_history_val_res_idx ON fhir_endpoints_info_history (validation_result_id);
+
+ALTER TABLE validations
+ADD CONSTRAINT fk_validations_validation_results
+FOREIGN KEY (validation_result_id) 
+REFERENCES validation_results(id)
+ON DELETE CASCADE;
+
+-- LANTERN-841: HTI-1 Final Rule Organization Data
+CREATE TABLE fhir_endpoint_organization_active (
+	org_id INT,
+	active VARCHAR(500)
+);
+
+CREATE TABLE fhir_endpoint_organization_addresses (
+	org_id INT,
+	address VARCHAR(500)
+);
+
+CREATE TABLE fhir_endpoint_organization_identifiers (
+	org_id INT,
+	identifier VARCHAR(500)
+);
+
+CREATE INDEX idx_fhir_endpoint_organization_active_org_id ON fhir_endpoint_organization_active (org_id);
+
+CREATE INDEX idx_fhir_endpoint_organization_addresses_org_id ON fhir_endpoint_organization_addresses (org_id);
+
+CREATE INDEX idx_fhir_endpoint_organization_identifiers_org_id ON fhir_endpoint_organization_identifiers (org_id);

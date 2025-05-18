@@ -35,11 +35,11 @@ securitymodule <- function(
   ns <- session$ns
 
   output$auth_type_count_table <- renderTable(
-    isolate(app_data$auth_type_counts()),
+    isolate(get_auth_type_count(db_connection)),
     align = "llrr"
   )
   output$endpoint_summary_table <- renderTable(
-    isolate(app_data$endpoint_security_counts())
+    isolate(get_endpoint_security_counts(db_connection))
   )
 
   securityPageSizeNum <- reactiveVal(NULL)

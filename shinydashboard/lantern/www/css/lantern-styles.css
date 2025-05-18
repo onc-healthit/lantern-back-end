@@ -1,0 +1,284 @@
+/* Hides the Skip To Content button when it is not focused on */
+.show-on-focus {     
+    position: absolute;
+    top: -10em;
+    background: #fff;
+    color: #112e51;
+    display: block;
+    font-weight: 600;
+  }
+  
+  /* Makes the Skip To Content button appear when it is focused on */
+  .show-on-focus:focus {  
+    top: 5px;   
+    position: absolute;
+    background: #fff;
+    color: #112e51;
+    display: block;
+    font-weight: 600;
+    font-size: 20px;
+  }
+  
+  /* Hides the Skip Past Resources button when it is not focused on */
+  .show-on-focus-resources {     
+    position: absolute;
+    top: -200em;
+    background: #fff;
+    color: #112e51;
+    display: block;
+    font-weight: 600;  
+    width: 180px;  
+  }
+  
+  /* Makes the Skip To Resources button appear when it is focused on */
+  .show-on-focus-resources:focus {  
+    position: static;
+    background: #fff;
+    color: #112e51;
+    display: block;
+    font-weight: 600;
+    font-size: 20px;
+    width: 180px;
+  }
+  
+  /* Changes the background color of the main Lantern content background*/
+  .content-wrapper, .right-side {
+    background-color: #F6F7F8;
+  }
+  
+  /* Changes the color of the Lantern header, navbar, and borders */
+  .skin-blue .main-header .navbar {
+    background-color: #1B5A7F;
+  }
+  
+  /* Changes the color of the Lantern main header logo */
+  .skin-blue .main-header .logo {
+    background-color: #1B5A7F;
+  }
+  
+  /* Changes the text color of the Current Endpoint Responses info boxes on the dashboard page */
+  .small-box {
+    color: black!important;
+  }
+  
+  /* Changes the font size of the text within the Current Endpoint Responses info boxes on the dashboard page */
+  .small-box p {
+    font-size: 20px;
+  }
+  
+  /* Changes the text color of the New badges that are added to new sidebar tabs */
+  .badge {
+    color: black!important;
+  }
+  
+  /* Changes the text color of NA text elements */
+  .NA {
+    color: #696464!important;
+  }
+  
+  /* Styling for all the urls on the Lantern page with class lantern-url */
+  .lantern-url {
+    color: #0044FF!important;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  
+  /* Adds a border to the bottom of the Lantern sidebar */
+  .sidebar-menu {
+     border-bottom: 1px solid white;
+  }
+  
+  /* Changes the width of the popup modals */
+  .modal-lg {
+    width: 75%!important;
+  }
+  
+  /* Changes the text color of the fields list on the Capability Statement Fields tab */
+  #fields_page-capstat_fields_text{
+    color: black!important;
+  }
+  
+  /* Changes the text color of the navbar tabs on the Organization page */
+  #organization_tabset li a {
+    color: #024A96;
+  }
+  
+  /* Changes the text color of the navbar tabs on the Resource page */
+  #resource_tabset li a {
+    color: #024A96;
+  }
+  
+  /* Changes the text color of the navbar tabs on the Profile page */
+  #profile_resource_tab li a {
+    color: #024A96;
+  }
+  
+  /* Changes the text color of the navbar tabs on the Endpoint modal popup */
+  #endpoint_modal_tabset li a {
+    color: #024A96;
+  }
+  
+  /* Change the text color of the active navbar tab on the Organization page, Resource page, Profile page, and Endpoint Modal */
+  .nav-tabs>li.active>a {
+    color: #555!important;
+  }
+  
+  /* Change color of the selected links in the resources checkbox */
+  .multi-wrapper .selected-wrapper .item.selected  {
+    color: #024A96;
+  }
+  
+  /* Change color of the non selected links in the resources checkbox */
+  .multi-wrapper .non-selected-wrapper .item.selected {
+    color: #4F4F4F;
+    opacity: 1!important;
+  }
+  
+  /* Remove underline from a tag elements when they are visted */
+  a:visited {
+    text-decoration: none;
+  }
+  
+  /* Bold a tag elements when they are hovered on */
+  a:hover {
+    font-weight: bold;
+  }
+  
+  /* Change coloring for FHIR version dropdown */
+  button.dropdown-toggle {
+    background-color: white!important;
+    color: black;
+  }
+  
+  /* Add a border when a button is hovered over */
+  button:hover {
+    border: 3px solid!important;
+  }     
+  
+  /* Add a border and when a select tag (dropdowns) is hovered over and make sure background stays white */
+  select:hover {
+    border: 3px solid!important;
+    background-color: white!important;
+    cursor: pointer;
+  }
+  
+  /* Bold an a tag element when it is active */
+  a:active {
+    font-weight: bold;
+  }
+  
+  /* Add a border to button when it is active */
+  button:active {
+    border: 3px solid!important;
+  } 
+  
+  /* When an a tag is focused on, add a border, change background color to yellow, and change text font to black */
+  a:focus-visible  {
+    border: 4px solid!important;
+    background-color: yellow!important;
+    color: black!important;
+  }
+  
+  /* When a button is focused on, add a border, change background color to yellow, and change text font to black */
+  button:focus-visible  {
+    border: 4px solid!important;
+    background-color: yellow!important;
+    color: black!important;
+  }
+  
+  /* When an select tag (dropdowns) is focused on, add a border, change background color to yellow, and change text font to black */
+  select:focus-visible  {
+    border: 4px solid!important;
+    background-color: yellow;
+    color: black!important; 
+  }
+  
+  /* Add a border when an input tag (textbox) is hovered over */
+  input:hover {
+    border: 3px solid!important;
+  }
+  
+  /* When an input tag (textbox) is focused on, add a border, change background color to yellow, and change text font to black */
+  input:focus-visible {
+    border: 4px solid!important;
+    background-color: yellow!important;
+    color: black!important; 
+  }
+  
+  /* When a sortable reactable table header is focused on, add a border, change background color to yellow, and change text font to black */
+  .rt-th:focus-visible {
+    border: 4px solid!important;
+    background-color: yellow!important;
+    color: black!important; 
+  }
+  
+  /* Make text bold when a sortable reactable table header is hovered over */
+  .rt-sort-header:hover {
+    font-weight: bold;
+  }
+  
+  /* When an element in a table is focused on, add a border, change background color to yellow, and change text font to black */
+  .rt-td:focus-visible {
+    border: 4px solid!important;
+    background-color: yellow!important;
+    color: black!important; 
+  }
+  
+  /* When the organizations location map is focused on, add a border around it */
+  #organizations_page-location_map:focus-visible {
+    border: 4px solid!important;
+  }
+  
+  /* When an element in a dataTable sortable header is focused on, add a border, change background color to yellow, and change text font to black */
+  table.dataTable thead .sorting:focus-visible  {
+    border: 4px solid!important;
+    background-color: yellow!important;
+    color: black!important;
+  }
+  
+  /* Make text bold when a dataTable sortable header is hovered over */
+  table.dataTable thead .sorting:hover {
+    border: 2px solid!important;
+  }
+  
+  /* Change the styling for download buttons */
+  a.btn {
+    background-color: #1B5A7F!important;
+    border: 1px solid black!important;
+    color: white;
+  }
+  
+  /* When a download button is focused on, add a border, change background color to yellow, and change text font to black */
+  a.btn:focus-visible  {
+    border: 4px solid black!important;
+    background-color: yellow!important;
+    color: black!important;
+  }
+  
+  /* When a download button is hovered over, add a border, change text color to white, and bold the text */
+  a.btn:hover {
+    border: 2px solid black!important;
+    font-weight: bold!important;
+    color: white!important;
+  }
+  
+  /* Change the styling for the buttons on the Lantern page */
+  .action-button {
+    background-color: #1B5A7F!important;
+    border: 1px solid black!important;
+    color: white!important;
+  }
+  
+  /* When a button is focused on, add a border, change background color to yellow, and change text font to black */
+  .action-button:focus-visible  {
+    border: 4px solid black!important;
+    background-color: yellow!important;
+    color: black!important;
+  }
+  
+  /* When a button is hovered over, add a border, change text color to white, and bold the text */
+  .action-button:hover {
+    border: 2px solid black!important;
+    font-weight: bold!important;
+    color: white!important;
+  }

@@ -1,0 +1,9 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS mv_get_security_endpoints CASCADE;
+
+DROP MATERIALIZED VIEW IF EXISTS mv_auth_type_count CASCADE;
+
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_security_counts CASCADE;
+
+COMMIT;

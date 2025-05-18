@@ -10,9 +10,10 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/fetcher"
 
+	"regexp"
+
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
-	"regexp"
 )
 
 // AddEndpointData iterates through the list of endpoints and adds each one to the database
@@ -92,12 +93,12 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		}
 	}
 
-	err := RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
+	err := RemoveOldEndpointOrganizations(ctx, store, firstUpdateOrg, listsource)
 	if err != nil {
 		log.Warn(err)
 	}
 
-	err = RemoveOldEndpointOrganizations(ctx, store, firstUpdateOrg, listsource)
+	err = RemoveOldEndpoints(ctx, store, firstUpdate, listsource)
 	if err != nil {
 		log.Warn(err)
 	}
@@ -142,9 +143,12 @@ func formatToFHIREndpt(endpoint *fetcher.EndpointEntry) (*endpointmanager.FHIREn
 
 	if endpoint.OrganizationName != "" || endpoint.NPIID != "" || endpoint.OrganizationZipCode != "" {
 		dbOrgEntry := endpointmanager.FHIREndpointOrganization{
-			OrganizationName:    endpoint.OrganizationName,
-			OrganizationNPIID:   endpoint.NPIID,
-			OrganizationZipCode: endpoint.OrganizationZipCode,
+			OrganizationName:        endpoint.OrganizationName,
+			OrganizationNPIID:       endpoint.NPIID,
+			OrganizationZipCode:     endpoint.OrganizationZipCode,
+			OrganizationIdentifiers: endpoint.OrganizationIdentifiers,
+			OrganizationAddresses:   endpoint.OrganizationAddresses,
+			OrganizationActive:      endpoint.OrganizationActive,
 		}
 
 		dbEntry.OrganizationList = []*endpointmanager.FHIREndpointOrganization{&dbOrgEntry}

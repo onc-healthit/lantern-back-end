@@ -44,7 +44,7 @@ selected_fhir_endpoint_profiles <- reactive({
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -61,7 +61,6 @@ selected_fhir_endpoint_profiles <- reactive({
         color = "#112446",
         text = "Please Wait, Lantern is fetching the most up-to-date data")
       app_fetcher()
-      database_fetcher()
       database_fetch(0)
       remove_modal_spinner()
     }
@@ -430,12 +429,18 @@ selected_fhir_endpoint_profiles <- reactive({
 
   output$show_security_filter <- renderUI({
     if (show_security_filter()) {
+      # Get the list of security codes directly from the existing materialized view
+      security_codes <- tbl(db_connection, "mv_get_security_endpoints") %>%
+      distinct(code) %>%
+      collect() %>%
+      pull(code) 
+      
       fluidRow(
         column(width = 4,
           selectInput(
             inputId = "auth_type_code",
             label = "Supported Authorization Type:",
-            choices = isolate(app_data$security_code_list()),
+            choices = security_codes,
             selected = "SMART-on-FHIR",
             size = 1,
             selectize = FALSE)
@@ -496,33 +501,35 @@ selected_fhir_endpoint_profiles <- reactive({
 
 
   checkbox_resources <- reactive({
-    res <- isolate(app_data$endpoint_resource_types())
     req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
-
+    
+    res <- tbl(db_connection, "mv_endpoint_resource_types")
+    
+    res <- res %>% 
+      filter(fhir_version %in% !!input$fhir_version)
+    
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
+      res <- res %>% filter(vendor_name == !!input$vendor)
     }
-
+    
     res <- res %>%
-           distinct(type) %>%
-           arrange(type) %>%
-           split(.$type) %>%
-           purrr::map(~ .$type)
-
+      distinct(type) %>%
+      arrange(type) %>%
+      collect() %>%
+      split(.$type) %>%
+      purrr::map(~ .$type)
+    
     return(res)
   })
 
   checkbox_resources_no_filter <- reactive({
-    res <- isolate(app_data$endpoint_resource_types())
-
-    res <- res %>%
-           distinct(type) %>%
-           arrange(type) %>%
-           split(.$type) %>%
-           purrr::map(~ .$type)
-
+    res <- tbl(db_connection, "mv_endpoint_resource_types") %>%
+      distinct(type) %>%
+      arrange(type) %>%
+      collect() %>%
+      split(.$type) %>%
+      purrr::map(~ .$type)
+    
     return(res)
   })
 
@@ -763,7 +770,64 @@ selected_fhir_endpoint_profiles <- reactive({
     }),
     easyClose = TRUE
   )))
+  })
+
+observeEvent(input$show_organization_modal, {
+  showModal(modalDialog(
+    title = "Organization Details",
+
+    p(HTML(paste("<b>Organization Active Status:</b><br/>",
+      paste(
+        {
+          active_vals <- get_org_active_information(db_connection) %>%
+            filter(org_id == input$show_organization_modal) %>%
+            pull(active)
+          if (length(active_vals) == 0 || all(is.na(active_vals))) {
+            "N/A"
+          } else {
+            active_vals
+          }
+        },
+        collapse = "<br/>"
+      )
+    ))),
+
+    p(HTML(paste("<b>Organization Identifiers:</b><br/>",
+      paste(
+        {
+          identifier_vals <- get_org_identifiers_information(db_connection) %>%
+          filter(org_id == input$show_organization_modal) %>%
+          pull(identifier)
+          if (length(identifier_vals) == 0 || all(is.na(identifier_vals))) {
+            "N/A"
+          } else {
+            identifier_vals
+          }
+        },
+    collapse = "<br/>"
+      )
+    ))),
+
+    p(HTML(paste("<b>Organization Addresses:</b><br/>",
+      paste(
+        {
+          address_vals <- get_org_addresses_information(db_connection) %>%
+          filter(org_id == input$show_organization_modal) %>%
+          pull(address)
+          if (length(address_vals) == 0 || all(is.na(address_vals))) {
+            "N/A"
+          } else {
+            address_vals
+          }
+        },
+    collapse = "<br/>"
+      )
+    ))),
+
+    easyClose = TRUE
+  ))
 })
+
 
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({
@@ -836,15 +900,11 @@ output$endpoint_profile_table <- DT::renderDataTable({
 
 implementation_guide_profiles_page <- function() {
   page <- fluidPage(
-    h1("Endpoint IGs and Profiles"),
-    bsCollapse(id = "IGs_profiles_collapse", multiple = TRUE,
-      bsCollapsePanel("Implementation Guides", fluidPage(
-        DT::dataTableOutput("endpoint_IG_table"),
-      ), style = "info"),
-      bsCollapsePanel("Endpoint Profiles", fluidPage(
-        DT::dataTableOutput("endpoint_profile_table"),
-      ), style = "info")
-  ))
+    h3("Implementation Guides"),
+    DT::dataTableOutput("endpoint_IG_table"),
+
+    h3("Endpoint Profiles"),
+    DT::dataTableOutput("endpoint_profile_table"))
   page
 }
 
@@ -1024,12 +1084,9 @@ endpoint_capabilities_page <- function() {
 organization_endpoint_page <- function() {
   page <- fluidPage(
     h1("Endpoint Organizations"),
-    bsCollapse(id = "organizations_collapse", multiple = TRUE,
-      bsCollapsePanel("Endpoint List Organizations", fluidPage(
-        DT::dataTableOutput("endpoint_list_org_table")
-      ), style = "info")
+    DT::dataTableOutput("endpoint_list_org_table")
     )
-  )
+  page
 }
 
 ### Endpoint Details Modal Page ###
@@ -1220,27 +1277,19 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       ),
       br(),
       uiOutput("show_date_filters"),
-      bsCollapse(id = "performance_collapse", multiple = TRUE,
-          bsCollapsePanel("Response Time", fluidPage(
-            textOutput("no_plot"),
-            dygraphOutput("endpoint_response_time_plot"),
-            p("Click and drag on plot to zoom in, double-click to zoom out."),
-            htmlOutput("plot_note_text")
-          ), style = "info")
-      ),
+      textOutput("no_plot"),
+      dygraphOutput("endpoint_response_time_plot"),
+      p("Click and drag on plot to zoom in, double-click to zoom out."),
+      htmlOutput("plot_note_text"),
       br(),
       uiOutput("show_http_date_filters"),
-      bsCollapse(id = "http_over_time_collapse", multiple = TRUE,
-          bsCollapsePanel("HTTP Responses Over Time", fluidPage(
-            fluidRow(
-              textOutput("http_no_plot"),
-              dygraphOutput("endpoint_http_response_plot"),
-              p("Click and drag on plot to zoom in, double-click to zoom out.")
-            ),
-            fluidRow(
-              reactable::reactableOutput("endpoint_http_response_table")
-            )
-          ), style = "info")
+      fluidRow(
+            textOutput("http_no_plot"),
+            dygraphOutput("endpoint_http_response_plot"),
+            p("Click and drag on plot to zoom in, double-click to zoom out.")
+          ),
+      fluidRow(
+        reactable::reactableOutput("endpoint_http_response_table")
       )
     ),
     sidebarPanel(

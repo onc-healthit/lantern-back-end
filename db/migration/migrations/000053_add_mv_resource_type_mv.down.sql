@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_resource_types CASCADE;
+
+COMMIT;
