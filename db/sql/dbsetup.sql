@@ -1518,8 +1518,7 @@ SELECT DISTINCT
         ELSE endpoint_export.fhir_version
     END AS fhir_version,
     
-    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
-    endpoint_export.requested_fhir_version
+    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name
 
 FROM
     endpoint_export
@@ -1536,7 +1535,7 @@ ORDER BY
 WITH DATA;
 
  -- Create indexes for endpoint list organizations materialized view
- CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, organization_id, requested_fhir_version);
+ CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, organization_id);
  CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
  CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
  CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
