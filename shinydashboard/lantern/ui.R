@@ -222,6 +222,6 @@ ui <- dashboardPage(
     uiOutput("htmlFooter"),
     
     # Load accessibility script with defer and async
-    tags$script(src = "js/accessibility.min.js", defer = TRUE, async = TRUE)
+    tags$script(src = "js/accessibility.js", defer = TRUE, async = TRUE)
   )
 )
