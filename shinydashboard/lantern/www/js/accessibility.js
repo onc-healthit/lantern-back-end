@@ -8,16 +8,7 @@ $(document).ready(function() {
   elems[0].setAttribute('role', 'main');
   elems[0].id = 'content';
   
-  // Create a new li element with all the same attributes as existing side menu element
-  var e = document.getElementById('side_menu');
-  var d = document.createElement('li');
-  d.classList.add('sidebarMenuSelectedTabItem', 'shiny-bound-input');
-  d.dataset.value = e.dataset.value;
-  
-  // Replace old div side menu element with new li element created above
-  e.parentNode.replaceChild(d, e);
-  e.remove();
-  d.id = 'side_menu';
+  document.getElementById('side_menu').classList.add('sidebarMenuSelectedTabItem');
   
   /*
     // Create an observer that watches if an element's tabindex attribute has been set or altered
