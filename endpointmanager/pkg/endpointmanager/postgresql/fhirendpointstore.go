@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
@@ -592,6 +593,8 @@ func (s *Store) AddFHIREndpointOrganizationIdentifiers(ctx context.Context, orgI
 	var err error
 	var count int
 
+	fmt.Printf("[DEBUG] AddFHIREndpointOrganizationActive: orgID = %d, orgIdentifiers = %s\n", orgID, orgIdentifiers)
+
 	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_identifiers WHERE org_id=$1;", orgID)
 
 	err = row.Scan(&count)
@@ -621,6 +624,8 @@ func (s *Store) AddFHIREndpointOrganizationAddresses(ctx context.Context, orgID 
 	var err error
 	var count int
 
+	fmt.Printf("[DEBUG] AddFHIREndpointOrganizationActive: orgID = %d, orgAddresses = %s\n", orgID, orgAddresses)
+
 	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_addresses WHERE org_id=$1;", orgID)
 
 	err = row.Scan(&count)
@@ -649,6 +654,8 @@ func (s *Store) AddFHIREndpointOrganizationAddresses(ctx context.Context, orgID 
 func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int, orgActive string) error {
 	var err error
 	var count int
+
+	fmt.Printf("[DEBUG] AddFHIREndpointOrganizationActive: orgID = %d, orgActive = %t\n", orgID, orgActive)
 
 	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_active WHERE org_id=$1;", orgID)
 
@@ -727,6 +734,8 @@ func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointm
 		return err
 	}
 
+	fmt.Printf("[DEBUG] Running DeleteFHIREndpointOrganizationMap for endpoint ID: %d\n", o.ID)
+
 	_, err = deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, org_map_id)
 
 	return err
@@ -740,25 +749,31 @@ func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpoi
 		return err
 	}
 
-	for _, org := range organizationsList {
-		err := s.DeleteFHIREndpointOrganization(ctx, org, e.ID)
-		if err != nil {
-			return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
-		}
+	fmt.Printf("[DEBUG] Found %d orgs linked to endpoint ID: %d\n", len(organizationsList), e.ID)
 
+	for _, org := range organizationsList {
+		fmt.Printf("[DEBUG] Deleting addresses for org ID: %d\n", org.ID)
 		_, err = deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, org.ID)
 		if err != nil {
 			return err
 		}
 
+		fmt.Printf("[DEBUG] Deleting active status for org ID: %d\n", org.ID)
 		_, err = deleteFHIREndpointOrganizationAddressStatement.ExecContext(ctx, org.ID)
 		if err != nil {
 			return err
 		}
 
+		fmt.Printf("[DEBUG] Deleting org ID: %d\n", org.ID)
 		_, err = deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, org.ID)
 		if err != nil {
 			return err
+		}
+
+		fmt.Printf("[DEBUG] Deleting identifiers for org ID: %d\n", org.ID)
+		err := s.DeleteFHIREndpointOrganization(ctx, org, e.ID)
+		if err != nil {
+			return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
 		}
 	}
 
