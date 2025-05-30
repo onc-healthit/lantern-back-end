@@ -102,16 +102,18 @@ func main() {
 		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
 	}
 
+	// UPDATED: Insert/Update list source info with timestamp
 	addListSourceStatement := `
 	INSERT INTO list_source_info (
 		list_source,
-		is_chpl
+		is_chpl,
+		updated_at
 	)
-	SELECT $1, $2
-	WHERE
-    NOT EXISTS (
-        SELECT list_source FROM list_source_info WHERE list_source = $3
-    );
+	VALUES ($1, $2, NOW())
+	ON CONFLICT (list_source)
+	DO UPDATE SET
+		updated_at = NOW(),
+		is_chpl = $2
 	`
 
 	if sourceCategory == "State Medicaid" {
@@ -123,9 +125,9 @@ func main() {
 			}
 		}
 
-		// Insert each unique ListSource into list_source_info table
+		// Insert each unique ListSource into list_source_info table with timestamp tracking
 		for listSourceValue := range uniqueListSources {
-			_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSourceValue, sourceCategory, listSourceValue)
+			_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSourceValue, sourceCategory)
 			if sourceErr != nil {
 				log.Warnf("Error adding list source '%s' to list_source_info: %v", listSourceValue, sourceErr)
 			}
@@ -139,9 +141,13 @@ func main() {
 			listSource = source
 		}
 
-		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, sourceCategory, listSource)
+		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, sourceCategory)
 		if sourceErr != nil {
-			log.Warnf("Error adding list source '%s' to list_source_info: %v", listSource, sourceErr)
+			log.Errorf("Error updating list source '%s' to list_source_info: %v", listSource, sourceErr)
+		} else {
+			log.Infof("Updated timestamp for list source: %s (Category: %s)", listSource, sourceCategory)
 		}
 	}
+
+	log.Infof("Population completed successfully for source: %s", source)
 }
