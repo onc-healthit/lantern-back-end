@@ -75,11 +75,8 @@ This removes all docker images, networks, and local volumes.
     make populatedb_prod
     ```
     This runs the following tasks inside the endpoint manager container:
-    * query the **National Plan & Provider Enumeration System (NPPES)** for their monthly export endpoint and NPI data files. **Note**: The command removes any entries in the NPI data file that are not organization entries.
     * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
     * the **CHPL querier**, which requests Health IT product, vendor, and certification information from CHPL and adds these to the database
-    * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-    * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
     * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval.
 
 3. **If you want to re-query and re-receive capability statements outside the refresh interval**, run the following:
@@ -111,13 +108,13 @@ This removes all docker images, networks, and local volumes.
         ```bash
          make update_source_data
          ```
-         This command will automatically query all the endpoint sources listed in `EndpointResourceList.json` for their endpoints. It will also query CHPL for its list of endpoint list sources, which is saved to `CHPLEndpointResourcesList.json`, and then query the endpoint lists (that have parsers written for them) for their endpoints. It then saves the first 10 endpoints from each list into their own files in the development resources directory, lantern-back-end/resources/dev_resources. It then queries NPPES for its endpoint and NPI data files, cut out all the entries in the NPI data file that are not organization entries, and then creates a copy of each file and reduce them to 1000 lines for development purposes.
+         This command will automatically query all the endpoint sources listed in `EndpointResourceList.json` for their endpoints. It will also query CHPL for its list of endpoint list sources, which is saved to `CHPLEndpointResourcesList.json`, and then query the endpoint lists (that have parsers written for them) for their endpoints. It then saves the first 10 endpoints from each list into their own files in the development resources directory, lantern-back-end/resources/dev_resources.
 
         **Note**: Resources can be moved from lantern-back-end/resources/prod_resources to lantern-back-end/resources/dev_resources to be used in the development environment.
 
         **Note**: Google Chrome must be installed in order to run this command and run the webscrapers needed for certain list sources.
 
-        **Note**: If you only want to query the endpoint sources without also querying NPPES, you can run `make update_source_data_prod` (see **Production Environment** section).
+        **Note**: If you only want to query the endpoint sources you can run `make update_source_data_prod` (see **Production Environment** section).
 
     2. Run the following command to add data to the database, using the data found in `lantern-back-end/resources/dev_resources`.
    
@@ -130,8 +127,6 @@ This removes all docker images, networks, and local volumes.
        This runs the following tasks inside the endpoint manager container:
          * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
         * the **CHPL querier**, which requests Health IT product, vendor, and certification information from CHPL and adds these to the database
-        * the **NPPES endpoint populator**, which adds endpoint data from the monthly NPPES export to the database. 
-        * the **NPPES org populator**, which adds provider data from the monthly NPPES export to the database.
         * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval.
 
        The `populate_db.sh` script expects the `dev_resources` directory to contain the following files:
@@ -212,12 +207,12 @@ There are three types of tests for Lantern and three corresponding commands:
 | `make test_int` | runs integration tests |
 |  `make test_e2e` | runs end-to-end tests |
 |`make test_all` | runs all tests and ends if any of the tests fail| 
-|`make populatedb` | Should be used with development environment by running `make run` first. Populates the database with the endpoint resource list information and NPPES information found in the `resources/dev_resources` directory.| 
-|`make populatedb_prod` | Should be used with production environment by running `make run_prod` first. Populates the database with the endpoint resource list information found in the `resources/prod_resources` directory, and queries NPPES for its latest information and automatically stores it in the database before deleting the files.| 
+|`make populatedb` | Should be used with development environment by running `make run` first. Populates the database with the endpoint resource list information found in the `resources/dev_resources` directory.| 
+|`make populatedb_prod` | Should be used with production environment by running `make run_prod` first. Populates the database with the endpoint resource list information found in the `resources/prod_resources` directory and automatically stores it in the database before deleting the files.| 
 |`make backup_database` | saves a database backup .sql file in the lantern base directory with name lantern_backup_`<timestamp>`.sql|
 |`make restore_database file=<backup file name>` | restores the backup database that the 'file' parameter is set to|
 |`make migrate_database direction=<up/down> force_version=<migration version number to force db to>` | Starts the postgres service and runs the next `*.up.sql` migration in the `db/migration/migrations` directory that has not yet been run. Must run this command the number times equal to the number of migrations you want to run. The optional direction parameter can be included to specify whether you want to run an up or down migration, and the force_version parameter can be included to force the database to a specific migration version before running the next migration. If the direction parameter is omitted, it will run an up migration by default, and if the force_version parameter is omitted, it runs the next migration that has not yet been run. The order of these two paramaters is important, and so if you want to include the force_version parameter, you must also include the direction parameter before it. |
-|`make update_source_data` | Automatically queries the endpoint lists listed in the `EndpointResourcesList.json` file found in the `resources/prod_resources` directory, queries CHPL for its list of endpoint lists and stores the data in a file in the same directory, queries the NPPES NPI and endpoint data, and stores truncated versions of the files in the `resources/dev_resources` directory. |
+|`make update_source_data` | Automatically queries the endpoint lists listed in the `EndpointResourcesList.json` file found in the `resources/prod_resources` directory, queries CHPL for its list of endpoint lists and stores the data in a file in the same directory, and stores truncated versions of the files in the `resources/dev_resources` directory. |
 |`make update_source_data_prod` | Automatically queries the endpoint lists listed in the `EndpointResourcesList.json` file found in the `resources/prod_resources` directory and queries CHPL for its list of endpoint lists and stores the data in a file in the same directory. |
 |  `make lint` | Runs the R and golang linters |
 |  `make lint_go` | Runs the golang lintr |
@@ -301,7 +296,7 @@ To configure this script to run using cron, do:
 
  # Configure Automatic Production Database Population
 
-You can configure an automatic production database population system using cron and the `automatic_populatedb_prod.sh` script located in the scripts directory to save all the endpoint information from the endpoint resource lists found in the `resources/prod_resources` directory into the database. The script also downloads the most recent NPPES file, stores all the information from that file into the database, and then deletes the NPPES file in order to save storage space. The task will send an email notification if the endpoint list information or NPPES information fails to be saved in the database. 
+You can configure an automatic production database population system using cron and the `automatic_populatedb_prod.sh` script located in the scripts directory to save all the endpoint information from the endpoint resource lists found in the `resources/prod_resources` directory into the database.
 
 To set up the script for this automatic production database population system, you must insert the correct information into the following variables located at the beginning of the automatic production database populator script.
   * Set the EMAIL variable to the email you want the automatic production database populator to send failure alerts to in the `automatic_populatedb_prod.sh` script

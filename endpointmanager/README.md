@@ -336,34 +336,6 @@ cd endpointmanager/cmd/historypruning
 go run main.go
 ```
 
-### NPPES Org Populator
-
-Reads in a CSV file of NPPES organization data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
-
-Primarily uses the `nppesquerier` package.
-
-To run, perform the following commands:
-
-
-```bash
-cd endpointmanager/cmd/nppesorgpopulator
-go run main.go <path to nppes org csv file>
-```
-
-### NPPES Contact Populator
-
-Reads in a CSV file of NPPES contact (endpoint) data. You can find the latest monthly export of NPPES data here: http://download.cms.gov/nppes/NPI_Files.html
-
-Primarily uses the `nppesquerier` package.
-
-To run, perform the following commands:
-
-
-```bash
-cd endpointmanager/cmd/nppescontactpopulator
-go run main.go <path to nppes contact csv file>
-```
-
 ### Send Endpoints
 Gets current list of endpoints sends each one to the capabilityquerier queue. It continues to repeat this action every time the query interval period has passed.
 

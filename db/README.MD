@@ -58,43 +58,6 @@ The list_source_info table stores information about whether each list source cam
 | list_source     | VARCHAR(500)  | Name/URL of list sources that Lantern collects  |
 | is_chpl     | BOOLEAN     |  Whether the list source comes from chpl (true) or not (false). |
 
-## npi_organizations 
-The entries in this table are from the npi data file in the NPPES monthly dissemination package.
-| Field        | Type           | Description  |
-| ------------- |:-------------:| -----:|
-| id     | INTEGER | Database ID of organization |
-| npi_id     | VARCHAR(500) | NPI ID of the NPPES contact entry |
-| name    | VARCHAR(500) | The Provider Organization Name (Legal Business Name) of the npi organization pulled from the npi data file|
-| secondary_name    | VARCHAR(500) | The Provider Other Organization Name pulled from the npi data file|
-| location     | JSONB | Location information of the Provider Organization including address lines, city, state, and zipcode |
-| taxonomy     | VARCHAR(500) | Healthcare Provider Taxonomy -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/ |
-| normalized_name    | VARCHAR(500) | Normalizes organization name by removing special characters and making name all uppercase|
-| normalized_secondary_name    | VARCHAR(500) | Normalizes secondary organization name by removing special characters and making name all uppercase|
-| created_at | TIMESTAMPTZ      |    Timestamp of creation |
-| updated_at | TIMESTAMPTZ      |    Timestamp of last update |
-
-## npi_contacts table
-The entries in this table are from the endpoints file in the NPPES monthly data dissemination package.
-| Field        | Type           | Description  |
-| ------------- |:-------------:| -----:|
-| id     | INTEGER | Database ID of organization |
-| npi_id     | VARCHAR(500) | NPI ID of the NPPES contact entry |
-| endpoint_type     | VARCHAR(500) | Endpoint type in NPPES, should always equal "FHIR" |
-| endpoint_type_description     | VARCHAR(500) | Endpoint type description in NPPES, should always equal "FHIR_URL"  |
-| endpoint     | VARCHAR(500) | Service base URL of FHIR endpoint |
-| valid_url     | BOOLEAN | Whether or not the endpoint field is formatted as a URL  |
-| affiliation     | VARCHAR(500) | Whether or not the endpoint is affiliated to organizations other than what is listed in this entry. Values are 'Y' or 'N' |
-| endpoint_description     | VARCHAR(500) | Brief description of endpoint by registerer |
-| affiliation_legal_business_name     | VARCHAR(500) | Legal busiiness name of the affiliated organization |
-| use_code     | VARCHAR(500) | Use code of the FHIR endpoint, values include "HIE", "DIRECT", "OTHER" or empty |
-| use_description     | VARCHAR(500) | Description of the use code, values include "Health Information Exchange (HIE)", "Direct", "Other or empty |
-| other_use_description     | VARCHAR(500) | Free text field describing other use of endpoint |
-| content_type     | VARCHAR(500) | Description of content at endpoint, values are "CSV", "Other" or empty |
-| content_description     | VARCHAR(500) | Free text field describing content hosted at endpoint |
-| other_content_description     | VARCHAR(500) | database ID of endpoint |
-| location     | JSONB | JSON of the location of the endpoint affiliated organization |
-| created_at | TIMESTAMPTZ      |    Timestamp of creation |
-| updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 
 ## fhir_endpoints_info table
 The fhir_endpoints_info table contains the data collected from the last query of the FHIR endpoint at `url` while requesting the version given by `requested_version` and represents the most up to date information
@@ -180,7 +143,6 @@ The endpoint_organization table stores the matches made by the endpoint linker a
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | url     | VARCHAR(500) | Service base URL of endpoint |
-| organization_npi_id     | VARCHAR(500) | NPI ID of the NPPES organization |
 | confidence     | VARCHAR(500) | Confidence percentage that match created by linking algorithm is accurate |
 | created_at | TIMESTAMPTZ      |    Timestamp of creation |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |

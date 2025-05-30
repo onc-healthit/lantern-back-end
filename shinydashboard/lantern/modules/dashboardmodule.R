@@ -301,8 +301,7 @@ dashboard <- function(
   output$note_text <- renderUI({
     note_info <- "(1) The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
                Resources (FHIR) endpoints published publicly by Certified API Developers in conformance with
-               the ONC Cures Act Final Rule, or discovered through the National Plan and Provider Enumeration
-               System (NPPES). This data, therefore, may not represent all FHIR endpoints in existence.
+               the ONC Cures Act Final Rule. This data, therefore, may not represent all FHIR endpoints in existence.
                (2) The number of endpoints for each Certified API Developer and FHIR version is a sum of all
                API Information Sources and unique endpoints discovered for each unique Certified API Developer.
                The API Information Source name associated with each endpoint may be represented as different

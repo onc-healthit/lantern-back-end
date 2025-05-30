@@ -89,8 +89,7 @@ capabilitystatementsizemodule <- function(
   output$notes_text <- renderUI({
     note_info <- "<br>(1) The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
                Resources (FHIR) endpoints published publicly by Certified API Developers in conformance with
-               the ONC Cures Act Final Rule, or discovered through the National Plan and Provider Enumeration
-               System (NPPES).<br>
+               the ONC Cures Act Final Rule.<br>
                (2) This figure represents the sizes of the CapabilityStatement documents as they are stored in the Lantern,
                the sizes of the CapabilityStatements may vary slightly when downloaded directly from their sources."
     res <- paste("<div style='font-size: 16px;'><b>Notes:</b>", note_info, "</div>")

@@ -100,8 +100,7 @@ organizationsmodule <- function(
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
       Resources (FHIR) endpoints published publicly by Certified API Developers in conformance
-      with the ONC Cures Act Final Rule, or discovered through the National Plan and Provider
-      Enumeration System (NPPES). This data, therefore, may not represent all FHIR endpoints
+      with the ONC Cures Act Final Rule. This data, therefore, may not represent all FHIR endpoints
       in existence. Insights gathered from this data should be framed accordingly."
     res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
