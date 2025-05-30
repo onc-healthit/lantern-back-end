@@ -263,9 +263,12 @@ CREATE TABLE endpoint_organization (
 );
 
 CREATE TABLE list_source_info (
-    list_source            VARCHAR(500),
-    is_chpl                BOOLEAN 
+    list_source            VARCHAR(500) PRIMARY KEY,
+    is_chpl                BOOLEAN,
+    updated_at             TIMESTAMPTZ DEFAULT NOW() 
 );
+
+CREATE INDEX IF NOT EXISTS idx_list_source_info_updated_at ON list_source_info(updated_at);
 
 CREATE TABLE product_criteria (
     healthit_product_id      INT REFERENCES healthit_products(id) ON DELETE CASCADE,
