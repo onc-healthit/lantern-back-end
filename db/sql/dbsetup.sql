@@ -1530,8 +1530,6 @@ LEFT JOIN LATERAL (
         unnest(endpoint_export.endpoint_names, endpoint_export.endpoint_ids) AS u(name_elem, id_elem)
 ) AS name_id ON TRUE
 
-ORDER BY
-    organization_name
 WITH DATA;
 
  -- Create indexes for endpoint list organizations materialized view
