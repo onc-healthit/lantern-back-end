@@ -137,7 +137,7 @@ dashboard <- function(
                   vendor_name = colDef(name = "Vendor"),
                   fhir_version = colDef(name = "FHIR Version"),
                   n = colDef(name = "Count"),
-                  percentage = colDef(name = "Developer Percentage", format = colFormat(suffix = "%"))
+                  percentage = colDef(name = "FHIR Version %", format = colFormat(suffix = "%"))
                 ),
                 sortable = TRUE,
                 searchable = TRUE,
