@@ -1066,7 +1066,7 @@ endpoint_capabilities_page <- function() {
     res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL)
     res <- res %>%
     filter(url == endpoint$url) %>%
-    filter(requested_fhir_version == endpoint$requested_fhir_version) %>%
+    filter(fhir_version == endpoint$requested_fhir_version) %>%
     mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
     res
   })
