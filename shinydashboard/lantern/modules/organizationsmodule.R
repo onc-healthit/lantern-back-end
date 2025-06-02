@@ -78,11 +78,12 @@ organizationsmodule <- function(
          align = "center"
        ),
        columns = list(
-         organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left"),
+         organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
+                                    grouped = JS("function(cellInfo) {return cellInfo.value}")),
          organization_id = colDef(name = "Organization Details", sortable = FALSE, html = TRUE),
          url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
-         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, aggregate = "count", format = list(aggregated = colFormat(prefix = "Total: ")))
+         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
        ),
        groupBy = c("organization_name"),
        striped = TRUE,
