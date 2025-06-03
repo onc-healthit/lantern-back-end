@@ -513,10 +513,11 @@ WITH latest_metadata AS (
 ), 
 totals AS (
     SELECT 
-        (SELECT count(DISTINCT url) FROM fhir_endpoints) AS all_endpoints,
-        (SELECT count(DISTINCT url) 
-         FROM fhir_endpoints_info 
-         WHERE requested_fhir_version = 'None') AS indexed_endpoints
+        -- Count (url, fhir_version) combinations to match Endpoints tab logic
+        (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
+        (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
+        FROM fhir_endpoints_info fei
+        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
 )
 SELECT 
     now() AS aggregation_date,
