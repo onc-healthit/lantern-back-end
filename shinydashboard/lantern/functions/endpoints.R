@@ -438,6 +438,7 @@ get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersi
 # Get counts of authorization types supported by FHIR Version
 get_auth_type_count <- function(db_connection) {
   res <- tbl(db_connection, "mv_auth_type_count") %>%
+    arrange(`FHIR Version`, Code) %>%
     collect()
   return(res)
 }
