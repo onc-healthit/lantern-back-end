@@ -1372,16 +1372,44 @@ output$endpoint_http_response_table <- reactable::renderReactable({
   })
 
 output$filter_profile_table <- DT::renderDataTable({
-      DT::datatable(
-        selected_fhir_endpoint_profiles(),
-        escape = FALSE,
-        colnames = c("Endpoint", "Profile URL", "Profile Name", "Resource", "FHIR Version", "Certified API Developer Name"),
-        options = list(
-        lengthMenu = c(5, 30, 50),
-        pageLength = 5,
-        scrollX = TRUE
-        )
-        )
+  df <- selected_fhir_endpoint_profiles()
+
+  if (nrow(df) == 0) {
+    return(DT::datatable(
+      data.frame(Message = "No data matching the selected filters"),
+      options = list(dom = 't'),  # show only the table
+      rownames = FALSE
+    ))
+  }
+
+  DT::datatable(
+    df,
+    rownames = FALSE,
+    filter = 'top',
+    options = list(
+      pageLength = 10,
+      lengthMenu = c(10, 25, 50, 100),
+      autoWidth = TRUE,
+      scrollX = TRUE,
+      order = list(),
+      columnDefs = list(
+        list(className = 'dt-center', targets = "_all"),
+        list(className = 'dt-left', targets = which(colnames(df) == "url")),
+        list(width = '300px', targets = which(colnames(df) == "url")),
+        list(width = '250px', targets = which(colnames(df) == "profileurl"))
+      )
+    ),
+    colnames = c(
+      "Endpoint URL",
+      "Profile URL", 
+      "Profile Name",
+      "Resource",
+      "FHIR Version",
+      "Certified API Developer Name"
+    ),
+    escape = FALSE,
+    class = 'stripe hover compact'
+  )
 })
 
 selected_endpoint_list_orgs <- reactive({
