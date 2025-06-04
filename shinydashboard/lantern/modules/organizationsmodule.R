@@ -42,7 +42,20 @@ organizationsmodule <- function(
 
    # Create the format for the csv
   csv_format <- reactive({
-    res <- get_endpoint_list_matches(db_connection) %>%
+    # Get current filter values
+      current_fhir <- sel_fhir_version()
+      current_vendor <- sel_vendor()
+ 
+      req(current_fhir, current_vendor)
+ 
+      # Get filtered data from the materialized view function
+      res <- get_endpoint_list_matches(
+        db_connection,
+        fhir_version = current_fhir,
+        vendor = current_vendor
+      )
+
+    res <- res %>%
     mutate(organization_id = as.integer(organization_id)) %>%
     left_join(get_org_identifiers_information(db_connection),
       by = c("organization_id" = "org_id")) %>%
