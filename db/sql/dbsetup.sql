@@ -504,30 +504,7 @@ CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
 CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
 CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
 
--- LANTERN-835
 
-CREATE MATERIALIZED VIEW mv_endpoint_totals AS
-WITH latest_metadata AS (
-    SELECT max(updated_at) AS last_updated
-    FROM fhir_endpoints_metadata
-), 
-totals AS (
-    SELECT 
-        -- Count (url, fhir_version) combinations to match Endpoints tab logic
-        (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
-        (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
-        FROM fhir_endpoints_info fei
-        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
-)
-SELECT 
-    now() AS aggregation_date,
-    totals.all_endpoints,
-    totals.indexed_endpoints,
-    greatest(totals.all_endpoints - totals.indexed_endpoints, 0) AS nonindexed_endpoints,
-    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
-FROM totals;
-
-CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
 CREATE MATERIALIZED VIEW mv_response_tally AS
 WITH response_counts AS (
@@ -1044,6 +1021,31 @@ CREATE INDEX idx_selected_fhir_endpoints_mv_fhir_version ON selected_fhir_endpoi
 CREATE INDEX idx_selected_fhir_endpoints_mv_vendor_name ON selected_fhir_endpoints_mv(vendor_name);
 CREATE INDEX idx_selected_fhir_endpoints_mv_availability ON selected_fhir_endpoints_mv(availability);
 CREATE INDEX idx_selected_fhir_endpoints_mv_is_chpl ON selected_fhir_endpoints_mv(is_chpl);
+
+-- LANTERN-835
+
+CREATE MATERIALIZED VIEW mv_endpoint_totals AS
+WITH latest_metadata AS (
+    SELECT max(updated_at) AS last_updated
+    FROM fhir_endpoints_metadata
+), 
+totals AS (
+    SELECT 
+        -- Count (url, fhir_version) combinations to match Endpoints tab logic
+        (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
+        (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
+        FROM fhir_endpoints_info fei
+        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
+)
+SELECT 
+    now() AS aggregation_date,
+    totals.all_endpoints,
+    totals.indexed_endpoints,
+    greatest(totals.all_endpoints - totals.indexed_endpoints, 0) AS nonindexed_endpoints,
+    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
+FROM totals;
+
+CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
 -- LANTERN-836: Contacts-MV
 
