@@ -3,11 +3,14 @@ library(purrr)
 library(reactable)
 
 profilemodule_UI <- function(id) {
-
   ns <- NS(id)
-
   tagList(
-    uiOutput(ns("profile_table"))
+    tags$style(HTML("
+      div.dataTables_filter {
+        display: none;
+      }
+    ")),
+    DTOutput("filter_profile_table")
   )
 }
 
@@ -21,12 +24,5 @@ profilemodule <- function(
   sel_profile
 ) {
   ns <- session$ns
-
-  output$profile_table <- renderUI({
-    if (length(sel_profile()) > 0) {
-        tagList(
-            DT::dataTableOutput("filter_profile_table")
-        )
-    }
-  })
+  
 }
