@@ -62,6 +62,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var endpointOrgMap = make(map[string][]string)
 	var organizationZip = make(map[string]string)
 	var organizationName = make(map[string]string)
+	var organizationURL = make(map[string]string)
 	var organizationAddresses = make(map[string][]string)
 	var organizationIdentifiers = make(map[string][]string)
 	var organizationActive = make(map[string]string)
@@ -191,6 +192,10 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 			if isIdentifierPresent {
 				organizationName[identifierKey] = bundleEntry.Resource.Name
 			}
+
+			if isIdentifierPresent {
+				organizationURL[identifierKey] = bundleEntry.FullURL
+			}
 		}
 	}
 
@@ -231,6 +236,11 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					orgName, ok := organizationName[identifierKey]
 					if ok {
 						entry.OrganizationName = strings.TrimSpace(orgName)
+					}
+
+					orgURL, ok := organizationURL[identifierKey]
+					if ok {
+						entry.OrganizationURL = strings.TrimSpace(orgURL)
 					}
 
 					address, ok := organizationAddresses[identifierKey]

@@ -46,9 +46,6 @@ organizationsmodule <- function(
 
       # Format URL for HTML display with modal popup
       res <- res %>%
-        mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
-      
-      res <- res %>%
         mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
       
       res
@@ -71,8 +68,8 @@ organizationsmodule <- function(
 
      reactable(
        display_data %>% 
-         select(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
-         distinct(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
+         select(organization_name, organization_id, org_url, fhir_version, vendor_name) %>% 
+         distinct(organization_name, organization_id, org_url, fhir_version, vendor_name) %>% 
          group_by(organization_name),
        defaultColDef = colDef(
          align = "center"
@@ -81,7 +78,7 @@ organizationsmodule <- function(
          organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
                                     grouped = JS("function(cellInfo) {return cellInfo.value}")),
          organization_id = colDef(name = "Organization Details", sortable = FALSE, html = TRUE),
-         url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
          vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
        ),
