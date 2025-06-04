@@ -844,10 +844,30 @@ observeEvent(input$show_organization_modal, {
 
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({
-  splitString <- strsplit(input$endpoint_popup, "&&")
-  endpointURL <- splitString[[1]][1]
-  endpoint_requested_fhir_version <- splitString[[1]][2]
+  req(input$endpoint_popup)
 
+  # Check if both URL and version are provided (from Endpoints tab)
+  if (grepl("&&", input$endpoint_popup)) {
+    splitString <- strsplit(input$endpoint_popup, "&&")[[1]]
+    endpointURL <- splitString[1]
+    endpoint_requested_fhir_version <- splitString[2]
+  } else {
+    # Only URL is provided (from Organizations tab)
+    endpointURL <- input$endpoint_popup
+
+    # Query DB for the most recent requested_fhir_version
+    res <- tbl(db_connection, "selected_fhir_endpoints_mv") %>%
+      filter(url == !!endpointURL) %>%
+      arrange(desc(info_updated)) %>%
+      collect()
+
+    if (nrow(res) == 0) {
+      warning(paste("No matching rows found for URL:", endpointURL))
+      endpoint_requested_fhir_version <- NA 
+    } else {
+      endpoint_requested_fhir_version <- res$requested_fhir_version[1]
+    }
+  }
   current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
   current_endpoint_list
 })
@@ -1076,14 +1096,21 @@ endpoint_capabilities_page <- function() {
  get_endpoint_list_orgs <- reactive({
     endpoint <- current_endpoint()
 
+    # Get the actual cap_fhir_version using the url only
+    cap_fhir_ver <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL) %>%
+      filter(url == endpoint$url) %>%
+      pull(fhir_version) %>% 
+      unique()
+    
+    # Now use cap_fhir_ver to filter
     res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL)
     res <- res %>%
-    filter(url == endpoint$url) %>%
-    filter(fhir_version == endpoint$requested_fhir_version) %>%
-    mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
+      filter(url == endpoint$url) %>%
+      filter(fhir_version == cap_fhir_ver) %>%
+      mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
+
     res
   })
-
 
   output$endpoint_list_org_table <- DT::renderDataTable({
     datatable(get_endpoint_list_orgs() %>% distinct(organization_name),
@@ -1123,7 +1150,7 @@ response_time_xts <- reactive({
   res <- get_endpoint_response_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
   # convert to xts format for use in dygraph
   xts(x = cbind(res$response),
-      order.by = res$date
+      order.by = res$date 
   )
 })
 
