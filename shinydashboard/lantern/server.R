@@ -282,7 +282,20 @@ selected_fhir_endpoint_profiles <- reactive({
         fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`multiple-separator` = " | ", size = 5))
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
-      developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
+      # Special handling for CapabilityStatement Size tab
+      if (input$side_menu == "capabilitystatementsize_tab") {
+        # Get vendor list without "All Developers"
+        vendor_choices <- app$vendor_list()
+        vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
+        
+        # Set default to first actual developer
+        default_vendor <- if(length(vendor_choices_filtered) > 0) vendor_choices_filtered[[1]] else ui_special_values$ALL_DEVELOPERS
+        
+        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = vendor_choices_filtered, selected = default_vendor, size = 1, selectize = FALSE)
+      } else {
+        # Normal behavior for other tabs
+        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
+      }
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
