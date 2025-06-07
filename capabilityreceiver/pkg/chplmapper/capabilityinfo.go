@@ -74,6 +74,29 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 			ep.VendorID = vendorMatch.ID
 			return nil
 		}
+
+		// --- Special handling for non-CHPL source: 1up Health ---
+		if fhirEndpoint.ListSource == "https://1up.health/fhir-endpoint-directory" {
+			vendorName := "1upHealth"
+
+			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
+			if err == sql.ErrNoRows {
+				newVendor := &endpointmanager.Vendor{
+					Name: vendorName,
+					URL:  "https://1up.health",
+				}
+				err = store.AddVendor(ctx, newVendor)
+				if err != nil {
+					return errors.Wrap(err, "failed to insert 1upHealth as new vendor")
+				}
+				ep.VendorID = newVendor.ID
+				return nil
+			} else if err != nil {
+				return errors.Wrap(err, "error checking for existing 1upHealth vendor")
+			}
+			ep.VendorID = vendorMatch.ID
+			return nil
+		}
 	}
 
 	if ep.CapabilityStatement == nil {
