@@ -50,6 +50,10 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 			if orgActOk {
 				fhirEntry.OrganizationActive = orgActive
 			}
+			orgURL, orgURLOk := lanternList[entry]["OrganizationURL"].(string)
+			if orgURLOk {
+				fhirEntry.OrganizationURL = orgURL
+			}
 			innerList = append(innerList, fhirEntry)
 		} else {
 			log.Warnf("No URL field in Lantern list. Returning an empty list of entries.")

@@ -56,17 +56,33 @@ organizationsmodule <- function(
       )
 
     res <- res %>%
-    mutate(organization_id = as.integer(organization_id)) %>%
-    left_join(get_org_identifiers_information(db_connection),
-      by = c("organization_id" = "org_id")) %>%
-    left_join(get_org_addresses_information(db_connection),
-      by = c("organization_id" = "org_id")) %>%
+      mutate(organization_id = as.integer(organization_id)) %>%
+      
+      # Left join with deduplicated or collapsed identifiers
+      left_join(
+        get_org_identifiers_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(identifier = paste(unique(identifier), collapse = "\n")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      # Left join with deduplicated or collapsed addresses
+      left_join(
+        get_org_addresses_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(address = paste(unique(address), collapse = "\n")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
       select(-organization_id)
 
     res <- res %>%
+      filter(organization_name != "Unknown") %>%
       mutate(address = toupper(address)) %>%
-      select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-      distinct(organization_name, identifier, address, url, fhir_version, vendor_name)
+      select(organization_name, identifier, address, org_url, fhir_version, vendor_name) %>%
+      distinct(organization_name, identifier, address, org_url, fhir_version, vendor_name)
 
     res
   })

@@ -29,6 +29,8 @@ var deleteFHIREndpointOrganizationIdentifierStatement *sql.Stmt
 var deleteFHIREndpointOrganizationAddressStatement *sql.Stmt
 var addFHIREndpointOrganizationActiveStatement *sql.Stmt
 var deleteFHIREndpointOrganizationActiveStatement *sql.Stmt
+var addFHIREndpointOrganizationURLStatement *sql.Stmt
+var deleteFHIREndpointOrganizationURLStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
@@ -519,6 +521,11 @@ func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpoint
 			if err != nil {
 				return err
 			}
+
+			err = s.AddFHIREndpointOrganizationURL(ctx, organization.ID, org.OrganizationURL)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -569,6 +576,11 @@ func (s *Store) AddFHIREndpointOrganization(ctx context.Context, org *endpointma
 	}
 
 	err = s.AddFHIREndpointOrganizationAddresses(ctx, org.ID, org.OrganizationAddresses)
+	if err != nil {
+		return err
+	}
+
+	err = s.AddFHIREndpointOrganizationURL(ctx, org.ID, org.OrganizationURL)
 	if err != nil {
 		return err
 	}
@@ -676,6 +688,36 @@ func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int
 	return nil
 }
 
+func (s *Store) AddFHIREndpointOrganizationURL(ctx context.Context, orgID int, orgURL string) error {
+	var err error
+	var count int
+
+	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_url WHERE org_id=$1;", orgID)
+
+	err = row.Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	// If there are entries in the fhir_endpoint_organization_url table that has this orgID, delete those first
+	if count > 0 {
+		_, err = deleteFHIREndpointOrganizationURLStatement.ExecContext(ctx, orgID)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Only insert organization URL data if it was provided in the FHIR bundle
+	if orgURL != "" {
+		_, err = addFHIREndpointOrganizationURLStatement.ExecContext(ctx, orgID, orgURL)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
@@ -757,6 +799,11 @@ func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpoi
 		}
 
 		_, err = deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, org.ID)
+		if err != nil {
+			return err
+		}
+
+		_, err = deleteFHIREndpointOrganizationURLStatement.ExecContext(ctx, org.ID)
 		if err != nil {
 			return err
 		}
@@ -910,6 +957,13 @@ func prepareFHIREndpointStatements(s *Store) error {
 	if err != nil {
 		return err
 	}
+	addFHIREndpointOrganizationURLStatement, err = s.DB.Prepare(`
+	INSERT INTO fhir_endpoint_organization_url (org_id, org_url)
+	VALUES ($1, $2)
+	RETURNING org_id;`)
+	if err != nil {
+		return err
+	}
 	deleteFHIREndpointOrganizationIdentifierStatement, err = s.DB.Prepare(`
 	DELETE FROM fhir_endpoint_organization_identifiers
 	WHERE org_id = $1`)
@@ -924,6 +978,12 @@ func prepareFHIREndpointStatements(s *Store) error {
 	}
 	deleteFHIREndpointOrganizationActiveStatement, err = s.DB.Prepare(`
 	DELETE FROM fhir_endpoint_organization_active
+	WHERE org_id = $1`)
+	if err != nil {
+		return err
+	}
+	deleteFHIREndpointOrganizationURLStatement, err = s.DB.Prepare(`
+	DELETE FROM fhir_endpoint_organization_url
 	WHERE org_id = $1`)
 	if err != nil {
 		return err

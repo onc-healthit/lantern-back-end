@@ -1423,22 +1423,32 @@ selected_endpoint_list_orgs <- reactive({
   )
 
   display_data <- res %>%
-    mutate(organization_id = as.integer(organization_id)) %>%
-    left_join(get_org_identifiers_information(db_connection),
-              by = c("organization_id" = "org_id")) %>%
-    left_join(get_org_addresses_information(db_connection),
-              by = c("organization_id" = "org_id")) %>%
-    select(-organization_id)
-
-  # Add HTML-formatted URL
-  display_data <- display_data %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
+  mutate(organization_id = as.integer(organization_id)) %>%
+  
+  # Left join with deduplicated or collapsed identifiers
+  left_join(
+    get_org_identifiers_information(db_connection) %>%
+      group_by(org_id) %>%
+      summarise(identifier = paste(unique(identifier), collapse = "<br> ")),
+    by = c("organization_id" = "org_id")
+  ) %>%
+  
+  # Left join with deduplicated or collapsed addresses
+  left_join(
+    get_org_addresses_information(db_connection) %>%
+      group_by(org_id) %>%
+      summarise(address = paste(unique(address), collapse = "<br> ")),
+    by = c("organization_id" = "org_id")
+  ) %>%
+  
+  select(-organization_id)
 
   # Always return a data.frame, even if empty
   dt_data <- display_data %>%
-    mutate(address = toupper(address)) %>%
-    select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-    distinct(organization_name, identifier, address, url, fhir_version, vendor_name)
+  filter(organization_name != "Unknown") %>%
+  mutate(address = toupper(address)) %>%
+  select(organization_name, identifier, address, org_url, fhir_version, vendor_name) %>%
+  distinct(organization_name, identifier, address, org_url, fhir_version, vendor_name)
 
   dt_data
 })
@@ -1467,14 +1477,14 @@ output$endpoint_list_orgs_table <- DT::renderDataTable({
       columnDefs = list(
         list(className = 'dt-center', targets = "_all"),
         list(className = 'dt-left', targets = which(colnames(df) == "organization_name")),
-        list(width = '300px', targets = which(colnames(df) == "url"))
+        list(width = '300px', targets = which(colnames(df) == "org_url"))
       )
     ),
     colnames = c(
       "Organization Name",
       "Organization Identifier",
       "Organization Address",
-      "URL",
+      "Organization URL",
       "FHIR Version",
       "Certified API Developer Name"
     ),
