@@ -269,14 +269,38 @@ organizationsmodule <- function(
     data_query <- do.call(glue_sql, c(list(data_query_str, .con = db_connection), data_params))
     res <- tbl(db_connection, sql(data_query)) %>% collect()
 
-    # Format URL for HTML display with modal popup
+    res <- res %>%
+      mutate(organization_id = as.integer(organization_id)) %>%
+      
+      # Left join with deduplicated or collapsed identifiers
+      left_join(
+        get_org_identifiers_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(identifier = paste(unique(identifier), collapse = "\n")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      # Left join with deduplicated or collapsed addresses
+      left_join(
+        get_org_addresses_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(address = paste(unique(address), collapse = "\n")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      select(-organization_id)
+
+    res <- res %>%
+      filter(organization_name != "Unknown") %>%
+      mutate(address = toupper(address)) %>%
+      select(organization_name, identifier, address, org_url, fhir_version, vendor_name) %>%
+      distinct(organization_name, identifier, address, org_url, fhir_version, vendor_name)
+
     res <- res %>%
       mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
-  
-    # Format popup for HTI-1 data
-    res <- res %>%
-      mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
-    
+
     res
   })
 
