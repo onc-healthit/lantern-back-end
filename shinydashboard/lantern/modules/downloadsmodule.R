@@ -25,12 +25,6 @@ downloadsmodule_UI <- function(id) {
     ),
     fluidRow(
       column(width = 12,
-              downloadButton(ns("organizations_download_data"), "Download Organization Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
-              downloadButton(ns("organizations_download_descriptions"), "Download Organization Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
-      )
-    ),
-    fluidRow(
-      column(width = 12,
              h2("REST API"),
              style = "padding-bottom:10px;padding-top:10px",
              p(HTML("This REST API [GET]<b> https://lantern.healthit.gov/api/daily/download </b> enables programmatic access
@@ -82,46 +76,6 @@ downloadsmodule <- function(
     },
     content = function(file) {
       file.copy("fhir_endpoints_fields.csv", file)
-    }
-  )
-
-  # Create the format for the csv
-  organization_csv_format <- reactive({
-    res <- get_endpoint_list_matches(db_connection)
-    
-    display_data <- res %>%
-      mutate(organization_id = as.integer(organization_id)) %>%
-      left_join(get_org_identifiers_information(db_connection),
-        by = c("organization_id" = "org_id")) %>%
-      left_join(get_org_addresses_information(db_connection),
-        by = c("organization_id" = "org_id")) %>%
-      select(-organization_id)
-
-    dt_data <- display_data %>%
-      mutate(address = toupper(address)) %>%
-      select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-      distinct(organization_name, identifier, address, url, fhir_version, vendor_name)
-
-    dt_data
-  })
-
-  # Downloadable csv of selected dataset
-  output$organizations_download_data <- downloadHandler(
-    filename = function() {
-      "fhir_endpoint_organizations.csv"
-    },
-    content = function(file) {
-      write.csv(organization_csv_format(), file, row.names = FALSE)
-    }
-  )
-
-  # Download csv of the field descriptions in the dataset csv
-  output$organizations_download_descriptions <- downloadHandler(
-    filename = function() {
-      "fhir_endpoint_organizations_fields.csv"
-    },
-    content = function(file) {
-      file.copy("fhir_endpoint_organizations_fields.csv", file)
     }
   )
 

@@ -1,7 +1,0 @@
-Field,	Description
-organization_name, Name of the healthcare organization
-identifier, Unique identifier for the organization
-address, Physical address of the organization
-url, Service base URL of the FHIR endpoint
-fhir_version,	FHIR version that is pulled from the endpoint's capability statement
-api_information_source_name, Organization names associated with the endpoint reported by the list source
