@@ -1,5 +1,8 @@
 #!/bin/sh
 
+log_file="/etc/lantern/populateEndpoints_logs.txt"
+current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
+
 set -e
 
 # get endpoint data
