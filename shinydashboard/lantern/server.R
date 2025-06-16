@@ -71,6 +71,18 @@ selected_fhir_endpoint_profiles <- reactive({
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
+  observeEvent(input$side_menu, {
+  if (input$side_menu == "endpoints_tab") { 
+    updateTextInput(session, "endpoints_page-search_query", value = "")
+  }
+  if (input$side_menu == "profile_tab") { 
+    updateTextInput(session, "profile_page-search_query", value = "")
+  }
+  if (input$side_menu == "contacts_tab") { 
+    updateTextInput(session, "contacts_page-search_query", value = "")
+  }
+  }, ignoreInit = TRUE)
+
   callModule(
         dashboard,
         "dashboard_page",
