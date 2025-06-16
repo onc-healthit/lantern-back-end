@@ -1412,4 +1412,11 @@ output$filter_profile_table <- DT::renderDataTable({
   )
 })
 
+# reset organizations module inputs when navigating again to organizations tab
+  observeEvent(input$side_menu, {
+      if (input$side_menu == "organizations_tab") { 
+        updateTextInput(session, "organizations_page-org_search_query", value = "")
+      }
+  }, ignoreInit = TRUE)
+
 }
