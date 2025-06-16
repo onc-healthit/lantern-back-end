@@ -146,34 +146,37 @@ organizationsmodule <- function(
       res <- res %>%
         mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
       
-      res
+      # Get all data
+      display_data <- res
+
+      display_data <- display_data %>% 
+        select(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
+        distinct(organization_name, organization_id, url, fhir_version, vendor_name)
+        
+      if (trimws(input$org_search_query) != ""){
+        display_data <- display_data %>%
+        filter(if_any(everything(), ~ str_detect(tolower(as.character(.x)), tolower(trimws(input$org_search_query)))))
+      }
+
+      display_data <- display_data %>% arrange(organization_name) %>% group_by(organization_name)
+
+      display_data
     })
 
 
   output$endpoint_list_orgs_table <- reactable::renderReactable({
-     # Get all data
-     display_data <- selected_endpoint_list_orgs()
 
-     if (nrow(display_data) == 0) {
-       return(
-         reactable(
-           data.frame(Message = "No data matching the selected filters"),
-           pagination = FALSE,
-           searchable = FALSE
-         )
-       )
-     }
-
-     display_data <- display_data %>% 
-      select(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
-      distinct(organization_name, organization_id, url, fhir_version, vendor_name)
-      
-     if (trimws(input$org_search_query) != ""){
-      display_data <- display_data %>%
-       filter(if_any(everything(), ~ str_detect(tolower(as.character(.x)), tolower(trimws(input$org_search_query)))))
-     }
-
-    display_data <- display_data %>% arrange(organization_name) %>% group_by(organization_name)
+    display_data <- selected_endpoint_list_orgs()
+    
+    if (nrow(display_data) == 0) {
+      return(
+        reactable(
+          data.frame(Message = "No data matching the selected filters"),
+          pagination = FALSE,
+          searchable = FALSE
+        )
+      )
+    }
 
     # Paginate using R slicing
     paged_data <- reactive({
