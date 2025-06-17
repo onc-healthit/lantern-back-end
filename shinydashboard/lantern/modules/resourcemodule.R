@@ -70,7 +70,7 @@ resourcemodule <- function(  #nolint
 
   # Update page selector max when total pages change
   observe({
-    updateNumericInput(session, "page_selector", 
+    updateNumericInput(session, ns("page_selector"), 
                       max = total_pages(),
                       value = page_state())
   })
@@ -83,7 +83,7 @@ resourcemodule <- function(  #nolint
       
       # Update the input if user entered invalid value
       if (new_page != input$page_selector) {
-        updateNumericInput(session, "page_selector", value = new_page)
+        updateNumericInput(session, ns("page_selector"), value = new_page)
       }
     }
   })
@@ -93,7 +93,7 @@ resourcemodule <- function(  #nolint
     if (page_state() < total_pages()) {
       new_page <- page_state() + 1
       page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
+      updateNumericInput(session, ns("page_selector"), value = new_page)
     }
   })
 
@@ -102,14 +102,14 @@ resourcemodule <- function(  #nolint
     if (page_state() > 1) {
       new_page <- page_state() - 1
       page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
+      updateNumericInput(session, ns("page_selector"), value = new_page)
     }
   })
 
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), input$search_query), {
     page_state(1)
-    updateNumericInput(session, "page_selector", value = 1)
+    updateNumericInput(session, ns("page_selector"), value = 1)
   })
 
   output$prev_button_ui <- renderUI({
