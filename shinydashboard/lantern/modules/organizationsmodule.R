@@ -12,9 +12,6 @@ organizationsmodule_UI <- function(id) {
       h2("Endpoint List Organizations")
     ),
     fluidRow(
-      column(width = 6, textInput(ns("org_search_query"), "Search:", value = ""))
-    ),
-    fluidRow(
       p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
       reactable::reactableOutput(ns("endpoint_list_orgs_table")),
       htmlOutput(ns("note_text"))
@@ -22,21 +19,20 @@ organizationsmodule_UI <- function(id) {
     fluidRow(
       column(3, 
         div(style = "display: flex; justify-content: flex-start;", 
-            uiOutput(ns("prev_button_ui"))
+            uiOutput(ns("org_prev_button_ui"))
         )
       ),
       column(6,
         div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
-            numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
-            textOutput(ns("page_info"), inline = TRUE)
+            textOutput(ns("org_page_info"), inline = TRUE)
         )
       ),
       column(3, 
         div(style = "display: flex; justify-content: flex-end;",
-            uiOutput(ns("next_button_ui"))
+            uiOutput(ns("org_next_button_ui"))
         )
       )
-    ),
+    )
   )
 }
 
@@ -50,123 +46,130 @@ organizationsmodule <- function(
 ) {
   ns <- session$ns
 
-  page_state <- reactiveVal(1)
-  page_size <- 10
+  org_page_state <- reactiveVal(1)
+  org_page_size <- 10
 
   # Calculate total pages based on filtered data
-  total_pages <- reactive({
-    total_records <- nrow(selected_endpoint_list_orgs() %>% distinct(organization_name, organization_id, url, fhir_version, vendor_name))
-    max(1, ceiling(total_records / page_size))
-  })
+  org_total_pages <- reactive({
+    fhir_versions <- sel_fhir_version()
+    vendor <- sel_vendor()
 
-  # Update page selector max when total pages change
-  observe({
-    updateNumericInput(session, "page_selector", 
-                      max = total_pages(),
-                      value = page_state())
-  })
+    req(sel_fhir_version(), sel_vendor())
 
-  # Handle page selector input
-  observeEvent(input$page_selector, {
-    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
-      new_page <- max(1, min(input$page_selector, total_pages()))
-      page_state(new_page)
-
-      # Update the input if user entered invalid value
-      if (new_page != input$page_selector) {
-        updateNumericInput(session, "page_selector", value = new_page)
-      }
+    versions_filter <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+    vendor_filter <- if (vendor != ui_special_values$ALL_DEVELOPERS) {
+      paste0("AND vendor_name = '", vendor, "'")
+    } else {
+      ""
     }
+
+    count_query <- paste0("
+      SELECT COUNT(*) as count FROM (
+        SELECT DISTINCT organization_name, organization_id, url, fhir_version, vendor_name
+        FROM mv_endpoint_list_organizations
+        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, "
+      ) AS subquery
+    ")
+
+    count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+    max(1, ceiling(count / org_page_size))
   })
 
   # Handle next page button
-  observeEvent(input$next_page, {
+  observeEvent(input$org_next_page, {
     message("NEXT PAGE BUTTON CLICKED")
-    if (page_state() < total_pages()) {
-      new_page <- page_state() + 1
-      page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
+    if (org_page_state() < org_total_pages()) {
+      new_page <- org_page_state() + 1
+      org_page_state(new_page)
     }
   })
 
   # Handle previous page button
-  observeEvent(input$prev_page, {
+  observeEvent(input$org_prev_page, {
     message("PREV PAGE BUTTON CLICKED")
-    if (page_state() > 1) {
-      new_page <- page_state() - 1
-      page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
+    if (org_page_state() > 1) {
+      new_page <- org_page_state() - 1
+      org_page_state(new_page)
     }
   })
 
   # Reset to first page on any filter/search change 
-  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence(), input$org_search_query), {
-    page_state(1)
-    updateNumericInput(session, "page_selector", value = 1)
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence()), {
+    org_page_state(1)
   })
 
-  output$prev_button_ui <- renderUI({
-    if (page_state() > 1) {
-      actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
+  output$org_prev_button_ui <- renderUI({
+    if (org_page_state() > 1) {
+      actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
     } else {
       NULL  # Hide the button
     }
   })
 
-  output$next_button_ui <- renderUI({
-    if (page_state() < total_pages()) {
-      actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
+  output$org_next_button_ui <- renderUI({
+    if (org_page_state() < org_total_pages()) {
+      actionButton(ns("org_next_page"), "Next", icon = icon("arrow-right"))
     } else {
       NULL  # Hide the button
     }
   })
 
-  output$page_info <- renderText({
-    paste("of", total_pages())
+  output$org_page_info <- renderText({
+    paste(org_page_state(), "of", org_total_pages())
   })
 
- selected_endpoint_list_orgs <- reactive({
+ paged_endpoint_list_orgs <- reactive({
       # Get current filter values
       current_fhir <- sel_fhir_version()
       current_vendor <- sel_vendor()
 
       req(current_fhir, current_vendor)
 
-      # Get filtered data from the materialized view function
-      res <- get_endpoint_list_matches(
-        db_connection,
-        fhir_version = current_fhir,
-        vendor = current_vendor
-      )
+      versions_filter <- paste0("('", paste(current_fhir, collapse = "', '"), "')")
+      vendor_filter <- if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
+        paste0("AND vendor_name = '", current_vendor, "'")
+      } else {
+        ""
+      }
+
+      limit <- org_page_size
+      offset <- (org_page_state() - 1) * org_page_size
+
+      # Get paginated, filtered data from the materialized view using sql
+      query <- paste0("
+        SELECT DISTINCT 
+          CASE 
+            WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
+            ELSE organization_name
+          END AS organization_name,
+          organization_id,
+          url,
+          fhir_version,
+          vendor_name
+        FROM mv_endpoint_list_organizations
+        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, "
+        ORDER BY organization_name
+        LIMIT ", limit, " OFFSET ", offset)
+
+      # Collect the data after applying filters in SQL
+      res <- tbl(db_connection, sql(query)) %>%
+        collect()
 
       # Format URL for HTML display with modal popup
       res <- res %>%
         mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
-      
+    
+      # Format popup for HTI-1 data
       res <- res %>%
         mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
       
-      # Get all data
-      display_data <- res
-
-      display_data <- display_data %>% 
-        select(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
-        distinct(organization_name, organization_id, url, fhir_version, vendor_name)
-        
-      if (trimws(input$org_search_query) != ""){
-        display_data <- display_data %>%
-        filter(if_any(everything(), ~ str_detect(tolower(as.character(.x)), tolower(trimws(input$org_search_query)))))
-      }
-
-      display_data <- display_data %>% arrange(organization_name) %>% group_by(organization_name)
-
-      display_data
+      res
     })
 
 
   output$endpoint_list_orgs_table <- reactable::renderReactable({
 
-    display_data <- selected_endpoint_list_orgs()
+    display_data <- paged_endpoint_list_orgs()
     
     if (nrow(display_data) == 0) {
       return(
@@ -178,17 +181,8 @@ organizationsmodule <- function(
       )
     }
 
-    # Paginate using R slicing
-    paged_data <- reactive({
-      all_data <- display_data
-      start <- (page_state() - 1) * page_size + 1
-      end <- min(nrow(all_data), page_state() * page_size)
-      if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
-      all_data[start:end, ]
-    })
-
      reactable(
-       paged_data(),
+       display_data,
        defaultColDef = colDef(
          align = "center"
        ),
