@@ -8,8 +8,26 @@ valuesmodule_UI <- function(id) {
     fluidRow(
       column(width = 7,
              h2("Field Values"),
-             reactable::reactableOutput(ns("capstat_values_table"))
+             reactable::reactableOutput(ns("capstat_values_table")),
+             fluidRow(
+              column(3, 
+                div(style = "display: flex; justify-content: flex-start;", 
+                    uiOutput(ns("prev_button_ui"))
+                )
+              ),
+              column(6,
+                div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+                    numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
+                    textOutput(ns("page_info"), inline = TRUE)
+                )
+              ),
+              column(3, 
+                div(style = "display: flex; justify-content: flex-end;",
+                    uiOutput(ns("next_button_ui"))
+                )
+              )
             ),
+      ),
       column(width = 5,
              h2("Endpoints that Include a Value for the Given Field"),
              uiOutput(ns("values_chart")),
@@ -28,6 +46,71 @@ valuesmodule <- function(
 ) {
 
   ns <- session$ns
+  page_size <- 10
+  page_state <- reactiveVal(1)
+
+  total_pages <- reactive({
+  total <- nrow(capstat_values_list())
+  max(1, ceiling(total / page_size))
+  })
+
+  # Update page selector max when total pages change
+  observe({
+    updateNumericInput(session, "page_selector", 
+                      max = total_pages(),
+                      value = page_state())
+  })
+
+  # Handle page selector input
+  observeEvent(input$page_selector, {
+    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
+      new_page <- max(1, min(input$page_selector, total_pages()))
+      page_state(new_page)
+      
+      # Update the input if user entered invalid value
+      if (new_page != input$page_selector) {
+        updateNumericInput(session, "page_selector", value = new_page)
+      }
+    }
+  })
+
+  # Reset to first page on any filter/search change
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values()), {
+    page_state(1)
+  })
+
+  # Page navigation buttons
+  output$prev_button_ui <- renderUI({
+  if (page_state() > 1) {
+    actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
+  } else {
+    NULL
+  }
+  })
+
+  output$next_button_ui <- renderUI({
+    if (page_state() < total_pages()) {
+      actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL
+    }
+  })
+
+  output$page_info <- renderText({
+    paste("of", total_pages())
+  })
+
+  observeEvent(input$next_page, {
+    if (page_state() < total_pages()) page_state(page_state() + 1)
+  })
+
+  observeEvent(input$prev_page, {
+    if (page_state() > 1) page_state(page_state() - 1)
+  })
+
+  output$current_page_info <- renderText({
+    paste("Page", page_state(), "of", total_pages())
+  })
 
   get_value_versions <- reactive({
   req(sel_capstat_values())
@@ -115,8 +198,17 @@ selected_fhir_endpoints <- reactive({
     get_capstat_values_list(selected_fhir_endpoints())
   })
 
+  # Add sliced data
+  paged_capstat_values <- reactive({
+    all_data <- capstat_values_list()
+    start <- (page_state() - 1) * page_size + 1
+    end <- min(nrow(all_data), page_state() * page_size)
+    if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
+    all_data[start:end, ]
+  })
+
   output$capstat_values_table <- reactable::renderReactable({
-    reactable(capstat_values_list() %>% select(Developer, "FHIR Version", field_value, Endpoints),
+    reactable(paged_capstat_values() %>% select(Developer, "FHIR Version", field_value, Endpoints),
                 columns = list(
                   field_value = colDef(name = get_value_table_header())
                 ),
@@ -124,7 +216,7 @@ selected_fhir_endpoints <- reactive({
                 searchable = TRUE,
                 striped = TRUE,
                 showSortIcon = TRUE,
-                defaultPageSize = isolate(capstatPageSizeNum())
+                defaultPageSize = page_size
     )
   })
 
