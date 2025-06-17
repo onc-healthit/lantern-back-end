@@ -79,8 +79,36 @@ validationsmodule <- function(
   page_size <- 10
   page_state <- reactiveVal(1)
 
+  # Get total using COUNT
   total_pages <- reactive({
-    max(1, ceiling(nrow(failed_validation_results()) / page_size))
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+
+    selected_rule <- if (!is.null(getReactableState("validation_details_table")$selected)) {
+      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
+    } else {
+      "NO_RULES"
+    }
+
+    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) paste0("AND vendor_name = '", sel_vendor(), "'") else ""
+    validation_group_filter <- if(sel_validation_group() != "All Groups") {
+      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
+      paste0("AND reference IN (", references, ")")
+    } else {
+      ""
+
+    }
+
+    query <- paste0(
+      "SELECT COUNT(*) as count FROM mv_validation_failures ",
+      "WHERE rule_name = '", selected_rule, "' ",
+      "AND fhir_version IN (", fhir_versions, ") ",
+      vendor_filter, " ",
+      validation_group_filter
+    )
+
+    count <- dbGetQuery(db_connection, query)$count
+    max(1, ceiling(count / page_size))
   })
 
   # Update page selector max when total pages change
@@ -295,7 +323,8 @@ validationsmodule <- function(
   })
 
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
-  failed_validation_results <- reactive({
+  # Paginated using SQL LIMIT OFFSET
+  paged_failed_validation_results <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     
     # Get the selected rule if available
@@ -319,16 +348,20 @@ validationsmodule <- function(
     } else {
       ""
     }
+
+    limit <- page_size
+    offset <- (page_state() - 1) * page_size
     
     # Query to get failed validations for the selected rule
     query <- paste0("
       SELECT fhir_version, url, expected, actual, vendor_name
       FROM mv_validation_failures
       WHERE rule_name = '", selected_rule, "'
-      AND fhir_version IN (", fhir_versions, ")
-      ", vendor_filter, "
-      ", validation_group_filter, "
-    ")
+      AND fhir_version IN (", fhir_versions, ") ",
+      vendor_filter, " ", 
+      validation_group_filter, " ",
+      "ORDER BY url LIMIT ", limit, " OFFSET ", offset
+    )
     
     # Execute query
     res <- dbGetQuery(db_connection, query)
@@ -338,15 +371,6 @@ validationsmodule <- function(
       mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
     
     return(res)
-  })
-
-  # Paginate using R slicing
-  paged_failed_validation_results <- reactive({
-    all_data <- failed_validation_results()
-    start <- (page_state() - 1) * page_size + 1
-    end <- min(nrow(all_data), page_state() * page_size)
-    if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
-    all_data[start:end, ]
   })
 
   output$validation_details_table <-  reactable::renderReactable({
@@ -430,10 +454,11 @@ validationsmodule <- function(
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
   output$validation_failure_table <- reactable::renderReactable({
-    reactable(paged_failed_validation_results(),
+    paged_data <- paged_failed_validation_results()
+    reactable(paged_data,
               defaultColDef = colDef(
                 style = function(value, index) {
-                  if (failed_validation_results()$fhir_version[index] == "No Cap Stat") {
+                  if (paged_data$fhir_version[index] == "No Cap Stat") {
                     list(background = "rgba(0, 0, 0, 0.03)")
                   }
                 }
@@ -441,7 +466,7 @@ validationsmodule <- function(
               columns = list(
                 fhir_version = colDef(name = "FHIR Version",
                                       cell = function(value, index) {
-                                        image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
+                                        image <- cap_stat_icon(paged_data$fhir_version[index])
                                         tagList(
                                           div(style = list(display = "inline-block", width = "45px"), image),
                                           value
