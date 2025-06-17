@@ -61,7 +61,7 @@ endpointsmodule <- function(
 
   # Calculate total pages based on filtered data
   total_pages <- reactive({
-    total_records <- nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version))
+    total_records <- nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version))
     max(1, ceiling(total_records / page_size))
   })
 
@@ -136,39 +136,86 @@ endpointsmodule <- function(
   })
 
   output$endpoint_count <- renderText({
-    paste("Matching Endpoints:", nrow(selected_fhir_endpoints() %>% distinct(url, fhir_version)))
+    paste("Matching Endpoints:", nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version)))
   })
 
+  # Main data query with LIMIT OFFSET pagination
   selected_fhir_endpoints <- reactive({
-    # Ensure all required reactive values are available
-    req(sel_fhir_version())
-    req(sel_vendor())
-    req(sel_availability())
-    req(sel_is_chpl())
+    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
+    
+    offset <- (page_state() - 1) * page_size
+
+    query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
+    params <- list(vals = sel_fhir_version())
+
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+      params$vendor <- sel_vendor()
+    }
+
+    if (sel_is_chpl() != "All") {
+      query_str <- paste0(query_str, " AND is_chpl = {chpl}")
+      params$chpl <- toupper(sel_is_chpl())
+    }
+
+    if (sel_availability() != "0-100") {
+      if (sel_availability() == "0" || sel_availability() == "100") {
+        query_str <- paste0(query_str, " AND availability = {availability}")
+        params$availability <- as.numeric(sel_availability())
+      } else {
+        availability_range <- strsplit(sel_availability(), "-")[[1]]
+        query_str <- paste0(query_str, " AND availability BETWEEN {low} AND {high}")
+        params$low <- as.numeric(availability_range[1])
+        params$high <- as.numeric(availability_range[2])
+      }
+    }
+
+    # Apply external search filter
+    if (trimws(input$search_query) != "") {
+      keyword <- tolower(trimws(input$search_query))
+      query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search})")
+      params$search <- paste0("%", keyword, "%")
+    }
+
+    # Add LIMIT OFFSET for pagination
+    query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
+    params$limit <- page_size
+    params$offset <- offset
+
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    res <- tbl(db_connection, sql(query)) %>% collect()
+    res
+  })
+
+  # Query without limit for total count and download
+  selected_fhir_endpoints_without_limit <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
     
     query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
     params <- list(vals = sel_fhir_version())
 
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-        query_str <- paste0(query_str, " AND vendor_name = {vendor}")
-        params$vendor <- sel_vendor()
+      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+      params$vendor <- sel_vendor()
     }
 
     if (sel_is_chpl() != "All") {
-        query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-        params$chpl <- toupper(sel_is_chpl())
+      query_str <- paste0(query_str, " AND is_chpl = {chpl}")
+      params$chpl <- toupper(sel_is_chpl())
     }
 
     if (sel_availability() != "0-100") {
-        if (sel_availability() == "0" || sel_availability() == "100") {
-            query_str <- paste0(query_str, " AND availability = {availability}")
-            params$availability <- as.numeric(sel_availability())
-        } else {
-            availability_range <- strsplit(sel_availability(), "-")[[1]]
-            query_str <- paste0(query_str, " AND availability BETWEEN {low} AND {high}")
-            params$low <- as.numeric(availability_range[1])
-            params$high <- as.numeric(availability_range[2])
-        }
+      if (sel_availability() == "0" || sel_availability() == "100") {
+        query_str <- paste0(query_str, " AND availability = {availability}")
+        params$availability <- as.numeric(sel_availability())
+      } else {
+        availability_range <- strsplit(sel_availability(), "-")[[1]]
+        query_str <- paste0(query_str, " AND availability BETWEEN {low} AND {high}")
+        params$low <- as.numeric(availability_range[1])
+        params$high <- as.numeric(availability_range[2])
+      }
     }
 
     # Apply external search filter
@@ -183,15 +230,6 @@ endpointsmodule <- function(
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     res <- tbl(db_connection, sql(query)) %>% collect()
     res
-  })
-
-  # Paginate using R slicing
-  paged_endpoints <- reactive({
-    all_data <- selected_fhir_endpoints()
-    start <- (page_state() - 1) * page_size + 1
-    end <- min(nrow(all_data), page_state() * page_size)
-    if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
-    all_data[start:end, ]
   })
 
   # Downloadable csv of selected dataset
@@ -216,7 +254,7 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              paged_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_at(vars(-group_cols()), as.character),
+              selected_fhir_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_at(vars(-group_cols()), as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -250,7 +288,7 @@ endpointsmodule <- function(
 
   # Create the format for the csv
   csv_format <- reactive({
-    res <- selected_fhir_endpoints() %>%
+    res <- selected_fhir_endpoints_without_limit() %>%
       select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
