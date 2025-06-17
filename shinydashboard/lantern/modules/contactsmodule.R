@@ -14,26 +14,16 @@ contactsmodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    fluidRow(
-      column(width = 6, textInput(ns("search_query"), "Search:", value = "")
-      )
-    ),
     reactable::reactableOutput(ns("contacts_table")),
     fluidRow(
-      column(3, 
+      column(6, 
         div(style = "display: flex; justify-content: flex-start;", 
-            uiOutput(ns("prev_button_ui"))
+            uiOutput(ns("contacts_prev_button_ui"))
         )
       ),
-      column(6,
-        div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
-            numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
-            textOutput(ns("page_info"), inline = TRUE)
-        )
-      ),
-      column(3, 
+      column(6, 
         div(style = "display: flex; justify-content: flex-end;",
-            uiOutput(ns("next_button_ui"))
+            uiOutput(ns("contacts_next_button_ui"))
         )
       )
     )
@@ -50,84 +40,46 @@ contactsmodule <- function(
 ) {
     ns <- session$ns
 
-    page_state <- reactiveVal(1)
-    page_size <- 10
-
-    # Calculate total pages based on filtered data
-    total_pages <- reactive({
-      total_records <- nrow(selected_contacts_without_limit() %>% distinct(url, fhir_version))
-      max(1, ceiling(total_records / page_size))
-    })
-
-    # Update page selector max when total pages change
-    observe({
-      updateNumericInput(session, "page_selector", 
-                        max = total_pages(),
-                        value = page_state())
-    })
-
-    # Handle page selector input
-    observeEvent(input$page_selector, {
-      if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
-        new_page <- max(1, min(input$page_selector, total_pages()))
-        page_state(new_page)
-        
-        # Update the input if user entered invalid value
-        if (new_page != input$page_selector) {
-          updateNumericInput(session, "page_selector", value = new_page)
-        }
-      }
-    })
+    contacts_page_state <- reactiveVal(1)
+    contacts_page_size <- 10
 
     # Handle next page button
-    observeEvent(input$next_page, {
-      if (page_state() < total_pages()) {
-        new_page <- page_state() + 1
-        page_state(new_page)
-        updateNumericInput(session, "page_selector", value = new_page)
-      }
+    observeEvent(input$contacts_next_page, {
+      new_page <- contacts_page_state() + 1
+      contacts_page_state(new_page)
     })
 
     # Handle previous page button
-    observeEvent(input$prev_page, {
-      if (page_state() > 1) {
-        new_page <- page_state() - 1
-        page_state(new_page)
-        updateNumericInput(session, "page_selector", value = new_page)
+    observeEvent(input$contacts_prev_page, {
+      if (contacts_page_state() > 1) {
+        new_page <- contacts_page_state() - 1
+        contacts_page_state(new_page)
       }
     })
 
-    # Reset to first page on any filter/search change
-    observeEvent(list(sel_fhir_version(), sel_vendor(), sel_has_contact(), input$search_query), {
-      page_state(1)
-      updateNumericInput(session, "page_selector", value = 1)
+    # Reset to first page on any filter change
+    observeEvent(list(sel_fhir_version(), sel_vendor(), sel_has_contact()), {
+      contacts_page_state(1)
     })
 
-    output$prev_button_ui <- renderUI({
-      if (page_state() > 1) {
-        actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
+    output$contacts_prev_button_ui <- renderUI({
+      if (contacts_page_state() > 1) {
+        actionButton(ns("contacts_prev_page"), "Previous", icon = icon("arrow-left"))
       } else {
         NULL  # Hide the button
       }
     })
 
-    output$next_button_ui <- renderUI({
-      if (page_state() < total_pages()) {
-        actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
-      } else {
-        NULL  # Hide the button
-      }
-    })
-
-    output$page_info <- renderText({
-      paste("of", total_pages())
+    output$contacts_next_button_ui <- renderUI({
+      # Always show next button - let the database handle empty results
+      actionButton(ns("contacts_next_page"), "Next", icon = icon("arrow-right"))
     })
 
     # Main data query with LIMIT OFFSET pagination
     selected_contacts <- reactive({
         req(sel_fhir_version(), sel_vendor(), sel_has_contact())
         
-        offset <- (page_state() - 1) * page_size
+        contacts_offset <- (contacts_page_state() - 1) * contacts_page_size
         
         query_str <- "SELECT * FROM mv_contacts_info WHERE fhir_version IN ({vals*})"
         params <- list(vals = sel_fhir_version())
@@ -137,18 +89,10 @@ contactsmodule <- function(
             params$vendor <- sel_vendor()
         }
 
-        # Apply external search filter at database level
-        if (trimws(input$search_query) != "") {
-          keyword <- tolower(trimws(input$search_query))
-          query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
-          query_str <- paste0(query_str, " OR LOWER(contact_name) LIKE {search} OR LOWER(contact_type) LIKE {search} OR LOWER(contact_value) LIKE {search})")
-          params$search <- paste0("%", keyword, "%")
-        }
-
         # Add LIMIT OFFSET for pagination
         query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
-        params$limit <- page_size
-        params$offset <- offset
+        params$limit <- contacts_page_size
+        params$offset <- contacts_offset
 
         query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
         res <- tbl(db_connection, sql(query)) %>% collect()
@@ -171,46 +115,6 @@ contactsmodule <- function(
         res <- res %>%
             rowwise() %>%
             mutate(show_all = ifelse(has_contact, paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to show all contact information.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_contact_modal\',&quot;", url, "&quot,{priority: \'event\'});\"> Show All Contacts </a>"), "-"))
-
-        if (sel_has_contact() != "Any") {
-            res <- res %>% filter(ifelse(sel_has_contact() == "True", has_contact == TRUE, has_contact == FALSE))
-        }
-
-        res
-    })
-
-    # Query without limit for total count calculation
-    selected_contacts_without_limit <- reactive({
-        req(sel_fhir_version(), sel_vendor(), sel_has_contact())
-        
-        query_str <- "SELECT * FROM mv_contacts_info WHERE fhir_version IN ({vals*})"
-        params <- list(vals = sel_fhir_version())
-
-        if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-            query_str <- paste0(query_str, " AND vendor_name = {vendor}")
-            params$vendor <- sel_vendor()
-        }
-
-        # Apply external search filter at database level
-        if (trimws(input$search_query) != "") {
-          keyword <- tolower(trimws(input$search_query))
-          query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
-          query_str <- paste0(query_str, " OR LOWER(contact_name) LIKE {search} OR LOWER(contact_type) LIKE {search} OR LOWER(contact_value) LIKE {search})")
-          params$search <- paste0("%", keyword, "%")
-        }
-
-        query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
-        res <- tbl(db_connection, sql(query)) %>% collect()
-
-        res <- res %>%
-            arrange(contact_preference) %>%
-            group_by(url) %>%
-            mutate(num_contacts = n()) %>%
-            distinct(url, .keep_all = TRUE)
-
-        res <- res %>%
-            rowwise() %>%
-                mutate(has_contact = (!is.na(contact_name) || !is.na(contact_type) || !is.na(contact_value)))
 
         if (sel_has_contact() != "Any") {
             res <- res %>% filter(ifelse(sel_has_contact() == "True", has_contact == TRUE, has_contact == FALSE))
