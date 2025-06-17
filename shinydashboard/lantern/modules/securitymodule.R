@@ -18,7 +18,25 @@ securitymodule_UI <- function(id) {
     div(
       uiOutput("show_security_filter"),
       tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
-      reactable::reactableOutput(ns("security_endpoints"))
+      reactable::reactableOutput(ns("security_endpoints")),
+      fluidRow(
+        column(3, 
+          div(style = "display: flex; justify-content: flex-start;", 
+              uiOutput(ns("prev_button_ui"))
+          )
+        ),
+        column(6,
+          div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+              numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
+              textOutput(ns("page_info"), inline = TRUE)
+          )
+        ),
+        column(3, 
+          div(style = "display: flex; justify-content: flex-end;",
+              uiOutput(ns("next_button_ui"))
+          )
+        )
+      )
     )
   )
 }
@@ -33,6 +51,63 @@ securitymodule <- function(
 ) {
 
   ns <- session$ns
+
+  page_size <- 10
+  page_state <- reactiveVal(1)
+
+  total_pages <- reactive({
+    max(1, ceiling(nrow(selected_endpoints()) / page_size))
+  })
+
+  # Update page selector max when total pages change
+  observe({
+    updateNumericInput(session, "page_selector", 
+                      max = total_pages(),
+                      value = page_state())
+  })
+
+  # Handle page selector input
+  observeEvent(input$page_selector, {
+    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
+      new_page <- max(1, min(input$page_selector, total_pages()))
+      page_state(new_page)
+      
+      # Update the input if user entered invalid value
+      if (new_page != input$page_selector) {
+        updateNumericInput(session, "page_selector", value = new_page)
+      }
+    }
+  })
+
+  observeEvent(input$next_page, {
+    if (page_state() < total_pages()) page_state(page_state() + 1)
+  })
+
+  observeEvent(input$prev_page, {
+    if (page_state() > 1) page_state(page_state() - 1)
+  })
+
+  output$prev_button_ui <- renderUI({
+    if (page_state() > 1) actionButton(ns("prev_page"), "Previous") else NULL
+  })
+
+  output$next_button_ui <- renderUI({
+    if (page_state() < total_pages()) actionButton(ns("next_page"), "Next") else NULL
+  })
+
+  output$page_info <- renderText({
+    paste("of", total_pages())
+  })
+
+  output$current_page_info <- renderText({
+    paste("Page", page_state(), "of", total_pages())
+  })
+
+  # Reset page when filters change
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_auth_type_code()), {
+    page_state(1)
+  })
+
 
   output$auth_type_count_table <- renderTable(
     isolate(get_auth_type_count(db_connection)),
@@ -74,8 +149,17 @@ securitymodule <- function(
   return(res)
 })
 
+  # Paginate using R slicing
+  paged_endpoints <- reactive({
+    data <- selected_endpoints()
+    start <- (page_state() - 1) * page_size + 1
+    end <- min(nrow(data), page_state() * page_size)
+    if (nrow(data) == 0 || start > nrow(data)) return(data[0, ])
+    data[start:end, ]
+  })
+
   output$security_endpoints <-  reactable::renderReactable({
-    reactable(selected_endpoints(),
+    reactable(paged_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
                   condensed_organization_names = colDef(name = "Organization", html = TRUE),
@@ -87,7 +171,7 @@ securitymodule <- function(
                 sortable = TRUE,
                 searchable = TRUE,
                 showSortIcon = TRUE,
-                defaultPageSize = isolate(securityPageSizeNum())
+                defaultPageSize = page_size
     )
   })
 
