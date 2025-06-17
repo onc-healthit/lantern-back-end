@@ -46,18 +46,17 @@ validationsmodule_UI <- function(id) {
         fluidRow(
           column(3, 
             div(style = "display: flex; justify-content: flex-start;", 
-                uiOutput(ns("prev_page_ui"))
+                uiOutput(ns("validation_prev_page_ui"))
             )
           ),
           column(6,
             div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
-                numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
-                textOutput(ns("current_page_info"), inline = TRUE)
+                textOutput(ns("validations_current_page_info"), inline = TRUE)
             )
           ),
           column(3, 
             div(style = "display: flex; justify-content: flex-end;",
-                uiOutput(ns("next_page_ui"))
+                uiOutput(ns("validation_next_page_ui"))
             )
           )
         ),
@@ -76,11 +75,11 @@ validationsmodule <- function(
   sel_validation_group
 ) {
   ns <- session$ns
-  page_size <- 10
-  page_state <- reactiveVal(1)
+  validations_page_size <- 10
+  validation_page_state <- reactiveVal(1)
 
   # Get total using COUNT
-  total_pages <- reactive({
+  validation_total_pages <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
 
     selected_rule <- if (!is.null(getReactableState("validation_details_table")$selected)) {
@@ -108,63 +107,43 @@ validationsmodule <- function(
     )
 
     count <- dbGetQuery(db_connection, query)$count
-    max(1, ceiling(count / page_size))
+    max(1, ceiling(count / validations_page_size))
   })
 
-  # Update page selector max when total pages change
-  observe({
-    updateNumericInput(session, "page_selector", value = page_state(), max = total_pages())
-  })
-
-  # Handle page selector input
-  observeEvent(input$page_selector, {
-    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
-      new_page <- max(1, min(input$page_selector, total_pages()))
-      page_state(new_page)
-      
-      # Update the input if user entered invalid value
-      if (new_page != input$page_selector) {
-        updateNumericInput(session, "page_selector", value = new_page)
-      }
-    }
-  })
-
-  output$prev_page_ui <- renderUI({
-    if (page_state() > 1) {
-      actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
+  output$validation_prev_page_ui <- renderUI({
+    if (validation_page_state() > 1) {
+      actionButton(ns("validation_prev_page"), "Previous", icon = icon("arrow-left"))
     } else {
       NULL
     }
   })
 
-  output$next_page_ui <- renderUI({
-    if (page_state() < total_pages()) {
-      actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
+  output$validation_next_page_ui <- renderUI({
+    if (validation_page_state() < validation_total_pages()) {
+      actionButton(ns("validation_next_page"), "Next", icon = icon("arrow-right"))
     } else {
       NULL
     }
   })
 
-  observeEvent(input$next_page, {
+  observeEvent(input$validation_next_page, {
     message("NEXT PAGE BUTTON CLICKED")
-    if (page_state() < total_pages()) {
-      new_page <- page_state() + 1
-      page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
+    if (validation_page_state() < validation_total_pages()) {
+      new_page <- validation_page_state() + 1
+      validation_page_state(new_page)
     }
   })
 
-  observeEvent(input$prev_page, {
+  observeEvent(input$validation_prev_page, {
     message("PREV PAGE BUTTON CLICKED")
-    if (page_state() > 1) {
-      new_page <- page_state() - 1
-      page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
+    if (validation_page_state() > 1) {
+      new_page <- validation_page_state() - 1
+      validation_page_state(new_page)
     }
   })
   
-  output$current_page_info <- renderText({
-    paste("Page", page_state(), "of", total_pages())
+  output$validations_current_page_info <- renderText({
+    paste("Page", validation_page_state(), "of", validation_total_pages())
   })
 
   output$anchorpoint <- renderUI({
@@ -178,7 +157,7 @@ validationsmodule <- function(
 
   # Reset page to 1 whenever filters or selected rule changes
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_validation_group(), getReactableState("validation_details_table")$selected), {
-    page_state(1)
+    validation_page_state(1)
   })
 
   # Function to directly query validation results plot data from materialized view
@@ -349,8 +328,8 @@ validationsmodule <- function(
       ""
     }
 
-    limit <- page_size
-    offset <- (page_state() - 1) * page_size
+    limit <- validations_page_size
+    offset <- (validation_page_state() - 1) * validations_page_size
     
     # Query to get failed validations for the selected rule
     query <- paste0("
