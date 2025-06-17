@@ -1,4 +1,5 @@
 # SMART-on-FHIR Well-known URI responses
+library(glue)
 
 smartresponsemodule_UI <- function(id) {
 
@@ -20,7 +21,19 @@ smartresponsemodule_UI <- function(id) {
     h2("Endpoints by Well Known URI support"),
     p("This is the list of endpoints which have returned a valid SMART Core Capabilities JSON document at the", code("/.well-known/smart-configuration"), " URI."),
     tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
-    reactable::reactableOutput(ns("well_known_endpoints"))
+    reactable::reactableOutput(ns("well_known_endpoints")),
+    fluidRow(
+      column(6, 
+        div(style = "display: flex; justify-content: flex-start;", 
+            uiOutput(ns("smartres_prev_button_ui"))
+        )
+      ),
+      column(6, 
+        div(style = "display: flex; justify-content: flex-end;",
+            uiOutput(ns("smartres_next_button_ui"))
+        )
+      )
+    )
   )
 }
 
@@ -213,24 +226,35 @@ get_well_known_endpoints_tbl <- function(db_connection) {
   tbl(db_connection, "mv_well_known_endpoints") %>% collect()
 }
 
-get_selected_endpoints <- function(db_connection, fhir_version, vendor) {
-  query <- tbl(db_connection, "mv_selected_endpoints")
+# Modified function to support LIMIT OFFSET pagination
+get_selected_endpoints <- function(db_connection, fhir_version, vendor, limit = NULL, offset = NULL) {
+  # Build SQL query with glue_sql 
+  query_str <- "SELECT url, condensed_organization_names, vendor_name, capability_fhir_version FROM mv_selected_endpoints WHERE 1=1"
+  params <- list()
   
   # Apply filtering on fhir_version
   if (!is.null(fhir_version) && length(fhir_version) > 0) {
-    query <- query %>% filter(capability_fhir_version %in% !!fhir_version)
+    query_str <- paste0(query_str, " AND capability_fhir_version IN ({vals*})")
+    params$vals <- fhir_version
   }
   
   # Apply filtering on vendor
   if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
-    query <- query %>% filter(vendor_name == !!vendor)
+    query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+    params$vendor <- vendor
   }
-
-  # Remove unique_id column
-  query <- query %>% select(-mv_id) 
   
-  # Collect the filtered data
-  result <- query %>% collect()
+  # Add LIMIT OFFSET if provided
+  if (!is.null(limit) && !is.null(offset)) {
+    query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
+    params$limit <- limit
+    params$offset <- offset
+  }
+  
+  # Execute query
+  query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+  result <- tbl(db_connection, sql(query)) %>% collect()
+  
   result
 }
 
@@ -243,6 +267,41 @@ smartresponsemodule <- function(
 ) {
 
   ns <- session$ns
+
+  smartres_page_state <- reactiveVal(1)
+  smartres_page_size <- 10
+
+  # Handle next page button
+  observeEvent(input$smartres_next_page, {
+    new_page <- smartres_page_state() + 1
+    smartres_page_state(new_page)
+  })
+
+  # Handle previous page button
+  observeEvent(input$smartres_prev_page, {
+    if (smartres_page_state() > 1) {
+      new_page <- smartres_page_state() - 1
+      smartres_page_state(new_page)
+    }
+  })
+
+  # Reset to first page on any filter change
+  observeEvent(list(sel_fhir_version(), sel_vendor()), {
+    smartres_page_state(1)
+  })
+
+  output$smartres_prev_button_ui <- renderUI({
+    if (smartres_page_state() > 1) {
+      actionButton(ns("smartres_prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$smartres_next_button_ui <- renderUI({
+    # Always show next button - let the database handle empty results
+    actionButton(ns("smartres_next_page"), "Next", icon = icon("arrow-right"))
+  })
 
   # IN PROGRESS - need to get the correct query with smart_http_response and smart_response columns
   # can we show a summary table of how many endpoints supporting /.well-known/smart-configuration ?
@@ -400,29 +459,27 @@ smartresponsemodule <- function(
     selected_well_known_endpoint_counts()
   )
 
-  smartPageSizeNum <- reactiveVal(NULL)
-
-  # url requested version is default set to None since this table filters on requested_version = 'None'
+  # Modified selected_endpoints with LIMIT OFFSET pagination
   selected_endpoints <- reactive({
-  if (is.null(isolate(smartPageSizeNum()))) {
-    smartPageSizeNum(10)
-  }
-  
-  current_fhir <- sel_fhir_version()
-  current_vendor <- sel_vendor()
-  req(current_fhir, current_vendor)
-  
-  res <- get_selected_endpoints(
-    db_connection,
-    fhir_version = current_fhir,
-    vendor = current_vendor
-  )
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+    req(current_fhir, current_vendor)
+    
+    smartres_offset <- (smartres_page_state() - 1) * smartres_page_size
+    
+    res <- get_selected_endpoints(
+      db_connection,
+      fhir_version = current_fhir,
+      vendor = current_vendor,
+      limit = smartres_page_size,
+      offset = smartres_offset
+    )
 
-  # Format the URL for HTML display with a modal popup.
-  res <- res %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
-  
-  res
+    # Format the URL for HTML display with a modal popup.
+    res <- res %>%
+      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+    
+    res
   })
 
   output$well_known_endpoints <-  reactable::renderReactable({
@@ -434,18 +491,11 @@ smartresponsemodule <- function(
                   capability_fhir_version = colDef(name = "FHIR Version")
                 ),
                 sortable = TRUE,
-                searchable = TRUE,
+                searchable = FALSE,  # Disabled search for performance
                 showSortIcon = TRUE,
-                defaultPageSize = isolate(smartPageSizeNum())
+                defaultPageSize = 10,
+                showPageSizeOptions = FALSE,  # Disabled page size options
+                pageSizeOptions = NULL  # Removed page size options
     )
   })
-
-  observeEvent(input$well_known_endpoints_state$length, {
-    if (is.null(isolate(smartPageSizeNum()))) {
-      smartPageSizeNum(10)
-    }
-    page <- input$well_known_endpoints_state$length
-    smartPageSizeNum(page)
-  })
-
 }
