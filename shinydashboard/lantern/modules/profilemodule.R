@@ -5,27 +5,12 @@ library(reactable)
 profilemodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    fluidRow(
-      column(width = 6, textInput(ns("search_query"), "Search:", value = "")
-      )
-    ),
-    reactable::reactableOutput(ns("profiles_table")),
-    fluidRow(
-      column(3, 
-        div(style = "display: flex; justify-content: flex-start;", uiOutput(ns("prev_button_ui"))
-        )
-      ),
-      column(6,
-        div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
-            numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
-            textOutput(ns("page_info"), inline = TRUE)
-        )
-      ),
-      column(3, 
-        div(style = "display: flex; justify-content: flex-end;", uiOutput(ns("next_button_ui"))
-        )
-      )
-    )
+    tags$style(HTML("
+      div.dataTables_filter {
+        display: none;
+      }
+    ")),
+    DTOutput("filter_profile_table")
   )
 }
 
