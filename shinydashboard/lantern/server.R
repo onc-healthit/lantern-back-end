@@ -70,28 +70,6 @@ function(input, output, session) { #nolint
   observeEvent(input$side_menu, {
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
-  
-  # tab navigation resets, add rest of the tabs here
-  observeEvent(input$side_menu, {
-    if (input$side_menu == "endpoints_tab") { 
-      updateTextInput(session, "endpoints_page-search_query", value = "")
-    }
-    if (input$side_menu == "profile_tab") { 
-      updateTextInput(session, "profile_page-search_query", value = "")
-    }
-  }, ignoreInit = TRUE)
-
-  observeEvent(input$side_menu, {
-  if (input$side_menu == "endpoints_tab") { 
-    updateTextInput(session, "endpoints_page-search_query", value = "")
-  }
-  if (input$side_menu == "profile_tab") { 
-    updateTextInput(session, "profile_page-search_query", value = "")
-  }
-  if (input$side_menu == "contacts_tab") { 
-    updateTextInput(session, "contacts_page-search_query", value = "")
-  }
-  }, ignoreInit = TRUE)
 
   observeEvent(input$side_menu, {
   if (input$side_menu == "endpoints_tab") { 
@@ -105,6 +83,9 @@ function(input, output, session) { #nolint
   }
   if (input$side_menu == "resource_tab") { 
     updateTextInput(session, "resource_page-search_query", value = "")
+  }
+  if (input$side_menu == "organizations_tab") { 
+    updateTextInput(session, "organizations_page-org_search_query", value = "")
   }
   }, ignoreInit = TRUE)
 
@@ -1407,125 +1388,5 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       easyClose = TRUE
     ))
   })
-
-# output$filter_profile_table <- DT::renderDataTable({
-#   df <- selected_fhir_endpoint_profiles()
-
-#   if (nrow(df) == 0) {
-#     return(DT::datatable(
-#       data.frame(Message = "No data matching the selected filters"),
-#       options = list(dom = 't'),  # show only the table
-#       rownames = FALSE
-#     ))
-#   }
-
-#   DT::datatable(
-#     df,
-#     rownames = FALSE,
-#     filter = 'top',
-#     options = list(
-#       pageLength = 10,
-#       lengthMenu = c(10, 25, 50, 100),
-#       autoWidth = TRUE,
-#       scrollX = TRUE,
-#       order = list(),
-#       columnDefs = list(
-#         list(className = 'dt-center', targets = "_all"),
-#         list(className = 'dt-left', targets = which(colnames(df) == "url")),
-#         list(width = '300px', targets = which(colnames(df) == "url")),
-#         list(width = '250px', targets = which(colnames(df) == "profileurl"))
-#       )
-#     ),
-#     colnames = c(
-#       "Endpoint URL",
-#       "Profile URL", 
-#       "Profile Name",
-#       "Resource",
-#       "FHIR Version",
-#       "Certified API Developer Name"
-#     ),
-#     escape = FALSE,
-#     class = 'stripe hover compact'
-#   )
-# })
-
-selected_endpoint_list_orgs <- reactive({
-  req(input$fhir_version, input$vendor)
-
-  # Get filtered data
-  res <- get_endpoint_list_matches(
-    db_connection,
-    fhir_version = input$fhir_version,
-    vendor = input$vendor
-  )
-
-  display_data <- res %>%
-    mutate(organization_id = as.integer(organization_id)) %>%
-    left_join(get_org_identifiers_information(db_connection),
-              by = c("organization_id" = "org_id")) %>%
-    left_join(get_org_addresses_information(db_connection),
-              by = c("organization_id" = "org_id")) %>%
-    select(-organization_id)
-
-  # Add HTML-formatted URL
-  display_data <- display_data %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
-
-  # Always return a data.frame, even if empty
-  dt_data <- display_data %>%
-    mutate(address = toupper(address)) %>%
-    select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-    distinct(organization_name, identifier, address, url, fhir_version, vendor_name)
-
-  dt_data
-})
-
-output$endpoint_list_orgs_table <- DT::renderDataTable({
-  df <- selected_endpoint_list_orgs()
-
-  if (nrow(df) == 0) {
-    return(DT::datatable(
-      data.frame(Message = "No data matching the selected filters"),
-      options = list(dom = 't'),  # show only the table
-      rownames = FALSE
-    ))
-  }
-
-  DT::datatable(
-    df,
-    rownames = FALSE,
-    filter = 'top',
-    options = list(
-      pageLength = 10,
-      lengthMenu = c(10, 25, 50, 100),
-      autoWidth = TRUE,
-      scrollX = TRUE,
-      order = list(),
-      columnDefs = list(
-        list(className = 'dt-center', targets = "_all"),
-        list(className = 'dt-left', targets = which(colnames(df) == "organization_name")),
-        list(width = '300px', targets = which(colnames(df) == "url"))
-      )
-    ),
-    colnames = c(
-      "Organization Name",
-      "Organization Identifier",
-      "Organization Address",
-      "URL",
-      "FHIR Version",
-      "Certified API Developer Name"
-    ),
-    escape = FALSE,
-    class = 'stripe hover compact'
-  )
-})
- 
-
-# reset organizations module inputs when navigating again to organizations tab
-  observeEvent(input$side_menu, {
-      if (input$side_menu == "organizations_tab") { 
-        updateTextInput(session, "organizations_page-org_search_query", value = "")
-      }
-  }, ignoreInit = TRUE)
 
 }
