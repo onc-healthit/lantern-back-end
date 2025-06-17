@@ -50,9 +50,9 @@ valuesmodule <- function(
   page_state <- reactiveVal(1)
 
   total_pages <- reactive({
-  total <- nrow(capstat_values_list())
+  total <- capstat_total_count()
   max(1, ceiling(total / page_size))
-  })
+})
 
   # Update page selector max when total pages change
   observe({
@@ -157,7 +157,7 @@ get_capstat_values_list <- function(capstat_values_tbl) {
   res <- capstat_values_tbl
 }
 
-selected_fhir_endpoints <- reactive({
+all_capstat_values <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
     # Get the selected values
     fhir_versions <- sel_fhir_version()
@@ -189,23 +189,71 @@ selected_fhir_endpoints <- reactive({
     return(res)
 })
 
-  capstatPageSizeNum <- reactiveVal(NULL)
+paged_capstat_values <- reactive({
+  req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
 
-  capstat_values_list <- reactive({
-    if (is.null(capstatPageSizeNum())) {
-      capstatPageSizeNum(10)
-    }
-    get_capstat_values_list(selected_fhir_endpoints())
-  })
+  fhir_versions <- sel_fhir_version()
+  vendor <- sel_vendor()
+  field_name <- sel_capstat_values()
 
-  # Add sliced data
-  paged_capstat_values <- reactive({
-    all_data <- capstat_values_list()
-    start <- (page_state() - 1) * page_size + 1
-    end <- min(nrow(all_data), page_state() * page_size)
-    if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
-    all_data[start:end, ]
-  })
+  fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+  valid_versions <- tbl(db_connection, 
+                        sql(paste0("SELECT unnest(fhir_versions) AS version 
+                                    FROM get_value_versions_mv 
+                                    WHERE field = '", field_name, "'"))) %>%
+                    collect() %>%
+                    pull(version)
+  valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+
+  limit <- page_size
+  offset <- (page_state() - 1) * page_size
+
+  query_str <- paste0("
+    SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\"
+    FROM selected_fhir_endpoints_values_mv
+    WHERE field = '", field_name, "'
+      AND \"FHIR Version\" IN ", fhir_versions_sql, "
+      AND \"FHIR Version\" IN ", valid_versions_sql)
+
+  if (vendor != ui_special_values$ALL_DEVELOPERS) {
+    query_str <- paste0(query_str, " AND \"Developer\" = '", vendor, "'")
+  }
+
+  query_str <- paste0(query_str, " ORDER BY \"Endpoints\" DESC LIMIT ", limit, " OFFSET ", offset)
+
+  tbl(db_connection, sql(query_str)) %>% collect()
+})
+
+capstat_total_count <- reactive({
+  req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+
+  fhir_versions <- sel_fhir_version()
+  vendor <- sel_vendor()
+  field_name <- sel_capstat_values()
+
+  fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+  valid_versions <- tbl(db_connection, 
+                        sql(paste0("SELECT unnest(fhir_versions) AS version 
+                                    FROM get_value_versions_mv 
+                                    WHERE field = '", field_name, "'"))) %>%
+                    collect() %>%
+                    pull(version)
+
+  valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+
+  count_query <- paste0("
+    SELECT COUNT(*) as count
+    FROM selected_fhir_endpoints_values_mv
+    WHERE field = '", field_name, "'
+      AND \"FHIR Version\" IN ", fhir_versions_sql, "
+      AND \"FHIR Version\" IN ", valid_versions_sql)
+
+  if (vendor != ui_special_values$ALL_DEVELOPERS) {
+    count_query <- paste0(count_query, " AND \"Developer\" = '", vendor, "'")
+  }
+
+  tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+})
 
   output$capstat_values_table <- reactable::renderReactable({
     reactable(paged_capstat_values() %>% select(Developer, "FHIR Version", field_value, Endpoints),
@@ -220,11 +268,6 @@ selected_fhir_endpoints <- reactive({
     )
   })
 
-  observeEvent(input$capstat_values_table_state$length, {
-    page <- input$capstat_values_table_state$length
-    capstatPageSizeNum(page)
-  })
-
   # Group by who has added a value vs who hasn't
   #
   # EXAMPLE:
@@ -234,7 +277,7 @@ selected_fhir_endpoints <- reactive({
   # 3.4.1            6                    3.4.1         6           yes
   # [Empty]          4                    [Empty]       4           no
   is_field_being_used <- reactive({
-    capstat_values_list() %>%
+    all_capstat_values() %>%
     # necessary to ungroup because you can't select a subset of fields in a dataset
     # that is grouped
     ungroup() %>%
