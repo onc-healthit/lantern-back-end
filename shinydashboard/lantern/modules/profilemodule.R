@@ -1,6 +1,7 @@
 library(DT)
 library(purrr)
 library(reactable)
+library(glue)
 
 profilemodule_UI <- function(id) {
   ns <- NS(id)
@@ -45,7 +46,7 @@ profilemodule <- function(
 
   # Calculate total pages based on filtered data
   total_pages <- reactive({
-    total_records <- nrow(selected_fhir_endpoint_profiles() %>% distinct(url, profileurl, fhir_version))
+    total_records <- nrow(selected_fhir_endpoint_profiles_without_limit() %>% distinct(url, profileurl, fhir_version))
     max(1, ceiling(total_records / page_size))
   })
 
@@ -113,8 +114,60 @@ profilemodule <- function(
     paste("of", total_pages())
   })
 
-  # Main data query without pagination
+  # Main data query with LIMIT OFFSET pagination
   selected_fhir_endpoint_profiles <- reactive({
+    req(sel_fhir_version(), sel_vendor())
+    
+    offset <- (page_state() - 1) * page_size
+    
+    query_str <- "SELECT DISTINCT url, profileurl, profilename, resource, fhir_version, vendor_name FROM endpoint_supported_profiles_mv WHERE fhir_version IN ({vals*})"
+    params <- list(vals = sel_fhir_version())
+
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+      params$vendor <- sel_vendor()
+    }
+
+    if (length(sel_resource()) > 0) {
+      if (sel_resource() != ui_special_values$ALL_RESOURCES) {
+        query_str <- paste0(query_str, " AND resource = {resource}")
+        params$resource <- sel_resource()
+      }
+    }
+
+    if (length(sel_profile()) > 0) {
+      if (sel_profile() != ui_special_values$ALL_PROFILES) {
+        query_str <- paste0(query_str, " AND profileurl = {profile}")
+        params$profile <- sel_profile()
+      }
+    }
+
+    # Apply external search filter at database level
+    if (trimws(input$search_query) != "") {
+      keyword <- tolower(trimws(input$search_query))
+      query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(profileurl) LIKE {search} OR LOWER(profilename) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(resource) LIKE {search} OR LOWER(vendor_name) LIKE {search} OR LOWER(fhir_version) LIKE {search})")
+      params$search <- paste0("%", keyword, "%")
+    }
+
+    # Add LIMIT OFFSET for pagination
+    query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
+    params$limit <- page_size
+    params$offset <- offset
+
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    res <- tbl(db_connection, sql(query)) %>% collect()
+    
+    res <- res %>%
+      group_by(url) %>%
+      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+      mutate_at(vars(-group_cols()), as.character)
+
+    return(res)
+  })
+
+  # Query without limit for total count calculation
+  selected_fhir_endpoint_profiles_without_limit <- reactive({
     req(sel_fhir_version(), sel_vendor())
     
     query_str <- "SELECT DISTINCT url, profileurl, profilename, resource, fhir_version, vendor_name FROM endpoint_supported_profiles_mv WHERE fhir_version IN ({vals*})"
@@ -149,26 +202,12 @@ profilemodule <- function(
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     res <- tbl(db_connection, sql(query)) %>% collect()
-    
-    res <- res %>%
-      group_by(url) %>%
-      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-      mutate_at(vars(-group_cols()), as.character)
 
     return(res)
   })
 
-  # Paginate using R slicing
-  paged_profiles <- reactive({
-    all_data <- selected_fhir_endpoint_profiles()
-    start <- (page_state() - 1) * page_size + 1
-    end <- min(nrow(all_data), page_state() * page_size)
-    if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
-    all_data[start:end, ]
-  })
-
   output$profiles_table <- reactable::renderReactable({
-    df <- paged_profiles()
+    df <- selected_fhir_endpoint_profiles()
 
     if (nrow(df) == 0) {
       return(reactable(
