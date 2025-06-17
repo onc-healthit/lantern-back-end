@@ -78,15 +78,6 @@ function(input, output, session) { #nolint
   #   }
   # }, ignoreInit = TRUE)
 
-  # tab navigation resets, add rest of the tabs here
-  observeEvent(input$side_menu, {
-    if (input$side_menu == "endpoints_tab") { 
-      updateTextInput(session, "endpoints_page-search_query", value = "")
-    }
-    if (input$side_menu == "profile_tab") { 
-      updateTextInput(session, "profile_page-search_query", value = "")
-    }
-  }, ignoreInit = TRUE)
 
   callModule(
         dashboard,
