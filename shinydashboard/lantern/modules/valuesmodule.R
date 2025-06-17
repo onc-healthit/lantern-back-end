@@ -12,18 +12,17 @@ valuesmodule_UI <- function(id) {
              fluidRow(
               column(3, 
                 div(style = "display: flex; justify-content: flex-start;", 
-                    uiOutput(ns("prev_button_ui"))
+                    uiOutput(ns("values_prev_button_ui"))
                 )
               ),
               column(6,
                 div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
-                    numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
-                    textOutput(ns("page_info"), inline = TRUE)
+                    textOutput(ns("values_page_info"), inline = TRUE)
                 )
               ),
               column(3, 
                 div(style = "display: flex; justify-content: flex-end;",
-                    uiOutput(ns("next_button_ui"))
+                    uiOutput(ns("values_next_button_ui"))
                 )
               )
             ),
@@ -46,70 +45,46 @@ valuesmodule <- function(
 ) {
 
   ns <- session$ns
-  page_size <- 10
-  page_state <- reactiveVal(1)
+  values_page_size <- 10
+  values_page_state <- reactiveVal(1)
 
-  total_pages <- reactive({
+  values_total_pages <- reactive({
   total <- capstat_total_count()
-  max(1, ceiling(total / page_size))
+  max(1, ceiling(total / values_page_size))
 })
-
-  # Update page selector max when total pages change
-  observe({
-    updateNumericInput(session, "page_selector", 
-                      max = total_pages(),
-                      value = page_state())
-  })
-
-  # Handle page selector input
-  observeEvent(input$page_selector, {
-    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
-      new_page <- max(1, min(input$page_selector, total_pages()))
-      page_state(new_page)
-      
-      # Update the input if user entered invalid value
-      if (new_page != input$page_selector) {
-        updateNumericInput(session, "page_selector", value = new_page)
-      }
-    }
-  })
 
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values()), {
-    page_state(1)
+    values_page_state(1)
   })
 
   # Page navigation buttons
-  output$prev_button_ui <- renderUI({
-  if (page_state() > 1) {
-    actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
+  output$values_prev_button_ui <- renderUI({
+  if (values_page_state() > 1) {
+    actionButton(ns("values_prev_page"), "Previous", icon = icon("arrow-left"))
   } else {
     NULL
   }
   })
 
-  output$next_button_ui <- renderUI({
-    if (page_state() < total_pages()) {
-      actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
+  output$values_next_button_ui <- renderUI({
+    if (values_page_state() < values_total_pages()) {
+      actionButton(ns("values_next_page"), "Next", icon = icon("arrow-right"))
     } else {
       NULL
     }
   })
 
-  output$page_info <- renderText({
-    paste("of", total_pages())
+  observeEvent(input$values_next_page, {
+    if (values_page_state() < values_total_pages()) values_page_state(values_page_state() + 1)
   })
 
-  observeEvent(input$next_page, {
-    if (page_state() < total_pages()) page_state(page_state() + 1)
+  observeEvent(input$values_prev_page, {
+    if (values_page_state() > 1) values_page_state(values_page_state() - 1)
   })
 
-  observeEvent(input$prev_page, {
-    if (page_state() > 1) page_state(page_state() - 1)
-  })
-
-  output$current_page_info <- renderText({
-    paste("Page", page_state(), "of", total_pages())
+  output$values_page_info <- renderText({
+    paste("Page", values_page_state(), "of", values_total_pages())
   })
 
   get_value_versions <- reactive({
@@ -205,8 +180,8 @@ paged_capstat_values <- reactive({
                     pull(version)
   valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
 
-  limit <- page_size
-  offset <- (page_state() - 1) * page_size
+  limit <- values_page_size
+  offset <- (values_page_state() - 1) * values_page_size
 
   query_str <- paste0("
     SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\"
@@ -264,7 +239,7 @@ capstat_total_count <- reactive({
                 searchable = TRUE,
                 striped = TRUE,
                 showSortIcon = TRUE,
-                defaultPageSize = page_size
+                defaultPageSize = values_page_size
     )
   })
 
