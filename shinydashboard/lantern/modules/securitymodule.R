@@ -55,9 +55,27 @@ securitymodule <- function(
   page_size <- 10
   page_state <- reactiveVal(1)
 
-  total_pages <- reactive({
-    max(1, ceiling(nrow(selected_endpoints()) / page_size))
-  })
+total_pages <- reactive({
+  req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
+
+  versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
+  vendor_filter <- if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+    paste0("AND vendor_name = '", sel_vendor(), "'")
+  } else {
+    ""
+  }
+
+  query <- paste0(
+    "SELECT COUNT(*) as count 
+     FROM selected_security_endpoints_mv 
+     WHERE fhir_version IN (", versions, ") 
+       AND code = '", sel_auth_type_code(), "' ",
+    vendor_filter
+  )
+
+  count <- tbl(db_connection, sql(query)) %>% collect() %>% pull(count)
+  max(1, ceiling(count / page_size))
+})
 
   # Update page selector max when total pages change
   observe({
@@ -117,49 +135,44 @@ securitymodule <- function(
     isolate(get_endpoint_security_counts(db_connection))
   )
 
-  securityPageSizeNum <- reactiveVal(NULL)
-
   # url requested version is default set to None since this table filters on requested_version = 'None'
   selected_endpoints <- reactive({
-  # Set default page size if needed
-  if (is.null(securityPageSizeNum())) {
-    securityPageSizeNum(10)
-  }
   # Ensure required reactive values are available
   req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
-  # Query the materialized view directly
-  res <- tbl(db_connection, sql("SELECT url_modal as url, 
-                                 condensed_organization_names, 
-                                 vendor_name, 
-                                 capability_fhir_version, 
-                                 fhir_version, 
-                                 tls_version, 
-                                 code 
-                          FROM selected_security_endpoints_mv")) %>%
-    collect()
-  # Apply filters based on user selections
-  res <- res %>% filter(fhir_version %in% sel_fhir_version())
-  if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-    res <- res %>% filter(vendor_name == sel_vendor())
+
+  versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
+  vendor_filter <- if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+    paste0("AND vendor_name = '", sel_vendor(), "'")
+  } else {
+    ""
   }
-  res <- res %>%
-    filter(code == sel_auth_type_code()) %>%
-    distinct(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code) %>%
-    select(url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code)
-  return(res)
+  
+  limit <- page_size
+  offset <- (page_state() - 1) * page_size
+  
+  # Query the materialized view directly
+  query <- paste0(
+    "SELECT url_modal as url, 
+            condensed_organization_names, 
+            vendor_name, 
+            capability_fhir_version, 
+            tls_version, 
+            code 
+     FROM selected_security_endpoints_mv 
+     WHERE fhir_version IN (", versions, ") 
+       AND code = '", sel_auth_type_code(), "' ",
+       vendor_filter, 
+     " ORDER BY url_modal 
+       LIMIT ", limit, " OFFSET ", offset
+  )
+
+  tbl(db_connection, sql(query)) %>% collect()
+
+  # TODO do we need distinct? this was there previously
 })
 
-  # Paginate using R slicing
-  paged_endpoints <- reactive({
-    data <- selected_endpoints()
-    start <- (page_state() - 1) * page_size + 1
-    end <- min(nrow(data), page_state() * page_size)
-    if (nrow(data) == 0 || start > nrow(data)) return(data[0, ])
-    data[start:end, ]
-  })
-
   output$security_endpoints <-  reactable::renderReactable({
-    reactable(paged_endpoints(),
+    reactable(selected_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
                   condensed_organization_names = colDef(name = "Organization", html = TRUE),
@@ -173,11 +186,6 @@ securitymodule <- function(
                 showSortIcon = TRUE,
                 defaultPageSize = page_size
     )
-  })
-
-  observeEvent(input$security_endpoints_state$length, {
-    page <- input$security_endpoints_state$length
-    securityPageSizeNum(page)
   })
 
 }
