@@ -43,6 +43,24 @@ validationsmodule_UI <- function(id) {
         htmlOutput(ns("failure_table_subtitle")),
         tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
         reactable::reactableOutput(ns("validation_failure_table")),
+        fluidRow(
+          column(3, 
+            div(style = "display: flex; justify-content: flex-start;", 
+                uiOutput(ns("prev_page_ui"))
+            )
+          ),
+          column(6,
+            div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+                numericInput(ns("page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
+                textOutput(ns("current_page_info"), inline = TRUE)
+            )
+          ),
+          column(3, 
+            div(style = "display: flex; justify-content: flex-end;",
+                uiOutput(ns("next_page_ui"))
+            )
+          )
+        ),
         p("A green check icon indicates that an endpoint has successfully returned a Conformance Resource/Capability Statement. A red X icon indicates the endpoint did not return a Conformance Resource/Capability Statement.")
       )
     )
@@ -58,6 +76,68 @@ validationsmodule <- function(
   sel_validation_group
 ) {
   ns <- session$ns
+  page_size <- 10
+  page_state <- reactiveVal(1)
+
+  total_pages <- reactive({
+    max(1, ceiling(nrow(failed_validation_results()) / page_size))
+  })
+
+  # Update page selector max when total pages change
+  observe({
+    updateNumericInput(session, "page_selector", value = page_state(), max = total_pages())
+  })
+
+  # Handle page selector input
+  observeEvent(input$page_selector, {
+    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
+      new_page <- max(1, min(input$page_selector, total_pages()))
+      page_state(new_page)
+      
+      # Update the input if user entered invalid value
+      if (new_page != input$page_selector) {
+        updateNumericInput(session, "page_selector", value = new_page)
+      }
+    }
+  })
+
+  output$prev_page_ui <- renderUI({
+    if (page_state() > 1) {
+      actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL
+    }
+  })
+
+  output$next_page_ui <- renderUI({
+    if (page_state() < total_pages()) {
+      actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL
+    }
+  })
+
+  observeEvent(input$next_page, {
+    message("NEXT PAGE BUTTON CLICKED")
+    if (page_state() < total_pages()) {
+      new_page <- page_state() + 1
+      page_state(new_page)
+      updateNumericInput(session, "page_selector", value = new_page)
+    }
+  })
+
+  observeEvent(input$prev_page, {
+    message("PREV PAGE BUTTON CLICKED")
+    if (page_state() > 1) {
+      new_page <- page_state() - 1
+      page_state(new_page)
+      updateNumericInput(session, "page_selector", value = new_page)
+    }
+  })
+  
+  output$current_page_info <- renderText({
+    paste("Page", page_state(), "of", total_pages())
+  })
 
   output$anchorpoint <- renderUI({
     HTML("<span id='anchorid'></span>")
@@ -65,6 +145,12 @@ validationsmodule <- function(
 
   output$anchorlink <- renderUI({
     HTML("<p>See additional validation details and failure information <a class=\"lantern-url\" href='#anchorid'>below</a></p>")
+  })
+
+
+  # Reset page to 1 whenever filters or selected rule changes
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_validation_group(), getReactableState("validation_details_table")$selected), {
+    page_state(1)
   })
 
   # Function to directly query validation results plot data from materialized view
@@ -254,6 +340,15 @@ validationsmodule <- function(
     return(res)
   })
 
+  # Paginate using R slicing
+  paged_failed_validation_results <- reactive({
+    all_data <- failed_validation_results()
+    start <- (page_state() - 1) * page_size + 1
+    end <- min(nrow(all_data), page_state() * page_size)
+    if (nrow(all_data) == 0 || start > nrow(all_data)) return(all_data[0, ])
+    all_data[start:end, ]
+  })
+
   output$validation_details_table <-  reactable::renderReactable({
     reactable(validation_details() %>% select(entry),
               columns = list(
@@ -335,7 +430,7 @@ validationsmodule <- function(
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
   output$validation_failure_table <- reactable::renderReactable({
-    reactable(failed_validation_results(),
+    reactable(paged_failed_validation_results(),
               defaultColDef = colDef(
                 style = function(value, index) {
                   if (failed_validation_results()$fhir_version[index] == "No Cap Stat") {
