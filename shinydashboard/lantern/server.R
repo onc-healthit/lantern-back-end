@@ -71,6 +71,13 @@ selected_fhir_endpoint_profiles <- reactive({
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
+  # reset endpoints module inputs when navigating again to endpoints tab
+  observeEvent(input$side_menu, {
+      if (input$side_menu == "endpoints_tab") { 
+        updateTextInput(session, "endpoints_page-search_query", value = "")
+      }
+  }, ignoreInit = TRUE)
+
   callModule(
         dashboard,
         "dashboard_page",
