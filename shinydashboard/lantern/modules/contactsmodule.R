@@ -75,13 +75,18 @@ contactsmodule <- function(
       actionButton(ns("contacts_next_page"), "Next", icon = icon("arrow-right"))
     })
 
-    # Main data query with LIMIT OFFSET pagination
+    # Main data query for pagination and filtering
     selected_contacts <- reactive({
         req(sel_fhir_version(), sel_vendor(), sel_has_contact())
         
         contacts_offset <- (contacts_page_state() - 1) * contacts_page_size
         
-        query_str <- "SELECT * FROM mv_contacts_info WHERE fhir_version IN ({vals*})"
+        # ESSENTIAL CHANGE: Get unique URLs first, then paginate
+        query_str <- "
+        SELECT DISTINCT ON (url) *
+        FROM mv_contacts_info 
+        WHERE fhir_version IN ({vals*})"
+        
         params <- list(vals = sel_fhir_version())
 
         if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -89,36 +94,35 @@ contactsmodule <- function(
             params$vendor <- sel_vendor()
         }
 
-        # Add LIMIT OFFSET for pagination
-        query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
+        # Apply has_contact filter at DATABASE level
+        if (sel_has_contact() != "Any") {
+            if (sel_has_contact() == "True") {
+                query_str <- paste0(query_str, " AND has_contact = TRUE")
+            } else {
+                query_str <- paste0(query_str, " AND has_contact = FALSE")
+            }
+        }
+
+        # Add ordering and pagination
+        query_str <- paste0(query_str, " 
+        ORDER BY url, contact_preference
+        LIMIT {limit} OFFSET {offset}")
+        
         params$limit <- contacts_page_size
         params$offset <- contacts_offset
 
         query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
         res <- tbl(db_connection, sql(query)) %>% collect()
 
+        # Process the results - no need for grouping/distinct since SQL handles it
         res <- res %>%
-            arrange(contact_preference) %>%
-            group_by(url) %>%
-            mutate(num_contacts = n()) %>%
-            distinct(url, .keep_all = TRUE) %>%
-            mutate(linkurl = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>"))
-
-        res <- res %>%
+            mutate(linkurl = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
             rowwise() %>%
-                mutate(has_contact = (!is.na(contact_name) || !is.na(contact_type) || !is.na(contact_value))) %>%
-                mutate(contact_name = ifelse(is.na(contact_name), ifelse(is.na(contact_value), "-", "N/A"), toString(contact_name))) %>%
-                mutate(contact_type = ifelse(is.na(contact_type), "-", toString(contact_type))) %>%
-                mutate(contact_value = ifelse(is.na(contact_value), "-", toString(contact_value))) %>%
-                mutate(condensed_endpoint_names = ifelse(length(endpoint_names) > 0, ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", url, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names), endpoint_names))
-
-        res <- res %>%
-            rowwise() %>%
+            mutate(contact_name = ifelse(is.na(contact_name), ifelse(is.na(contact_value), "-", "N/A"), toString(contact_name))) %>%
+            mutate(contact_type = ifelse(is.na(contact_type), "-", toString(contact_type))) %>%
+            mutate(contact_value = ifelse(is.na(contact_value), "-", toString(contact_value))) %>%
+            mutate(condensed_endpoint_names = ifelse(length(endpoint_names) > 0, ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 5, paste0(paste0(head(strsplit(endpoint_names, ";")[[1]], 5), collapse = ";"), "; ", paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing the endpoint's entire list of API information source names.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_details\',&quot;", url, "&quot,{priority: \'event\'});\"> Click For More... </a>")), endpoint_names), endpoint_names)) %>%
             mutate(show_all = ifelse(has_contact, paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to show all contact information.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_contact_modal\',&quot;", url, "&quot,{priority: \'event\'});\"> Show All Contacts </a>"), "-"))
-
-        if (sel_has_contact() != "Any") {
-            res <- res %>% filter(ifelse(sel_has_contact() == "True", has_contact == TRUE, has_contact == FALSE))
-        }
 
         res
     })
