@@ -1411,5 +1411,3 @@ output$filter_profile_table <- DT::renderDataTable({
     class = 'stripe hover compact'
   )
 })
-
-}

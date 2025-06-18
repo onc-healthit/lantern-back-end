@@ -15,6 +15,23 @@ organizationsmodule_UI <- function(id) {
       p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
       reactable::reactableOutput(ns("endpoint_list_orgs_table")),
       htmlOutput(ns("note_text"))
+    ),
+    fluidRow(
+      column(3, 
+        div(style = "display: flex; justify-content: flex-start;", 
+            uiOutput(ns("org_prev_button_ui"))
+        )
+      ),
+      column(6,
+        div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+            textOutput(ns("org_page_info"), inline = TRUE)
+        )
+      ),
+      column(3, 
+        div(style = "display: flex; justify-content: flex-end;",
+            uiOutput(ns("org_next_button_ui"))
+        )
+      )
     )
   )
 }
@@ -29,25 +46,120 @@ organizationsmodule <- function(
 ) {
   ns <- session$ns
 
+  org_page_state <- reactiveVal(1)
+  org_page_size <- 10
 
- selected_endpoint_list_orgs <- reactive({
+  # Calculate total pages based on filtered data
+  org_total_pages <- reactive({
+    fhir_versions <- sel_fhir_version()
+    vendor <- sel_vendor()
+
+    req(sel_fhir_version(), sel_vendor())
+
+    versions_filter <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+    vendor_filter <- if (vendor != ui_special_values$ALL_DEVELOPERS) {
+      paste0("AND vendor_name = '", vendor, "'")
+    } else {
+      ""
+    }
+
+    count_query <- paste0("
+      SELECT COUNT(*) as count FROM (
+        SELECT DISTINCT organization_name, organization_id, url, fhir_version, vendor_name
+        FROM mv_endpoint_list_organizations
+        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, "
+      ) AS subquery
+    ")
+
+    count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+    max(1, ceiling(count / org_page_size))
+  })
+
+  # Handle next page button
+  observeEvent(input$org_next_page, {
+    message("NEXT PAGE BUTTON CLICKED")
+    if (org_page_state() < org_total_pages()) {
+      new_page <- org_page_state() + 1
+      org_page_state(new_page)
+    }
+  })
+
+  # Handle previous page button
+  observeEvent(input$org_prev_page, {
+    message("PREV PAGE BUTTON CLICKED")
+    if (org_page_state() > 1) {
+      new_page <- org_page_state() - 1
+      org_page_state(new_page)
+    }
+  })
+
+  # Reset to first page on any filter/search change 
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence()), {
+    org_page_state(1)
+  })
+
+  output$org_prev_button_ui <- renderUI({
+    if (org_page_state() > 1) {
+      actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$org_next_button_ui <- renderUI({
+    if (org_page_state() < org_total_pages()) {
+      actionButton(ns("org_next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$org_page_info <- renderText({
+    paste(org_page_state(), "of", org_total_pages())
+  })
+
+ paged_endpoint_list_orgs <- reactive({
       # Get current filter values
       current_fhir <- sel_fhir_version()
       current_vendor <- sel_vendor()
 
       req(current_fhir, current_vendor)
 
-      # Get filtered data from the materialized view function
-      res <- get_endpoint_list_matches(
-        db_connection,
-        fhir_version = current_fhir,
-        vendor = current_vendor
-      )
+      versions_filter <- paste0("('", paste(current_fhir, collapse = "', '"), "')")
+      vendor_filter <- if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
+        paste0("AND vendor_name = '", current_vendor, "'")
+      } else {
+        ""
+      }
+
+      limit <- org_page_size
+      offset <- (org_page_state() - 1) * org_page_size
+
+      # Get paginated, filtered data from the materialized view using sql
+      query <- paste0("
+        SELECT DISTINCT 
+          CASE 
+            WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
+            ELSE organization_name
+          END AS organization_name,
+          organization_id,
+          url,
+          fhir_version,
+          vendor_name
+        FROM mv_endpoint_list_organizations
+        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, "
+        ORDER BY organization_name
+        LIMIT ", limit, " OFFSET ", offset)
+
+      # Collect the data after applying filters in SQL
+      res <- tbl(db_connection, sql(query)) %>%
+        collect()
 
       # Format URL for HTML display with modal popup
       res <- res %>%
         mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
-      
+    
+      # Format popup for HTI-1 data
       res <- res %>%
         mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
       
@@ -56,24 +168,21 @@ organizationsmodule <- function(
 
 
   output$endpoint_list_orgs_table <- reactable::renderReactable({
-     # Get all data
-     display_data <- selected_endpoint_list_orgs()
 
-     if (nrow(display_data) == 0) {
-       return(
-         reactable(
-           data.frame(Message = "No data matching the selected filters"),
-           pagination = FALSE,
-           searchable = FALSE
-         )
-       )
-     }
+    display_data <- paged_endpoint_list_orgs()
+    
+    if (nrow(display_data) == 0) {
+      return(
+        reactable(
+          data.frame(Message = "No data matching the selected filters"),
+          pagination = FALSE,
+          searchable = FALSE
+        )
+      )
+    }
 
      reactable(
-       display_data %>% 
-         select(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
-         distinct(organization_name, organization_id, url, fhir_version, vendor_name) %>% 
-         group_by(organization_name),
+       display_data,
        defaultColDef = colDef(
          align = "center"
        ),
@@ -87,14 +196,11 @@ organizationsmodule <- function(
        ),
        groupBy = c("organization_name"),
        striped = TRUE,
-       searchable = TRUE,
+       searchable = FALSE,
        showSortIcon = TRUE,
        highlight = TRUE,
-       defaultPageSize = 10,
-       showPageSizeOptions = TRUE,
-       pageSizeOptions = c(10, 25, 50, 100),
-       minRows = 10,
-       paginationType = "jump"
+       pagination = FALSE,
+       defaultExpanded = TRUE
      )
    })
 
