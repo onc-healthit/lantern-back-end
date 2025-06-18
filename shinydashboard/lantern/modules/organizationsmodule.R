@@ -12,6 +12,11 @@ organizationsmodule_UI <- function(id) {
       h2("Endpoint List Organizations")
     ),
     fluidRow(
+      column(6, 
+        textInput(ns("org_search_query"), "Search Organizations")
+      )
+    ),
+    fluidRow(
       p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
       reactable::reactableOutput(ns("endpoint_list_orgs_table")),
       htmlOutput(ns("note_text"))
@@ -24,6 +29,7 @@ organizationsmodule_UI <- function(id) {
       ),
       column(6,
         div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+            numericInput(ns("org_page_selector"), label = NULL, value = 1, min = 1, step = 1, width = "80px"),
             textOutput(ns("org_page_info"), inline = TRUE)
         )
       ),
@@ -49,6 +55,20 @@ organizationsmodule <- function(
   org_page_state <- reactiveVal(1)
   org_page_size <- 10
 
+  org_search_filter <- reactive({
+    term <- input$org_search_query
+    if (!is.null(term) && term != "") {
+      paste0("AND (",
+        "organization_name ILIKE '%", term, "%' OR ",
+        "organization_id ILIKE '%", term, "%' OR ",
+        "url ILIKE '%", term, "%' OR ",
+        "fhir_version ILIKE '%", term, "%' OR ",
+        "vendor_name ILIKE '%", term, "%')")
+    } else {
+      ""
+    }
+  })
+
   # Calculate total pages based on filtered data
   org_total_pages <- reactive({
     fhir_versions <- sel_fhir_version()
@@ -63,11 +83,13 @@ organizationsmodule <- function(
       ""
     }
 
+    search_filter <- org_search_filter()
+
     count_query <- paste0("
       SELECT COUNT(*) as count FROM (
         SELECT DISTINCT organization_name, organization_id, url, fhir_version, vendor_name
         FROM mv_endpoint_list_organizations
-        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, "
+        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, " ", search_filter, "
       ) AS subquery
     ")
 
@@ -94,9 +116,29 @@ organizationsmodule <- function(
   })
 
   # Reset to first page on any filter/search change 
-  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence()), {
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence(), input$org_search_query), {
     org_page_state(1)
+    updateNumericInput(session, "org_page_selector", value = 1)
   })
+
+  # Sync page selector
+  observe({
+    updateNumericInput(session, "org_page_selector",
+                      max = org_total_pages(),
+                      value = org_page_state())
+  })
+
+  # Manual page input
+  observeEvent(input$org_page_selector, {
+    if (!is.null(input$org_page_selector) && !is.na(input$org_page_selector)) {
+      new_page <- max(1, min(input$org_page_selector, org_total_pages()))
+      org_page_state(new_page)
+
+      if (new_page != input$org_page_selector) {
+        updateNumericInput(session, "org_page_selector", value = new_page)
+      }
+    }
+})
 
   output$org_prev_button_ui <- renderUI({
     if (org_page_state() > 1) {
@@ -115,7 +157,7 @@ organizationsmodule <- function(
   })
 
   output$org_page_info <- renderText({
-    paste(org_page_state(), "of", org_total_pages())
+    paste("of", org_total_pages())
   })
 
  paged_endpoint_list_orgs <- reactive({
@@ -132,6 +174,8 @@ organizationsmodule <- function(
         ""
       }
 
+      search_filter <- org_search_filter()
+
       limit <- org_page_size
       offset <- (org_page_state() - 1) * org_page_size
 
@@ -147,7 +191,7 @@ organizationsmodule <- function(
           fhir_version,
           vendor_name
         FROM mv_endpoint_list_organizations
-        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, "
+        WHERE fhir_version IN ", versions_filter, " ", vendor_filter, " ", search_filter, "
         ORDER BY organization_name
         LIMIT ", limit, " OFFSET ", offset)
 
