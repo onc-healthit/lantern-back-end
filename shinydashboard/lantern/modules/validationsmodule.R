@@ -51,6 +51,7 @@ validationsmodule_UI <- function(id) {
           ),
           column(6,
             div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+                numericInput(ns("validation_page_selector"), label = NULL, value = 1, min = 1, step = 1, width = "80px"),
                 textOutput(ns("validations_current_page_info"), inline = TRUE)
             )
           ),
@@ -110,6 +111,24 @@ validationsmodule <- function(
     max(1, ceiling(count / validations_page_size))
   })
 
+  observe({
+    updateNumericInput(session, "validation_page_selector", 
+                      max = validation_total_pages(),
+                      value = validation_page_state())
+  })
+
+  # Handle page selector input
+  observeEvent(input$validation_page_selector, {
+    if (!is.null(input$validation_page_selector) && !is.na(input$validation_page_selector)) {
+      new_page <- max(1, min(input$validation_page_selector, validation_total_pages()))
+      validation_page_state(new_page)
+
+      if (new_page != input$validation_page_selector) {
+        updateNumericInput(session, "validation_page_selector", value = new_page)
+      }
+    }
+  })
+
   output$validation_prev_page_ui <- renderUI({
     if (validation_page_state() > 1) {
       actionButton(ns("validation_prev_page"), "Previous", icon = icon("arrow-left"))
@@ -143,7 +162,7 @@ validationsmodule <- function(
   })
   
   output$validations_current_page_info <- renderText({
-    paste("Page", validation_page_state(), "of", validation_total_pages())
+    paste("of", validation_total_pages())
   })
 
   output$anchorpoint <- renderUI({
@@ -158,6 +177,7 @@ validationsmodule <- function(
   # Reset page to 1 whenever filters or selected rule changes
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_validation_group(), getReactableState("validation_details_table")$selected), {
     validation_page_state(1)
+    updateNumericInput(session, "validation_page_selector", value = 1)
   })
 
   # Function to directly query validation results plot data from materialized view
