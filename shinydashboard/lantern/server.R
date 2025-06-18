@@ -1419,6 +1419,12 @@ output$filter_profile_table <- DT::renderDataTable({
   )
 })
 
+observeEvent(input$side_menu, {
+  if (input$side_menu == "resource_tab") {
+    updateTextInput(session, "resource_page-res_search_query", value = "")
+  }
+}, ignoreInit = TRUE)
+
 # Reset search query input for values page
 observeEvent(input$side_menu, {
   if (input$side_menu == "values_tab") {
