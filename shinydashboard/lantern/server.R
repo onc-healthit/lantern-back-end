@@ -1412,4 +1412,10 @@ output$filter_profile_table <- DT::renderDataTable({
   )
 })
 
+observeEvent(input$side_menu, {
+  if (input$side_menu == "security_tab") {
+    updateTextInput(session, "security_page-security_search_query", value = "")
+  }
+}, ignoreInit = TRUE)
+
 }
