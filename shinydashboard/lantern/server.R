@@ -290,7 +290,7 @@ selected_fhir_endpoint_profiles <- reactive({
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for CapabilityStatement Size tab
-      if (input$side_menu == "capabilitystatementsize_tab") {
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "values_tab", "profile_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
