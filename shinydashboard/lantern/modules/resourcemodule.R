@@ -11,7 +11,24 @@ resourcemodule_UI <- function(id) {
       column(width = 12, style = "margin-right: 5px; margin-left: 5px;",
         tabsetPanel(id = "resource_tabset", type = "tabs",
               tabPanel("Bar Graph", uiOutput(ns("resource_full_plot"))),
-              tabPanel("Table", reactable::reactableOutput(ns("resource_op_table")))
+              tabPanel("Table", 
+                tagList(
+                  reactable::reactableOutput(ns("resource_op_table")),
+                  fluidRow(
+                    column(3, 
+                      div(style = "display: flex; justify-content: flex-start;", uiOutput(ns("prev_button_ui"))
+                      )
+                    ),
+                    column(6, 
+                      div()
+                    ),
+                    column(3, 
+                      div(style = "display: flex; justify-content: flex-end;", uiOutput(ns("next_button_ui"))
+                      )
+                    )
+                  )
+                )
+              )
         )
       )
     )
@@ -35,9 +52,45 @@ resourcemodule <- function(  #nolint
 
   ns <- session$ns
 
+  res_page_state <- reactiveVal(1)
+  res_page_size <- 10
+
+  # Handle next page button
+  observeEvent(input$res_next_page, {
+    new_page <- res_page_state() + 1
+    res_page_state(new_page)
+  })
+
+  # Handle previous page button
+  observeEvent(input$res_prev_page, {
+    if (res_page_state() > 1) {
+      new_page <- res_page_state() - 1
+      res_page_state(new_page)
+    }
+  })
+
+  output$prev_button_ui <- renderUI({
+    if (res_page_state() > 1) {
+      actionButton(ns("res_prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$next_button_ui <- renderUI({
+      actionButton(ns("res_next_page"), "Next", icon = icon("arrow-right"))
+  })
+
+  # Original select_operations function unchanged (for plots)
   select_operations <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_resources())
     get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()))
+  })
+
+  # Paginated select_operations function for the table
+  paginated_select_operations <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_resources())
+    get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), res_page_size, (res_page_state() - 1) * res_page_size)
   })
 
   number_resources <- reactive({
@@ -60,13 +113,12 @@ resourcemodule <- function(  #nolint
     if (is.null(pageSizeNum())) {
       pageSizeNum(50)
     }
-    op_table <- select_operations()
+    op_table <- paginated_select_operations()  # Use paginated data
     if ("type" %in% colnames(op_table)) {
       op_table <- op_table %>% rename("Endpoints" = n, "Resource" = type, "FHIR Version" = fhir_version)
     }
     op_table
   })
-
 
    output$resource_op_table <- reactable::renderReactable({
      reactable(
@@ -85,22 +137,20 @@ resourcemodule <- function(  #nolint
               ),
               groupBy = "Resource",
               sortable = TRUE,
-              searchable = TRUE,
+              searchable = FALSE,  # Disabled built-in search
               striped = TRUE,
               showSortIcon = TRUE,
-              defaultPageSize = isolate(pageSizeNum()),
-              showPageSizeOptions = TRUE,
-              pageSizeOptions = c(25, 50, 100, number_resources()$n - 1)
+              defaultExpanded = TRUE,
+              pagination = FALSE
 
      )
   })
 
   select_operations_count <- reactive({
-    select_operations() %>%
+    select_operations() %>%  # Use original data for plots
     rename("Endpoints" = n, "Resource" = type)  %>%
     mutate(Endpoints = as.numeric(Endpoints))
   })
-
 
   vendor <- reactive({
     sel_vendor()
