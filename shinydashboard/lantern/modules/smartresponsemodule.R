@@ -21,14 +21,24 @@ smartresponsemodule_UI <- function(id) {
     h2("Endpoints by Well Known URI support"),
     p("This is the list of endpoints which have returned a valid SMART Core Capabilities JSON document at the", code("/.well-known/smart-configuration"), " URI."),
     tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
+    fluidRow(
+      column(width = 6, textInput(ns("smartres_search_query"), "Search:", value = "")
+      )
+    ),
     reactable::reactableOutput(ns("well_known_endpoints")),
     fluidRow(
-      column(6, 
+      column(3, 
         div(style = "display: flex; justify-content: flex-start;", 
             uiOutput(ns("smartres_prev_button_ui"))
         )
       ),
-      column(6, 
+      column(6,
+        div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+            numericInput(ns("smartres_page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
+            textOutput(ns("smartres_page_info"), inline = TRUE)
+        )
+      ),
+      column(3, 
         div(style = "display: flex; justify-content: flex-end;",
             uiOutput(ns("smartres_next_button_ui"))
         )
@@ -228,7 +238,7 @@ get_well_known_endpoints_tbl <- function(db_connection) {
 
 # Modified function to support LIMIT OFFSET pagination
 get_selected_endpoints <- function(db_connection, fhir_version, vendor, limit = NULL, offset = NULL) {
-  # Build SQL query with glue_sql 
+  # Build SQL query with glue_sql
   query_str <- "SELECT url, condensed_organization_names, vendor_name, capability_fhir_version FROM mv_selected_endpoints WHERE 1=1"
   params <- list()
   
@@ -271,10 +281,39 @@ smartresponsemodule <- function(
   smartres_page_state <- reactiveVal(1)
   smartres_page_size <- 10
 
+  # Calculate total pages based on filtered data
+  smartres_total_pages <- reactive({
+    total_records <- nrow(selected_endpoints_without_limit())
+    max(1, ceiling(total_records / smartres_page_size))
+  })
+
+  # Update page selector max when total pages change
+  observe({
+    updateNumericInput(session, "smartres_page_selector", 
+                      max = smartres_total_pages(),
+                      value = smartres_page_state())
+  })
+
+  # Handle page selector input
+  observeEvent(input$smartres_page_selector, {
+    if (!is.null(input$smartres_page_selector) && !is.na(input$smartres_page_selector)) {
+      new_page <- max(1, min(input$smartres_page_selector, smartres_total_pages()))
+      smartres_page_state(new_page)
+      
+      # Update the input if user entered invalid value
+      if (new_page != input$smartres_page_selector) {
+        updateNumericInput(session, "smartres_page_selector", value = new_page)
+      }
+    }
+  })
+
   # Handle next page button
   observeEvent(input$smartres_next_page, {
-    new_page <- smartres_page_state() + 1
-    smartres_page_state(new_page)
+    if (smartres_page_state() < smartres_total_pages()) {
+      new_page <- smartres_page_state() + 1
+      smartres_page_state(new_page)
+      updateNumericInput(session, "smartres_page_selector", value = new_page)
+    }
   })
 
   # Handle previous page button
@@ -282,12 +321,14 @@ smartresponsemodule <- function(
     if (smartres_page_state() > 1) {
       new_page <- smartres_page_state() - 1
       smartres_page_state(new_page)
+      updateNumericInput(session, "smartres_page_selector", value = new_page)
     }
   })
 
-  # Reset to first page on any filter change
-  observeEvent(list(sel_fhir_version(), sel_vendor()), {
+  # Reset to first page on any filter/search change
+  observeEvent(list(sel_fhir_version(), sel_vendor(), input$smartres_search_query), {
     smartres_page_state(1)
+    updateNumericInput(session, "smartres_page_selector", value = 1)
   })
 
   output$smartres_prev_button_ui <- renderUI({
@@ -299,8 +340,15 @@ smartresponsemodule <- function(
   })
 
   output$smartres_next_button_ui <- renderUI({
-    # Always show next button - let the database handle empty results
-    actionButton(ns("smartres_next_page"), "Next", icon = icon("arrow-right"))
+    if (smartres_page_state() < smartres_total_pages()) {
+      actionButton(ns("smartres_next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$smartres_page_info <- renderText({
+    paste("of", smartres_total_pages())
   })
 
   # IN PROGRESS - need to get the correct query with smart_http_response and smart_response columns
@@ -459,7 +507,7 @@ smartresponsemodule <- function(
     selected_well_known_endpoint_counts()
   )
 
-  # Modified selected_endpoints with LIMIT OFFSET pagination
+  # Modified selected_endpoints with LIMIT OFFSET pagination and search
   selected_endpoints <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
@@ -467,17 +515,77 @@ smartresponsemodule <- function(
     
     smartres_offset <- (smartres_page_state() - 1) * smartres_page_size
     
-    res <- get_selected_endpoints(
-      db_connection,
-      fhir_version = current_fhir,
-      vendor = current_vendor,
-      limit = smartres_page_size,
-      offset = smartres_offset
-    )
+    # Build SQL query 
+    query_str <- "SELECT url, condensed_organization_names, vendor_name, capability_fhir_version FROM mv_selected_endpoints WHERE 1=1"
+    params <- list()
+    
+    # Apply filtering on fhir_version
+    if (!is.null(current_fhir) && length(current_fhir) > 0) {
+      query_str <- paste0(query_str, " AND capability_fhir_version IN ({vals*})")
+      params$vals <- current_fhir
+    }
+    
+    # Apply filtering on vendor
+    if (!is.null(current_vendor) && current_vendor != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+      params$vendor <- current_vendor
+    }
+    
+    # Apply external search filter at database level 
+    if (trimws(input$smartres_search_query) != "") {
+      keyword <- tolower(trimws(input$smartres_search_query))
+      query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_organization_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search})")
+      params$search <- paste0("%", keyword, "%")
+    }
+    
+    # Add LIMIT OFFSET for pagination
+    query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
+    params$limit <- smartres_page_size
+    params$offset <- smartres_offset
+    
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    res <- tbl(db_connection, sql(query)) %>% collect()
 
     # Format the URL for HTML display with a modal popup.
     res <- res %>%
       mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+    
+    res
+  })
+
+  # Query without limit for total count calculation
+  selected_endpoints_without_limit <- reactive({
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+    req(current_fhir, current_vendor)
+    
+    # Same query as main but without LIMIT OFFSET
+    query_str <- "SELECT url, condensed_organization_names, vendor_name, capability_fhir_version FROM mv_selected_endpoints WHERE 1=1"
+    params <- list()
+    
+    # Apply filtering on fhir_version
+    if (!is.null(current_fhir) && length(current_fhir) > 0) {
+      query_str <- paste0(query_str, " AND capability_fhir_version IN ({vals*})")
+      params$vals <- current_fhir
+    }
+    
+    # Apply filtering on vendor
+    if (!is.null(current_vendor) && current_vendor != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+      params$vendor <- current_vendor
+    }
+    
+    # Apply external search filter at database level
+    if (trimws(input$smartres_search_query) != "") {
+      keyword <- tolower(trimws(input$smartres_search_query))
+      query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_organization_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search})")
+      params$search <- paste0("%", keyword, "%")
+    }
+    
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    res <- tbl(db_connection, sql(query)) %>% collect()
     
     res
   })
