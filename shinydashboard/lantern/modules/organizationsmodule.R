@@ -177,7 +177,7 @@ organizationsmodule <- function(
       search_filter <- org_search_filter()
 
       limit <- org_page_size
-      offset <- (org_page_state() - 1) * org_page_size
+      offset <- ((org_page_state() - 1) * org_page_size) + 20
 
       # Get paginated, filtered data from the materialized view using sql
       query <- paste0("
