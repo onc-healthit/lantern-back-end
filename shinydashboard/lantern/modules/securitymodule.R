@@ -161,7 +161,16 @@ securitymodule <- function(
   })
 
   security_total_pages <- reactive({
-    count_query <- paste0("SELECT COUNT(*) as count ", security_base_sql())
+    # FIX: Also add DISTINCT to the count query
+    count_query <- paste0("SELECT COUNT(*) as count FROM (
+                            SELECT DISTINCT url_modal, 
+                                   condensed_organization_names, 
+                                   vendor_name, 
+                                   capability_fhir_version, 
+                                   tls_version, 
+                                   code ",
+                          security_base_sql(),
+                          ") AS distinct_results")
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / security_page_size))
   })
@@ -170,9 +179,8 @@ securitymodule <- function(
     limit <- security_page_size
     offset <- (security_page_state() - 1) * security_page_size
 
-    # TODO do we need distinct? this was there previously
     query <- paste0(
-      "SELECT url_modal as url, 
+      "SELECT DISTINCT url_modal as url, 
               condensed_organization_names, 
               vendor_name, 
               capability_fhir_version, 
