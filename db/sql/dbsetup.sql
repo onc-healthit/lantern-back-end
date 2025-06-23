@@ -1481,6 +1481,7 @@ SELECT
     "Developer",
     "FHIR Version",
     field,
+    CASE WHEN COALESCE(field_value, '[Empty]') = '[Empty]' THEN 'no' ELSE 'yes' END AS is_used,
     COALESCE(field_value, '[Empty]') AS field_value,
     COUNT(DISTINCT endpoint_id)::INT AS "Endpoints"  -- Explicitly cast to INT
 FROM field_combinations
@@ -1492,6 +1493,8 @@ CREATE INDEX idx_selected_fhir_endpoints_dev ON selected_fhir_endpoints_values_m
 CREATE INDEX idx_selected_fhir_endpoints_fhir_version ON selected_fhir_endpoints_values_mv("FHIR Version");
 CREATE INDEX idx_selected_fhir_endpoints_field ON selected_fhir_endpoints_values_mv(Field);
 CREATE INDEX idx_selected_fhir_endpoints_field_value ON selected_fhir_endpoints_values_mv(field_value);
+CREATE INDEX idx_selected_fhir_endpoints_is_used ON selected_fhir_endpoints_values_mv(is_used);
+CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv (field, "FHIR Version", "Developer", is_used);
 
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);
