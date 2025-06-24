@@ -39,10 +39,24 @@ function(input, output, session) { #nolint
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
-  # reset endpoints module inputs when navigating again to endpoints tab
+  # Reset search query inputs when navigating between tabs
   observeEvent(input$side_menu, {
-      if (input$side_menu == "endpoints_tab") { 
-        updateTextInput(session, "endpoints_page-search_query", value = "")
+      
+      # Map of tab to search input ID
+      search_inputs <- list(
+        "endpoints_tab" = "endpoints_page-search_query",
+        "organizations_tab" = "organizations_page-org_search_query", 
+        "resource_tab" = "resource_page-res_search_query",
+        "values_tab" = "values_page-values_search_query",
+        "profile_tab" = "profile_page-profile_search_query",
+        "security_tab" = "security_page-security_search_query",
+        "smartresponse_tab" = "smartresponse_page-smartres_search_query",
+        "contacts_tab" = "contacts_page-contacts_search_query"
+      )
+      
+      # Reset search input for current tab
+      if (input$side_menu %in% names(search_inputs)) {
+        updateTextInput(session, search_inputs[[input$side_menu]], value = "")
       }
   }, ignoreInit = TRUE)
 
@@ -1416,32 +1430,5 @@ output$endpoint_list_orgs_table <- DT::renderDataTable({
     class = 'stripe hover compact'
   )
 })
-
-
-observeEvent(input$side_menu, {
-  if (input$side_menu == "resource_tab") {
-    updateTextInput(session, "resource_page-res_search_query", value = "")
-  }
-}, ignoreInit = TRUE)
-
-# Reset search query input for values page
-observeEvent(input$side_menu, {
-  if (input$side_menu == "values_tab") {
-    updateTextInput(session, "values_page-values_search_query", value = "")
-  }
-}, ignoreInit = TRUE)
-
-observeEvent(input$side_menu, {
-  if (input$side_menu == "security_tab") {
-    updateTextInput(session, "security_page-security_search_query", value = "")
-  }
-}, ignoreInit = TRUE)
-
-# Reset search query input for organizations page
-  observeEvent(input$side_menu, {
-      if (input$side_menu == "organizations_tab") { 
-        updateTextInput(session, "organizations_page-org_search_query", value = "")
-      }
-  }, ignoreInit = TRUE)
 
 }
