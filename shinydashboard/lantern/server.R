@@ -8,38 +8,6 @@ library(dygraphs)
 # Define server function
 function(input, output, session) { #nolint
 
-# selected_fhir_endpoint_profiles <- reactive({
-#     res <- get_supported_profiles(db_connection)
-#     req(input$fhir_version, input$vendor)
-
-#     res <- res %>% filter(fhir_version %in% input$fhir_version)
-
-#     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-#       res <- res %>% filter(vendor_name == input$vendor)
-#     }
-
-#      if (length(input$profile_resource) > 0) {
-#         if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
-#           res <- res %>% filter(resource == input$profile_resource)
-#         }
-#     }
-
-#     if (length(input$profiles) > 0) {
-#         if (input$profiles != ui_special_values$ALL_PROFILES) {
-#         res <- res %>% filter(profileurl == input$profiles)
-#         }
-#     }
-
-#     res <- res %>%
-#     distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
-#     select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
-#     group_by(url) %>%
-#     mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-#     mutate_at(vars(-group_cols()), as.character)
-
-#     return(res)
-#   })
-
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
@@ -1378,47 +1346,6 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       easyClose = TRUE
     ))
   })
-
-# output$filter_profile_table <- DT::renderDataTable({
-#   df <- selected_fhir_endpoint_profiles()
-
-#   if (nrow(df) == 0) {
-#     return(DT::datatable(
-#       data.frame(Message = "No data matching the selected filters"),
-#       options = list(dom = 't'),  # show only the table
-#       rownames = FALSE
-#     ))
-#   }
-
-#   DT::datatable(
-#     df,
-#     rownames = FALSE,
-#     filter = 'top',
-#     options = list(
-#       pageLength = 10,
-#       lengthMenu = c(10, 25, 50, 100),
-#       autoWidth = TRUE,
-#       scrollX = TRUE,
-#       order = list(),
-#       columnDefs = list(
-#         list(className = 'dt-center', targets = "_all"),
-#         list(className = 'dt-left', targets = which(colnames(df) == "url")),
-#         list(width = '300px', targets = which(colnames(df) == "url")),
-#         list(width = '250px', targets = which(colnames(df) == "profileurl"))
-#       )
-#     ),
-#     colnames = c(
-#       "Endpoint URL",
-#       "Profile URL", 
-#       "Profile Name",
-#       "Resource",
-#       "FHIR Version",
-#       "Certified API Developer Name"
-#     ),
-#     escape = FALSE,
-#     class = 'stripe hover compact'
-#   )
-# })
 
 selected_endpoint_list_orgs <- reactive({
   req(input$fhir_version, input$vendor)
