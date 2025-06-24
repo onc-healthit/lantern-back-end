@@ -581,6 +581,22 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_selected
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_selected_fhir_endpoints_field_value." >> $log_file
 }
 
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_selected_fhir_endpoints_is_used;" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_selected_fhir_endpoints_is_used." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_selected_fhir_endpoints_is_used ON selected_fhir_endpoints_values_mv(is_used);" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_selected_fhir_endpoints_is_used." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_summary_query;" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_summary_query." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv(field, "FHIR Version", "Developer", is_used);" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_summary_query." >> $log_file
+}
+
 # Refresh mv_endpoint_organization_tbl
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_organization_tbl;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_organization_tbl." >> $log_file
