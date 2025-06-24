@@ -8,6 +8,38 @@ library(dygraphs)
 # Define server function
 function(input, output, session) { #nolint
 
+selected_fhir_endpoint_profiles <- reactive({
+    res <- get_supported_profiles(db_connection)
+    req(input$fhir_version, input$vendor)
+
+    res <- res %>% filter(fhir_version %in% input$fhir_version)
+
+    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+      res <- res %>% filter(vendor_name == input$vendor)
+    }
+
+     if (length(input$profile_resource) > 0) {
+        if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
+          res <- res %>% filter(resource == input$profile_resource)
+        }
+    }
+
+    if (length(input$profiles) > 0) {
+        if (input$profiles != ui_special_values$ALL_PROFILES) {
+        res <- res %>% filter(profileurl == input$profiles)
+        }
+    }
+
+    res <- res %>%
+    distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
+    select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
+    group_by(url) %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+    mutate_at(vars(-group_cols()), as.character)
+
+    return(res)
+  })
+
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
@@ -39,24 +71,10 @@ function(input, output, session) { #nolint
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
-  # Reset search query inputs when navigating between tabs
+  # reset endpoints module inputs when navigating again to endpoints tab
   observeEvent(input$side_menu, {
-      
-      # Map of tab to search input ID
-      search_inputs <- list(
-        "endpoints_tab" = "endpoints_page-search_query",
-        "organizations_tab" = "organizations_page-org_search_query", 
-        "resource_tab" = "resource_page-res_search_query",
-        "values_tab" = "values_page-values_search_query",
-        "profile_tab" = "profile_page-profile_search_query",
-        "security_tab" = "security_page-security_search_query",
-        "smartresponse_tab" = "smartresponse_page-smartres_search_query",
-        "contacts_tab" = "contacts_page-contacts_search_query"
-      )
-      
-      # Reset search input for current tab
-      if (input$side_menu %in% names(search_inputs)) {
-        updateTextInput(session, search_inputs[[input$side_menu]], value = "")
+      if (input$side_menu == "endpoints_tab") { 
+        updateTextInput(session, "endpoints_page-search_query", value = "")
       }
   }, ignoreInit = TRUE)
 
@@ -272,7 +290,7 @@ function(input, output, session) { #nolint
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for CapabilityStatement Size tab
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "values_tab", "profile_tab")) {
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
@@ -1359,5 +1377,72 @@ output$endpoint_http_response_table <- reactable::renderReactable({
       easyClose = TRUE
     ))
   })
+
+output$filter_profile_table <- DT::renderDataTable({
+  df <- selected_fhir_endpoint_profiles()
+
+  if (nrow(df) == 0) {
+    return(DT::datatable(
+      data.frame(Message = "No data matching the selected filters"),
+      options = list(dom = 't'),  # show only the table
+      rownames = FALSE
+    ))
+  }
+
+  DT::datatable(
+    df,
+    rownames = FALSE,
+    filter = 'top',
+    options = list(
+      pageLength = 10,
+      lengthMenu = c(10, 25, 50, 100),
+      autoWidth = TRUE,
+      scrollX = TRUE,
+      order = list(),
+      columnDefs = list(
+        list(className = 'dt-center', targets = "_all"),
+        list(className = 'dt-left', targets = which(colnames(df) == "url")),
+        list(width = '300px', targets = which(colnames(df) == "url")),
+        list(width = '250px', targets = which(colnames(df) == "profileurl"))
+      )
+    ),
+    colnames = c(
+      "Endpoint URL",
+      "Profile URL", 
+      "Profile Name",
+      "Resource",
+      "FHIR Version",
+      "Certified API Developer Name"
+    ),
+    escape = FALSE,
+    class = 'stripe hover compact'
+  )
+})
+
+observeEvent(input$side_menu, {
+  if (input$side_menu == "resource_tab") {
+    updateTextInput(session, "resource_page-res_search_query", value = "")
+  }
+}, ignoreInit = TRUE)
+
+# Reset search query input for values page
+observeEvent(input$side_menu, {
+  if (input$side_menu == "values_tab") {
+    updateTextInput(session, "values_page-values_search_query", value = "")
+  }
+}, ignoreInit = TRUE)
+
+observeEvent(input$side_menu, {
+  if (input$side_menu == "security_tab") {
+    updateTextInput(session, "security_page-security_search_query", value = "")
+  }
+}, ignoreInit = TRUE)
+
+# Reset search query input for organizations page
+  observeEvent(input$side_menu, {
+      if (input$side_menu == "organizations_tab") { 
+        updateTextInput(session, "organizations_page-org_search_query", value = "")
+      }
+  }, ignoreInit = TRUE)
 
 }
