@@ -59,30 +59,10 @@ endpointsmodule <- function(
   page_state <- reactiveVal(1)
   page_size <- 10
 
-  # Cache the distinct processed data
-  processed_distinct_data <- reactive({
-    # Get all filtered data
-    all_data <- selected_fhir_endpoints_without_limit()
-    
-    # Check if data exists and has required columns
-    if (nrow(all_data) == 0 || !"urlModal" %in% names(all_data)) {
-      return(data.frame())
-    }
-    
-    # Apply distinct operation once and cache the result
-    all_data %>% 
-      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% 
-      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>%
-      arrange(urlModal)
-  })
-
-  # Calculate total pages from cached distinct data
+  # Calculate total pages based on filtered data
   total_pages <- reactive({
-    distinct_data <- processed_distinct_data()
-    if (nrow(distinct_data) == 0) {
-      return(1)
-    }
-    max(1, ceiling(nrow(distinct_data) / page_size))
+    total_records <- nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version))
+    max(1, ceiling(total_records / page_size))
   })
 
   # Update page selector max when total pages change
@@ -98,6 +78,7 @@ endpointsmodule <- function(
       new_page <- max(1, min(input$page_selector, total_pages()))
       page_state(new_page)
       
+      # Update the input if user entered invalid value
       if (new_page != input$page_selector) {
         updateNumericInput(session, "page_selector", value = new_page)
       }
@@ -106,6 +87,7 @@ endpointsmodule <- function(
 
   # Handle next page button
   observeEvent(input$next_page, {
+    message("NEXT PAGE BUTTON CLICKED")
     if (page_state() < total_pages()) {
       new_page <- page_state() + 1
       page_state(new_page)
@@ -115,6 +97,7 @@ endpointsmodule <- function(
 
   # Handle previous page button
   observeEvent(input$prev_page, {
+    message("PREV PAGE BUTTON CLICKED")
     if (page_state() > 1) {
       new_page <- page_state() - 1
       page_state(new_page)
@@ -132,7 +115,7 @@ endpointsmodule <- function(
     if (page_state() > 1) {
       actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
     } else {
-      NULL
+      NULL  # Hide the button
     }
   })
 
@@ -140,7 +123,7 @@ endpointsmodule <- function(
     if (page_state() < total_pages()) {
       actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
     } else {
-      NULL
+      NULL  # Hide the button
     }
   })
 
@@ -156,25 +139,57 @@ endpointsmodule <- function(
     paste("Matching Endpoints:", nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version)))
   })
 
-  # PERFORMANCE OPTIMIZATION: Fast pagination from cached data
+  # Main data query with LIMIT OFFSET pagination
   selected_fhir_endpoints <- reactive({
-    distinct_data <- processed_distinct_data()
+    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
     
-    if (nrow(distinct_data) == 0) {
-      return(data.frame())
+    offset <- (page_state() - 1) * page_size
+
+    query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
+    params <- list(vals = sel_fhir_version())
+
+    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+      params$vendor <- sel_vendor()
     }
-    
-    start_row <- ((page_state() - 1) * page_size) + 1
-    end_row <- min(page_state() * page_size, nrow(distinct_data))
-    
-    if (start_row <= nrow(distinct_data)) {
-      distinct_data[start_row:end_row, ]
-    } else {
-      data.frame()
+
+    if (sel_is_chpl() != "All") {
+      query_str <- paste0(query_str, " AND is_chpl = {chpl}")
+      params$chpl <- toupper(sel_is_chpl())
     }
+
+    if (sel_availability() != "0-100") {
+      if (sel_availability() == "0" || sel_availability() == "100") {
+        query_str <- paste0(query_str, " AND availability = {availability}")
+        params$availability <- as.numeric(sel_availability())
+      } else {
+        availability_range <- strsplit(sel_availability(), "-")[[1]]
+        query_str <- paste0(query_str, " AND availability BETWEEN {low} AND {high}")
+        params$low <- as.numeric(availability_range[1])
+        params$high <- as.numeric(availability_range[2])
+      }
+    }
+
+    # Apply external search filter
+    if (trimws(input$search_query) != "") {
+      keyword <- tolower(trimws(input$search_query))
+      query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
+      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search})")
+      params$search <- paste0("%", keyword, "%")
+    }
+
+    # Add LIMIT OFFSET for pagination
+    query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
+    params$limit <- page_size
+    params$offset <- offset
+
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    res <- tbl(db_connection, sql(query)) %>% collect()
+    res
   })
 
-  # Original query - unchanged for compatibility
+  # Query without limit for total count and download
   selected_fhir_endpoints_without_limit <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
     
@@ -203,6 +218,7 @@ endpointsmodule <- function(
       }
     }
 
+    # Apply external search filter
     if (trimws(input$search_query) != "") {
       keyword <- tolower(trimws(input$search_query))
       query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
@@ -226,6 +242,7 @@ endpointsmodule <- function(
     }
   )
 
+  # Download csv of the field descriptions in the dataset csv
   output$download_descriptions <- downloadHandler(
     filename = function() {
       "fhir_endpoints_fields.csv"
@@ -236,48 +253,40 @@ endpointsmodule <- function(
   )
 
   output$endpoints_table <- reactable::renderReactable({
-    data_to_display <- selected_fhir_endpoints()
-    
-    if (nrow(data_to_display) == 0) {
-      return(
-        reactable(
-          data.frame(Message = "No data matching the selected filters"),
-          pagination = FALSE,
-          searchable = FALSE
-        )
-      )
-    }
-    
-    reactable(
-      data_to_display %>% 
-        group_by(urlModal) %>% 
-        mutate_at(vars(-group_cols()), as.character),
-      defaultColDef = colDef(align = "center"),
-      columns = list(
-        urlModal = colDef(name = "URL", minWidth = 300,
-                  style = JS("function(rowInfo, colInfo, state) {
-                          var prevRow = state.pageRows[rowInfo.viewIndex - 1]
-                          if (prevRow && rowInfo.row['urlModal'] === prevRow['urlModal']) {
-                            return { visibility: 'hidden' }
-                          }
-                        }"),
-                  sortable = TRUE, align = "left", html = TRUE),
-        endpoint_names = colDef(show = FALSE, sortable = TRUE),
-        condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = TRUE, html = TRUE),
-        vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = TRUE),
-        capability_fhir_version = colDef(name = "FHIR Version", sortable = TRUE),
-        format = colDef(name = "Supported Formats", sortable = TRUE),
-        cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = TRUE),
-        status = colDef(name = "HTTP Response", sortable = TRUE),
-        availability = colDef(name = "Availability", sortable = TRUE)
-      ),
-      searchable = FALSE,
-      showSortIcon = TRUE,
-      highlight = TRUE,
-      defaultPageSize = 10
-    )
+     reactable(
+              selected_fhir_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_at(vars(-group_cols()), as.character),
+              defaultColDef = colDef(
+                align = "center"
+              ),
+              columns = list(
+                  urlModal = colDef(name = "URL", minWidth = 300,
+                            style = JS("function(rowInfo, colInfo, state) {
+                                    var prevRow = state.pageRows[rowInfo.viewIndex - 1]
+                                    if (prevRow && rowInfo.row['urlModal'] === prevRow['urlModal']) {
+                                      return { visibility: 'hidden' }
+                                    }
+                                  }"
+                            ),
+                            sortable = TRUE,
+                            align = "left",
+                            html = TRUE),
+                  endpoint_names = colDef(show = FALSE, sortable = TRUE),
+                  condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = TRUE, html = TRUE),
+                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = TRUE),
+                  capability_fhir_version = colDef(name = "FHIR Version", sortable = TRUE),
+                  format = colDef(name = "Supported Formats", sortable = TRUE),
+                  cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = TRUE),
+                  status = colDef(name = "HTTP Response", sortable = TRUE),
+                  availability = colDef(name = "Availability", sortable = TRUE)
+              ),
+              searchable = FALSE,
+              showSortIcon = TRUE,
+              highlight = TRUE,
+              defaultPageSize = 10
+     )
   })
 
+  # Create the format for the csv
   csv_format <- reactive({
     res <- selected_fhir_endpoints_without_limit() %>%
       select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
