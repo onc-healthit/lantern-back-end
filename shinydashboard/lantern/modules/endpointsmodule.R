@@ -87,7 +87,12 @@ endpointsmodule <- function(
 
   # Handle next page button
   observeEvent(input$next_page, {
-    message("NEXT PAGE BUTTON CLICKED")
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_next_time) && 
+        (current_time - session$userData$last_next_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_next_time <- current_time
     if (page_state() < total_pages()) {
       new_page <- page_state() + 1
       page_state(new_page)
@@ -97,7 +102,12 @@ endpointsmodule <- function(
 
   # Handle previous page button
   observeEvent(input$prev_page, {
-    message("PREV PAGE BUTTON CLICKED")
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_prev_time) && 
+        (current_time - session$userData$last_prev_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_prev_time <- current_time
     if (page_state() > 1) {
       new_page <- page_state() - 1
       page_state(new_page)

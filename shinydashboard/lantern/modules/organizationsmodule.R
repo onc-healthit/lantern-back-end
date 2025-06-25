@@ -98,7 +98,12 @@ organizationsmodule <- function(
 
   # Handle next page button
   observeEvent(input$org_next_page, {
-    message("NEXT PAGE BUTTON CLICKED")
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_next_time) && 
+        (current_time - session$userData$last_next_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_next_time <- current_time
     if (org_page_state() < org_total_pages()) {
       new_page <- org_page_state() + 1
       org_page_state(new_page)
@@ -107,7 +112,12 @@ organizationsmodule <- function(
 
   # Handle previous page button
   observeEvent(input$org_prev_page, {
-    message("PREV PAGE BUTTON CLICKED")
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_prev_time) && 
+        (current_time - session$userData$last_prev_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_prev_time <- current_time
     if (org_page_state() > 1) {
       new_page <- org_page_state() - 1
       org_page_state(new_page)

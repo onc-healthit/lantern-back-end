@@ -93,12 +93,37 @@ valuesmodule <- function(
 
 
   observeEvent(input$values_next_page, {
-    if (values_page_state() < values_total_pages()) values_page_state(values_page_state() + 1)
+    # Double-click protection
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_values_next_time) && 
+        (current_time - session$userData$last_values_next_time) < 300) {
+      return()  # Ignore rapid consecutive clicks
+    }
+    session$userData$last_values_next_time <- current_time
+    
+    if (values_page_state() < values_total_pages()) {
+      new_page <- values_page_state() + 1
+      values_page_state(new_page)
+      updateNumericInput(session, "values_page_selector", value = new_page)
+    }
   })
 
   observeEvent(input$values_prev_page, {
-    if (values_page_state() > 1) values_page_state(values_page_state() - 1)
+    # Double-click protection
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_values_prev_time) && 
+        (current_time - session$userData$last_values_prev_time) < 300) {
+      return()  # Ignore rapid consecutive clicks
+    }
+    session$userData$last_values_prev_time <- current_time
+    
+    if (values_page_state() > 1) {
+      new_page <- values_page_state() - 1
+      values_page_state(new_page)
+      updateNumericInput(session, "values_page_selector", value = new_page)
+    }
   })
+
 
   output$values_page_info <- renderText({
     paste("of", values_total_pages())
@@ -218,7 +243,7 @@ paged_capstat_values <- reactive({
                   field_value = colDef(name = get_value_table_header())
                 ),
                 sortable = TRUE,
-                searchable = TRUE,
+                searchable = FALSE,
                 striped = TRUE,
                 showSortIcon = TRUE,
                 defaultPageSize = values_page_size
