@@ -8,38 +8,6 @@ library(dygraphs)
 # Define server function
 function(input, output, session) { #nolint
 
-selected_fhir_endpoint_profiles <- reactive({
-    res <- get_supported_profiles(db_connection)
-    req(input$fhir_version, input$vendor)
-
-    res <- res %>% filter(fhir_version %in% input$fhir_version)
-
-    if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
-    }
-
-     if (length(input$profile_resource) > 0) {
-        if (input$profile_resource != ui_special_values$ALL_RESOURCES) {
-          res <- res %>% filter(resource == input$profile_resource)
-        }
-    }
-
-    if (length(input$profiles) > 0) {
-        if (input$profiles != ui_special_values$ALL_PROFILES) {
-        res <- res %>% filter(profileurl == input$profiles)
-        }
-    }
-
-    res <- res %>%
-    distinct(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
-    select(url, profileurl, profilename, resource, fhir_version, vendor_name) %>%
-    group_by(url) %>%
-    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
-    mutate_at(vars(-group_cols()), as.character)
-
-    return(res)
-  })
-
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
@@ -69,6 +37,27 @@ selected_fhir_endpoint_profiles <- reactive({
   # Trigger this observer every time side_menu changes, and change the url to contain the new tab name
   observeEvent(input$side_menu, {
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
+  }, ignoreInit = TRUE)
+
+  # Reset search query inputs when navigating between tabs
+  observeEvent(input$side_menu, {
+      
+      # Map of tab to search input ID
+      search_inputs <- list(
+        "endpoints_tab" = "endpoints_page-search_query",
+        "organizations_tab" = "organizations_page-org_search_query", 
+        "resource_tab" = "resource_page-res_search_query",
+        "values_tab" = "values_page-values_search_query",
+        "profile_tab" = "profile_page-profile_search_query",
+        "security_tab" = "security_page-security_search_query",
+        "smartresponse_tab" = "smartresponse_page-smartres_search_query",
+        "contacts_tab" = "contacts_page-contacts_search_query"
+      )
+      
+      # Reset search input for current tab
+      if (input$side_menu %in% names(search_inputs)) {
+        updateTextInput(session, search_inputs[[input$side_menu]], value = "")
+      }
   }, ignoreInit = TRUE)
 
   callModule(
@@ -283,7 +272,7 @@ selected_fhir_endpoint_profiles <- reactive({
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for CapabilityStatement Size tab
-      if (input$side_menu == "capabilitystatementsize_tab") {
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "values_tab", "profile_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
@@ -1371,8 +1360,39 @@ output$endpoint_http_response_table <- reactable::renderReactable({
     ))
   })
 
-output$filter_profile_table <- DT::renderDataTable({
-  df <- selected_fhir_endpoint_profiles()
+selected_endpoint_list_orgs <- reactive({
+  req(input$fhir_version, input$vendor)
+
+  # Get filtered data
+  res <- get_endpoint_list_matches(
+    db_connection,
+    fhir_version = input$fhir_version,
+    vendor = input$vendor
+  )
+
+  display_data <- res %>%
+    mutate(organization_id = as.integer(organization_id)) %>%
+    left_join(get_org_identifiers_information(db_connection),
+              by = c("organization_id" = "org_id")) %>%
+    left_join(get_org_addresses_information(db_connection),
+              by = c("organization_id" = "org_id")) %>%
+    select(-organization_id)
+
+  # Add HTML-formatted URL
+  display_data <- display_data %>%
+    mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
+
+  # Always return a data.frame, even if empty
+  dt_data <- display_data %>%
+    mutate(address = toupper(address)) %>%
+    select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
+    distinct(organization_name, identifier, address, url, fhir_version, vendor_name)
+
+  dt_data
+})
+
+output$endpoint_list_orgs_table <- DT::renderDataTable({
+  df <- selected_endpoint_list_orgs()
 
   if (nrow(df) == 0) {
     return(DT::datatable(
@@ -1394,16 +1414,15 @@ output$filter_profile_table <- DT::renderDataTable({
       order = list(),
       columnDefs = list(
         list(className = 'dt-center', targets = "_all"),
-        list(className = 'dt-left', targets = which(colnames(df) == "url")),
-        list(width = '300px', targets = which(colnames(df) == "url")),
-        list(width = '250px', targets = which(colnames(df) == "profileurl"))
+        list(className = 'dt-left', targets = which(colnames(df) == "organization_name")),
+        list(width = '300px', targets = which(colnames(df) == "url"))
       )
     ),
     colnames = c(
-      "Endpoint URL",
-      "Profile URL", 
-      "Profile Name",
-      "Resource",
+      "Organization Name",
+      "Organization Identifier",
+      "Organization Address",
+      "URL",
       "FHIR Version",
       "Certified API Developer Name"
     ),

@@ -8,8 +8,27 @@ valuesmodule_UI <- function(id) {
     fluidRow(
       column(width = 7,
              h2("Field Values"),
-             reactable::reactableOutput(ns("capstat_values_table"))
+             textInput(ns("values_search_query"), "Search: ", value = ""),
+             reactable::reactableOutput(ns("capstat_values_table")),
+             fluidRow(
+              column(3, 
+                div(style = "display: flex; justify-content: flex-start;", 
+                    uiOutput(ns("values_prev_button_ui"))
+                )
+              ),
+              column(6,
+                div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+                    numericInput(ns("values_page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
+                    textOutput(ns("values_page_info"), inline = TRUE)
+                )
+              ),
+              column(3, 
+                div(style = "display: flex; justify-content: flex-end;",
+                    uiOutput(ns("values_next_button_ui"))
+                )
+              )
             ),
+      ),
       column(width = 5,
              h2("Endpoints that Include a Value for the Given Field"),
              uiOutput(ns("values_chart")),
@@ -28,23 +47,79 @@ valuesmodule <- function(
 ) {
 
   ns <- session$ns
+  values_page_size <- 10
+  values_page_state <- reactiveVal(1)
+
+  # Reset to first page on any filter/search change
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values(), input$values_search_query), {
+    values_page_state(1)
+    updateNumericInput(session, "values_page_selector", value = 1)
+  })
+
+  # Page navigation buttons
+  output$values_prev_button_ui <- renderUI({
+  if (values_page_state() > 1) {
+    actionButton(ns("values_prev_page"), "Previous", icon = icon("arrow-left"))
+  } else {
+    NULL
+  }
+  })
+
+  output$values_next_button_ui <- renderUI({
+    if (values_page_state() < values_total_pages()) {
+      actionButton(ns("values_next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL
+    }
+  })
+
+  # Sync page selector
+  observe({
+    updateNumericInput(session, "values_page_selector", 
+                      max = values_total_pages(),
+                      value = values_page_state())
+  })
+
+  # Manual page input
+  observeEvent(input$values_page_selector, {
+    if (!is.null(input$values_page_selector) && !is.na(input$values_page_selector)) {
+      new_page <- max(1, min(input$values_page_selector, values_total_pages()))
+      values_page_state(new_page)
+      if (new_page != input$values_page_selector) {
+        updateNumericInput(session, "values_page_selector", value = new_page)
+      }
+    }
+  })
+
+
+  observeEvent(input$values_next_page, {
+    if (values_page_state() < values_total_pages()) values_page_state(values_page_state() + 1)
+  })
+
+  observeEvent(input$values_prev_page, {
+    if (values_page_state() > 1) values_page_state(values_page_state() - 1)
+  })
+
+  output$values_page_info <- renderText({
+    paste("of", values_total_pages())
+  })
 
   get_value_versions <- reactive({
-  req(sel_capstat_values())
-  # Query the materialized view for the selected field
-  result <- tbl(db_connection, 
-                sql(paste0("SELECT unnest(fhir_versions) AS fhir_version 
-                           FROM get_value_versions_mv 
-                           WHERE field = '", sel_capstat_values(), "'"))) %>%
-    collect()
-  # Extract the versions as a character vector
-  if (nrow(result) > 0) {
-    versions <- result$fhir_version
-  } else {
-    versions <- character(0)  # Empty character vector if no results
-  }
-  return(versions)
-})
+    req(sel_capstat_values())
+    # Query the materialized view for the selected field
+    result <- tbl(db_connection, 
+                  sql(paste0("SELECT unnest(fhir_versions) AS fhir_version 
+                            FROM get_value_versions_mv 
+                            WHERE field = '", sel_capstat_values(), "'"))) %>%
+      collect()
+    # Extract the versions as a character vector
+    if (nrow(result) > 0) {
+      versions <- result$fhir_version
+    } else {
+      versions <- character(0)  # Empty character vector if no results
+    }
+    return(versions)
+  })
 
   get_value_table_header <- reactive({
     res <- isolate(get_capstat_fields(db_connection))
@@ -70,53 +145,75 @@ valuesmodule <- function(
     header
   })
 
-get_capstat_values_list <- function(capstat_values_tbl) {
-  res <- capstat_values_tbl
-}
+values_base_sql <- reactive({
+  req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
 
-selected_fhir_endpoints <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
-    # Get the selected values
-    fhir_versions <- sel_fhir_version()
-    vendor <- sel_vendor()
-    field_name <- sel_capstat_values()
-    # Create SQL for FHIR versions filtering
-    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
-    # Get the valid versions for the selected field
-    valid_versions <- tbl(db_connection, 
+  versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
+  field <- sel_capstat_values()
+  vendor <- sel_vendor()
+
+  # Valid FHIR versions for the selected field
+  valid_versions <- tbl(db_connection, 
                         sql(paste0("SELECT unnest(fhir_versions) AS version 
-                                  FROM get_value_versions_mv 
-                                  WHERE field = '", field_name, "'"))) %>%
-                      collect() %>%
-                      pull(version)
-    # Create a comma-separated string of valid versions for SQL
-    valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
-    # Build the base query with field and FHIR version filtering
-    query_str <- paste0("
-        SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\"
-        FROM selected_fhir_endpoints_values_mv
-        WHERE field = '", field_name, "'
-        AND \"FHIR Version\" IN ", fhir_versions_sql, "
-        AND \"FHIR Version\" IN ", valid_versions_sql)
-    # Add vendor filtering if needed
-    if (vendor != ui_special_values$ALL_DEVELOPERS) {
-        query_str <- paste0(query_str, " AND \"Developer\" = '", vendor, "'")
-    }
-    res <- tbl(db_connection, sql(query_str)) %>% collect()
-    return(res)
+                                    FROM get_value_versions_mv 
+                                    WHERE field = '", field, "'"))) %>%
+                    collect() %>%
+                    pull(version)
+  valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+
+  vendor_filter <- if (vendor != ui_special_values$ALL_DEVELOPERS) {
+    paste0("AND \"Developer\" = '", vendor, "'")
+  } else {
+    ""
+  }
+
+  search_filter <- ""
+  if (!is.null(input$values_search_query) && input$values_search_query != "") {
+    q <- gsub("'", "''", input$values_search_query)
+    search_filter <- paste0("AND (\"Developer\" ILIKE '%", q, "%' OR 
+                                  \"FHIR Version\" ILIKE '%", q, "%' OR 
+                                  field_value ILIKE '%", q, "%')")
+  }
+
+  paste0("FROM selected_fhir_endpoints_values_mv 
+         WHERE field = '", field, "'
+           AND \"FHIR Version\" IN ", valid_versions_sql, " 
+           AND \"FHIR Version\" IN (", versions, ") ",
+           vendor_filter, " ",
+           search_filter)
 })
 
-  capstatPageSizeNum <- reactiveVal(NULL)
+values_total_pages <- reactive({
+  count_query <- paste0("SELECT COUNT(*) as count ", values_base_sql())
+  count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+  max(1, ceiling(count / values_page_size))
+})
 
-  capstat_values_list <- reactive({
-    if (is.null(capstatPageSizeNum())) {
-      capstatPageSizeNum(10)
-    }
-    get_capstat_values_list(selected_fhir_endpoints())
-  })
+
+all_capstat_values <- reactive({
+  query <- paste0(
+    "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
+    values_base_sql()
+  )
+  tbl(db_connection, sql(query)) %>% collect()
+})
+
+paged_capstat_values <- reactive({
+  limit <- values_page_size
+  offset <- (values_page_state() - 1) * values_page_size
+
+  query <- paste0(
+    "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
+    values_base_sql(),
+    " ORDER BY \"Endpoints\" DESC 
+      LIMIT ", limit, " OFFSET ", offset
+  )
+
+  tbl(db_connection, sql(query)) %>% collect()
+})
 
   output$capstat_values_table <- reactable::renderReactable({
-    reactable(capstat_values_list() %>% select(Developer, "FHIR Version", field_value, Endpoints),
+    reactable(paged_capstat_values() %>% select(Developer, "FHIR Version", field_value, Endpoints),
                 columns = list(
                   field_value = colDef(name = get_value_table_header())
                 ),
@@ -124,13 +221,8 @@ selected_fhir_endpoints <- reactive({
                 searchable = TRUE,
                 striped = TRUE,
                 showSortIcon = TRUE,
-                defaultPageSize = isolate(capstatPageSizeNum())
+                defaultPageSize = values_page_size
     )
-  })
-
-  observeEvent(input$capstat_values_table_state$length, {
-    page <- input$capstat_values_table_state$length
-    capstatPageSizeNum(page)
   })
 
   # Group by who has added a value vs who hasn't
@@ -142,7 +234,7 @@ selected_fhir_endpoints <- reactive({
   # 3.4.1            6                    3.4.1         6           yes
   # [Empty]          4                    [Empty]       4           no
   is_field_being_used <- reactive({
-    capstat_values_list() %>%
+    all_capstat_values() %>%
     # necessary to ungroup because you can't select a subset of fields in a dataset
     # that is grouped
     ungroup() %>%

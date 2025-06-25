@@ -43,6 +43,24 @@ validationsmodule_UI <- function(id) {
         htmlOutput(ns("failure_table_subtitle")),
         tags$p("The URL for each endpoint in the table below can be clicked on to see additional information for that individual endpoint.", role = "comment"),
         reactable::reactableOutput(ns("validation_failure_table")),
+        fluidRow(
+          column(3, 
+            div(style = "display: flex; justify-content: flex-start;", 
+                uiOutput(ns("validation_prev_page_ui"))
+            )
+          ),
+          column(6,
+            div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+                numericInput(ns("validation_page_selector"), label = NULL, value = 1, min = 1, step = 1, width = "80px"),
+                textOutput(ns("validations_current_page_info"), inline = TRUE)
+            )
+          ),
+          column(3, 
+            div(style = "display: flex; justify-content: flex-end;",
+                uiOutput(ns("validation_next_page_ui"))
+            )
+          )
+        ),
         p("A green check icon indicates that an endpoint has successfully returned a Conformance Resource/Capability Statement. A red X icon indicates the endpoint did not return a Conformance Resource/Capability Statement.")
       )
     )
@@ -58,6 +76,94 @@ validationsmodule <- function(
   sel_validation_group
 ) {
   ns <- session$ns
+  validations_page_size <- 10
+  validation_page_state <- reactiveVal(1)
+
+  # Get total using COUNT
+  validation_total_pages <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+
+    selected_rule <- if (!is.null(getReactableState("validation_details_table")$selected)) {
+      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
+    } else {
+      "NO_RULES"
+    }
+
+    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) paste0("AND vendor_name = '", sel_vendor(), "'") else ""
+    validation_group_filter <- if(sel_validation_group() != "All Groups") {
+      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
+      paste0("AND reference IN (", references, ")")
+    } else {
+      ""
+
+    }
+
+    query <- paste0(
+      "SELECT COUNT(*) as count FROM mv_validation_failures ",
+      "WHERE rule_name = '", selected_rule, "' ",
+      "AND fhir_version IN (", fhir_versions, ") ",
+      vendor_filter, " ",
+      validation_group_filter
+    )
+
+    count <- dbGetQuery(db_connection, query)$count
+    max(1, ceiling(count / validations_page_size))
+  })
+
+  observe({
+    updateNumericInput(session, "validation_page_selector", 
+                      max = validation_total_pages(),
+                      value = validation_page_state())
+  })
+
+  # Handle page selector input
+  observeEvent(input$validation_page_selector, {
+    if (!is.null(input$validation_page_selector) && !is.na(input$validation_page_selector)) {
+      new_page <- max(1, min(input$validation_page_selector, validation_total_pages()))
+      validation_page_state(new_page)
+
+      if (new_page != input$validation_page_selector) {
+        updateNumericInput(session, "validation_page_selector", value = new_page)
+      }
+    }
+  })
+
+  output$validation_prev_page_ui <- renderUI({
+    if (validation_page_state() > 1) {
+      actionButton(ns("validation_prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL
+    }
+  })
+
+  output$validation_next_page_ui <- renderUI({
+    if (validation_page_state() < validation_total_pages()) {
+      actionButton(ns("validation_next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL
+    }
+  })
+
+  observeEvent(input$validation_next_page, {
+    message("NEXT PAGE BUTTON CLICKED")
+    if (validation_page_state() < validation_total_pages()) {
+      new_page <- validation_page_state() + 1
+      validation_page_state(new_page)
+    }
+  })
+
+  observeEvent(input$validation_prev_page, {
+    message("PREV PAGE BUTTON CLICKED")
+    if (validation_page_state() > 1) {
+      new_page <- validation_page_state() - 1
+      validation_page_state(new_page)
+    }
+  })
+  
+  output$validations_current_page_info <- renderText({
+    paste("of", validation_total_pages())
+  })
 
   output$anchorpoint <- renderUI({
     HTML("<span id='anchorid'></span>")
@@ -65,6 +171,13 @@ validationsmodule <- function(
 
   output$anchorlink <- renderUI({
     HTML("<p>See additional validation details and failure information <a class=\"lantern-url\" href='#anchorid'>below</a></p>")
+  })
+
+
+  # Reset page to 1 whenever filters or selected rule changes
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_validation_group(), getReactableState("validation_details_table")$selected), {
+    validation_page_state(1)
+    updateNumericInput(session, "validation_page_selector", value = 1)
   })
 
   # Function to directly query validation results plot data from materialized view
@@ -209,7 +322,8 @@ validationsmodule <- function(
   })
 
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
-  failed_validation_results <- reactive({
+  # Paginated using SQL LIMIT OFFSET
+  paged_failed_validation_results <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     
     # Get the selected rule if available
@@ -233,16 +347,20 @@ validationsmodule <- function(
     } else {
       ""
     }
+
+    limit <- validations_page_size
+    offset <- (validation_page_state() - 1) * validations_page_size
     
     # Query to get failed validations for the selected rule
     query <- paste0("
       SELECT fhir_version, url, expected, actual, vendor_name
       FROM mv_validation_failures
       WHERE rule_name = '", selected_rule, "'
-      AND fhir_version IN (", fhir_versions, ")
-      ", vendor_filter, "
-      ", validation_group_filter, "
-    ")
+      AND fhir_version IN (", fhir_versions, ") ",
+      vendor_filter, " ", 
+      validation_group_filter, " ",
+      "ORDER BY url LIMIT ", limit, " OFFSET ", offset
+    )
     
     # Execute query
     res <- dbGetQuery(db_connection, query)
@@ -335,10 +453,11 @@ validationsmodule <- function(
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
   output$validation_failure_table <- reactable::renderReactable({
-    reactable(failed_validation_results(),
+    paged_data <- paged_failed_validation_results()
+    reactable(paged_data,
               defaultColDef = colDef(
                 style = function(value, index) {
-                  if (failed_validation_results()$fhir_version[index] == "No Cap Stat") {
+                  if (paged_data$fhir_version[index] == "No Cap Stat") {
                     list(background = "rgba(0, 0, 0, 0.03)")
                   }
                 }
@@ -346,7 +465,7 @@ validationsmodule <- function(
               columns = list(
                 fhir_version = colDef(name = "FHIR Version",
                                       cell = function(value, index) {
-                                        image <- cap_stat_icon(failed_validation_results()$fhir_version[index])
+                                        image <- cap_stat_icon(paged_data$fhir_version[index])
                                         tagList(
                                           div(style = list(display = "inline-block", width = "45px"), image),
                                           value
