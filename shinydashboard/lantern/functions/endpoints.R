@@ -519,10 +519,10 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
     tidyr::replace_na(list(organization_name = "Unknown")) %>%
     mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
 
-  result <- result %>%
-    mutate(organization_id = as.integer(organization_id)) %>%
-    left_join(get_org_url_information(db_connection),
-        by = c("organization_id" = "org_id"))
+  # result <- result %>%
+  #   mutate(organization_id = as.integer(organization_id)) %>%
+  #   left_join(get_org_url_information(db_connection),
+  #       by = c("organization_id" = "org_id"))
 
   return(result)
 }
