@@ -1,5 +1,9 @@
 # Values Module
 
+log_time <- function(label, start, end) {
+  message("[", label, "] Duration: ", round(difftime(end, start, units = "secs"), 3), "s")
+}
+
 valuesmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -55,9 +59,13 @@ valuesmodule <- function(
     max(1, ceiling(total / values_page_size))
   })
 
-  capstat_fields_cache <- reactive({
-    get_capstat_fields(db_connection)
-  })
+  # capstat_fields_cache <- reactive({
+  #   start <- Sys.time()
+  #   res <- get_capstat_fields(db_connection)
+  #   end <- Sys.time()
+  #   log_time("capstat_fields_cache", start, end)
+  #   res
+  # })
 
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values(), input$values_search_query), {
@@ -114,38 +122,42 @@ valuesmodule <- function(
   })
 
   get_value_table_header <- reactive({
-    res <- capstat_fields_cache()
-    req(sel_capstat_values(), sel_fhir_version())
-    header <- ""
-    if (length(sel_fhir_version()) == 1) {
-      header <- sel_capstat_values()
-    } else {
-      res <- res %>%
-      group_by(field) %>%
-      arrange(fhir_version, .by_group = TRUE) %>%
-      subset(field == sel_capstat_values()) %>%
-      mutate(fhir_version_name = case_when(
-      fhir_version %in% dstu2 ~ "DSTU2",
-      fhir_version %in% stu3 ~ "STU3",
-      fhir_version %in% r4 ~ "R4",
-      TRUE ~ "DSTU2"
-      )) %>%
-      summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
-      versions <- res %>% pull(2)
-      header <- paste(sel_capstat_values(), " (", versions, ")", sep = "")
-    }
-    header
-  })
+    start <- Sys.time()
 
+    req(sel_capstat_values(), sel_fhir_version())
+
+    valid_versions <- valid_field_versions()
+      header <- ""
+      if (length(sel_fhir_version()) == 1) {
+        header <- sel_capstat_values()
+    } else {
+        version_labels <- sort(unique(
+          case_when(
+            valid_versions %in% dstu2 ~ "DSTU2",
+            valid_versions %in% stu3  ~ "STU3",
+            valid_versions %in% r4    ~ "R4",
+            TRUE                      ~ "DSTU2"
+          )
+        ))
+
+      header <- paste0(sel_capstat_values(), " (", paste(version_labels, collapse = ", "), ")")
+    }
+    end <- Sys.time()
+    log_time("get_value_table_header", start, end)
+    header
+})
   valid_field_versions <- reactive({
     req(sel_capstat_values())
-
-    tbl(db_connection, 
+    start <- Sys.time()
+    res <- tbl(db_connection, 
         sql(paste0("SELECT unnest(fhir_versions) AS version 
                     FROM get_value_versions_mv 
                     WHERE field = '", sel_capstat_values(), "'"))) %>%
       collect() %>%
       pull(version)
+    end <- Sys.time()
+    log_time("valid_field_versions", start, end)
+    res
   })
 
   get_base_values_sql <- reactive({
@@ -192,12 +204,20 @@ valuesmodule <- function(
       " ORDER BY \"Endpoints\" DESC LIMIT ", limit, " OFFSET ", offset
     )
 
-    tbl(db_connection, sql(query_str))
+    start <- Sys.time()
+    res <- tbl(db_connection, sql(query_str))
+    end <- Sys.time()
+    log_time("paged_capstat_values", start, end)
+    res
   })
 
   capstat_total_count <- reactive({
     count_query <- paste0("SELECT COUNT(*) as count ", get_base_values_sql())
-    tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+    start <- Sys.time()
+    res <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+    end <- Sys.time()
+    log_time("capstat_total_count", start, end)
+    res
   })
 
   output$capstat_values_table <- reactable::renderReactable({
@@ -216,31 +236,31 @@ valuesmodule <- function(
   # Gets the total number of endpoints that are using the currently selected field
   capstat_value_usage_summary <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    start <- Sys.time()
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
     field_name <- sel_capstat_values()
 
     fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
-    valid_versions <- valid_field_versions()
-    valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
 
     summary_query <- paste0("
-      SELECT
-        is_used AS used,
-        SUM(\"Endpoints\") AS count
-      FROM selected_fhir_endpoints_values_mv
+      SELECT is_used AS used, SUM(count) AS count
+      FROM capstat_usage_summary_mv
       WHERE field = '", field_name, "'
-        AND \"FHIR Version\" IN ", fhir_versions_sql, "
-        AND \"FHIR Version\" IN ", valid_versions_sql)
+        AND \"FHIR Version\" IN ", fhir_versions_sql)
 
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
       summary_query <- paste0(summary_query, " AND \"Developer\" = '", vendor, "'")
     }
 
-  summary_query <- paste0(summary_query, " GROUP BY used")
+    summary_query <- paste0(summary_query, " GROUP BY is_used")
 
-  tbl(db_connection, sql(summary_query)) %>% collect()
+    res <- tbl(db_connection, sql(summary_query)) %>% collect()
+    end <- Sys.time()
+    log_time("capstat_value_usage_summary", start, end)
+
+    res
   })
 
   # Data format for the Pie Chart
