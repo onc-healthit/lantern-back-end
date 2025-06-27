@@ -146,6 +146,14 @@ validationsmodule <- function(
   })
 
   observeEvent(input$validation_next_page, {
+    # Double-click protection
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_validation_next_time) && 
+        (current_time - session$userData$last_validation_next_time) < 300) {
+      return()  # Ignore rapid consecutive clicks
+    }
+    session$userData$last_validation_next_time <- current_time
+    
     message("NEXT PAGE BUTTON CLICKED")
     if (validation_page_state() < validation_total_pages()) {
       new_page <- validation_page_state() + 1
@@ -154,6 +162,14 @@ validationsmodule <- function(
   })
 
   observeEvent(input$validation_prev_page, {
+    # Double-click protection
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_validation_prev_time) && 
+        (current_time - session$userData$last_validation_prev_time) < 300) {
+      return()  # Ignore rapid consecutive clicks
+    }
+    session$userData$last_validation_prev_time <- current_time
+    
     message("PREV PAGE BUTTON CLICKED")
     if (validation_page_state() > 1) {
       new_page <- validation_page_state() - 1
