@@ -309,6 +309,12 @@ smartresponsemodule <- function(
 
   # Handle next page button
   observeEvent(input$smartres_next_page, {
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_next_time) && 
+        (current_time - session$userData$last_next_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_next_time <- current_time
     if (smartres_page_state() < smartres_total_pages()) {
       new_page <- smartres_page_state() + 1
       smartres_page_state(new_page)
@@ -318,6 +324,12 @@ smartresponsemodule <- function(
 
   # Handle previous page button
   observeEvent(input$smartres_prev_page, {
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_prev_time) && 
+        (current_time - session$userData$last_prev_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_prev_time <- current_time
     if (smartres_page_state() > 1) {
       new_page <- smartres_page_state() - 1
       smartres_page_state(new_page)

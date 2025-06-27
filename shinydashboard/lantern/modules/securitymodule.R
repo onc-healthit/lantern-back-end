@@ -76,11 +76,35 @@ securitymodule <- function(
   })
 
   observeEvent(input$security_next_page, {
-    if (security_page_state() < security_total_pages()) security_page_state(security_page_state() + 1)
+    # Double-click protection
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_security_next_time) && 
+        (current_time - session$userData$last_security_next_time) < 300) {
+      return()  # Ignore rapid consecutive clicks
+    }
+    session$userData$last_security_next_time <- current_time
+    
+    if (security_page_state() < security_total_pages()) {
+      new_page <- security_page_state() + 1
+      security_page_state(new_page)
+      updateNumericInput(session, "security_page_selector", value = new_page)
+    }
   })
 
   observeEvent(input$security_prev_page, {
-    if (security_page_state() > 1) security_page_state(security_page_state() - 1)
+    # Double-click protection
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_security_prev_time) && 
+        (current_time - session$userData$last_security_prev_time) < 300) {
+      return()  # Ignore rapid consecutive clicks
+    }
+    session$userData$last_security_prev_time <- current_time
+    
+    if (security_page_state() > 1) {
+      new_page <- security_page_state() - 1
+      security_page_state(new_page)
+      updateNumericInput(session, "security_page_selector", value = new_page)
+    }
   })
 
   output$security_prev_button_ui <- renderUI({
