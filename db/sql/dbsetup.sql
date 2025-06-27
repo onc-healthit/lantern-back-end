@@ -1481,6 +1481,7 @@ SELECT
     "Developer",
     "FHIR Version",
     field,
+    CASE WHEN COALESCE(field_value, '[Empty]') = '[Empty]' THEN 'no' ELSE 'yes' END AS is_used,
     COALESCE(field_value, '[Empty]') AS field_value,
     COUNT(DISTINCT endpoint_id)::INT AS "Endpoints"  -- Explicitly cast to INT
 FROM field_combinations
@@ -1492,6 +1493,8 @@ CREATE INDEX idx_selected_fhir_endpoints_dev ON selected_fhir_endpoints_values_m
 CREATE INDEX idx_selected_fhir_endpoints_fhir_version ON selected_fhir_endpoints_values_mv("FHIR Version");
 CREATE INDEX idx_selected_fhir_endpoints_field ON selected_fhir_endpoints_values_mv(Field);
 CREATE INDEX idx_selected_fhir_endpoints_field_value ON selected_fhir_endpoints_values_mv(field_value);
+CREATE INDEX idx_selected_fhir_endpoints_is_used ON selected_fhir_endpoints_values_mv(is_used);
+CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv (field, "FHIR Version", "Developer", is_used);
 
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);
@@ -2376,35 +2379,3 @@ CREATE INDEX idx_fhir_endpoint_organization_active_org_id ON fhir_endpoint_organ
 CREATE INDEX idx_fhir_endpoint_organization_addresses_org_id ON fhir_endpoint_organization_addresses (org_id);
 
 CREATE INDEX idx_fhir_endpoint_organization_identifiers_org_id ON fhir_endpoint_organization_identifiers (org_id);
-
---Profiles Tab Pagination MV
-CREATE MATERIALIZED VIEW mv_profiles_paginated AS
-SELECT 
-  row_number() OVER (ORDER BY vendor_name, url, profileurl) AS page_id,
-  url,
-  profileurl,
-  profilename,
-  resource,
-  fhir_version,
-  vendor_name
-FROM (
-  SELECT DISTINCT 
-    url,
-    profileurl,
-    profilename,
-    resource,
-    fhir_version,
-    vendor_name
-  FROM endpoint_supported_profiles_mv
-) distinct_profiles
-ORDER BY vendor_name, url, profileurl;
-
--- Create indexes for fast filtering and pagination
-CREATE UNIQUE INDEX mv_profiles_paginated_page_id_idx ON mv_profiles_paginated(page_id);
-CREATE INDEX mv_profiles_paginated_fhir_version_idx ON mv_profiles_paginated(fhir_version);
-CREATE INDEX mv_profiles_paginated_vendor_name_idx ON mv_profiles_paginated(vendor_name);
-CREATE INDEX mv_profiles_paginated_resource_idx ON mv_profiles_paginated(resource);
-CREATE INDEX mv_profiles_paginated_profileurl_idx ON mv_profiles_paginated(profileurl);
-
--- Composite index for common filter combinations
-CREATE INDEX mv_profiles_paginated_composite_idx ON mv_profiles_paginated(vendor_name, fhir_version, resource);

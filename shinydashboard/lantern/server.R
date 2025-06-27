@@ -271,8 +271,8 @@ function(input, output, session) { #nolint
         fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`multiple-separator` = " | ", size = 5))
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
-      # Special handling for CapabilityStatement Size tab
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "values_tab", "profile_tab")) {
+      # Special handling for specific tabs
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]

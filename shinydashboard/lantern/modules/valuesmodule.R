@@ -50,6 +50,11 @@ valuesmodule <- function(
   values_page_size <- 10
   values_page_state <- reactiveVal(1)
 
+  values_total_pages <- reactive({
+    total <- capstat_total_count()
+    max(1, ceiling(total / values_page_size))
+  })
+
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values(), input$values_search_query), {
     values_page_state(1)
@@ -104,200 +109,145 @@ valuesmodule <- function(
     paste("of", values_total_pages())
   })
 
-  get_value_versions <- reactive({
-    req(sel_capstat_values())
-    # Query the materialized view for the selected field
-    result <- tbl(db_connection, 
-                  sql(paste0("SELECT unnest(fhir_versions) AS fhir_version 
-                            FROM get_value_versions_mv 
-                            WHERE field = '", sel_capstat_values(), "'"))) %>%
-      collect()
-    # Extract the versions as a character vector
-    if (nrow(result) > 0) {
-      versions <- result$fhir_version
-    } else {
-      versions <- character(0)  # Empty character vector if no results
-    }
-    return(versions)
-  })
-
   get_value_table_header <- reactive({
-    res <- isolate(get_capstat_fields(db_connection))
     req(sel_capstat_values(), sel_fhir_version())
-    header <- ""
-    if (length(sel_fhir_version()) == 1) {
-      header <- sel_capstat_values()
+
+    valid_versions <- valid_field_versions()
+      header <- ""
+      if (length(sel_fhir_version()) == 1) {
+        header <- sel_capstat_values()
     } else {
-      res <- res %>%
-      group_by(field) %>%
-      arrange(fhir_version, .by_group = TRUE) %>%
-      subset(field == sel_capstat_values()) %>%
-      mutate(fhir_version_name = case_when(
-      fhir_version %in% dstu2 ~ "DSTU2",
-      fhir_version %in% stu3 ~ "STU3",
-      fhir_version %in% r4 ~ "R4",
-      TRUE ~ "DSTU2"
-      )) %>%
-      summarise(fhir_version_names = paste(unique(fhir_version_name), collapse = ", "))
-      versions <- res %>% pull(2)
-      header <- paste(sel_capstat_values(), " (", versions, ")", sep = "")
+        version_labels <- sort(unique(
+          case_when(
+            valid_versions %in% dstu2 ~ "DSTU2",
+            valid_versions %in% stu3  ~ "STU3",
+            valid_versions %in% r4    ~ "R4",
+            TRUE                      ~ "DSTU2"
+          )
+        ))
+
+      header <- paste0(sel_capstat_values(), " (", paste(version_labels, collapse = ", "), ")")
     }
+
     header
+})
+  valid_field_versions <- reactive({
+    req(sel_capstat_values())
+
+    res <- tbl(db_connection, 
+        sql(paste0("SELECT unnest(fhir_versions) AS version 
+                    FROM get_value_versions_mv 
+                    WHERE field = '", sel_capstat_values(), "'"))) %>%
+      collect() %>%
+      pull(version)
+
+    res
   })
 
-values_base_sql <- reactive({
-  req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+  get_base_values_sql <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
 
-  versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
-  field <- sel_capstat_values()
-  vendor <- sel_vendor()
+    fhir_versions <- sel_fhir_version()
+    vendor <- sel_vendor()
+    field_name <- sel_capstat_values()
 
-  # Valid FHIR versions for the selected field
-  valid_versions <- tbl(db_connection, 
-                        sql(paste0("SELECT unnest(fhir_versions) AS version 
-                                    FROM get_value_versions_mv 
-                                    WHERE field = '", field, "'"))) %>%
-                    collect() %>%
-                    pull(version)
-  valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+    valid_versions <- valid_field_versions()
 
-  vendor_filter <- if (vendor != ui_special_values$ALL_DEVELOPERS) {
-    paste0("AND \"Developer\" = '", vendor, "'")
-  } else {
-    ""
-  }
+    valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
 
-  search_filter <- ""
-  if (!is.null(input$values_search_query) && input$values_search_query != "") {
-    q <- gsub("'", "''", input$values_search_query)
-    search_filter <- paste0("AND (\"Developer\" ILIKE '%", q, "%' OR 
-                                  \"FHIR Version\" ILIKE '%", q, "%' OR 
-                                  field_value ILIKE '%", q, "%')")
-  }
+    search_filter <- ""
+    if (!is.null(input$values_search_query) && input$values_search_query != "") {
+      q <- gsub("'", "''", input$values_search_query)
+      search_filter <- paste0("AND (\"Developer\" ILIKE '%", q, "%' OR 
+                                    \"FHIR Version\" ILIKE '%", q, "%' OR 
+                                    field_value ILIKE '%", q, "%')")
+    }
 
-  paste0("FROM selected_fhir_endpoints_values_mv 
-         WHERE field = '", field, "'
-           AND \"FHIR Version\" IN ", valid_versions_sql, " 
-           AND \"FHIR Version\" IN (", versions, ") ",
-           vendor_filter, " ",
-           search_filter)
-})
+    sql_base <- paste0("
+      FROM selected_fhir_endpoints_values_mv
+      WHERE field = '", field_name, "'
+        AND \"FHIR Version\" IN ", fhir_versions_sql, "
+        AND \"FHIR Version\" IN ", valid_versions_sql, 
+        search_filter)
 
-values_total_pages <- reactive({
-  count_query <- paste0("SELECT COUNT(*) as count ", values_base_sql())
-  count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
-  max(1, ceiling(count / values_page_size))
-})
+    if (vendor != ui_special_values$ALL_DEVELOPERS) {
+      sql_base <- paste0(sql_base, " AND \"Developer\" = '", vendor, "'")
+    }
 
+    return(sql_base)
+  })
 
-all_capstat_values <- reactive({
-  query <- paste0(
-    "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
-    values_base_sql()
-  )
-  tbl(db_connection, sql(query)) %>% collect()
-})
+  paged_capstat_values <- reactive({
+    limit <- values_page_size
+    offset <- (values_page_state() - 1) * values_page_size
 
-paged_capstat_values <- reactive({
-  limit <- values_page_size
-  offset <- (values_page_state() - 1) * values_page_size
+    query_str <- paste0(
+      "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
+      get_base_values_sql(),
+      " ORDER BY \"Endpoints\" DESC LIMIT ", limit, " OFFSET ", offset
+    )
 
-  query <- paste0(
-    "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
-    values_base_sql(),
-    " ORDER BY \"Endpoints\" DESC 
-      LIMIT ", limit, " OFFSET ", offset
-  )
+    res <- tbl(db_connection, sql(query_str))
 
-  tbl(db_connection, sql(query)) %>% collect()
-})
+    res
+  })
+
+  capstat_total_count <- reactive({
+    count_query <- paste0("SELECT COUNT(*) as count ", get_base_values_sql())
+    res <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
+    res
+  })
 
   output$capstat_values_table <- reactable::renderReactable({
-    reactable(paged_capstat_values() %>% select(Developer, "FHIR Version", field_value, Endpoints),
+    reactable(paged_capstat_values() %>% collect(),
                 columns = list(
                   field_value = colDef(name = get_value_table_header())
                 ),
                 sortable = TRUE,
-                searchable = TRUE,
+                searchable = FALSE,
                 striped = TRUE,
                 showSortIcon = TRUE,
                 defaultPageSize = values_page_size
     )
   })
 
-  # Group by who has added a value vs who hasn't
-  #
-  # EXAMPLE:
-  # capstat_values_list                   returned value
-  # field_value      Endpoints            field_value   Endpoints   used
-  # 1.0.1            3                    1.0.1         3           yes
-  # 3.4.1            6                    3.4.1         6           yes
-  # [Empty]          4                    [Empty]       4           no
-  is_field_being_used <- reactive({
-    all_capstat_values() %>%
-    # necessary to ungroup because you can't select a subset of fields in a dataset
-    # that is grouped
-    ungroup() %>%
-    select(c(Endpoints, field_value)) %>%
-    # create a new column called "used"
-    # if the field is not being used, set it to "no", otherwise set it to "yes"
-    mutate(used = ifelse(field_value == "[Empty]", "no", "yes"))
-  })
-
   # Gets the total number of endpoints that are using the currently selected field
-  being_used <- reactive({
-    # Filter by the endpoints that have a value in the currently selected field,
-    # then pull the Endpoints column which has the count of endpoints
-    #
-    # EXAMPLE:
-    # is_field_being_used                     res
-    # field_value   Endpoints   used          Endpoints
-    # 1.0.1         3           yes           3
-    # 3.4.1         6           yes           6
-    # [Empty]       4           no
-    res <- is_field_being_used() %>%
-      filter(used == "yes") %>%
-      pull(Endpoints)
+  capstat_value_usage_summary <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
 
-    # Get the total of all of the values in the Endpoints column if the column
-    # is not empty. If the column is empty then the total is 0.
-    total_endpts <- 0
-    if (!is.null(res)) {
-      total_endpts <- sum(res)
+    fhir_versions <- sel_fhir_version()
+    vendor <- sel_vendor()
+    field_name <- sel_capstat_values()
+
+    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+
+    summary_query <- paste0("
+      SELECT is_used AS used, SUM(count) AS count
+      FROM capstat_usage_summary_mv
+      WHERE field = '", field_name, "'
+        AND \"FHIR Version\" IN ", fhir_versions_sql)
+
+    if (vendor != ui_special_values$ALL_DEVELOPERS) {
+      summary_query <- paste0(summary_query, " AND \"Developer\" = '", vendor, "'")
     }
-    total_endpts
-  })
 
-  # Gets the total number of endpoints that are not using the currently selected field
-  not_being_used <- reactive({
-    # Filter by the endpoints that don't have a value in the currently selected field,
-    # then pull the Endpoints column which has the count of endpoints
-    #
-    # EXAMPLE:
-    # is_field_being_used                     res
-    # field_value   Endpoints   used          Endpoints
-    # 1.0.1         3           yes           4
-    # 3.4.1         6           yes
-    # [Empty]       4           no
-    res <- is_field_being_used() %>%
-      filter(used == "no") %>%
-      pull(Endpoints)
+    summary_query <- paste0(summary_query, " GROUP BY is_used")
 
-    # Get the total of all of the values in the Endpoints column if the column
-    # is not empty. If the column is empty then the total is 0.
-    total_endpts <- 0
-    if (!is.null(res)) {
-      total_endpts <- sum(res)
-    }
-    total_endpts
+    res <- tbl(db_connection, sql(summary_query)) %>% collect()
+
+    res
   })
 
   # Data format for the Pie Chart
   percent_used_chart <- reactive({
-    data.frame(
-      group = c("Yes", "No"),
-      value = c(being_used(), not_being_used())
-    )
+    data <- capstat_value_usage_summary()
+
+    # Default to 0 if row is missing
+    yes <- if ("yes" %in% data$used) as.numeric(data$count[data$used == "yes"]) else 0
+    no  <- if ("no" %in% data$used)  as.numeric(data$count[data$used == "no"])  else 0
+
+    data.frame(group = c("Yes", "No"), value = c(yes, no))
   })
 
   output$values_chart <- renderUI({
