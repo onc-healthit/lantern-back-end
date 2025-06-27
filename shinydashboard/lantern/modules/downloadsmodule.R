@@ -113,10 +113,17 @@ downloadsmodule <- function(
     select(-organization_id)
 
     res <- res %>%
+      group_by(organization_name) %>%
+      summarise(
+        identifier = paste(unique(identifier), collapse = "<br/>"),
+        address = paste(unique(address), collapse = "<br/>"),
+        url = paste(unique(url), collapse = "<br/>"),
+        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
+        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        .groups = "drop"
+      ) %>%
       filter(organization_name != "Unknown") %>%
       mutate(address = toupper(address)) %>%
-      select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-      distinct(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
       arrange(organization_name)
 
     res

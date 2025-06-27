@@ -299,14 +299,22 @@ organizationsmodule <- function(
       select(-organization_id)
 
     res <- res %>%
-      filter(organization_name != "Unknown") %>%
-      mutate(address = toupper(address)) %>%
-      select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-      distinct(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-      arrange(organization_name)
+      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
     res <- res %>%
-      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
+      group_by(organization_name) %>%
+      summarise(
+        identifier = paste(unique(identifier), collapse = "<br/>"),
+        address = paste(unique(address), collapse = "<br/>"),
+        url = paste(unique(url), collapse = "<br/>"),
+        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
+        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        .groups = "drop"
+      ) %>%
+      filter(organization_name != "Unknown") %>%
+      mutate(address = toupper(address)) %>%
+      arrange(organization_name)
+
 
     res
   })
@@ -349,10 +357,17 @@ organizationsmodule <- function(
       select(-organization_id)
 
     res <- res %>%
+      group_by(organization_name) %>%
+      summarise(
+        identifier = paste(unique(identifier), collapse = "<br/>"),
+        address = paste(unique(address), collapse = "<br/>"),
+        url = paste(unique(url), collapse = "<br/>"),
+        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
+        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        .groups = "drop"
+      ) %>%
       filter(organization_name != "Unknown") %>%
       mutate(address = toupper(address)) %>%
-      select(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
-      distinct(organization_name, identifier, address, url, fhir_version, vendor_name) %>%
       arrange(organization_name)
 
     res
