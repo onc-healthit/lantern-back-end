@@ -25,6 +25,12 @@ downloadsmodule_UI <- function(id) {
     ),
     fluidRow(
       column(width = 12,
+              downloadButton(ns("organizations_download_data"), "Download Organization Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+              downloadButton(ns("organizations_download_descriptions"), "Download Organization Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+      )
+    ),
+    fluidRow(
+      column(width = 12,
              h2("REST API"),
              style = "padding-bottom:10px;padding-top:10px",
              p(HTML("This REST API [GET]<b> https://lantern.healthit.gov/api/daily/download </b> enables programmatic access
@@ -76,6 +82,70 @@ downloadsmodule <- function(
     },
     content = function(file) {
       file.copy("fhir_endpoints_fields.csv", file)
+    }
+  )
+
+  # Create the format for the csv
+  organization_csv_format <- reactive({
+    res <- get_endpoint_list_matches(db_connection)
+
+  res <- res %>%
+    mutate(organization_id = as.integer(organization_id)) %>%
+    
+    # Left join with deduplicated or collapsed identifiers
+    left_join(
+      get_org_identifiers_information(db_connection) %>%
+        mutate(org_id = as.integer(org_id)) %>%
+        group_by(org_id) %>%
+        summarise(identifier = paste(unique(identifier), collapse = "\n")),
+      by = c("organization_id" = "org_id")
+    ) %>%
+    
+    # Left join with deduplicated or collapsed addresses
+    left_join(
+      get_org_addresses_information(db_connection) %>%
+        mutate(org_id = as.integer(org_id)) %>%
+        group_by(org_id) %>%
+        summarise(address = paste(unique(address), collapse = "\n")),
+      by = c("organization_id" = "org_id")
+    ) %>%
+    
+    select(-organization_id)
+
+    res <- res %>%
+      group_by(organization_name) %>%
+      summarise(
+        identifier = paste(unique(identifier), collapse = "<br/>"),
+        address = paste(unique(address), collapse = "<br/>"),
+        url = paste(unique(url), collapse = "<br/>"),
+        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
+        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        .groups = "drop"
+      ) %>%
+      filter(organization_name != "Unknown") %>%
+      mutate(address = toupper(address)) %>%
+      arrange(organization_name)
+
+    res
+  })
+
+  # Downloadable csv of selected dataset
+  output$organizations_download_data <- downloadHandler(
+    filename = function() {
+      "fhir_endpoint_organizations.csv"
+    },
+    content = function(file) {
+      write.csv(organization_csv_format(), file, row.names = FALSE)
+    }
+  )
+
+  # Download csv of the field descriptions in the dataset csv
+  output$organizations_download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoint_organizations_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoint_organizations_fields.csv", file)
     }
   )
 

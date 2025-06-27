@@ -2377,6 +2377,12 @@ CREATE INDEX idx_fhir_endpoint_organization_addresses_org_id ON fhir_endpoint_or
 
 CREATE INDEX idx_fhir_endpoint_organization_identifiers_org_id ON fhir_endpoint_organization_identifiers (org_id);
 
+CREATE TABLE fhir_endpoint_organization_url (
+	org_id INT,
+	org_url VARCHAR(500)
+);
+
+CREATE INDEX idx_fhir_endpoint_organization_url_org_id ON fhir_endpoint_organization_url (org_id);
 --Profiles Tab Pagination MV
 CREATE MATERIALIZED VIEW mv_profiles_paginated AS
 SELECT 

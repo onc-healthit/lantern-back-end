@@ -12,6 +12,12 @@ organizationsmodule_UI <- function(id) {
       h2("Endpoint List Organizations")
     ),
     fluidRow(
+      column(width = 12, style = "padding-bottom:20px",
+             downloadButton(ns("download_data"), "Download Organization Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+      ),
+    ),
+    fluidRow(
       column(6, 
         textInput(ns("org_search_query"), "Search Organizations")
       )
@@ -269,30 +275,117 @@ organizationsmodule <- function(
     data_query <- do.call(glue_sql, c(list(data_query_str, .con = db_connection), data_params))
     res <- tbl(db_connection, sql(data_query)) %>% collect()
 
-    # Format URL for HTML display with modal popup
+    res <- res %>%
+      mutate(organization_id = as.integer(organization_id)) %>%
+      
+      # Left join with deduplicated or collapsed identifiers
+      left_join(
+        get_org_identifiers_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(identifier = paste(unique(identifier), collapse = "<br/>")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      # Left join with deduplicated or collapsed addresses
+      left_join(
+        get_org_addresses_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(address = paste(unique(address), collapse = "<br/>")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      select(-organization_id)
+
     res <- res %>%
       mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
-  
-    # Format popup for HTI-1 data
+
     res <- res %>%
-      mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
-    
+      group_by(organization_name) %>%
+      summarise(
+        identifier = paste(unique(identifier), collapse = "<br/>"),
+        address = paste(unique(address), collapse = "<br/>"),
+        url = paste(unique(url), collapse = "<br/>"),
+        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
+        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        .groups = "drop"
+      ) %>%
+      filter(organization_name != "Unknown") %>%
+      mutate(address = toupper(address)) %>%
+      arrange(organization_name)
+
+
+    res
+  })
+
+  csv_format <- reactive({
+      # Get current filter values
+      current_fhir <- sel_fhir_version()
+      current_vendor <- sel_vendor()
+
+      req(current_fhir, current_vendor)
+
+      # Get filtered data from the materialized view function
+      res <- get_endpoint_list_matches(
+        db_connection,
+        fhir_version = current_fhir,
+        vendor = current_vendor
+      )
+
+    res <- res %>%
+      mutate(organization_id = as.integer(organization_id)) %>%
+      
+      # Left join with deduplicated or collapsed identifiers
+      left_join(
+        get_org_identifiers_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(identifier = paste(unique(identifier), collapse = "\n")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      # Left join with deduplicated or collapsed addresses
+      left_join(
+        get_org_addresses_information(db_connection) %>%
+          mutate(org_id = as.integer(org_id)) %>%
+          group_by(org_id) %>%
+          summarise(address = paste(unique(address), collapse = "\n")),
+        by = c("organization_id" = "org_id")
+      ) %>%
+      
+      select(-organization_id)
+
+    res <- res %>%
+      group_by(organization_name) %>%
+      summarise(
+        identifier = paste(unique(identifier), collapse = "<br/>"),
+        address = paste(unique(address), collapse = "<br/>"),
+        url = paste(unique(url), collapse = "<br/>"),
+        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
+        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        .groups = "drop"
+      ) %>%
+      filter(organization_name != "Unknown") %>%
+      mutate(address = toupper(address)) %>%
+      arrange(organization_name)
+
     res
   })
 
   output$endpoint_list_orgs_table <- reactable::renderReactable({
+     # Get all data
+     display_data <- paged_endpoint_list_orgs()
 
-    display_data <- paged_endpoint_list_orgs()
-    
-    if (nrow(display_data) == 0) {
-      return(
-        reactable(
-          data.frame(Message = "No data matching the selected filters"),
-          pagination = FALSE,
-          searchable = FALSE
-        )
-      )
-    }
+     if (nrow(display_data) == 0) {
+       return(
+         reactable(
+           data.frame(Message = "No data matching the selected filters"),
+           pagination = FALSE,
+           searchable = FALSE
+         )
+       )
+     }
 
      reactable(
        display_data,
@@ -302,12 +395,12 @@ organizationsmodule <- function(
        columns = list(
          organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
                                     grouped = JS("function(cellInfo) {return cellInfo.value}")),
-         organization_id = colDef(name = "Organization Details", sortable = FALSE, html = TRUE),
-         url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
+         address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
+         url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
          vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
        ),
-       groupBy = c("organization_name"),
        striped = TRUE,
        searchable = FALSE,
        showSortIcon = TRUE,
@@ -316,6 +409,26 @@ organizationsmodule <- function(
        defaultExpanded = TRUE
      )
    })
+
+  # Downloadable csv of selected dataset
+  output$download_data <- downloadHandler(
+    filename = function() {
+      "fhir_endpoint_organizations.csv"
+    },
+    content = function(file) {
+      write.csv(csv_format(), file, row.names = FALSE)
+    }
+  )
+
+  # Download csv of the field descriptions in the dataset csv
+  output$download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoint_organizations_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoint_organizations_fields.csv", file)
+    }
+  )
 
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
