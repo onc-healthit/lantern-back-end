@@ -1,9 +1,5 @@
 # Values Module
 
-log_time <- function(label, start, end) {
-  message("[", label, "] Duration: ", round(difftime(end, start, units = "secs"), 3), "s")
-}
-
 valuesmodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -58,14 +54,6 @@ valuesmodule <- function(
     total <- capstat_total_count()
     max(1, ceiling(total / values_page_size))
   })
-
-  # capstat_fields_cache <- reactive({
-  #   start <- Sys.time()
-  #   res <- get_capstat_fields(db_connection)
-  #   end <- Sys.time()
-  #   log_time("capstat_fields_cache", start, end)
-  #   res
-  # })
 
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values(), input$values_search_query), {
@@ -122,8 +110,6 @@ valuesmodule <- function(
   })
 
   get_value_table_header <- reactive({
-    start <- Sys.time()
-
     req(sel_capstat_values(), sel_fhir_version())
 
     valid_versions <- valid_field_versions()
@@ -142,21 +128,19 @@ valuesmodule <- function(
 
       header <- paste0(sel_capstat_values(), " (", paste(version_labels, collapse = ", "), ")")
     }
-    end <- Sys.time()
-    log_time("get_value_table_header", start, end)
+
     header
 })
   valid_field_versions <- reactive({
     req(sel_capstat_values())
-    start <- Sys.time()
+
     res <- tbl(db_connection, 
         sql(paste0("SELECT unnest(fhir_versions) AS version 
                     FROM get_value_versions_mv 
                     WHERE field = '", sel_capstat_values(), "'"))) %>%
       collect() %>%
       pull(version)
-    end <- Sys.time()
-    log_time("valid_field_versions", start, end)
+
     res
   })
 
@@ -204,19 +188,14 @@ valuesmodule <- function(
       " ORDER BY \"Endpoints\" DESC LIMIT ", limit, " OFFSET ", offset
     )
 
-    start <- Sys.time()
     res <- tbl(db_connection, sql(query_str))
-    end <- Sys.time()
-    log_time("paged_capstat_values", start, end)
+
     res
   })
 
   capstat_total_count <- reactive({
     count_query <- paste0("SELECT COUNT(*) as count ", get_base_values_sql())
-    start <- Sys.time()
     res <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
-    end <- Sys.time()
-    log_time("capstat_total_count", start, end)
     res
   })
 
@@ -236,7 +215,6 @@ valuesmodule <- function(
   # Gets the total number of endpoints that are using the currently selected field
   capstat_value_usage_summary <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
-    start <- Sys.time()
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
@@ -257,8 +235,6 @@ valuesmodule <- function(
     summary_query <- paste0(summary_query, " GROUP BY is_used")
 
     res <- tbl(db_connection, sql(summary_query)) %>% collect()
-    end <- Sys.time()
-    log_time("capstat_value_usage_summary", start, end)
 
     res
   })
