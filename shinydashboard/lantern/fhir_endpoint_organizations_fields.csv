@@ -2,6 +2,6 @@ Field,	Description
 organization_name, Name of the healthcare organization
 identifier, Unique identifiers for the organization
 address, Physical addresses of the organization
-url, Service base URLs of the FHIR endpoints
+org_url, Service base URLs of the FHIR Organization resources
 fhir_version,	FHIR version that is pulled from the endpoint's capability statement
 api_information_source_name, Organization names associated with the endpoint reported by the list source

@@ -110,6 +110,9 @@ downloadsmodule <- function(
       by = c("organization_id" = "org_id")
     ) %>%
     
+    left_join(get_org_url_information(db_connection),
+          by = c("organization_id" = "org_id")) %>%
+        
     select(-organization_id)
 
     res <- res %>%
@@ -117,7 +120,7 @@ downloadsmodule <- function(
       summarise(
         identifier = paste(unique(identifier), collapse = "<br/>"),
         address = paste(unique(address), collapse = "<br/>"),
-        url = paste(unique(url), collapse = "<br/>"),
+        org_url = paste(unique(org_url), collapse = "<br/>"),
         fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
         vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
         .groups = "drop"

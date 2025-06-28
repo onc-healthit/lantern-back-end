@@ -91,7 +91,6 @@ organizationsmodule <- function(
       count_query_str <- paste0(count_query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
         organization_id ILIKE {search_pattern} OR 
-        url ILIKE {search_pattern} OR 
         fhir_version ILIKE {search_pattern} OR 
         vendor_name ILIKE {search_pattern})")
       count_params$search_pattern <- paste0("%", search_term, "%")
@@ -210,7 +209,6 @@ organizationsmodule <- function(
       query_str <- paste0(query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
         organization_id ILIKE {search_pattern} OR 
-        url ILIKE {search_pattern} OR 
         fhir_version ILIKE {search_pattern} OR 
         vendor_name ILIKE {search_pattern})")
       params$search_pattern <- paste0("%", search_term, "%")
@@ -239,7 +237,6 @@ organizationsmodule <- function(
           ELSE organization_name
         END AS organization_name,
         organization_id,
-        url,
         fhir_version,
         vendor_name
       FROM mv_endpoint_list_organizations
@@ -258,7 +255,6 @@ organizationsmodule <- function(
       data_query_str <- paste0(data_query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
         organization_id ILIKE {search_pattern} OR 
-        url ILIKE {search_pattern} OR 
         fhir_version ILIKE {search_pattern} OR 
         vendor_name ILIKE {search_pattern})")
       data_params$search_pattern <- paste0("%", search_term, "%")
@@ -268,7 +264,7 @@ organizationsmodule <- function(
     data_query_str <- paste0(data_query_str, " AND CASE 
       WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
       ELSE organization_name
-    END IN ({org_names*}) ORDER BY organization_name, url")
+    END IN ({org_names*}) ORDER BY organization_name")
     data_params$org_names <- org_names
 
     # Execute second query
@@ -296,17 +292,17 @@ organizationsmodule <- function(
         by = c("organization_id" = "org_id")
       ) %>%
       
+      left_join(get_org_url_information(db_connection),
+          by = c("organization_id" = "org_id")) %>%
+        
       select(-organization_id)
-
-    res <- res %>%
-      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
     res <- res %>%
       group_by(organization_name) %>%
       summarise(
         identifier = paste(unique(identifier), collapse = "<br/>"),
         address = paste(unique(address), collapse = "<br/>"),
-        url = paste(unique(url), collapse = "<br/>"),
+        org_url = paste(unique(org_url), collapse = "<br/>"),
         fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
         vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
         .groups = "drop"
@@ -354,16 +350,19 @@ organizationsmodule <- function(
         by = c("organization_id" = "org_id")
       ) %>%
       
+      left_join(get_org_url_information(db_connection),
+          by = c("organization_id" = "org_id")) %>%
+        
       select(-organization_id)
 
     res <- res %>%
       group_by(organization_name) %>%
       summarise(
-        identifier = paste(unique(identifier), collapse = "<br/>"),
-        address = paste(unique(address), collapse = "<br/>"),
-        url = paste(unique(url), collapse = "<br/>"),
-        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
-        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        identifier = paste(unique(identifier), collapse = "\n"),
+        address = paste(unique(address), collapse = "\n"),
+        org_url = paste(unique(org_url), collapse = "\n"),
+        fhir_version = paste(unique(fhir_version), collapse = "\n"),
+        vendor_name = paste(unique(vendor_name), collapse = "\n"),
         .groups = "drop"
       ) %>%
       filter(organization_name != "Unknown") %>%
@@ -397,7 +396,7 @@ organizationsmodule <- function(
                                     grouped = JS("function(cellInfo) {return cellInfo.value}")),
          identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
          address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
-         url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
          vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
        ),
