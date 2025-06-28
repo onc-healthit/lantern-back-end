@@ -61,12 +61,24 @@ resourcemodule <- function(  #nolint
 
   # Handle next page button
   observeEvent(input$res_next_page, {
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_next_time) && 
+        (current_time - session$userData$last_next_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_next_time <- current_time
     new_page <- res_page_state() + 1
     res_page_state(new_page)
   })
 
   # Handle previous page button
   observeEvent(input$res_prev_page, {
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_prev_time) && 
+        (current_time - session$userData$last_prev_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_prev_time <- current_time
     if (res_page_state() > 1) {
       new_page <- res_page_state() - 1
       res_page_state(new_page)

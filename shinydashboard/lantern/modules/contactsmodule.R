@@ -81,6 +81,12 @@ contactsmodule <- function(
 
     # Handle next page button
     observeEvent(input$contacts_next_page, {
+      current_time <- as.numeric(Sys.time()) * 1000
+      if (!is.null(session$userData$last_contacts_next_time) && 
+          (current_time - session$userData$last_contacts_next_time) < 1000) {
+        return()  # Ignore only rapid consecutive clicks
+      }
+      session$userData$last_contacts_next_time <- current_time
       if (contacts_page_state() < contacts_total_pages()) {
         new_page <- contacts_page_state() + 1
         contacts_page_state(new_page)
@@ -90,6 +96,12 @@ contactsmodule <- function(
 
     # Handle previous page button
     observeEvent(input$contacts_prev_page, {
+      current_time <- as.numeric(Sys.time()) * 1000
+      if (!is.null(session$userData$last_contacts_prev_time) && 
+          (current_time - session$userData$last_contacts_prev_time) < 1000) {
+        return()  # Ignore only rapid consecutive clicks
+      }
+      session$userData$last_contacts_prev_time <- current_time
       if (contacts_page_state() > 1) {
         new_page <- contacts_page_state() - 1
         contacts_page_state(new_page)

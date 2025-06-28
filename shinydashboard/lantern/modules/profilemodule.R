@@ -114,6 +114,12 @@ profilemodule <- function(
 
   # Handle next page button
   observeEvent(input$profile_next_page, {
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_next_time) && 
+        (current_time - session$userData$last_next_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_next_time <- current_time
     if (profile_page_state() < profile_total_pages()) {
       new_page <- profile_page_state() + 1
       profile_page_state(new_page)
@@ -123,6 +129,12 @@ profilemodule <- function(
 
   # Handle previous page button
   observeEvent(input$profile_prev_page, {
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_prev_time) && 
+        (current_time - session$userData$last_prev_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_prev_time <- current_time
     if (profile_page_state() > 1) {
       new_page <- profile_page_state() - 1
       profile_page_state(new_page)

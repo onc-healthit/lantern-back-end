@@ -59,9 +59,14 @@ endpointsmodule <- function(
   page_state <- reactiveVal(1)
   page_size <- 10
 
-  # Calculate total pages based on filtered data
+  # Calculate total pages based on ACTUAL TABLE ROWS (after distinct operation)
   total_pages <- reactive({
-    total_records <- nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version))
+    # Count the actual distinct rows that will be displayed in the table
+    table_data <- selected_fhir_endpoints_without_limit() %>% 
+      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% 
+      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability)
+    
+    total_records <- nrow(table_data)
     max(1, ceiling(total_records / page_size))
   })
 
@@ -87,7 +92,12 @@ endpointsmodule <- function(
 
   # Handle next page button
   observeEvent(input$next_page, {
-    message("NEXT PAGE BUTTON CLICKED")
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_next_time) && 
+        (current_time - session$userData$last_next_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_next_time <- current_time
     if (page_state() < total_pages()) {
       new_page <- page_state() + 1
       page_state(new_page)
@@ -97,7 +107,12 @@ endpointsmodule <- function(
 
   # Handle previous page button
   observeEvent(input$prev_page, {
-    message("PREV PAGE BUTTON CLICKED")
+    current_time <- as.numeric(Sys.time()) * 1000
+    if (!is.null(session$userData$last_prev_time) && 
+        (current_time - session$userData$last_prev_time) < 300) {
+      return()  # Ignore only rapid consecutive clicks
+    }
+    session$userData$last_prev_time <- current_time
     if (page_state() > 1) {
       new_page <- page_state() - 1
       page_state(new_page)
@@ -135,8 +150,10 @@ endpointsmodule <- function(
     HTML("<p>You may also download endpoint data by visiting the <a tabindex=\"0\" id=\"downloads_page_link\" class=\"lantern-url\">Downloads Page</a>.</p>")
   })
 
+  # MATCHING ENDPOINTS: Count unique (url, fhir_version) combinations - the actual endpoints
   output$endpoint_count <- renderText({
-    paste("Matching Endpoints:", nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version)))
+    unique_endpoints <- nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version))
+    paste("Matching Endpoints:", unique_endpoints)
   })
 
   # Main data query with LIMIT OFFSET pagination
