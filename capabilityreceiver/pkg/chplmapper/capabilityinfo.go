@@ -47,7 +47,7 @@ type ChplCertifiedProduct struct {
 
 type ChplMapResults struct {
 	ChplProductIDs []string
-	ChplDeveloper  string
+	ChplDeveloper  []string
 }
 
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
@@ -60,11 +60,11 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	}
 
 	for _, fhirEndpoint := range fhirEndpointList {
-		developerName := listSourceMap[fhirEndpoint.ListSource].ChplDeveloper
+		developerNames := listSourceMap[fhirEndpoint.ListSource].ChplDeveloper
 
-		if len(developerName) > 0 {
+		if len(developerNames) > 0 {
 			// No errors thrown means a vendor with developer name was found and can be set on ep
-			vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
+			vendorMatch, err := store.GetVendorUsingName(ctx, developerNames[0])
 			if err == sql.ErrNoRows {
 				log.Infof("No vendor found matching the CHPL endpoint list developer name. Ensure the vendor table is not empty.")
 				return nil
@@ -336,7 +336,7 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 			var listSource = obj.ListSourceURL
 			var softwareProducts = obj.SoftwareProducts
 
-			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: []string{}}
 
 			chplID := ""
 
@@ -349,9 +349,9 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 			}
 
 			if listSource != "" {
-				if len(softwareProducts) > 0 {
+				for _, softwareProduct := range softwareProducts {
 					// Developer is the same for all products, just grab first one
-					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+					chplMapResult.ChplDeveloper = append(chplMapResult.ChplDeveloper, softwareProduct.Developer.Name)
 				}
 
 				softwareListMap[listSource] = chplMapResult
