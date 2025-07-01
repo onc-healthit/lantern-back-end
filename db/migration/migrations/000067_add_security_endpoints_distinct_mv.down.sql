@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE;
+
+COMMIT;

@@ -1214,6 +1214,28 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_selected
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_selected_security_endpoints_code." >> $log_file
 }
 
+# Refresh security_endpoints_distinct_mv
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY security_endpoints_distinct_mv;" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh security_endpoints_distinct_mv." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_unique_security_endpoints_distinct_mv;" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_unique_security_endpoints_distinct_mv." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_unique_security_endpoints_distinct_mv ON security_endpoints_distinct_mv (url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code);" -U lantern -d lantern || { 
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_unique_security_endpoints_distinct_mv." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_security_endpoints_distinct_filters;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_security_endpoints_distinct_filters." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_security_endpoints_distinct_filters ON security_endpoints_distinct_mv(capability_fhir_version, code, vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_security_endpoints_distinct_filters." >> $log_file
+}
+
+
 # Refresh mv_validation_results_plot
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_validation_results_plot;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_validation_results_plot." >> $log_file
