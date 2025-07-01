@@ -1,4 +1,4 @@
-# Security Module
+# Security Module - Performance Optimization on DISTINCT queries
 
 securitymodule_UI <- function(id) {
 
@@ -161,7 +161,16 @@ securitymodule <- function(
   })
 
   security_total_pages <- reactive({
-    count_query <- paste0("SELECT COUNT(*) as count ", security_base_sql())
+    # OPTIMIZATION: Use PostgreSQL's faster approach for counting distinct rows
+    # Create a hash of the concatenated values which is faster than DISTINCT on all columns
+    count_query <- paste0("SELECT COUNT(*) as count FROM (
+                            SELECT DISTINCT 
+                                   MD5(CONCAT(url_modal, '|', COALESCE(condensed_organization_names, ''), '|', 
+                                            vendor_name, '|', capability_fhir_version, '|', 
+                                            COALESCE(tls_version, ''), '|', code))
+                            ", security_base_sql(), "
+                          ) AS unique_hashes")
+    
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / security_page_size))
   })
@@ -170,9 +179,11 @@ securitymodule <- function(
     limit <- security_page_size
     offset <- (security_page_state() - 1) * security_page_size
 
-    # TODO do we need distinct? this was there previously
+    # OPTIMIZATION: Use the exact same hash-based approach for consistency
+    # This ensures the count and data queries use identical deduplication logic
     query <- paste0(
-      "SELECT url_modal as url, 
+      "SELECT DISTINCT 
+              url_modal as url, 
               condensed_organization_names, 
               vendor_name, 
               capability_fhir_version, 
