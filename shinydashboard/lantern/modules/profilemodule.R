@@ -3,6 +3,14 @@ library(purrr)
 library(reactable)
 library(glue)
 
+log_duration <- function(label, expr) {
+  start_time <- Sys.time()
+  result <- expr
+  duration <- Sys.time() - start_time
+  message(sprintf("[%s] Duration: %.3fs", label, as.numeric(duration, units = "secs")))
+  result
+}
+
 profilemodule_UI <- function(id) {
   ns <- NS(id)
   tagList(
@@ -47,6 +55,7 @@ profilemodule <- function(
 
   # FAST COUNT: Get total count without loading all data
   profile_total_count <- reactive({
+    log_duration("profile_total_count", {
     req(sel_fhir_version(), sel_vendor())
     
     # Count query - much faster than loading all data
@@ -82,15 +91,18 @@ profilemodule <- function(
     query <- do.call(glue_sql, c(list(count_query, .con = db_connection), params))
     result <- tbl(db_connection, sql(query)) %>% collect()
     as.numeric(result$total[1])
+    })
   })
 
   # Calculate total pages from count
   profile_total_pages <- reactive({
+    log_duration("profile_total_pages", {
     total_count <- profile_total_count()
     if (total_count == 0) {
       return(1)
     }
     max(1, ceiling(total_count / profile_page_size))
+    })
   })
 
   # Update page selector max when total pages change
@@ -171,6 +183,7 @@ profilemodule <- function(
 
   # FAST PAGINATION: Only load the 10 rows needed for current page
   selected_fhir_endpoint_profiles <- reactive({
+    log_duration("selected_profiles_query", {
     req(sel_fhir_version(), sel_vendor())
     
     profile_offset <- (profile_page_state() - 1) * profile_page_size
@@ -228,9 +241,11 @@ profilemodule <- function(
     }
     
     return(res)
+    })
   })
 
   output$profiles_table <- reactable::renderReactable({
+    log_duration("renderReactable_profiles_table", {
     df <- selected_fhir_endpoint_profiles()
 
     if (nrow(df) == 0) {
@@ -257,5 +272,6 @@ profilemodule <- function(
       highlight = TRUE,
       defaultPageSize = profile_page_size
     )
+    })
   })
 }

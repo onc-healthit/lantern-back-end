@@ -272,7 +272,7 @@ function(input, output, session) { #nolint
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for specific tabs
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab")) {
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
@@ -452,53 +452,55 @@ function(input, output, session) { #nolint
   })
 
   profile_options <- reactive({
-    query <- tbl(db_connection, "endpoint_supported_profiles_mv") %>%
-      filter(fhir_version %in% !!input$fhir_version)
+    req(input$fhir_version)
+
+    sql_str <- "SELECT DISTINCT profileurl
+                FROM endpoint_supported_profiles_mv
+                WHERE fhir_version IN ({fhir_versions*})"
+
+    params <- list(fhir_versions = input$fhir_version)
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      query <- query %>% filter(vendor_name == !!input$vendor)
+      sql_str <- paste(sql_str, "AND vendor_name = {vendor}")
+      params$vendor <- input$vendor
     }
 
-  res <-  query %>%
-      select(profileurl) %>%
-      distinct() %>%
-      arrange(profileurl) %>%
-      collect()
+    sql_str <- paste(sql_str, "ORDER BY profileurl")
 
-    # split(.$profileurl) %>%
-    # purrr::map(~ .$profileurl)
+    query <- do.call(glue::glue_sql, c(list(sql_str, .con = db_connection), params))
+    res <- DBI::dbGetQuery(db_connection, query)
 
-  res <- split(res$profileurl, res$profileurl)
+    res_split <- split(res$profileurl, res$profileurl)
 
-  profile_list <- list(
-    "All Profiles" = ui_special_values$ALL_PROFILES
-  )
-
-  return(c(profile_list, res))
+    c("All Profiles" = ui_special_values$ALL_PROFILES, res_split)
   })
 
   resource_options <- reactive({
-    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
-    res <- res %>%
-    filter(fhir_version %in% input$fhir_version) %>%
-    filter(resource != "")
+    base_query <- "
+      SELECT DISTINCT resource
+      FROM endpoint_supported_profiles_mv
+      WHERE resource != ''
+        AND fhir_version IN ({fhir_versions*})
+    "
+
+    params <- list(fhir_versions = input$fhir_version)
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
+      base_query <- paste0(base_query, " AND vendor_name = {vendor}")
+      params$vendor <- input$vendor
     }
 
-    resource_list <- list(
-        "All Resources" = ui_special_values$ALL_RESOURCES
-    )
+    base_query <- paste0(base_query, " ORDER BY resource")
 
-    res <- res %>%
-    distinct(resource) %>%
-    arrange(resource) %>%
-    split(.$resource) %>%
-    purrr::map(~ .$resource)
-    return(c(resource_list, res))
+    query <- do.call(glue::glue_sql, c(list(base_query, .con = db_connection), params))
+    res <- DBI::dbGetQuery(db_connection, query)
+
+    resource_list <- list("All Resources" = ui_special_values$ALL_RESOURCES)
+    res_split <- split(res$resource, res$resource)
+
+    return(c(resource_list, res_split))
   })
 
 

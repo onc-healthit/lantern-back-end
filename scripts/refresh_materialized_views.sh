@@ -1595,6 +1595,14 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_profiles_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_profiles_paginated_composite_idx." >> $log_file
 }
 
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_profiles_filters;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_profiles_filters." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_profiles_filters ON mv_profiles_paginated (fhir_version, vendor_name, resource, profileurl, url);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_profiles_filters." >> $log_file
+}
+
 # Refresh and reindex capstat_usage_summary_mv
 docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY capstat_usage_summary_mv;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh capstat_usage_summary_mv." >> $log_file
