@@ -294,6 +294,8 @@ organizationsmodule <- function(
       
       left_join(get_org_url_information(db_connection),
           by = c("organization_id" = "org_id")) %>%
+
+      mutate(org_url = if_else(str_starts(org_url, "urn:uuid:"), "", org_url)) %>%
         
       select(-organization_id)
 
@@ -352,7 +354,9 @@ organizationsmodule <- function(
       
       left_join(get_org_url_information(db_connection),
           by = c("organization_id" = "org_id")) %>%
-        
+
+      mutate(org_url = if_else(str_starts(org_url, "urn:uuid:"), "", org_url)) %>%
+
       select(-organization_id)
 
     res <- res %>%

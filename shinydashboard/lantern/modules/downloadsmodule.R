@@ -112,17 +112,19 @@ downloadsmodule <- function(
     
     left_join(get_org_url_information(db_connection),
           by = c("organization_id" = "org_id")) %>%
-        
+
+    mutate(org_url = if_else(str_starts(org_url, "urn:uuid:"), "", org_url)) %>%
+
     select(-organization_id)
 
     res <- res %>%
       group_by(organization_name) %>%
       summarise(
-        identifier = paste(unique(identifier), collapse = "<br/>"),
-        address = paste(unique(address), collapse = "<br/>"),
-        org_url = paste(unique(org_url), collapse = "<br/>"),
-        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
-        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        identifier = paste(unique(identifier), collapse = "\n"),
+        address = paste(unique(address), collapse = "\n"),
+        org_url = paste(unique(org_url), collapse = "\n"),
+        fhir_version = paste(unique(fhir_version), collapse = "\n"),
+        vendor_name = paste(unique(vendor_name), collapse = "\n"),
         .groups = "drop"
       ) %>%
       filter(organization_name != "Unknown") %>%
