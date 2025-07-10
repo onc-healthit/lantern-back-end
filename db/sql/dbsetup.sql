@@ -1769,6 +1769,22 @@ CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
   GROUP BY sub.url
   ORDER BY sub.url;
 
+-- Create materialized view for security_endpoints_distinct_mv
+DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE;
+CREATE MATERIALIZED VIEW security_endpoints_distinct_mv AS
+SELECT DISTINCT
+  url_modal AS url,
+  condensed_organization_names,
+  vendor_name,
+  capability_fhir_version,
+  tls_version,
+  code
+FROM selected_security_endpoints_mv;
+
+-- Create indexes for security_endpoints_distinct_mv
+CREATE UNIQUE INDEX idx_unique_security_endpoints_distinct_mv ON security_endpoints_distinct_mv (url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code);
+CREATE INDEX idx_security_endpoints_distinct_filters  ON security_endpoints_distinct_mv(capability_fhir_version, code, vendor_name);
+
 -- Create indexes for mv_endpoint_organization_tbl
 CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
