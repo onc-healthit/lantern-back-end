@@ -16,7 +16,7 @@ function(res) {
     include_file(filename, res, content_type = "text/csv")
 }
 
-#* @get /daily/download-orgs
+#* @get /organizations/v1
 #* @description Download a CSV file containing daily organization data
 function(res) {
   res$setHeader("Content-Type", "text/csv")
