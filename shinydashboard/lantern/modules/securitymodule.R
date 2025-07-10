@@ -87,7 +87,7 @@ securitymodule <- function(
     # Double-click protection
     current_time <- as.numeric(Sys.time()) * 1000
     if (!is.null(session$userData$last_security_next_time) && 
-        (current_time - session$userData$last_security_next_time) < 500) {
+        (current_time - session$userData$last_security_next_time) < 1000) {
       return()  # Ignore rapid consecutive clicks
     }
     session$userData$last_security_next_time <- current_time
@@ -103,7 +103,7 @@ securitymodule <- function(
     # Double-click protection
     current_time <- as.numeric(Sys.time()) * 1000
     if (!is.null(session$userData$last_security_prev_time) && 
-        (current_time - session$userData$last_security_prev_time) < 500) {
+        (current_time - session$userData$last_security_prev_time) < 1000) {
       return()  # Ignore rapid consecutive clicks
     }
     session$userData$last_security_prev_time <- current_time
