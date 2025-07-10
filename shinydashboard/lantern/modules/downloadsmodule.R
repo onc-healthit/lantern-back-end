@@ -33,11 +33,15 @@ downloadsmodule_UI <- function(id) {
       column(width = 12,
              h2("REST API"),
              style = "padding-bottom:10px;padding-top:10px",
-             p(HTML("This REST API [GET]<b> https://lantern.healthit.gov/api/daily/download </b> enables programmatic access
-              to download the daily Lantern data (available for download as a CSV above). The API will initiate
-              the download of the data in CSV format automatically. This can be used to program the
-              download for any purpose."))
-      )
+             p(HTML("These REST APIs enable programmatic access to download daily Lantern data in CSV format:
+                    <br><br>
+                    [GET]<b> https://lantern.healthit.gov/api/daily/download </b> – Downloads daily FHIR endpoint data.
+                    <br>
+                    [GET]<b> https://lantern.healthit.gov/api/daily/download-orgs </b> – Downloads daily organization data associated with endpoints.
+                    <br><br>
+                    The APIs will initiate the download of the data in CSV format automatically. 
+                    These can be used to program the download for any purpose."))
+                    )
     ),
     fluidRow(
       column(width = 12, style = "padding-top:50px",

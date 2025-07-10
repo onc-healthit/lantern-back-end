@@ -832,17 +832,6 @@ get_validation_results <- function(db_connection) {
     mutate(fhir_version = if_else(fhir_version %in% valid_fhir_versions, fhir_version, "Unknown"))
 }
 
-get_endpoint_list_matches <- function() {
-    el <- endpoint_export_tbl() %>%
-          separate_rows(endpoint_names, sep = ";") %>%
-          select(url, endpoint_names, fhir_version, vendor_name, requested_fhir_version) %>%
-          rename(organization_name = endpoint_names) %>%
-          tidyr::replace_na(list(organization_name = "Unknown")) %>%
-          mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
-    el
-}
-
-
 get_capability_and_smart_response <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
     sql(paste0("SELECT capability_statement, smart_response FROM fhir_endpoints_info WHERE
