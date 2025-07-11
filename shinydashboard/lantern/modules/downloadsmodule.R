@@ -34,15 +34,23 @@ downloadsmodule_UI <- function(id) {
              h2("REST API"),
              style = "padding-bottom:10px;padding-top:10px",
              p(HTML("These REST APIs enable programmatic access to download daily Lantern data in CSV format:
-                    <br><br>
-                    [GET]<b> https://lantern.healthit.gov/api/daily/download </b> – Downloads daily FHIR endpoint data.
-                    <br>
-                    [GET]<b> https://lantern.healthit.gov/api/daily/download-orgs </b> – Downloads daily organization data associated with endpoints.
-                    <br><br>
-                    The APIs will initiate the download of the data in CSV format automatically. 
-                    These can be used to program the download for any purpose."))
-                    )
-    ),
+              <br><br>
+              [GET]<b> https://lantern.healthit.gov/api/daily/download </b> – Downloads daily FHIR endpoint data.
+              <br>
+              [GET]<b> https://lantern.healthit.gov/api/organizations/v1 </b> – Downloads daily organization data associated with endpoints.
+              <br><br>
+              Optional query parameter <code>?vendor=&lt;Vendor Name&gt;</code> can be used with the organizations API to filter results by certified API developer.
+              <br>
+              For example, to download data only for <i>Epic Systems Corporation</i>, use:
+              <code>https://lantern.healthit.gov/api/organizations/v1?vendor=Epic%20Systems%20Corporation</code>
+              <br>
+              Vendor names must match exactly as listed in the CHPL database. If the name contains spaces, commas, or other special characters,
+              they must be <a href='https://en.wikipedia.org/wiki/Percent-encoding' target='_blank'>URL encoded</a>. 
+              <br>
+              Most browsers handle this automatically, but other tools may require manual encoding.
+              <br><br>
+              The APIs will initiate the download of the data in CSV format automatically. These can be used to program the download for any purpose.")))
+            ),
     fluidRow(
       column(width = 12, style = "padding-top:50px",
              htmlOutput(ns("note_text"))

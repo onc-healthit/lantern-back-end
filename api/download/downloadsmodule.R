@@ -57,8 +57,8 @@ download_data <- function(db_tables) {
 }
 
 # Get organization data and transform to csv
-get_organization_csv_data <- function(db_connection) {
-  res <- get_endpoint_list_matches(db_connection)
+get_organization_csv_data <- function(db_connection, current_vendor = NULL) {
+  res <- get_endpoint_list_matches(db_connection, vendor = current_vendor)
 
   res <- res %>%
     mutate(organization_id = as.integer(organization_id)) %>%
@@ -114,7 +114,7 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
     query <- query %>% filter(fhir_version %in% !!fhir_version)
   }
 
-  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+  if (!is.null(vendor)) {
     query <- query %>% filter(vendor_name == !!vendor)
   }
 
