@@ -1557,4 +1557,41 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX mv_profiles_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_profiles_paginated_composite_idx." >> $log_file
 }
 
+# Refresh and reindex mv_organizations_aggregated
+docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_organizations_aggregated;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_profiles_paginated." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_orgs_agg_name;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_orgs_agg_name." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_orgs_agg_name." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_orgs_agg_fhir_versions;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_orgs_agg_fhir_versions." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_orgs_agg_fhir_versions ON mv_organizations_aggregated USING GIN(fhir_versions_array);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_orgs_agg_fhir_versions." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_orgs_agg_vendor_names;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_orgs_agg_vendor_names." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_orgs_agg_vendor_names ON mv_organizations_aggregated USING GIN(vendor_names_array);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_orgs_agg_vendor_names." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_mv_orgs_agg_urls;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_orgs_agg_urls." >> $log_file
+}
+
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_mv_orgs_agg_urls ON mv_organizations_aggregated USING GIN(urls_array);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_orgs_agg_urls." >> $log_file
+}
+
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
