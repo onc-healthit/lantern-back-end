@@ -31,26 +31,40 @@ downloadsmodule_UI <- function(id) {
     ),
     fluidRow(
       column(width = 12,
-             h2("REST API"),
-             style = "padding-bottom:10px;padding-top:10px",
-             p(HTML("These REST APIs enable programmatic access to download daily Lantern data in CSV format:
-              <br><br>
-              [GET]<b> https://lantern.healthit.gov/api/daily/download </b> – Downloads daily FHIR endpoint data.
-              <br>
-              [GET]<b> https://lantern.healthit.gov/api/organizations/v1 </b> – Downloads daily organization data associated with endpoints.
-              <br><br>
-              Optional query parameter <code>?vendor=&lt;Vendor Name&gt;</code> can be used with the organizations API to filter results by certified API developer.
-              <br>
-              For example, to download data only for <i>Epic Systems Corporation</i>, use:
-              <code>https://lantern.healthit.gov/api/organizations/v1?vendor=Epic%20Systems%20Corporation</code>
-              <br>
-              Vendor names must match exactly as listed in the CHPL database. If the name contains spaces, commas, or other special characters,
-              they must be <a href='https://en.wikipedia.org/wiki/Percent-encoding' target='_blank'>URL encoded</a>. 
-              <br>
-              Most browsers handle this automatically, but other tools may require manual encoding.
-              <br><br>
-              The APIs will initiate the download of the data in CSV format automatically. These can be used to program the download for any purpose.")))
-            ),
+            h2("REST API"),
+            style = "padding-bottom:10px;padding-top:10px",
+            p(HTML("These REST APIs enable programmatic access to download daily Lantern data in CSV format:
+                  <br><br>
+                  [GET]<b> https://lantern.healthit.gov/api/daily/download </b> – Downloads daily FHIR endpoint data.
+                  <br>
+                  [GET]<b> https://lantern.healthit.gov/api/organizations/v1 </b> – Downloads daily organization data associated with endpoints.
+                  <br><br>
+                  The organizations API supports the following optional query parameters for filtering results:
+                  <br>
+                  <code>developer</code> – Filter by certified API developer name. <br>
+                  <code>fhir_version</code> – Comma-separated list of FHIR versions to include. <br>
+                  <code>identifier</code> – Exact match on organization identifier (e.g., NPI). <br>
+                  <code>hti1</code> – Use <code>hti1=present</code> to return only organizations with HTI-1 relevant data.
+                  <br><br>
+                  All filters can be used independently or in combination.
+                  <br>
+                  For example, to download data only for <i>Epic Systems Corporation</i> and FHIR version <i>No Cap Stat</i> or <i>4.0.1</i>, use:
+                  <br>
+                  <code>?developer=Epic%20Systems%20Corporation&fhir_version=No%20Cap%20Stat,4.0.1</code>
+                  <br><br>
+                  To return organizations with identifier <i>1750581864</i> that have HTI-1 data:
+                  <br>
+                  <code>?identifier=1750581864&hti1=present</code>
+                  <br><br>
+                  Developer names and other parameter values must match exactly as stored in the system.
+                  If the value contains spaces, commas, or other special characters, it must be 
+                  <a href='https://en.wikipedia.org/wiki/Percent-encoding' target='_blank'>URL encoded</a>.
+                  Most browsers handle this automatically, but other tools may require manual encoding.
+                  <br><br>
+                  The APIs will initiate download of the data in CSV format automatically. 
+                  These can be used to programmatically retrieve data for analysis or integration."))
+            )
+    ),
     fluidRow(
       column(width = 12, style = "padding-top:50px",
              htmlOutput(ns("note_text"))

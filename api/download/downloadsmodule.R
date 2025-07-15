@@ -57,8 +57,14 @@ download_data <- function(db_tables) {
 }
 
 # Get organization data and transform to csv
-get_organization_csv_data <- function(db_connection, current_vendor = NULL) {
-  res <- get_endpoint_list_matches(db_connection, vendor = current_vendor)
+get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, hti1 = NULL) {
+  res <- get_endpoint_list_matches(
+    db_connection,
+    vendor = developer,
+    fhir_version = fhir_versions,
+    identifier = identifier,
+    hti1 = hti1
+  )
 
   res <- res %>%
     mutate(organization_id = as.integer(organization_id)) %>%
@@ -105,20 +111,54 @@ get_organization_csv_data <- function(db_connection, current_vendor = NULL) {
   res
 }
 
-get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor = NULL) {
+get_endpoint_list_matches <- function(
+  db_connection,
+  fhir_version = NULL,
+  vendor = NULL,
+  identifier = NULL,
+  hti1 = NULL
+) {
   # Start with base query
-  query <- tbl(db_connection, "mv_endpoint_list_organizations")
+  query <- tbl(db_connection, "mv_endpoint_list_organizations") %>%
+    filter(organization_id != "Unknown") %>%
+    mutate(organization_id = as.integer(organization_id))
 
-  # Apply filters in SQL before collecting data
+  # Filter by FHIR version(s)
   if (!is.null(fhir_version) && length(fhir_version) > 0) {
     query <- query %>% filter(fhir_version %in% !!fhir_version)
   }
 
+  # Filter by vendor name
   if (!is.null(vendor)) {
     query <- query %>% filter(vendor_name == !!vendor)
   }
 
-  # Collect the data after applying filters in SQL
+  # Filter by identifier value (exact match on "NPI: <id>" or "Other: <id>")
+  if (!is.null(identifier)) {
+    identifier_variants <- c(paste0("NPI: ", identifier), paste0("Other: ", identifier))
+    
+    subquery <- tbl(db_connection, "fhir_endpoint_organization_identifiers") %>%
+      filter(identifier %in% !!identifier_variants) %>%
+      select(org_id) %>%
+      distinct()
+    
+    query <- query %>%
+      semi_join(subquery, by = c("organization_id" = "org_id"))
+  }
+
+  # Filter by HTI-1 presence
+  if (!is.null(hti1)) {
+    hti1_orgs <- union_all(
+      tbl(db_connection, "fhir_endpoint_organization_identifiers") %>% select(org_id),
+      tbl(db_connection, sql("SELECT org_id FROM fhir_endpoint_organization_addresses")),
+      tbl(db_connection, sql("SELECT org_id FROM fhir_endpoint_organization_active"))
+    ) %>% distinct()
+
+    query <- query %>%
+      semi_join(hti1_orgs, by = c("organization_id" = "org_id"))
+  }
+
+  # Collect filtered results and sanitize
   result <- query %>%
     collect() %>%
     tidyr::replace_na(list(organization_name = "Unknown")) %>%
