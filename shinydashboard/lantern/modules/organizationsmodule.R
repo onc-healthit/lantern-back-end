@@ -281,37 +281,40 @@ organizationsmodule <- function(
       # Left join with deduplicated or collapsed identifiers
       left_join(
         get_org_identifiers_information(db_connection) %>%
-          mutate(org_id = as.integer(org_id)) %>%
-          group_by(org_id) %>%
-          summarise(identifier = paste(unique(identifier), collapse = "<br/>")),
+          mutate(org_id = as.integer(org_id)),
         by = c("organization_id" = "org_id")
       ) %>%
       
       # Left join with deduplicated or collapsed addresses
       left_join(
         get_org_addresses_information(db_connection) %>%
-          mutate(org_id = as.integer(org_id)) %>%
-          group_by(org_id) %>%
-          summarise(address = paste(unique(address), collapse = "<br/>")),
+          mutate(org_id = as.integer(org_id)),
         by = c("organization_id" = "org_id")
       ) %>%
       
+      left_join(get_org_url_information(db_connection),
+          by = c("organization_id" = "org_id")) %>%
+
+      mutate(org_url = if_else(str_starts(org_url, "urn:uuid:"), "", org_url)) %>%
+
       select(-organization_id)
 
     res <- res %>%
       mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
 
     res <- res %>%
+      mutate(organization_name = toupper(organization_name)) %>%
       group_by(organization_name) %>%
       summarise(
         identifier = paste(unique(identifier), collapse = "<br/>"),
         address = paste(unique(address), collapse = "<br/>"),
         url = paste(unique(url), collapse = "<br/>"),
+        org_url = paste(unique(org_url), collapse = "<br/>"),
         fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
         vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
         .groups = "drop"
       ) %>%
-      filter(organization_name != "Unknown") %>%
+      filter(organization_name != "UNKNOWN") %>%
       mutate(address = toupper(address)) %>%
       arrange(organization_name)
 
@@ -339,34 +342,37 @@ organizationsmodule <- function(
       # Left join with deduplicated or collapsed identifiers
       left_join(
         get_org_identifiers_information(db_connection) %>%
-          mutate(org_id = as.integer(org_id)) %>%
-          group_by(org_id) %>%
-          summarise(identifier = paste(unique(identifier), collapse = "\n")),
+          mutate(org_id = as.integer(org_id)),
         by = c("organization_id" = "org_id")
       ) %>%
       
       # Left join with deduplicated or collapsed addresses
       left_join(
         get_org_addresses_information(db_connection) %>%
-          mutate(org_id = as.integer(org_id)) %>%
-          group_by(org_id) %>%
-          summarise(address = paste(unique(address), collapse = "\n")),
+          mutate(org_id = as.integer(org_id)),
         by = c("organization_id" = "org_id")
       ) %>%
       
+      left_join(get_org_url_information(db_connection),
+          by = c("organization_id" = "org_id")) %>%
+
+      mutate(org_url = if_else(str_starts(org_url, "urn:uuid:"), "", org_url)) %>%
+
       select(-organization_id)
 
     res <- res %>%
+      mutate(organization_name = toupper(organization_name)) %>%
       group_by(organization_name) %>%
       summarise(
-        identifier = paste(unique(identifier), collapse = "<br/>"),
-        address = paste(unique(address), collapse = "<br/>"),
-        url = paste(unique(url), collapse = "<br/>"),
-        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
-        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
+        identifier = paste(unique(identifier), collapse = "\n"),
+        address = paste(unique(address), collapse = "\n"),
+        url = paste(unique(url), collapse = "\n"),
+        org_url = paste(unique(org_url), collapse = "\n"),
+        fhir_version = paste(unique(fhir_version), collapse = "\n"),
+        vendor_name = paste(unique(vendor_name), collapse = "\n"),
         .groups = "drop"
       ) %>%
-      filter(organization_name != "Unknown") %>%
+      filter(organization_name != "UNKNOWN") %>%
       mutate(address = toupper(address)) %>%
       arrange(organization_name)
 
@@ -398,6 +404,7 @@ organizationsmodule <- function(
          identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
          address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
          vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
        ),
