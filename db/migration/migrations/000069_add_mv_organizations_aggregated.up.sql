@@ -14,12 +14,12 @@ WITH base_filtered_data AS (
     FROM mv_endpoint_list_organizations mv
 ),
 processed_data AS (
-    -- Step 2: Apply the R mutate logic
+    -- Step 2: Apply the R mutate logic including uppercase conversion
     SELECT DISTINCT
-        -- Replicate tidyr::replace_na(list(organization_name = "Unknown"))
+        -- Replicate tidyr::replace_na(list(organization_name = "Unknown")) + UPPER()
         CASE 
-            WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
-            ELSE organization_name
+            WHEN organization_name IS NULL OR organization_name = '' THEN 'UNKNOWN'
+            ELSE UPPER(organization_name)
         END AS organization_name,
         -- Replicate mutate(organization_id = as.integer(organization_id))
         CASE 
@@ -171,7 +171,7 @@ FROM endpoint_data_agg eda
 LEFT JOIN identifiers_agg ia ON eda.organization_name = ia.organization_name
 LEFT JOIN addresses_agg aa ON eda.organization_name = aa.organization_name  
 LEFT JOIN urls_agg ua ON eda.organization_name = ua.organization_name
-WHERE eda.organization_name != 'Unknown';
+WHERE eda.organization_name != 'UNKNOWN';
 
 -- Create indexes for performance 
 CREATE UNIQUE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_name);
