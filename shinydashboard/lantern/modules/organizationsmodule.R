@@ -373,7 +373,13 @@ organizationsmodule <- function(
         .groups = "drop"
       ) %>%
       filter(organization_name != "UNKNOWN") %>%
-      mutate(address = toupper(address)) %>%
+      mutate(
+        address = toupper(address),
+        identifier = substr(identifier, 1, 32765),
+        address = substr(address, 1, 32765),
+        url = substr(url, 1, 32765),
+        org_url = substr(org_url, 1, 32765)
+      ) %>%
       arrange(organization_name)
 
     res
