@@ -90,13 +90,13 @@ organizationsmodule <- function(
     count_query_str <- "SELECT COUNT(*) as count FROM mv_organizations_aggregated WHERE TRUE"
     count_params <- list()
 
-    # FIXED: Add FHIR version filter using array overlap (like original code)
+    # FIXED: Add FHIR version filter using array overlap 
     if (!is_all_fhir_versions_selected()) {
       count_query_str <- paste0(count_query_str, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
       count_params$fhir_versions <- fhir_versions
     }
 
-    # Add vendor filter using array overlap (like original code)
+    # Add vendor filter using array overlap 
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
       count_query_str <- paste0(count_query_str, " AND vendor_names_array && ARRAY[{vendor}]")
       count_params$vendor <- vendor
@@ -303,20 +303,20 @@ organizationsmodule <- function(
     
     res <- tbl(db_connection, sql(data_query)) %>% collect()
     
-    # Handle empty org_url field gracefully (replace empty/NA with "Not Available")
+    # Handle empty fields gracefully - leave them empty
     res <- res %>%
       mutate(
+        # Convert NA to empty string 
         org_url = case_when(
-          is.na(org_url) | org_url == "" | org_url == "NA" ~ "Not Available",
+          is.na(org_url) | org_url == "NA" ~ "",
           TRUE ~ org_url
         ),
-        # Clean up any remaining NA values in other fields
         identifier = case_when(
-          is.na(identifier) | identifier == "" ~ "Not Available",
+          is.na(identifier) ~ "",
           TRUE ~ identifier
         ),
         address = case_when(
-          is.na(address) | address == "" ~ "Not Available", 
+          is.na(address) ~ "",
           TRUE ~ address
         )
       )
@@ -408,20 +408,20 @@ organizationsmodule <- function(
     
     res <- tbl(db_connection, sql(data_query)) %>% collect()
     
-    # Handle empty org_url field gracefully for CSV (leave empty instead of "Not Available")
+    # Handle empty fields gracefully for CSV - leave them empty
     res <- res %>%
       mutate(
+        # Convert NA to empty string 
         org_url = case_when(
-          is.na(org_url) | org_url == "" | org_url == "NA" ~ "",
+          is.na(org_url) | org_url == "NA" ~ "",
           TRUE ~ org_url
         ),
-        # Clean up CSV fields
         identifier = case_when(
-          is.na(identifier) | identifier == "" ~ "",
+          is.na(identifier) ~ "",
           TRUE ~ identifier
         ),
         address = case_when(
-          is.na(address) | address == "" ~ "",
+          is.na(address) ~ "",
           TRUE ~ address
         )
       )
@@ -453,8 +453,8 @@ organizationsmodule <- function(
                                     grouped = JS("function(cellInfo) {return cellInfo.value}")),
          identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
          address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
-         org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
          vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
        ),

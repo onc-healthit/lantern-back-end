@@ -56,38 +56,55 @@ org_ids_per_name AS (
     FROM processed_data
     GROUP BY organization_name
 ),
--- Step 4: Replicate LEFT JOIN logic for identifiers 
-identifiers_agg AS (
-    SELECT 
+-- Step 4: Get DISTINCT identifiers per organization (avoiding double aggregation)
+identifiers_raw AS (
+    SELECT DISTINCT
         opn.organization_name,
-        string_agg(DISTINCT fei.identifier, '<br/>') as identifiers_html,
-        string_agg(DISTINCT fei.identifier, E'\n') as identifiers_csv
+        fei.identifier
     FROM org_ids_per_name opn
     LEFT JOIN fhir_endpoint_organization_identifiers fei 
         ON (opn.org_ids_array IS NOT NULL 
             AND array_length(opn.org_ids_array, 1) > 0 
             AND fei.org_id = ANY(opn.org_ids_array))
-    GROUP BY opn.organization_name
+    WHERE fei.identifier IS NOT NULL
 ),
--- Step 5: Replicate LEFT JOIN logic for addresses 
-addresses_agg AS (
+identifiers_agg AS (
     SELECT 
+        organization_name,
+        string_agg(identifier, '<br/>') as identifiers_html,
+        string_agg(identifier, E'\n') as identifiers_csv
+    FROM identifiers_raw
+    GROUP BY organization_name
+),
+-- Step 5: Get DISTINCT addresses per organization (avoiding double aggregation)
+addresses_raw AS (
+    SELECT DISTINCT
         opn.organization_name,
-        string_agg(DISTINCT UPPER(fea.address), '<br/>') as addresses_html,
-        string_agg(DISTINCT UPPER(fea.address), E'\n') as addresses_csv
+        UPPER(fea.address) as address
     FROM org_ids_per_name opn
     LEFT JOIN fhir_endpoint_organization_addresses fea 
         ON (opn.org_ids_array IS NOT NULL 
             AND array_length(opn.org_ids_array, 1) > 0 
             AND fea.org_id = ANY(opn.org_ids_array))
-    GROUP BY opn.organization_name
+    WHERE fea.address IS NOT NULL
 ),
--- Step 6: Replicate LEFT JOIN logic for URLs
-urls_agg AS (
+addresses_agg AS (
     SELECT 
+        organization_name,
+        string_agg(address, '<br/>') as addresses_html,
+        string_agg(address, E'\n') as addresses_csv
+    FROM addresses_raw
+    GROUP BY organization_name
+),
+-- Step 6: Get DISTINCT org URLs per organization with urn:uuid filtering
+urls_raw AS (
+    SELECT DISTINCT
         opn.organization_name,
-        string_agg(DISTINCT feou.org_url, '<br/>') as org_urls_html,
-        string_agg(DISTINCT feou.org_url, E'\n') as org_urls_csv
+        -- FIXED: Apply the urn:uuid filtering 
+        CASE 
+            WHEN feou.org_url LIKE 'urn:uuid:%' THEN ''
+            ELSE feou.org_url
+        END as org_url
     FROM org_ids_per_name opn
     LEFT JOIN fhir_endpoint_organization_url feou 
         ON (opn.org_ids_array IS NOT NULL 
@@ -95,7 +112,15 @@ urls_agg AS (
             AND feou.org_id = ANY(opn.org_ids_array)
             AND feou.org_url IS NOT NULL 
             AND feou.org_url != '')
-    GROUP BY opn.organization_name
+    WHERE feou.org_url IS NOT NULL AND feou.org_url != ''
+),
+urls_agg AS (
+    SELECT 
+        organization_name,
+        string_agg(org_url, '<br/>') FILTER (WHERE org_url != '') as org_urls_html,
+        string_agg(org_url, E'\n') FILTER (WHERE org_url != '') as org_urls_csv
+    FROM urls_raw
+    GROUP BY organization_name
 ),
 -- Step 7: Replicate the R group_by/summarise logic 
 endpoint_data_agg AS (
@@ -121,19 +146,19 @@ endpoint_data_agg AS (
 -- Step 8: Final select with the exact R filter logic
 SELECT 
     eda.organization_name,
-    -- For HTML display (pagination) 
-    COALESCE(NULLIF(ia.identifiers_html, ''), '') as identifiers_html,
-    COALESCE(NULLIF(aa.addresses_html, ''), '') as addresses_html,
-    COALESCE(NULLIF(ua.org_urls_html, ''), '') as org_urls_html,
-    eda.endpoint_urls_html,
+    -- For HTML display (pagination)
+    COALESCE(ia.identifiers_html, '') as identifiers_html,
+    COALESCE(aa.addresses_html, '') as addresses_html,
+	eda.endpoint_urls_html,
+    COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
     
-    -- For CSV export 
-    COALESCE(NULLIF(ia.identifiers_csv, ''), '') as identifiers_csv,
-    COALESCE(NULLIF(aa.addresses_csv, ''), '') as addresses_csv,
-    COALESCE(NULLIF(ua.org_urls_csv, ''), '') as org_urls_csv,
+    -- For CSV export  
+    COALESCE(ia.identifiers_csv, '') as identifiers_csv,
+    COALESCE(aa.addresses_csv, '') as addresses_csv,
     eda.endpoint_urls_csv,
+	COALESCE(ua.org_urls_csv, '') as org_urls_csv,
     eda.fhir_versions_csv,
     eda.vendor_names_csv,
     
