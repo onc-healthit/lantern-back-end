@@ -2486,7 +2486,24 @@ identifiers_agg AS (
     SELECT 
         organization_name,
         string_agg(identifier, '<br/>') as identifiers_html,
-        LEFT(string_agg(identifier, E'\n'), 32765) as identifiers_csv
+        -- Truncate at complete lines to prevent CSV corruption
+        CASE 
+            WHEN LENGTH(string_agg(identifier, E'\n')) <= 32765 
+            THEN string_agg(identifier, E'\n')
+            ELSE 
+                -- Find the last complete line within 32765 chars
+                LEFT(
+                    string_agg(identifier, E'\n'), 
+                    GREATEST(
+                        1,
+                        CASE 
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier, E'\n'), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier, E'\n'), 32765))) + 1
+                            ELSE 32765
+                        END
+                    )
+                )
+        END as identifiers_csv
     FROM identifiers_raw
     GROUP BY organization_name
 ),
@@ -2506,7 +2523,24 @@ addresses_agg AS (
     SELECT 
         organization_name,
         string_agg(address, '<br/>') as addresses_html,
-        LEFT(string_agg(address, E'\n'), 32765) as addresses_csv
+        -- Truncate at complete lines to prevent CSV corruption
+        CASE 
+            WHEN LENGTH(string_agg(address, E'\n')) <= 32765 
+            THEN string_agg(address, E'\n')
+            ELSE 
+                -- Find the last complete line within 32765 chars
+                LEFT(
+                    string_agg(address, E'\n'), 
+                    GREATEST(
+                        1,
+                        CASE 
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(address, E'\n'), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(address, E'\n'), 32765))) + 1
+                            ELSE 32765
+                        END
+                    )
+                )
+        END as addresses_csv
     FROM addresses_raw
     GROUP BY organization_name
 ),
@@ -2532,7 +2566,24 @@ urls_agg AS (
     SELECT 
         organization_name,
         string_agg(org_url, '<br/>') FILTER (WHERE org_url != '') as org_urls_html,
-        LEFT(string_agg(org_url, E'\n') FILTER (WHERE org_url != ''), 32765) as org_urls_csv
+        -- Truncate at complete lines to prevent CSV corruption
+        CASE 
+            WHEN LENGTH(string_agg(org_url, E'\n') FILTER (WHERE org_url != '')) <= 32765 
+            THEN string_agg(org_url, E'\n') FILTER (WHERE org_url != '')
+            ELSE 
+                -- Find the last complete line within 32765 chars
+                LEFT(
+                    string_agg(org_url, E'\n') FILTER (WHERE org_url != ''), 
+                    GREATEST(
+                        1,
+                        CASE 
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(org_url, E'\n') FILTER (WHERE org_url != ''), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(org_url, E'\n') FILTER (WHERE org_url != ''), 32765))) + 1
+                            ELSE 32765
+                        END
+                    )
+                )
+        END as org_urls_csv
     FROM urls_raw
     GROUP BY organization_name
 ),
@@ -2545,7 +2596,24 @@ endpoint_data_agg AS (
             DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&quot,{priority: ''event''});"> ' || url || '</a>',
             '<br/>'
         ) as endpoint_urls_html,
-        LEFT(string_agg(DISTINCT url, E'\n'), 32765) as endpoint_urls_csv,
+        -- Truncate at complete lines to prevent CSV corruption
+        CASE 
+            WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
+            THEN string_agg(DISTINCT url, E'\n')
+            ELSE 
+                -- Find the last complete line within 32765 chars
+                LEFT(
+                    string_agg(DISTINCT url, E'\n'), 
+                    GREATEST(
+                        1,
+                        CASE 
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT url, E'\n'), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT url, E'\n'), 32765))) + 1
+                            ELSE 32765
+                        END
+                    )
+                )
+        END as endpoint_urls_csv,
         string_agg(DISTINCT fhir_version, '<br/>') as fhir_versions_html,
         string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
         string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
