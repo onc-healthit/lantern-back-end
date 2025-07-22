@@ -455,8 +455,8 @@ organizationsmodule <- function(
          address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
          org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
-         fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
-         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
+         fhir_version = colDef(name = "FHIR Version", sortable = FALSE, html = TRUE),
+         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
        ),
        striped = TRUE,
        searchable = FALSE,
