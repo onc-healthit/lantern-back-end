@@ -85,48 +85,66 @@ downloadsmodule <- function(
     }
   )
 
-  # Create the format for the csv
+  # Create the format for the organization data csv using the same materialized view approach as organization tab
   organization_csv_format <- reactive({
-    res <- get_endpoint_list_matches(db_connection)
+    # Use the same materialized view query as the organization tab but without filters
+    query_str <- "
+      WITH base_data AS (
+        SELECT 
+          organization_name,
+          identifiers_csv as identifier,
+          addresses_csv as address,
+          org_urls_csv as org_url,
+          endpoint_urls_csv as url,
+          fhir_versions_array,
+          vendor_names_array
+        FROM mv_organizations_aggregated 
+      )
+      SELECT 
+        organization_name,
+        identifier,
+        address,
+        org_url,
+        url,
+        -- Show ALL FHIR versions (CSV format)
+        string_agg(
+          DISTINCT fhir_version, 
+          E'\\n'
+        ) as fhir_version,
+        -- Show ALL vendor names (CSV format)
+        string_agg(
+          DISTINCT vendor_name,
+          E'\\n'
+        ) as vendor_name
+      FROM base_data bd
+      CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
+      CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+      GROUP BY organization_name, identifier, address, org_url, url
+      ORDER BY organization_name"
 
-  res <- res %>%
-    mutate(organization_id = as.integer(organization_id)) %>%
+    # Execute the query
+    data_query <- glue_sql(query_str, .con = db_connection)
+    res <- tbl(db_connection, sql(data_query)) %>% collect()
     
-    # Left join with deduplicated or collapsed identifiers
-    left_join(
-      get_org_identifiers_information(db_connection) %>%
-        mutate(org_id = as.integer(org_id)) %>%
-        group_by(org_id) %>%
-        summarise(identifier = paste(unique(identifier), collapse = "\n")),
-      by = c("organization_id" = "org_id")
-    ) %>%
-    
-    # Left join with deduplicated or collapsed addresses
-    left_join(
-      get_org_addresses_information(db_connection) %>%
-        mutate(org_id = as.integer(org_id)) %>%
-        group_by(org_id) %>%
-        summarise(address = paste(unique(address), collapse = "\n")),
-      by = c("organization_id" = "org_id")
-    ) %>%
-    
-    select(-organization_id)
-
+    # Handle empty fields gracefully for CSV - same as organization tab
     res <- res %>%
-      group_by(organization_name) %>%
-      summarise(
-        identifier = paste(unique(identifier), collapse = "<br/>"),
-        address = paste(unique(address), collapse = "<br/>"),
-        url = paste(unique(url), collapse = "<br/>"),
-        fhir_version = paste(unique(fhir_version), collapse = "<br/>"),
-        vendor_name = paste(unique(vendor_name), collapse = "<br/>"),
-        .groups = "drop"
-      ) %>%
-      filter(organization_name != "Unknown") %>%
-      mutate(address = toupper(address)) %>%
-      arrange(organization_name)
+      mutate(
+        # Convert NA to empty string 
+        org_url = case_when(
+          is.na(org_url) | org_url == "NA" ~ "",
+          TRUE ~ org_url
+        ),
+        identifier = case_when(
+          is.na(identifier) ~ "",
+          TRUE ~ identifier
+        ),
+        address = case_when(
+          is.na(address) ~ "",
+          TRUE ~ address
+        )
+      )
 
-    res
+    return(res)
   })
 
   # Downloadable csv of selected dataset
