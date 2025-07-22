@@ -341,7 +341,13 @@ organizationsmodule <- function(
           org_urls_csv as org_url,
           endpoint_urls_csv as url,
           fhir_versions_array,
-          vendor_names_array
+          vendor_names_array,
+          -- ADDED: Include HTML fields for search functionality
+          identifiers_html,
+          addresses_html,
+          endpoint_urls_html,
+          fhir_versions_html,
+          vendor_names_html
         FROM mv_organizations_aggregated 
         WHERE TRUE"
     
@@ -357,6 +363,19 @@ organizationsmodule <- function(
     if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
       query_str <- paste0(query_str, " AND vendor_names_array && ARRAY[{vendor}]")
       params$vendor <- current_vendor
+    }
+
+    # Add search filter if present (same logic as pagination and count)
+    search_term <- input$org_search_query
+    if (!is.null(search_term) && search_term != "") {
+      query_str <- paste0(query_str, " AND (
+        organization_name ILIKE {search_pattern} OR 
+        identifiers_html ILIKE {search_pattern} OR 
+        addresses_html ILIKE {search_pattern} OR 
+        endpoint_urls_html ILIKE {search_pattern} OR 
+        fhir_versions_html ILIKE {search_pattern} OR 
+        vendor_names_html ILIKE {search_pattern})")
+      params$search_pattern <- paste0("%", search_term, "%")
     }
 
     # Close the base_data CTE and add the filtered aggregation
