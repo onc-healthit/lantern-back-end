@@ -61,6 +61,9 @@ organizationsmodule <- function(
   org_page_state <- reactiveVal(1)
   org_page_size <- 10
 
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
   # Helper function to determine if all FHIR versions are selected
   is_all_fhir_versions_selected <- reactive({
     current_selection <- sel_fhir_version()
@@ -79,7 +82,7 @@ organizationsmodule <- function(
     return(length(current_vec) == length(all_vec) && setequal(current_vec, all_vec))
   })
 
-  # FIXED: Calculate total pages using original array-based filtering
+  # Calculate total pages using original array-based filtering
   org_total_pages <- reactive({
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
@@ -90,7 +93,7 @@ organizationsmodule <- function(
     count_query_str <- "SELECT COUNT(*) as count FROM mv_organizations_aggregated WHERE TRUE"
     count_params <- list()
 
-    # FIXED: Add FHIR version filter using array overlap 
+    # Add FHIR version filter using array overlap 
     if (!is_all_fhir_versions_selected()) {
       count_query_str <- paste0(count_query_str, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
       count_params$fhir_versions <- fhir_versions
@@ -128,7 +131,6 @@ organizationsmodule <- function(
 
   # Handle next page button
   observeEvent(input$org_next_page, {
-    message("NEXT PAGE BUTTON CLICKED")
     if (org_page_state() < org_total_pages()) {
       new_page <- org_page_state() + 1
       org_page_state(new_page)
@@ -137,7 +139,6 @@ organizationsmodule <- function(
 
   # Handle previous page button
   observeEvent(input$org_prev_page, {
-    message("PREV PAGE BUTTON CLICKED")
     if (org_page_state() > 1) {
       new_page <- org_page_state() - 1
       org_page_state(new_page)
@@ -150,51 +151,66 @@ organizationsmodule <- function(
     updateNumericInput(session, "org_page_selector", value = 1)
   })
 
-  # Sync page selector
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "org_page_selector",
-                      max = org_total_pages(),
-                      value = org_page_state())
+    new_page <- org_page_state()
+    current_selector <- input$org_page_selector
+    
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+      
+      isolate({  # This is the key fix to break feedback loops!
+        updateNumericInput(session, "org_page_selector",
+                          max = org_total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
   # Manual page input
   observeEvent(input$org_page_selector, {
-    if (!is.null(input$org_page_selector) && !is.na(input$org_page_selector)) {
-      new_page <- max(1, min(input$org_page_selector, org_total_pages()))
-      org_page_state(new_page)
+    # Get current input value
+    current_input <- input$org_page_selector
+    
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
+        is.numeric(current_input) &&
+        current_input > 0) {
+      
+      new_page <- max(1, min(current_input, org_total_pages()))
+      
+      # Only update page state if it's actually different
+      if (new_page != org_page_state()) {
+        org_page_state(new_page)
+      }
 
-      if (new_page != input$org_page_selector) {
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "org_page_selector", value = new_page)
       }
-    }
-  })
-
-  output$org_prev_button_ui <- renderUI({
-    if (org_page_state() > 1) {
-      actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
     } else {
-      NULL  # Hide the button
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "org_page_selector", value = org_page_state())
     }
-  })
+  }, ignoreInit = TRUE)  # Prevent observer from firing on initialization or first load 
 
-  output$org_next_button_ui <- renderUI({
-    if (org_page_state() < org_total_pages()) {
-      actionButton(ns("org_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL  # Hide the button
-    }
-  })
-
-  output$org_page_info <- renderText({
-    paste("of", org_total_pages())
-  })
-
-  # Single query that builds filtered FHIR versions and vendor names dynamically
+  # Data fetching with race condition protection
   paged_endpoint_list_orgs <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
 
     req(current_fhir, current_vendor)
+
+    # Generate unique request ID
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
 
     limit <- org_page_size
     
@@ -260,12 +276,12 @@ organizationsmodule <- function(
         address,
         org_url,
         url,
-        -- FIXED: Only show FHIR versions that match the current filter
+        -- Only show FHIR versions that match the current filter
         string_agg(
           DISTINCT fhir_version, 
           '<br/>'
         ) as fhir_version,
-        -- FIXED: Only show vendor names that match the current filter  
+        -- Only show vendor names that match the current filter  
         string_agg(
           DISTINCT vendor_name,
           '<br/>'
@@ -301,27 +317,34 @@ organizationsmodule <- function(
       data_query <- glue_sql(query_str, .con = db_connection)
     }
     
-    res <- tbl(db_connection, sql(data_query)) %>% collect()
+    # Execute query
+    result <- tbl(db_connection, sql(data_query)) %>% collect()
     
-    # Handle empty fields gracefully - leave them empty
-    res <- res %>%
-      mutate(
-        # Convert NA to empty string 
-        org_url = case_when(
-          is.na(org_url) | org_url == "NA" ~ "",
-          TRUE ~ org_url
-        ),
-        identifier = case_when(
-          is.na(identifier) ~ "",
-          TRUE ~ identifier
-        ),
-        address = case_when(
-          is.na(address) ~ "",
-          TRUE ~ address
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      result <- result %>%
+        mutate(
+          # Convert NA to empty string 
+          org_url = case_when(
+            is.na(org_url) | org_url == "NA" ~ "",
+            TRUE ~ org_url
+          ),
+          identifier = case_when(
+            is.na(identifier) ~ "",
+            TRUE ~ identifier
+          ),
+          address = case_when(
+            is.na(address) ~ "",
+            TRUE ~ address
+          )
         )
-      )
-
-    return(res)
+      return(result)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
   })
 
   # CSV format using filtered approach
@@ -342,7 +365,7 @@ organizationsmodule <- function(
           endpoint_urls_csv as url,
           fhir_versions_array,
           vendor_names_array,
-          -- ADDED: Include HTML fields for search functionality
+          -- Include HTML fields for search functionality
           identifiers_html,
           addresses_html,
           endpoint_urls_html,
@@ -485,6 +508,27 @@ organizationsmodule <- function(
        defaultExpanded = TRUE
      )
    })
+
+  # Button UI outputs
+  output$org_prev_button_ui <- renderUI({
+    if (org_page_state() > 1) {
+      actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$org_next_button_ui <- renderUI({
+    if (org_page_state() < org_total_pages()) {
+      actionButton(ns("org_next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL  # Hide the button
+    }
+  })
+
+  output$org_page_info <- renderText({
+    paste("of", org_total_pages())
+  })
 
   # Downloadable csv of selected dataset
   output$download_data <- downloadHandler(
