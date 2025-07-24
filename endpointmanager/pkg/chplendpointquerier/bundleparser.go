@@ -23,6 +23,7 @@ type BundleResource struct {
 	Identifier   interface{}          `json:"identifier"`
 	Active       interface{}          `json:"active"`
 	Name         string               `json:"name"`
+	Telecom      interface{}          `json:"telecom"`
 	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
 	Orgs         []Organization       `json:"contained"`
 	ResourceType string               `json:"resourceType"`
@@ -191,7 +192,19 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 			organizationName[keyCount] = bundleEntry.Resource.Name
 
-			organizationURL[keyCount] = bundleEntry.FullURL
+			// Extract organization URL from telecom field when system is "url"
+			if bundleEntry.Resource.Telecom != nil {
+				telecomArr := bundleEntry.Resource.Telecom.([]interface{})
+				for _, telecom := range telecomArr {
+					telecomMap := telecom.(map[string]interface{})
+					if telecomMap["system"] != nil && telecomMap["system"].(string) == "url" {
+						if telecomMap["value"] != nil && telecomMap["value"].(string) != "" {
+							organizationURL[keyCount] = strings.TrimSpace(telecomMap["value"].(string))
+							break // Use the first URL found
+						}
+					}
+				}
+			}
 		}
 		keyCount++
 	}
