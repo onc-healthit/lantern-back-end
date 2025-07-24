@@ -57,28 +57,18 @@ func containsOrgId(s []string, str string) bool {
 	return false
 }
 
-func containsKey(s []int, i int) bool {
-	for _, v := range s {
-		if v == i {
-			return true
-		}
-	}
-	return false
-}
-
 func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var lanternEntryList []LanternEntry
 
-	var endpointOrgMap = make(map[string][]int)
-	var organizationZip = make(map[int]string)
-	var organizationName = make(map[int]string)
-	var organizationURL = make(map[int]string)
-	var organizationAddresses = make(map[int][]string)
-	var organizationIdentifiers = make(map[int][]string)
-	var organizationActive = make(map[int]string)
-	var organizationNPI = make(map[int]string)
-
-	keyCount := 0
+	var endpointOrgMap = make(map[string][]string)
+	var organizationZip = make(map[string]string)
+	var organizationName = make(map[string]string)
+	var organizationURL = make(map[string]string)
+	var organizationAddresses = make(map[string][]string)
+	var organizationIdentifiers = make(map[string][]string)
+	var organizationActive = make(map[string]string)
+	var organizationNPI = make(map[string]string)
+	var seenIdentifiers = make(map[string]bool)
 
 	var structBundle FHIRBundle
 	err := json.Unmarshal(bundle, &structBundle)
@@ -88,6 +78,9 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	}
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
+
+			isIdentifierPresent := false
+			var identifierKey string
 
 			if bundleEntry.Resource.Identifier != nil {
 				identifierArr := bundleEntry.Resource.Identifier.([]interface{})
@@ -111,19 +104,26 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 						if identifierMap["value"] != nil && identifierMap["value"].(string) != "" {
 							identifierStr := identifierCode + ": " + identifierMap["value"].(string)
 
-							if !containsOrgId(organizationIdentifiers[keyCount], identifierStr) {
-								organizationIdentifiers[keyCount] = append(organizationIdentifiers[keyCount], identifierStr)
+							if !isIdentifierPresent && !seenIdentifiers[identifierStr] {
+								isIdentifierPresent = true
+								identifierKey = identifierStr
+							}
+
+							seenIdentifiers[identifierStr] = true
+
+							if !containsOrgId(organizationIdentifiers[identifierKey], identifierStr) {
+								organizationIdentifiers[identifierKey] = append(organizationIdentifiers[identifierKey], identifierStr)
 							}
 
 							if identifierCode == "NPI" {
-								organizationNPI[keyCount] = identifierMap["value"].(string)
+								organizationNPI[identifierKey] = identifierMap["value"].(string)
 							}
 						}
 					}
 				}
 			}
 
-			if bundleEntry.Resource.Endpoint != nil {
+			if isIdentifierPresent && bundleEntry.Resource.Endpoint != nil {
 				endpointArr := bundleEntry.Resource.Endpoint.([]interface{})
 				for _, endpoint := range endpointArr {
 					endpointMap := endpoint.(map[string]interface{})
@@ -133,14 +133,14 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 						endpointId = strings.TrimPrefix(endpointId, "endpoint/")
 
 						// Store endpoint-to-organizations mapping (if not already present)
-						if !containsKey(endpointOrgMap[endpointId], keyCount) {
-							endpointOrgMap[endpointId] = append(endpointOrgMap[endpointId], keyCount)
+						if !containsOrgId(endpointOrgMap[endpointId], identifierKey) {
+							endpointOrgMap[endpointId] = append(endpointOrgMap[endpointId], identifierKey)
 						}
 					}
 				}
 			}
 
-			if bundleEntry.Resource.Address != nil {
+			if isIdentifierPresent && bundleEntry.Resource.Address != nil {
 				addressMapArr := bundleEntry.Resource.Address.([]interface{})
 				for _, address := range addressMapArr {
 					addressMap := address.(map[string]interface{})
@@ -175,38 +175,41 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 					finalString := strings.Join(result, ", ")
 
-					if !containsOrgId(organizationAddresses[keyCount], finalString) {
-						organizationAddresses[keyCount] = append(organizationAddresses[keyCount], finalString)
+					if !containsOrgId(organizationAddresses[identifierKey], finalString) {
+						organizationAddresses[identifierKey] = append(organizationAddresses[identifierKey], finalString)
 					}
 
 					postalCode, ok := addressMap["postalCode"].(string)
 					if ok {
-						organizationZip[keyCount] = postalCode
+						organizationZip[identifierKey] = postalCode
 					}
 				}
 			}
 
-			if bundleEntry.Resource.Active != nil {
-				organizationActive[keyCount] = strconv.FormatBool(bundleEntry.Resource.Active.(bool))
+			if isIdentifierPresent && bundleEntry.Resource.Active != nil {
+				organizationActive[identifierKey] = strconv.FormatBool(bundleEntry.Resource.Active.(bool))
 			}
 
-			organizationName[keyCount] = bundleEntry.Resource.Name
+			if isIdentifierPresent {
+				organizationName[identifierKey] = bundleEntry.Resource.Name
+			}
 
-			// Extract organization URL from telecom field when system is "url"
-			if bundleEntry.Resource.Telecom != nil {
-				telecomArr := bundleEntry.Resource.Telecom.([]interface{})
-				for _, telecom := range telecomArr {
-					telecomMap := telecom.(map[string]interface{})
-					if telecomMap["system"] != nil && telecomMap["system"].(string) == "url" {
-						if telecomMap["value"] != nil && telecomMap["value"].(string) != "" {
-							organizationURL[keyCount] = strings.TrimSpace(telecomMap["value"].(string))
-							break // Use the first URL found
+			if isIdentifierPresent {
+				// Extract organization URL from telecom field when system is "url"
+				if bundleEntry.Resource.Telecom != nil {
+					telecomArr := bundleEntry.Resource.Telecom.([]interface{})
+					for _, telecom := range telecomArr {
+						telecomMap := telecom.(map[string]interface{})
+						if telecomMap["system"] != nil && telecomMap["system"].(string) == "url" {
+							if telecomMap["value"] != nil && telecomMap["value"].(string) != "" {
+								organizationURL[identifierKey] = strings.TrimSpace(telecomMap["value"].(string))
+								break // Use the first URL found
+							}
 						}
 					}
 				}
 			}
 		}
-		keyCount++
 	}
 
 	for _, bundleEntry := range structBundle.Entries {
@@ -219,6 +222,15 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 			entryURL := bundleEntry.Resource.Address.(string)
 			// Do not add entries that do not have URLs
 			if entryURL != "" {
+				for _, org := range bundleEntry.Resource.Orgs {
+					if len(org.Address) > 0 {
+						address := org.Address[0]
+						if address.PostalCode != "" {
+							organizationZip[org.Id] = strings.TrimSpace(address.PostalCode)
+						}
+					}
+				}
+
 				var endpointId string
 				if len(endpointOrgMap[bundleEntry.Resource.OrgId]) > 0 {
 					endpointId = bundleEntry.Resource.OrgId
@@ -228,43 +240,43 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 				isPersisted := false
 
-				for _, keyCount := range endpointOrgMap[endpointId] {
+				for _, identifierKey := range endpointOrgMap[endpointId] {
 
 					isPersisted = true
 
 					entry.URL = strings.TrimSpace(entryURL)
 
-					orgName, ok := organizationName[keyCount]
+					orgName, ok := organizationName[identifierKey]
 					if ok {
 						entry.OrganizationName = strings.TrimSpace(orgName)
 					}
 
-					orgURL, ok := organizationURL[keyCount]
+					orgURL, ok := organizationURL[identifierKey]
 					if ok {
 						entry.OrganizationURL = strings.TrimSpace(orgURL)
 					}
 
-					address, ok := organizationAddresses[keyCount]
+					address, ok := organizationAddresses[identifierKey]
 					if ok {
 						entry.OrganizationAddresses = address
 					}
 
-					identifier, ok := organizationIdentifiers[keyCount]
+					identifier, ok := organizationIdentifiers[identifierKey]
 					if ok {
 						entry.OrganizationIdentifiers = identifier
 					}
 
-					npiID, ok := organizationNPI[keyCount]
+					npiID, ok := organizationNPI[identifierKey]
 					if ok {
 						entry.NPIID = strings.TrimSpace(npiID)
 					}
 
-					active, ok := organizationActive[keyCount]
+					active, ok := organizationActive[identifierKey]
 					if ok {
 						entry.OrganizationActive = active
 					}
 
-					postalCode, ok := organizationZip[keyCount]
+					postalCode, ok := organizationZip[identifierKey]
 					if ok {
 						entry.OrganizationZipCode = strings.TrimSpace(postalCode)
 					}
