@@ -466,7 +466,9 @@ organizationsmodule <- function(
           is.na(address) ~ "",
           TRUE ~ address
         )
-      )
+      ) %>%
+      # Remove org_url column from CSV export
+      select(-org_url)
 
     return(res)
   })
@@ -485,6 +487,9 @@ organizationsmodule <- function(
        )
      }
 
+     # Remove org_url column from display data for UI
+     display_data <- display_data %>% select(-org_url)
+
      reactable(
        display_data,
        defaultColDef = colDef(
@@ -496,7 +501,7 @@ organizationsmodule <- function(
          identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
          address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
-         org_url = colDef(name = "Organization URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         # org_url column is hidden from UI 
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE, html = TRUE),
          vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
        ),
