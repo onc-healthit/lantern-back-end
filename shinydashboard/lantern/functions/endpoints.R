@@ -571,8 +571,15 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
 
     res$list_source <- paste0(resListSource$list_source, collapse = "\n")
     res$security <- paste0(resSecurity$security, collapse = ",")
-    res$supported_versions <- resSupportedVersions$supported_versions
-    res$default_version <- resSupportedVersions$default_version
+        
+    if (nrow(resSupportedVersions) > 0) {
+        res$supported_versions <- resSupportedVersions$supported_versions
+        res$default_version <- resSupportedVersions$default_version
+    } else {
+        # Provide default values when no results found
+        res$supported_versions <- "Not Available"
+        res$default_version <- "Not Available"
+    }
 
     res <- res %>%
     mutate(vendor_name = if_else(vendor_name == "Unknown", "Not Available", vendor_name)) %>%
