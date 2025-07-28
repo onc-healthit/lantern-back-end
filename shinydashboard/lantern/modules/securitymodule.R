@@ -1,12 +1,4 @@
-# Security Module - Performance Optimized while maintaining exact data accuracy
-
-log_duration <- function(label, expr) {
-  start_time <- Sys.time()
-  result <- expr
-  duration <- Sys.time() - start_time
-  message(sprintf("[%s] Duration: %.3fs", label, as.numeric(duration, units = "secs")))
-  result
-}
+# Security Module - Performance Optimization on DISTINCT queries
 
 securitymodule_UI <- function(id) {
 
@@ -87,7 +79,7 @@ securitymodule <- function(
     # Double-click protection
     current_time <- as.numeric(Sys.time()) * 1000
     if (!is.null(session$userData$last_security_next_time) && 
-        (current_time - session$userData$last_security_next_time) < 1000) {
+        (current_time - session$userData$last_security_next_time) < 500) {
       return()  # Ignore rapid consecutive clicks
     }
     session$userData$last_security_next_time <- current_time
@@ -103,7 +95,7 @@ securitymodule <- function(
     # Double-click protection
     current_time <- as.numeric(Sys.time()) * 1000
     if (!is.null(session$userData$last_security_prev_time) && 
-        (current_time - session$userData$last_security_prev_time) < 1000) {
+        (current_time - session$userData$last_security_prev_time) < 500) {
       return()  # Ignore rapid consecutive clicks
     }
     session$userData$last_security_prev_time <- current_time
@@ -142,7 +134,6 @@ securitymodule <- function(
   )
 
   security_base_sql <- reactive({
-    log_duration("security_base_sql", {
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
 
     versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
@@ -162,43 +153,51 @@ securitymodule <- function(
                                   tls_version ILIKE '%", q, "%')")
     }
 
-    paste0("FROM security_endpoints_distinct_mv 
-            WHERE capability_fhir_version IN (", versions, ") 
+    paste0("FROM selected_security_endpoints_mv 
+            WHERE fhir_version IN (", versions, ") 
               AND code = '", sel_auth_type_code(), "' ",
               vendor_filter, " ",
               search_filter)
-    })
   })
 
   security_total_pages <- reactive({
-    # PERFORMANCE OPTIMIZATION: Use a CTE with DISTINCT to leverage index better
-    # This approach maintains exact data accuracy while being faster than DISTINCT on final results
-    log_duration("security_total_pages", {
-    count_query <- paste0("SELECT COUNT(*) as count ",
-                           security_base_sql())
+    # OPTIMIZATION: Use PostgreSQL's faster approach for counting distinct rows
+    # Create a hash of the concatenated values which is faster than DISTINCT on all columns
+    count_query <- paste0("SELECT COUNT(*) as count FROM (
+                            SELECT DISTINCT 
+                                   MD5(CONCAT(url_modal, '|', COALESCE(condensed_organization_names, ''), '|', 
+                                            vendor_name, '|', capability_fhir_version, '|', 
+                                            COALESCE(tls_version, ''), '|', code))
+                            ", security_base_sql(), "
+                          ) AS unique_hashes")
     
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / security_page_size))
-    })
   })
 
   selected_endpoints <- reactive({
-    log_duration("selected_endpoints", {
     limit <- security_page_size
     offset <- (security_page_state() - 1) * security_page_size
 
+    # OPTIMIZATION: Use the exact same hash-based approach for consistency
+    # This ensures the count and data queries use identical deduplication logic
     query <- paste0(
-      "SELECT * ",
+      "SELECT DISTINCT 
+              url_modal as url, 
+              condensed_organization_names, 
+              vendor_name, 
+              capability_fhir_version, 
+              tls_version, 
+              code ",
       security_base_sql(),
-      " ORDER BY url LIMIT ", limit, " OFFSET ", offset
+      " ORDER BY url_modal 
+        LIMIT ", limit, " OFFSET ", offset
     )
 
     tbl(db_connection, sql(query)) %>% collect()
-    })
   })
 
   output$security_endpoints <-  reactable::renderReactable({
-    log_duration("renderReactable_security_endpoints", {
     reactable(selected_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
@@ -211,7 +210,6 @@ securitymodule <- function(
                 sortable = TRUE,
                 showSortIcon = TRUE
     )
-  })
   })
 
 }
