@@ -104,7 +104,7 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
       organization_name,
       identifier,
       address,
-      url,
+      url AS fhir_endpoint_url,
       string_agg(DISTINCT fhir_version, E'\\n') AS fhir_version,
       string_agg(DISTINCT vendor_name, E'\\n') AS vendor_name
     FROM base_data bd

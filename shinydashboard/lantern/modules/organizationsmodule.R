@@ -409,7 +409,7 @@ organizationsmodule <- function(
         identifier,
         address,
         org_url,
-        url,
+        url AS fhir_endpoint_url,
         -- Only show FHIR versions that match the current filter (CSV format)
         string_agg(
           DISTINCT fhir_version, 
