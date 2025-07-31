@@ -182,7 +182,7 @@ securitymodule <- function(
     search_filter <- ""
     if (!is.null(input$security_search_query) && input$security_search_query != "") {
       q <- gsub("'", "''", input$security_search_query)
-      search_filter <- paste0("AND (url_modal ILIKE '%", q, "%' OR 
+      search_filter <- paste0("AND (url ILIKE '%", q, "%' OR 
                                   condensed_organization_names ILIKE '%", q, "%' OR 
                                   vendor_name ILIKE '%", q, "%' OR 
                                   capability_fhir_version ILIKE '%", q, "%' OR 
