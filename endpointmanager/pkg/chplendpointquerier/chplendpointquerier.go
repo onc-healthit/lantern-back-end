@@ -15,6 +15,7 @@ type EndpointList struct {
 type LanternEntry struct {
 	URL                     string   `json:"URL"`
 	OrganizationName        string   `json:"OrganizationName"`
+	OrganizationURL         string   `json:"OrganizationURL"`
 	NPIID                   string   `json:"NPIID"`
 	OrganizationZipCode     string   `json:"OrganizationZipCode"`
 	OrganizationIdentifiers []string `json:"OrganizationIdentifiers"`

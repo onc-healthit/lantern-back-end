@@ -2,14 +2,20 @@ library(DT)
 library(purrr)
 library(reactable)
 library(leaflet)
+library(glue)
 
 organizationsmodule_UI <- function(id) {
-
   ns <- NS(id)
 
   tagList(
     fluidRow(
       h2("Endpoint List Organizations")
+    ),
+    fluidRow(
+      column(width = 12, style = "padding-bottom:20px",
+             downloadButton(ns("download_data"), "Download Organization Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+             downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
+      ),
     ),
     fluidRow(
       column(6, 
@@ -55,27 +61,47 @@ organizationsmodule <- function(
   org_page_state <- reactiveVal(1)
   org_page_size <- 10
 
-  # Calculate total pages based on UNIQUE ORGANIZATION NAMES, not total rows
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
+  # Helper function to determine if all FHIR versions are selected
+  is_all_fhir_versions_selected <- reactive({
+    current_selection <- sel_fhir_version()
+    all_available <- app$distinct_fhir_version_list_no_capstat()
+
+    # If either is NULL, we can't compare
+    if (is.null(current_selection) || is.null(all_available)) {
+      return(FALSE)
+    }
+
+    # Convert to vectors for comparison
+    current_vec <- unlist(current_selection)
+    all_vec <- unlist(all_available)
+
+    # Check if current selection equals all available versions
+    return(length(current_vec) == length(all_vec) && setequal(current_vec, all_vec))
+  })
+
+  # Calculate total pages using original array-based filtering
   org_total_pages <- reactive({
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
 
     req(sel_fhir_version(), sel_vendor())
 
-    # Use parameterized query for count as well
-    count_query_str <- "
-      SELECT COUNT(DISTINCT CASE 
-        WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
-        ELSE organization_name
-      END) as count
-      FROM mv_endpoint_list_organizations
-      WHERE fhir_version IN ({fhir_versions*})"
-    
-    count_params <- list(fhir_versions = fhir_versions)
+    # Build parameterized query for count using the materialized view
+    count_query_str <- "SELECT COUNT(*) as count FROM mv_organizations_aggregated WHERE TRUE"
+    count_params <- list()
 
-    # Add vendor filter
+    # Add FHIR version filter using array overlap
+    if (!is_all_fhir_versions_selected()) {
+      count_query_str <- paste0(count_query_str, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
+      count_params$fhir_versions <- fhir_versions
+    }
+
+    # Add vendor filter using array overlap
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
-      count_query_str <- paste0(count_query_str, " AND vendor_name = {vendor}")
+      count_query_str <- paste0(count_query_str, " AND vendor_names_array && ARRAY[{vendor}]")
       count_params$vendor <- vendor
     }
 
@@ -84,26 +110,27 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       count_query_str <- paste0(count_query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        organization_id ILIKE {search_pattern} OR 
-        url ILIKE {search_pattern} OR 
-        fhir_version ILIKE {search_pattern} OR 
-        vendor_name ILIKE {search_pattern})")
+        identifiers_html ILIKE {search_pattern} OR
+        addresses_html ILIKE {search_pattern} OR
+        endpoint_urls_html ILIKE {search_pattern} OR
+        fhir_versions_html ILIKE {search_pattern} OR
+        vendor_names_html ILIKE {search_pattern})")
       count_params$search_pattern <- paste0("%", search_term, "%")
     }
 
-    count_query <- do.call(glue_sql, c(list(count_query_str, .con = db_connection), count_params))
+    # Execute count query
+    if (length(count_params) > 0) {
+      count_query <- do.call(glue_sql, c(list(count_query_str, .con = db_connection), count_params))
+    } else {
+      count_query <- glue_sql(count_query_str, .con = db_connection)
+    }
+
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / org_page_size))
   })
 
   # Handle next page button
   observeEvent(input$org_next_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_next_time) && 
-        (current_time - session$userData$last_next_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_next_time <- current_time
     if (org_page_state() < org_total_pages()) {
       new_page <- org_page_state() + 1
       org_page_state(new_page)
@@ -112,12 +139,6 @@ organizationsmodule <- function(
 
   # Handle previous page button
   observeEvent(input$org_prev_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_prev_time) && 
-        (current_time - session$userData$last_prev_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_prev_time <- current_time
     if (org_page_state() > 1) {
       new_page <- org_page_state() - 1
       org_page_state(new_page)
@@ -130,25 +151,370 @@ organizationsmodule <- function(
     updateNumericInput(session, "org_page_selector", value = 1)
   })
 
-  # Sync page selector
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "org_page_selector",
-                      max = org_total_pages(),
-                      value = org_page_state())
+    new_page <- org_page_state()
+    current_selector <- input$org_page_selector
+
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) ||
+        is.na(current_selector) ||
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+
+      isolate({  # This is the key fix to break feedback loops!
+        updateNumericInput(session, "org_page_selector",
+                          max = org_total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
   # Manual page input
   observeEvent(input$org_page_selector, {
-    if (!is.null(input$org_page_selector) && !is.na(input$org_page_selector)) {
-      new_page <- max(1, min(input$org_page_selector, org_total_pages()))
-      org_page_state(new_page)
+    # Get current input value
+    current_input <- input$org_page_selector
 
-      if (new_page != input$org_page_selector) {
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) &&
+        !is.na(current_input) &&
+        is.numeric(current_input) &&
+        current_input > 0) {
+
+      new_page <- max(1, min(current_input, org_total_pages()))
+
+      # Only update page state if it's actually different
+      if (new_page != org_page_state()) {
+        org_page_state(new_page)
+      }
+
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "org_page_selector", value = new_page)
       }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "org_page_selector", value = org_page_state())
     }
-})
+  }, ignoreInit = TRUE)  # Prevent observer from firing on initialization or first load
 
+  # Data fetching with race condition protection
+  paged_endpoint_list_orgs <- reactive({
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+
+    req(current_fhir, current_vendor)
+
+    # Generate unique request ID
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
+
+    limit <- org_page_size
+    
+    is_initial_load <- (
+        is_all_fhir_versions_selected() &&
+        sel_vendor() == ui_special_values$ALL_DEVELOPERS &&
+        (is.null(input$org_search_query) || input$org_search_query == "")
+    )
+ 
+    offset <- if (is_initial_load && org_page_state() == 1) {
+      20  # Skip first 20 rows on very first load
+    } else {
+      (org_page_state() - 1) * org_page_size
+    }
+
+    # Build query that constructs filtered HTML based on selected filters
+    query_str <- "
+      WITH base_data AS (
+        SELECT
+          organization_name,
+          identifiers_html as identifier,
+          addresses_html as address,
+          org_urls_html as org_url,
+          endpoint_urls_html as url,
+          fhir_versions_array,
+          vendor_names_array
+        FROM mv_organizations_aggregated
+        WHERE TRUE"
+    
+    params <- list()
+
+    # Add FHIR version filter using array overlap
+    if (!is_all_fhir_versions_selected()) {
+      query_str <- paste0(query_str, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
+      params$fhir_versions <- current_fhir
+    }
+
+    # Add vendor filter using array overlap
+    if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_names_array && ARRAY[{vendor}]")
+      params$vendor <- current_vendor
+    }
+
+    # Add search filter if present
+    search_term <- input$org_search_query
+    if (!is.null(search_term) && search_term != "") {
+      query_str <- paste0(query_str, " AND (
+        organization_name ILIKE {search_pattern} OR 
+        identifiers_html ILIKE {search_pattern} OR
+        addresses_html ILIKE {search_pattern} OR
+        endpoint_urls_html ILIKE {search_pattern} OR
+        fhir_versions_html ILIKE {search_pattern} OR
+        vendor_names_html ILIKE {search_pattern})")
+      params$search_pattern <- paste0("%", search_term, "%")
+    }
+
+    # Close the base_data CTE and add the filtered aggregation
+    query_str <- paste0(query_str, "
+      )
+      SELECT
+        organization_name,
+        identifier,
+        address,
+        org_url,
+        url,
+        -- Only show FHIR versions that match the current filter
+        string_agg(
+          DISTINCT fhir_version,
+          '<br/>'
+        ) as fhir_version,
+        -- Only show vendor names that match the current filter
+        string_agg(
+          DISTINCT vendor_name,
+          '<br/>'
+        ) as vendor_name
+      FROM base_data bd
+      CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
+      CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+      WHERE 1=1")
+
+    # Apply the same filters to the individual FHIR versions and vendors
+    if (!is_all_fhir_versions_selected()) {
+      query_str <- paste0(query_str, " AND fhir_version = ANY(ARRAY[{fhir_versions_display*}])")
+      params$fhir_versions_display <- current_fhir
+    }
+
+    if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor_display}")
+      params$vendor_display <- current_vendor
+    }
+
+    # Add GROUP BY, ordering and pagination
+    query_str <- paste0(query_str, "
+      GROUP BY organization_name, identifier, address, org_url, url
+      ORDER BY organization_name
+      LIMIT {limit} OFFSET {offset}")
+    params$limit <- limit
+    params$offset <- offset
+
+    # Execute the optimized query
+    if (length(params) > 0) {
+      data_query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    } else {
+      data_query <- glue_sql(query_str, .con = db_connection)
+    }
+
+    # Execute query
+    result <- tbl(db_connection, sql(data_query)) %>% collect()
+
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      result <- result %>%
+        mutate(
+          # Convert NA to empty string
+          org_url = case_when(
+            is.na(org_url) | org_url == "NA" ~ "",
+            TRUE ~ org_url
+          ),
+          identifier = case_when(
+            is.na(identifier) ~ "",
+            TRUE ~ identifier
+          ),
+          address = case_when(
+            is.na(address) ~ "",
+            TRUE ~ address
+          )
+        )
+      return(result)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
+  })
+
+  # CSV format using filtered approach
+  csv_format <- reactive({
+    current_fhir <- sel_fhir_version()
+    current_vendor <- sel_vendor()
+
+    req(current_fhir, current_vendor)
+
+    # Build query for CSV export using the same filtering logic
+    query_str <- "
+      WITH base_data AS (
+        SELECT
+          organization_name,
+          identifiers_csv as identifier,
+          addresses_csv as address,
+          org_urls_csv as org_url,
+          endpoint_urls_csv as url,
+          fhir_versions_array,
+          vendor_names_array,
+          -- Include HTML fields for search functionality
+          identifiers_html,
+          addresses_html,
+          endpoint_urls_html,
+          fhir_versions_html,
+          vendor_names_html
+        FROM mv_organizations_aggregated
+        WHERE TRUE"
+    
+    params <- list()
+
+    # Add FHIR version filter using array overlap
+    if (!is_all_fhir_versions_selected()) {
+      query_str <- paste0(query_str, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
+      params$fhir_versions <- current_fhir
+    }
+
+    # Add vendor filter using array overlap
+    if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_names_array && ARRAY[{vendor}]")
+      params$vendor <- current_vendor
+    }
+
+    # Add search filter if present (same logic as pagination and count)
+    search_term <- input$org_search_query
+    if (!is.null(search_term) && search_term != "") {
+      query_str <- paste0(query_str, " AND (
+        organization_name ILIKE {search_pattern} OR 
+        identifiers_html ILIKE {search_pattern} OR
+        addresses_html ILIKE {search_pattern} OR
+        endpoint_urls_html ILIKE {search_pattern} OR
+        fhir_versions_html ILIKE {search_pattern} OR
+        vendor_names_html ILIKE {search_pattern})")
+      params$search_pattern <- paste0("%", search_term, "%")
+    }
+
+    # Close the base_data CTE and add the filtered aggregation
+    query_str <- paste0(query_str, "
+      )
+      SELECT
+        organization_name,
+        identifier,
+        address,
+        org_url,
+        url AS fhir_endpoint_url,
+        -- Only show FHIR versions that match the current filter (CSV format)
+        string_agg(
+          DISTINCT fhir_version,
+          E'\\n'
+        ) as fhir_version,
+        -- Only show vendor names that match the current filter (CSV format)
+        string_agg(
+          DISTINCT vendor_name,
+          E'\\n'
+        ) as vendor_name
+      FROM base_data bd
+      CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
+      CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+      WHERE 1=1")
+
+    # Apply the same filters to the individual FHIR versions and vendors
+    if (!is_all_fhir_versions_selected()) {
+      query_str <- paste0(query_str, " AND fhir_version = ANY(ARRAY[{fhir_versions_display*}])")
+      params$fhir_versions_display <- current_fhir
+    }
+
+    if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
+      query_str <- paste0(query_str, " AND vendor_name = {vendor_display}")
+      params$vendor_display <- current_vendor
+    }
+
+    # Add GROUP BY and ordering
+    query_str <- paste0(query_str, "
+      GROUP BY organization_name, identifier, address, org_url, url
+      ORDER BY organization_name")
+
+    # Execute query
+    if (length(params) > 0) {
+      data_query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    } else {
+      data_query <- glue_sql(query_str, .con = db_connection)
+    }
+
+    res <- tbl(db_connection, sql(data_query)) %>% collect()
+
+    # Handle empty fields gracefully for CSV - leave them empty
+    res <- res %>%
+      mutate(
+        # Convert NA to empty string
+        org_url = case_when(
+          is.na(org_url) | org_url == "NA" ~ "",
+          TRUE ~ org_url
+        ),
+        identifier = case_when(
+          is.na(identifier) ~ "",
+          TRUE ~ identifier
+        ),
+        address = case_when(
+          is.na(address) ~ "",
+          TRUE ~ address
+        )
+      ) %>%
+      # Remove org_url column from CSV export
+      select(-org_url)
+
+    return(res)
+  })
+
+  # Reactable output
+  output$endpoint_list_orgs_table <- reactable::renderReactable({
+     display_data <- paged_endpoint_list_orgs()
+
+     if (nrow(display_data) == 0) {
+       return(
+         reactable(
+           data.frame(Message = "No data matching the selected filters"),
+           pagination = FALSE,
+           searchable = FALSE
+         )
+       )
+     }
+
+     # Remove org_url column from display data for UI
+     display_data <- display_data %>% select(-org_url)
+
+     reactable(
+       display_data,
+       defaultColDef = colDef(
+         align = "center"
+       ),
+       columns = list(
+         organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
+                                    grouped = JS("function(cellInfo) {return cellInfo.value}")),
+         identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
+         address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
+         url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
+         # org_url column is hidden from UI
+         fhir_version = colDef(name = "FHIR Version", sortable = FALSE, html = TRUE),
+         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
+       ),
+       striped = TRUE,
+       searchable = FALSE,
+       showSortIcon = TRUE,
+       highlight = TRUE,
+       pagination = FALSE,
+       defaultExpanded = TRUE
+     )
+   })
+
+  # Button UI outputs
   output$org_prev_button_ui <- renderUI({
     if (org_page_state() > 1) {
       actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
@@ -169,163 +535,25 @@ organizationsmodule <- function(
     paste("of", org_total_pages())
   })
 
-  # Modified query to get organizations for pagination
-  paged_endpoint_list_orgs <- reactive({
-    current_fhir <- sel_fhir_version()
-    current_vendor <- sel_vendor()
-
-    req(current_fhir, current_vendor)
-
-    limit <- org_page_size
-    
-    is_initial_load <- (
-        all(sel_fhir_version() == ui_special_values$ALL_FHIR_VERSIONS) &&
-        sel_vendor() == ui_special_values$ALL_DEVELOPERS &&
-        (is.null(input$org_search_query) || input$org_search_query == "")
-    )
- 
-    offset <- if (is_initial_load && org_page_state() == 1) {
-      20  # Skip first 20 rows on very first load
-    } else {
-      (org_page_state() - 1) * org_page_size
+  # Downloadable csv of selected dataset
+  output$download_data <- downloadHandler(
+    filename = function() {
+      "fhir_endpoint_organizations.csv"
+    },
+    content = function(file) {
+      write.csv(csv_format(), file, row.names = FALSE)
     }
+  )
 
-    # Build base query with parameterized approach
-    query_str <- "
-      SELECT DISTINCT 
-        CASE 
-          WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
-          ELSE organization_name
-        END AS organization_name
-      FROM mv_endpoint_list_organizations
-      WHERE fhir_version IN ({fhir_versions*})"
-    
-    params <- list(fhir_versions = current_fhir)
-
-    # Add vendor filter using parameters
-    if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
-      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
-      params$vendor <- current_vendor
+  # Download csv of the field descriptions in the dataset csv
+  output$download_descriptions <- downloadHandler(
+    filename = function() {
+      "fhir_endpoint_organizations_fields.csv"
+    },
+    content = function(file) {
+      file.copy("fhir_endpoint_organizations_fields.csv", file)
     }
-
-    # Add search filter if present
-    search_term <- input$org_search_query
-    if (!is.null(search_term) && search_term != "") {
-      query_str <- paste0(query_str, " AND (
-        organization_name ILIKE {search_pattern} OR 
-        organization_id ILIKE {search_pattern} OR 
-        url ILIKE {search_pattern} OR 
-        fhir_version ILIKE {search_pattern} OR 
-        vendor_name ILIKE {search_pattern})")
-      params$search_pattern <- paste0("%", search_term, "%")
-    }
-
-    # Add ordering and pagination
-    query_str <- paste0(query_str, " ORDER BY organization_name LIMIT {limit} OFFSET {offset}")
-    params$limit <- limit
-    params$offset <- offset
-
-    # Execute first query to get organization names
-    org_names_query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
-    org_names <- tbl(db_connection, sql(org_names_query)) %>% 
-      collect() %>% 
-      pull(organization_name)
-
-    if (length(org_names) == 0) {
-      return(data.frame())
-    }
-
-    # Second query to get all data for these organization names using parameters
-    data_query_str <- "
-      SELECT DISTINCT 
-        CASE 
-          WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
-          ELSE organization_name
-        END AS organization_name,
-        organization_id,
-        url,
-        fhir_version,
-        vendor_name
-      FROM mv_endpoint_list_organizations
-      WHERE fhir_version IN ({fhir_versions*})"
-    
-    data_params <- list(fhir_versions = current_fhir)
-
-    # Add vendor filter
-    if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
-      data_query_str <- paste0(data_query_str, " AND vendor_name = {vendor}")
-      data_params$vendor <- current_vendor
-    }
-
-    # Add search filter if present
-    if (!is.null(search_term) && search_term != "") {
-      data_query_str <- paste0(data_query_str, " AND (
-        organization_name ILIKE {search_pattern} OR 
-        organization_id ILIKE {search_pattern} OR 
-        url ILIKE {search_pattern} OR 
-        fhir_version ILIKE {search_pattern} OR 
-        vendor_name ILIKE {search_pattern})")
-      data_params$search_pattern <- paste0("%", search_term, "%")
-    }
-
-    # Add organization names filter using parameters
-    data_query_str <- paste0(data_query_str, " AND CASE 
-      WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
-      ELSE organization_name
-    END IN ({org_names*}) ORDER BY organization_name, url")
-    data_params$org_names <- org_names
-
-    # Execute second query
-    data_query <- do.call(glue_sql, c(list(data_query_str, .con = db_connection), data_params))
-    res <- tbl(db_connection, sql(data_query)) %>% collect()
-
-    # Format URL for HTML display with modal popup
-    res <- res %>%
-      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&quot,{priority: \'event\'});\">", url, "</a>"))
-  
-    # Format popup for HTI-1 data
-    res <- res %>%
-      mutate(organization_id = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this organization.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'show_organization_modal\',&quot;", organization_id, "&quot,{priority: \'event\'});\"> HTI-1 Data </a>"))
-    
-    res
-  })
-
-  output$endpoint_list_orgs_table <- reactable::renderReactable({
-
-    display_data <- paged_endpoint_list_orgs()
-    
-    if (nrow(display_data) == 0) {
-      return(
-        reactable(
-          data.frame(Message = "No data matching the selected filters"),
-          pagination = FALSE,
-          searchable = FALSE
-        )
-      )
-    }
-
-     reactable(
-       display_data,
-       defaultColDef = colDef(
-         align = "center"
-       ),
-       columns = list(
-         organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
-                                    grouped = JS("function(cellInfo) {return cellInfo.value}")),
-         organization_id = colDef(name = "Organization Details", sortable = FALSE, html = TRUE),
-         url = colDef(name = "URL", minWidth = 300, sortable = FALSE, html = TRUE),
-         fhir_version = colDef(name = "FHIR Version", sortable = FALSE),
-         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE)
-       ),
-       groupBy = c("organization_name"),
-       striped = TRUE,
-       searchable = FALSE,
-       showSortIcon = TRUE,
-       highlight = TRUE,
-       pagination = FALSE,
-       defaultExpanded = TRUE
-     )
-   })
+  )
 
   output$note_text <- renderUI({
     note_info <- "The endpoints queried by Lantern are limited to Fast Healthcare Interoperability
