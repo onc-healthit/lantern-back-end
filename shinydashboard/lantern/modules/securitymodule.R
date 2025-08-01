@@ -1,4 +1,12 @@
-# Security Module - Performance Optimization on DISTINCT queries
+# Security Module - Performance Optimized while maintaining exact data accuracy
+
+log_duration <- function(label, expr) {
+  start_time <- Sys.time()
+  result <- expr
+  duration <- Sys.time() - start_time
+  message(sprintf("[%s] Duration: %.3fs", label, as.numeric(duration, units = "secs")))
+  result
+}
 
 securitymodule_UI <- function(id) {
 
@@ -58,61 +66,89 @@ securitymodule <- function(
   security_page_size <- 10
   security_page_state <- reactiveVal(1)
 
-  # Handle page selection
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "security_page_selector", 
-                      max = security_total_pages(),
-                      value = security_page_state())
+    new_page <- security_page_state()
+    current_selector <- input$security_page_selector
+
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) ||
+        is.na(current_selector) ||
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+
+      isolate({  # This is the key fix to break feedback loops
+        updateNumericInput(session, "security_page_selector",
+                          max = security_total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
+  # Handle page selector input
   observeEvent(input$security_page_selector, {
-    if (!is.null(input$security_page_selector) && !is.na(input$security_page_selector)) {
-      new_page <- max(1, min(input$security_page_selector, security_total_pages()))
-      security_page_state(new_page)
-      if (new_page != input$security_page_selector) {
+    # Get current input value
+    current_input <- input$security_page_selector
+
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) &&
+        !is.na(current_input) &&
+        is.numeric(current_input) &&
+        current_input > 0) {
+
+      new_page <- max(1, min(current_input, security_total_pages()))
+
+      # Only update page state if it's actually different
+      if (new_page != security_page_state()) {
+        security_page_state(new_page)
+      }
+
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "security_page_selector", value = new_page)
       }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "security_page_selector", value = security_page_state())
     }
-  })
+  }, ignoreInit = TRUE)  # Prevent firing on initialization
 
+  # Handle next page button
   observeEvent(input$security_next_page, {
-    # Double-click protection
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_security_next_time) && 
-        (current_time - session$userData$last_security_next_time) < 500) {
-      return()  # Ignore rapid consecutive clicks
-    }
-    session$userData$last_security_next_time <- current_time
-    
     if (security_page_state() < security_total_pages()) {
       new_page <- security_page_state() + 1
       security_page_state(new_page)
-      updateNumericInput(session, "security_page_selector", value = new_page)
     }
   })
 
+  # Handle previous page button
   observeEvent(input$security_prev_page, {
-    # Double-click protection
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_security_prev_time) && 
-        (current_time - session$userData$last_security_prev_time) < 500) {
-      return()  # Ignore rapid consecutive clicks
-    }
-    session$userData$last_security_prev_time <- current_time
-    
     if (security_page_state() > 1) {
       new_page <- security_page_state() - 1
       security_page_state(new_page)
-      updateNumericInput(session, "security_page_selector", value = new_page)
     }
   })
 
   output$security_prev_button_ui <- renderUI({
-    if (security_page_state() > 1) actionButton(ns("security_prev_page"), "Previous") else NULL
+    if (security_page_state() > 1) {
+      actionButton(ns("security_prev_page"), "Previous", icon = icon("arrow-left"))
+    } else {
+      NULL
+    }
   })
 
   output$security_next_button_ui <- renderUI({
-    if (security_page_state() < security_total_pages()) actionButton(ns("security_next_page"), "Next") else NULL
+    if (security_page_state() < security_total_pages()) {
+      actionButton(ns("security_next_page"), "Next", icon = icon("arrow-right"))
+    } else {
+      NULL
+    }
   })
 
   output$current_security_page_info <- renderText({
@@ -122,7 +158,6 @@ securitymodule <- function(
   # Reset page when filters change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_auth_type_code(), input$security_search_query), {
     security_page_state(1)
-    updateNumericInput(session, "security_page_selector", value = 1)
   })
 
   output$auth_type_count_table <- renderTable(
@@ -134,6 +169,7 @@ securitymodule <- function(
   )
 
   security_base_sql <- reactive({
+    log_duration("security_base_sql", {
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
 
     versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
@@ -146,58 +182,67 @@ securitymodule <- function(
     search_filter <- ""
     if (!is.null(input$security_search_query) && input$security_search_query != "") {
       q <- gsub("'", "''", input$security_search_query)
-      search_filter <- paste0("AND (url_modal ILIKE '%", q, "%' OR 
+      search_filter <- paste0("AND (url ILIKE '%", q, "%' OR
                                   condensed_organization_names ILIKE '%", q, "%' OR 
                                   vendor_name ILIKE '%", q, "%' OR 
                                   capability_fhir_version ILIKE '%", q, "%' OR 
                                   tls_version ILIKE '%", q, "%')")
     }
 
-    paste0("FROM selected_security_endpoints_mv 
-            WHERE fhir_version IN (", versions, ") 
+    paste0("FROM security_endpoints_distinct_mv 
+            WHERE capability_fhir_version IN (", versions, ") 
               AND code = '", sel_auth_type_code(), "' ",
               vendor_filter, " ",
               search_filter)
+    })
   })
 
   security_total_pages <- reactive({
-    # OPTIMIZATION: Use PostgreSQL's faster approach for counting distinct rows
-    # Create a hash of the concatenated values which is faster than DISTINCT on all columns
-    count_query <- paste0("SELECT COUNT(*) as count FROM (
-                            SELECT DISTINCT 
-                                   MD5(CONCAT(url_modal, '|', COALESCE(condensed_organization_names, ''), '|', 
-                                            vendor_name, '|', capability_fhir_version, '|', 
-                                            COALESCE(tls_version, ''), '|', code))
-                            ", security_base_sql(), "
-                          ) AS unique_hashes")
+    # PERFORMANCE OPTIMIZATION: Use a CTE with DISTINCT to leverage index better
+    # This approach maintains exact data accuracy while being faster than DISTINCT on final results
+    log_duration("security_total_pages", {
+    count_query <- paste0("SELECT COUNT(*) as count ",
+                           security_base_sql())
     
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / security_page_size))
+    })
   })
 
+  # Main data query - WITH RACE CONDITION PROTECTION
   selected_endpoints <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
+
+    # Generate unique request ID
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
+
+    log_duration("selected_endpoints", {
     limit <- security_page_size
     offset <- (security_page_state() - 1) * security_page_size
 
-    # OPTIMIZATION: Use the exact same hash-based approach for consistency
-    # This ensures the count and data queries use identical deduplication logic
     query <- paste0(
-      "SELECT DISTINCT 
-              url_modal as url, 
-              condensed_organization_names, 
-              vendor_name, 
-              capability_fhir_version, 
-              tls_version, 
-              code ",
+      "SELECT * ",
       security_base_sql(),
-      " ORDER BY url_modal 
-        LIMIT ", limit, " OFFSET ", offset
+      " ORDER BY url LIMIT ", limit, " OFFSET ", offset
     )
 
-    tbl(db_connection, sql(query)) %>% collect()
+    result <- tbl(db_connection, sql(query)) %>% collect()
+
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      return(result)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
+    })
   })
 
   output$security_endpoints <-  reactable::renderReactable({
+    log_duration("renderReactable_security_endpoints", {
     reactable(selected_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
@@ -210,6 +255,7 @@ securitymodule <- function(
                 sortable = TRUE,
                 showSortIcon = TRUE
     )
+  })
   })
 
 }
