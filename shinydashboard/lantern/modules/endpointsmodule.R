@@ -244,6 +244,9 @@ endpointsmodule <- function(
       params$search <- paste0("%", keyword, "%")
     }
 
+    # Add ordering by vendor name
+    query_str <- paste0(query_str, " ORDER BY vendor_name, list_source, url, requested_fhir_version")
+
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     res <- tbl(db_connection, sql(query)) %>% collect()
     res
@@ -308,7 +311,9 @@ endpointsmodule <- function(
     res <- selected_fhir_endpoints_without_limit() %>%
       select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
       rowwise() %>%
-      mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
+      mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
+             info_created = format(info_created, "%m/%d/%y %H:%M"),
+             info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
       ungroup() %>%
       rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
