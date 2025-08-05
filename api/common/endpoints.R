@@ -71,17 +71,17 @@ get_endpoint_totals_list <- function(db_tables) {
 
 # create a join to get more detailed table of fhir_endpoint information
 get_fhir_endpoints_tbl <- function() {
-  ret_tbl <- endpoint_export_tbl() %>%
-    distinct(url, vendor_name, fhir_version, http_response, requested_fhir_version, .keep_all = TRUE) %>%
-    select(url, endpoint_names, info_created, info_updated, list_source, vendor_name, capability_fhir_version, fhir_version, format, http_response, response_time_seconds, smart_http_response, errors, availability, cap_stat_exists, kind, requested_fhir_version, is_chpl) %>%
-    left_join(app$http_response_code_tbl() %>% select(code, label),
-      by = c("http_response" = "code")) %>%
-      mutate(status = if_else(http_response == 200, paste("Success:", http_response, "-", label), paste("Failure:", http_response, "-", label))) %>%
-      mutate(cap_stat_exists = tolower(as.character(cap_stat_exists))) %>%
-      mutate(cap_stat_exists = case_when(
-        kind != "instance" ~ "true*",
-        TRUE ~ cap_stat_exists
-      ))
+  res <- tbl(db_connection,
+    sql("SELECT url, endpoint_names, info_created, info_updated, list_source, 
+                vendor_name, capability_fhir_version, fhir_version, format, 
+                http_response, response_time_seconds, smart_http_response, errors, 
+                availability, cap_stat_exists, kind, 
+                requested_fhir_version, is_chpl, status 
+         FROM fhir_endpoint_comb_mv
+         ORDER BY vendor_name")) %>%
+    collect()
+  
+  res
 }
 
 # get the endpoint tally by http_response received
