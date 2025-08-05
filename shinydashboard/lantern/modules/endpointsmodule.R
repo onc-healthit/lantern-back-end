@@ -11,6 +11,9 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h2(style = "margin-top:0", textOutput(ns("endpoint_count"))),
+             # Add note for the endpoint table count and Matching Unique Endpoints count discrepancy
+             tags$p(tags$strong(style = "font-style: italic; color: #666;",
+                    "Note: The table below may show multiple rows per endpoint depending on the number of FHIR versions supported by the endpoint.")),
              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
              htmlOutput(ns("anchorlink"))
