@@ -142,7 +142,6 @@ downloadsmodule <- function(
         organization_name,
         identifier,
         address,
-        org_url,
         url AS fhir_endpoint_url,
         -- Show ALL FHIR versions (CSV format)
         string_agg(
@@ -157,30 +156,12 @@ downloadsmodule <- function(
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
-      GROUP BY organization_name, identifier, address, org_url, url
+      GROUP BY organization_name, identifier, address, fhir_endpoint_url
       ORDER BY organization_name"
 
     # Execute the query
     data_query <- glue_sql(query_str, .con = db_connection)
     res <- tbl(db_connection, sql(data_query)) %>% collect()
-    
-    # Handle empty fields gracefully for CSV - same as organization tab
-    res <- res %>%
-      mutate(
-        # Convert NA to empty string 
-        org_url = case_when(
-          is.na(org_url) | org_url == "NA" ~ "",
-          TRUE ~ org_url
-        ),
-        identifier = case_when(
-          is.na(identifier) ~ "",
-          TRUE ~ identifier
-        ),
-        address = case_when(
-          is.na(address) ~ "",
-          TRUE ~ address
-        )
-      )
 
     return(res)
   })
