@@ -68,16 +68,16 @@ organizationsmodule <- function(
   is_all_fhir_versions_selected <- reactive({
     current_selection <- sel_fhir_version()
     all_available <- app$distinct_fhir_version_list_no_capstat()
-
+    
     # If either is NULL, we can't compare
     if (is.null(current_selection) || is.null(all_available)) {
       return(FALSE)
     }
-
+    
     # Convert to vectors for comparison
     current_vec <- unlist(current_selection)
     all_vec <- unlist(all_available)
-
+    
     # Check if current selection equals all available versions
     return(length(current_vec) == length(all_vec) && setequal(current_vec, all_vec))
   })
@@ -93,13 +93,13 @@ organizationsmodule <- function(
     count_query_str <- "SELECT COUNT(*) as count FROM mv_organizations_aggregated WHERE TRUE"
     count_params <- list()
 
-    # Add FHIR version filter using array overlap
+    # Add FHIR version filter using array overlap 
     if (!is_all_fhir_versions_selected()) {
       count_query_str <- paste0(count_query_str, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
       count_params$fhir_versions <- fhir_versions
     }
 
-    # Add vendor filter using array overlap
+    # Add vendor filter using array overlap 
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
       count_query_str <- paste0(count_query_str, " AND vendor_names_array && ARRAY[{vendor}]")
       count_params$vendor <- vendor
@@ -110,10 +110,10 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       count_query_str <- paste0(count_query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        identifiers_html ILIKE {search_pattern} OR
-        addresses_html ILIKE {search_pattern} OR
-        endpoint_urls_html ILIKE {search_pattern} OR
-        fhir_versions_html ILIKE {search_pattern} OR
+        identifiers_html ILIKE {search_pattern} OR 
+        addresses_html ILIKE {search_pattern} OR 
+        endpoint_urls_html ILIKE {search_pattern} OR 
+        fhir_versions_html ILIKE {search_pattern} OR 
         vendor_names_html ILIKE {search_pattern})")
       count_params$search_pattern <- paste0("%", search_term, "%")
     }
@@ -124,7 +124,7 @@ organizationsmodule <- function(
     } else {
       count_query <- glue_sql(count_query_str, .con = db_connection)
     }
-
+    
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / org_page_size))
   })
@@ -155,14 +155,14 @@ organizationsmodule <- function(
   observe({
     new_page <- org_page_state()
     current_selector <- input$org_page_selector
-
+    
     # Only update if different (prevents infinite loop)
     # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) ||
-        is.na(current_selector) ||
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
         !is.numeric(current_selector) ||
         current_selector != new_page) {
-
+      
       isolate({  # This is the key fix to break feedback loops!
         updateNumericInput(session, "org_page_selector",
                           max = org_total_pages(),
@@ -175,15 +175,15 @@ organizationsmodule <- function(
   observeEvent(input$org_page_selector, {
     # Get current input value
     current_input <- input$org_page_selector
-
+    
     # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) &&
-        !is.na(current_input) &&
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
         is.numeric(current_input) &&
         current_input > 0) {
-
+      
       new_page <- max(1, min(current_input, org_total_pages()))
-
+      
       # Only update page state if it's actually different
       if (new_page != org_page_state()) {
         org_page_state(new_page)
@@ -199,7 +199,7 @@ organizationsmodule <- function(
       invalidateLater(100)
       updateNumericInput(session, "org_page_selector", value = org_page_state())
     }
-  }, ignoreInit = TRUE)  # Prevent observer from firing on initialization or first load
+  }, ignoreInit = TRUE)  # Prevent observer from firing on initialization or first load 
 
   # Data fetching with race condition protection
   paged_endpoint_list_orgs <- reactive({
@@ -220,16 +220,13 @@ organizationsmodule <- function(
         (is.null(input$org_search_query) || input$org_search_query == "")
     )
  
-    offset <- if (is_initial_load && org_page_state() == 1) {
-      20  # Skip first 20 rows on very first load
-    } else {
+    offset <-
       (org_page_state() - 1) * org_page_size
-    }
 
     # Build query that constructs filtered HTML based on selected filters
     query_str <- "
       WITH base_data AS (
-        SELECT
+        SELECT 
           organization_name,
           identifiers_html as identifier,
           addresses_html as address,
@@ -237,7 +234,7 @@ organizationsmodule <- function(
           endpoint_urls_html as url,
           fhir_versions_array,
           vendor_names_array
-        FROM mv_organizations_aggregated
+        FROM mv_organizations_aggregated 
         WHERE TRUE"
     
     params <- list()
@@ -259,10 +256,10 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       query_str <- paste0(query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        identifiers_html ILIKE {search_pattern} OR
-        addresses_html ILIKE {search_pattern} OR
-        endpoint_urls_html ILIKE {search_pattern} OR
-        fhir_versions_html ILIKE {search_pattern} OR
+        identifiers_html ILIKE {search_pattern} OR 
+        addresses_html ILIKE {search_pattern} OR 
+        endpoint_urls_html ILIKE {search_pattern} OR 
+        fhir_versions_html ILIKE {search_pattern} OR 
         vendor_names_html ILIKE {search_pattern})")
       params$search_pattern <- paste0("%", search_term, "%")
     }
@@ -270,7 +267,7 @@ organizationsmodule <- function(
     # Close the base_data CTE and add the filtered aggregation
     query_str <- paste0(query_str, "
       )
-      SELECT
+      SELECT 
         organization_name,
         identifier,
         address,
@@ -278,10 +275,10 @@ organizationsmodule <- function(
         url,
         -- Only show FHIR versions that match the current filter
         string_agg(
-          DISTINCT fhir_version,
+          DISTINCT fhir_version, 
           '<br/>'
         ) as fhir_version,
-        -- Only show vendor names that match the current filter
+        -- Only show vendor names that match the current filter  
         string_agg(
           DISTINCT vendor_name,
           '<br/>'
@@ -303,9 +300,11 @@ organizationsmodule <- function(
     }
 
     # Add GROUP BY, ordering and pagination
-    query_str <- paste0(query_str, "
+    query_str <- paste0(query_str, " 
       GROUP BY organization_name, identifier, address, org_url, url
-      ORDER BY organization_name
+      ORDER BY
+        (organization_name ~ '[A-Za-z]') DESC,  -- Prioritize orgs with letters
+        organization_name ASC
       LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
     params$offset <- offset
@@ -316,17 +315,17 @@ organizationsmodule <- function(
     } else {
       data_query <- glue_sql(query_str, .con = db_connection)
     }
-
+    
     # Execute query
     result <- tbl(db_connection, sql(data_query)) %>% collect()
-
+    
     # Only return results if this is still the latest request
     # Use isolate() to check without creating reactive dependency
     if (request_id == isolate(current_request_id())) {
       # This is the latest request, process normally
       result <- result %>%
         mutate(
-          # Convert NA to empty string
+          # Convert NA to empty string 
           org_url = case_when(
             is.na(org_url) | org_url == "NA" ~ "",
             TRUE ~ org_url
@@ -357,7 +356,7 @@ organizationsmodule <- function(
     # Build query for CSV export using the same filtering logic
     query_str <- "
       WITH base_data AS (
-        SELECT
+        SELECT 
           organization_name,
           identifiers_csv as identifier,
           addresses_csv as address,
@@ -371,7 +370,7 @@ organizationsmodule <- function(
           endpoint_urls_html,
           fhir_versions_html,
           vendor_names_html
-        FROM mv_organizations_aggregated
+        FROM mv_organizations_aggregated 
         WHERE TRUE"
     
     params <- list()
@@ -393,10 +392,10 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       query_str <- paste0(query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        identifiers_html ILIKE {search_pattern} OR
-        addresses_html ILIKE {search_pattern} OR
-        endpoint_urls_html ILIKE {search_pattern} OR
-        fhir_versions_html ILIKE {search_pattern} OR
+        identifiers_html ILIKE {search_pattern} OR 
+        addresses_html ILIKE {search_pattern} OR 
+        endpoint_urls_html ILIKE {search_pattern} OR 
+        fhir_versions_html ILIKE {search_pattern} OR 
         vendor_names_html ILIKE {search_pattern})")
       params$search_pattern <- paste0("%", search_term, "%")
     }
@@ -404,7 +403,7 @@ organizationsmodule <- function(
     # Close the base_data CTE and add the filtered aggregation
     query_str <- paste0(query_str, "
       )
-      SELECT
+      SELECT 
         organization_name,
         identifier,
         address,
