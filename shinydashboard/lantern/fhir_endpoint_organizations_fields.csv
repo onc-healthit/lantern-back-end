@@ -1,0 +1,7 @@
+Field,	Description
+organization_name, Name of the healthcare organization
+identifier, Facility identifiers of the organization
+address, Physical addresses of the organization
+url,Service base URLs of the FHIR endpoints used by the organization
+fhir_version,	FHIR versions pulled from the endpoints' capability statements
+vendor_name, Developer names associated with the FHIR endpoints

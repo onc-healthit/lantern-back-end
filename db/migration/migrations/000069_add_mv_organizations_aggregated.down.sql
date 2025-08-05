@@ -1,0 +1,5 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS mv_organizations_aggregated CASCADE;
+
+COMMIT;

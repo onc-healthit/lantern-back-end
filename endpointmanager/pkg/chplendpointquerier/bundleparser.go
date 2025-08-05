@@ -23,6 +23,7 @@ type BundleResource struct {
 	Identifier   interface{}          `json:"identifier"`
 	Active       interface{}          `json:"active"`
 	Name         string               `json:"name"`
+	Telecom      interface{}          `json:"telecom"`
 	ManagingOrg  ManagingOrgReference `json:"managingOrganization"`
 	Orgs         []Organization       `json:"contained"`
 	ResourceType string               `json:"resourceType"`
@@ -62,6 +63,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	var endpointOrgMap = make(map[string][]string)
 	var organizationZip = make(map[string]string)
 	var organizationName = make(map[string]string)
+	var organizationURL = make(map[string]string)
 	var organizationAddresses = make(map[string][]string)
 	var organizationIdentifiers = make(map[string][]string)
 	var organizationActive = make(map[string]string)
@@ -191,6 +193,22 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 			if isIdentifierPresent {
 				organizationName[identifierKey] = bundleEntry.Resource.Name
 			}
+
+			if isIdentifierPresent {
+				// Extract organization URL from telecom field when system is "url"
+				if bundleEntry.Resource.Telecom != nil {
+					telecomArr := bundleEntry.Resource.Telecom.([]interface{})
+					for _, telecom := range telecomArr {
+						telecomMap := telecom.(map[string]interface{})
+						if telecomMap["system"] != nil && telecomMap["system"].(string) == "url" {
+							if telecomMap["value"] != nil && telecomMap["value"].(string) != "" {
+								organizationURL[identifierKey] = strings.TrimSpace(telecomMap["value"].(string))
+								break // Use the first URL found
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -231,6 +249,11 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					orgName, ok := organizationName[identifierKey]
 					if ok {
 						entry.OrganizationName = strings.TrimSpace(orgName)
+					}
+
+					orgURL, ok := organizationURL[identifierKey]
+					if ok {
+						entry.OrganizationURL = strings.TrimSpace(orgURL)
 					}
 
 					address, ok := organizationAddresses[identifierKey]
