@@ -9,7 +9,7 @@ get_fhir_endpoints_tbl <- function() {
                 availability, cap_stat_exists, kind, 
                 requested_fhir_version, is_chpl, status 
          FROM fhir_endpoint_comb_mv
-         ORDER BY vendor_name")) %>%
+         ORDER BY vendor_name, list_source, url, requested_fhir_version")) %>%
     collect()
 
   res

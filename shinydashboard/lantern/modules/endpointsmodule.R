@@ -279,7 +279,7 @@ endpointsmodule <- function(
     }
 
     # Add ordering by vendor name
-    query_str <- paste0(query_str, " ORDER BY vendor_name")
+    query_str <- paste0(query_str, " ORDER BY vendor_name, list_source, url, requested_fhir_version")
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     res <- tbl(db_connection, sql(query)) %>% collect()
