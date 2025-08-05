@@ -73,16 +73,16 @@ securitymodule <- function(
   observe({
     new_page <- security_page_state()
     current_selector <- input$security_page_selector
-    
+
     # Only update if different (prevents infinite loop)
     # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) || 
-        is.na(current_selector) || 
+    if (is.null(current_selector) ||
+        is.na(current_selector) ||
         !is.numeric(current_selector) ||
         current_selector != new_page) {
-      
+
       isolate({  # This is the key fix to break feedback loops
-        updateNumericInput(session, "security_page_selector", 
+        updateNumericInput(session, "security_page_selector",
                           max = security_total_pages(),
                           value = new_page)
       })
@@ -93,15 +93,15 @@ securitymodule <- function(
   observeEvent(input$security_page_selector, {
     # Get current input value
     current_input <- input$security_page_selector
-    
+
     # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) && 
-        !is.na(current_input) && 
+    if (!is.null(current_input) &&
+        !is.na(current_input) &&
         is.numeric(current_input) &&
         current_input > 0) {
-      
+
       new_page <- max(1, min(current_input, security_total_pages()))
-      
+
       # Only update page state if it's actually different
       if (new_page != security_page_state()) {
         security_page_state(new_page)
@@ -119,7 +119,7 @@ securitymodule <- function(
     }
   }, ignoreInit = TRUE)  # Prevent firing on initialization
 
-  # Handle next page button 
+  # Handle next page button
   observeEvent(input$security_next_page, {
     if (security_page_state() < security_total_pages()) {
       new_page <- security_page_state() + 1
@@ -127,7 +127,7 @@ securitymodule <- function(
     }
   })
 
-  # Handle previous page button 
+  # Handle previous page button
   observeEvent(input$security_prev_page, {
     if (security_page_state() > 1) {
       new_page <- security_page_state() - 1
@@ -182,7 +182,7 @@ securitymodule <- function(
     search_filter <- ""
     if (!is.null(input$security_search_query) && input$security_search_query != "") {
       q <- gsub("'", "''", input$security_search_query)
-      search_filter <- paste0("AND (url ILIKE '%", q, "%' OR 
+      search_filter <- paste0("AND (url ILIKE '%", q, "%' OR
                                   condensed_organization_names ILIKE '%", q, "%' OR 
                                   vendor_name ILIKE '%", q, "%' OR 
                                   capability_fhir_version ILIKE '%", q, "%' OR 
@@ -212,11 +212,11 @@ securitymodule <- function(
   # Main data query - WITH RACE CONDITION PROTECTION
   selected_endpoints <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
-    
-    # Generate unique request ID 
+
+    # Generate unique request ID
     request_id <- isolate(current_request_id()) + 1
     current_request_id(request_id)
-    
+
     log_duration("selected_endpoints", {
     limit <- security_page_size
     offset <- (security_page_state() - 1) * security_page_size
@@ -228,7 +228,7 @@ securitymodule <- function(
     )
 
     result <- tbl(db_connection, sql(query)) %>% collect()
-    
+
     # Only return results if this is still the latest request
     # Use isolate() to check without creating reactive dependency
     if (request_id == isolate(current_request_id())) {
