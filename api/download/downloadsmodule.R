@@ -6,8 +6,8 @@ get_fhir_endpoints_tbl <- function() {
     sql("SELECT url, endpoint_names, info_created, info_updated, list_source, 
                 vendor_name, capability_fhir_version, fhir_version, format, 
                 http_response, response_time_seconds, smart_http_response, errors, 
-                availability, cap_stat_exists, kind, 
-                requested_fhir_version, is_chpl, status 
+                kind, availability, requested_fhir_version, is_chpl,
+                cap_stat_exists, status 
          FROM fhir_endpoint_comb_mv
          ORDER BY vendor_name, list_source, url, requested_fhir_version")) %>%
     collect()
