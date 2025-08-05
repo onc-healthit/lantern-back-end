@@ -125,7 +125,7 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
 
   # Finalize
   query <- paste0(query, "
-    GROUP BY organization_name, identifier, address, url
+    GROUP BY organization_name, identifier, address, fhir_endpoint_url
     ORDER BY organization_name")
 
   # Build SQL safely

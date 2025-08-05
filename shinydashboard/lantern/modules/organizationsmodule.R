@@ -408,7 +408,6 @@ organizationsmodule <- function(
         organization_name,
         identifier,
         address,
-        org_url,
         url AS fhir_endpoint_url,
         -- Only show FHIR versions that match the current filter (CSV format)
         string_agg(
@@ -438,7 +437,7 @@ organizationsmodule <- function(
 
     # Add GROUP BY and ordering
     query_str <- paste0(query_str, " 
-      GROUP BY organization_name, identifier, address, org_url, url
+      GROUP BY organization_name, identifier, address, fhir_endpoint_url
       ORDER BY organization_name")
 
     # Execute query
@@ -449,26 +448,6 @@ organizationsmodule <- function(
     }
     
     res <- tbl(db_connection, sql(data_query)) %>% collect()
-    
-    # Handle empty fields gracefully for CSV - leave them empty
-    res <- res %>%
-      mutate(
-        # Convert NA to empty string 
-        org_url = case_when(
-          is.na(org_url) | org_url == "NA" ~ "",
-          TRUE ~ org_url
-        ),
-        identifier = case_when(
-          is.na(identifier) ~ "",
-          TRUE ~ identifier
-        ),
-        address = case_when(
-          is.na(address) ~ "",
-          TRUE ~ address
-        )
-      ) %>%
-      # Remove org_url column from CSV export
-      select(-org_url)
 
     return(res)
   })
