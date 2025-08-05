@@ -79,7 +79,8 @@ get_fhir_endpoints_tbl <- function() {
                 http_response, response_time_seconds, smart_http_response, errors, 
                 availability, cap_stat_exists, kind, 
                 requested_fhir_version, is_chpl, status 
-         FROM fhir_endpoint_comb_mv")) %>%
+         FROM fhir_endpoint_comb_mv
+         ORDER BY vendor_name")) %>%
     collect()
   
   res

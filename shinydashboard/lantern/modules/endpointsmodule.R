@@ -278,6 +278,9 @@ endpointsmodule <- function(
       params$search <- paste0("%", keyword, "%")
     }
 
+    # Add ordering by vendor name
+    query_str <- paste0(query_str, " ORDER BY vendor_name")
+
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     res <- tbl(db_connection, sql(query)) %>% collect()
     res
