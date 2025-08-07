@@ -281,66 +281,84 @@ smartresponsemodule <- function(
   smartres_page_state <- reactiveVal(1)
   smartres_page_size <- 10
 
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
   # Calculate total pages based on filtered data
   smartres_total_pages <- reactive({
     total_records <- nrow(selected_endpoints_without_limit())
     max(1, ceiling(total_records / smartres_page_size))
   })
 
-  # Update page selector max when total pages change
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "smartres_page_selector", 
-                      max = smartres_total_pages(),
-                      value = smartres_page_state())
+    new_page <- smartres_page_state()
+    current_selector <- input$smartres_page_selector
+    
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+      
+      isolate({  # This is the key fix to break feedback loops!
+        updateNumericInput(session, "smartres_page_selector", 
+                          max = smartres_total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
   # Handle page selector input
   observeEvent(input$smartres_page_selector, {
-    if (!is.null(input$smartres_page_selector) && !is.na(input$smartres_page_selector)) {
-      new_page <- max(1, min(input$smartres_page_selector, smartres_total_pages()))
-      smartres_page_state(new_page)
+    # Get current input value
+    current_input <- input$smartres_page_selector
+    
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
+        is.numeric(current_input) &&
+        current_input > 0) {
       
-      # Update the input if user entered invalid value
-      if (new_page != input$smartres_page_selector) {
+      new_page <- max(1, min(current_input, smartres_total_pages()))
+      
+      # Only update page state if it's actually different
+      if (new_page != smartres_page_state()) {
+        smartres_page_state(new_page)
+      }
+
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "smartres_page_selector", value = new_page)
       }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "smartres_page_selector", value = smartres_page_state())
     }
-  })
+  }, ignoreInit = TRUE)  
 
-  # Handle next page button
+  # Handle next page button 
   observeEvent(input$smartres_next_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_next_time) && 
-        (current_time - session$userData$last_next_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_next_time <- current_time
     if (smartres_page_state() < smartres_total_pages()) {
       new_page <- smartres_page_state() + 1
       smartres_page_state(new_page)
-      updateNumericInput(session, "smartres_page_selector", value = new_page)
     }
   })
 
-  # Handle previous page button
+  # Handle previous page button 
   observeEvent(input$smartres_prev_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_prev_time) && 
-        (current_time - session$userData$last_prev_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_prev_time <- current_time
     if (smartres_page_state() > 1) {
       new_page <- smartres_page_state() - 1
       smartres_page_state(new_page)
-      updateNumericInput(session, "smartres_page_selector", value = new_page)
     }
   })
 
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), input$smartres_search_query), {
     smartres_page_state(1)
-    updateNumericInput(session, "smartres_page_selector", value = 1)
   })
 
   output$smartres_prev_button_ui <- renderUI({
@@ -519,11 +537,15 @@ smartresponsemodule <- function(
     selected_well_known_endpoint_counts()
   )
 
-  # Modified selected_endpoints with LIMIT OFFSET pagination and search
+  # Modified selected_endpoints with LIMIT OFFSET pagination and search - WITH RACE CONDITION PROTECTION
   selected_endpoints <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
     req(current_fhir, current_vendor)
+    
+    # Generate unique request ID 
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
     
     smartres_offset <- (smartres_page_state() - 1) * smartres_page_size
     
@@ -557,13 +579,22 @@ smartresponsemodule <- function(
     params$offset <- smartres_offset
     
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
-    res <- tbl(db_connection, sql(query)) %>% collect()
+    result <- tbl(db_connection, sql(query)) %>% collect()
 
-    # Format the URL for HTML display with a modal popup.
-    res <- res %>%
-      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
-    
-    res
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      
+      # Format the URL for HTML display with a modal popup.
+      res <- result %>%
+        mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open a pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+      
+      return(res)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
   })
 
   # Query without limit for total count calculation
