@@ -10,6 +10,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
+	log "github.com/sirupsen/logrus"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -266,7 +267,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		metadata_id,
 		requested_fhir_version,
 		capability_fhir_version
-	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND fhir_endpoints_info.requested_fhir_version = $2`
+	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND fhir_endpoints_info.requested_fhir_version = $2 LIMIT 1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, url, requestedVersion)
 
@@ -357,6 +358,8 @@ func (s *Store) GetFHIREndpointInfoValidation(ctx context.Context, e *endpointma
 func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo, metadataID int) error {
 	var err error
 	var capabilityStatementJSON []byte
+
+	log.Infof("Adding FHIREndpointInfo with URL: %s", e.URL)
 
 	if e.CapabilityStatementBytes != nil {
 		capabilityStatementJSON = e.CapabilityStatementBytes
@@ -494,7 +497,7 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int
 
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
-	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
+	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.URL, e.RequestedFhirVersion)
 	return err
 }
 
@@ -650,7 +653,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	}
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
         DELETE FROM fhir_endpoints_info
-        WHERE id = $1`)
+        WHERE url = $1 AND requested_fhir_version = $2`)
 	if err != nil {
 		return err
 	}
