@@ -445,6 +445,10 @@ CREATE INDEX fhir_endpoint_organizations_name ON fhir_endpoint_organizations (or
 CREATE INDEX fhir_endpoint_organizations_zipcode ON fhir_endpoint_organizations (organization_zipcode);
 CREATE INDEX fhir_endpoint_organizations_npi_id ON fhir_endpoint_organizations (organization_npi_id);
 
+--For chpl stale data cleanup
+CREATE INDEX idx_fhir_endpoints_metadata_url ON fhir_endpoints_metadata(url);
+CREATE INDEX idx_fhir_endpoints_availability_url ON fhir_endpoints_availability(url);
+
 CREATE INDEX vendor_id_idx ON vendors (id);
 CREATE INDEX fhir_endpoints_info_vendor_id_idx ON fhir_endpoints_info (vendor_id);
 CREATE INDEX fhir_endpoints_info_history_vendor_id_idx ON fhir_endpoints_info_history (vendor_id);

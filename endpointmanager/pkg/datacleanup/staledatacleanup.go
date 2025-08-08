@@ -2,6 +2,7 @@ package datacleanup
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -26,19 +27,35 @@ func CleanupStaleData(ctx context.Context, store *postgresql.Store, populationSt
 
 	log.Infof("Found %d stale CHPL list sources to cleanup: %v", len(staleSources), staleSources)
 
-	for _, source := range staleSources {
-		err = deleteEndpointDataByListSource(ctx, store, source)
+	// Start transaction for all cleanup operations
+	tx, err := store.DB.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
 		if err != nil {
-			log.Errorf("Failed to delete endpoint data for list source %s: %v", source, err)
+			tx.Rollback()
 		}
+	}()
+
+	// Process all stale sources in batches for better performance
+	err = deleteEndpointDataBatch(ctx, tx, staleSources)
+	if err != nil {
+		return fmt.Errorf("failed to delete endpoint data: %w", err)
 	}
 
-	err = deleteListSources(ctx, store, staleSources)
+	err = deleteListSourcesBatch(ctx, tx, staleSources)
 	if err != nil {
 		return fmt.Errorf("failed to delete stale list sources: %w", err)
 	}
 
-	log.Infof("Cleanup completed: processed %d stale CHPL list sources", len(staleSources))
+	// Commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		return fmt.Errorf("failed to commit cleanup transaction: %w", err)
+	}
+
+	log.Infof("Cleanup completed successfully: processed %d stale CHPL list sources", len(staleSources))
 	return nil
 }
 
@@ -69,7 +86,7 @@ func getStaleListSources(ctx context.Context, store *postgresql.Store, since tim
 	return staleSources, nil
 }
 
-func deleteListSources(ctx context.Context, store *postgresql.Store, listSources []string) error {
+func deleteListSourcesBatch(ctx context.Context, tx *sql.Tx, listSources []string) error {
 	if len(listSources) == 0 {
 		return nil
 	}
@@ -79,7 +96,7 @@ func deleteListSources(ctx context.Context, store *postgresql.Store, listSources
 		WHERE list_source = ANY($1) AND is_chpl = true
 	`
 
-	result, err := store.DB.ExecContext(ctx, query, pq.Array(listSources))
+	result, err := tx.ExecContext(ctx, query, pq.Array(listSources))
 	if err != nil {
 		return fmt.Errorf("failed to delete stale list sources: %w", err)
 	}
@@ -90,92 +107,184 @@ func deleteListSources(ctx context.Context, store *postgresql.Store, listSources
 	return nil
 }
 
-func deleteEndpointDataByListSource(ctx context.Context, store *postgresql.Store, listSource string) error {
-	log.Infof("Deleting endpoint data for list source: %s", listSource)
+func deleteEndpointDataBatch(ctx context.Context, tx *sql.Tx, listSources []string) error {
+	log.Infof("Deleting endpoint data for %d list sources", len(listSources))
 
+	// Step 1: Get all URLs from endpoints to be deleted
 	findEndpointsQuery := `
-		SELECT id, url FROM fhir_endpoints 
-		WHERE list_source = $1
+		SELECT DISTINCT url FROM fhir_endpoints 
+		WHERE list_source = ANY($1)
 	`
 
-	rows, err := store.DB.QueryContext(ctx, findEndpointsQuery, listSource)
+	rows, err := tx.QueryContext(ctx, findEndpointsQuery, pq.Array(listSources))
 	if err != nil {
-		return fmt.Errorf("failed to find endpoints for list source %s: %w", listSource, err)
+		return fmt.Errorf("failed to find endpoints for list sources: %w", err)
 	}
 	defer rows.Close()
 
 	var endpointURLs []string
 	for rows.Next() {
-		var id int
 		var url string
-		if err := rows.Scan(&id, &url); err != nil {
-			return fmt.Errorf("failed to scan endpoint: %w", err)
+		if err := rows.Scan(&url); err != nil {
+			return fmt.Errorf("failed to scan endpoint URL: %w", err)
 		}
 		endpointURLs = append(endpointURLs, url)
 	}
 
 	if len(endpointURLs) == 0 {
-		log.Infof("No endpoints found for list source: %s", listSource)
+		log.Info("No endpoints found for the stale list sources")
 		return nil
 	}
 
-	log.Infof("Deleting %d endpoints for list source: %s", len(endpointURLs), listSource)
+	log.Infof("Found %d unique endpoints to delete", len(endpointURLs))
 
-	_, err = store.DB.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_info_history 
-		WHERE url = ANY($1)
-	`, pq.Array(endpointURLs))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_info_history: %v", err)
+	// Process URLs in batches to avoid parameter limits
+	batchSize := 1000
+	for i := 0; i < len(endpointURLs); i += batchSize {
+		end := i + batchSize
+		if end > len(endpointURLs) {
+			end = len(endpointURLs)
+		}
+
+		batch := endpointURLs[i:end]
+		log.Infof("Processing batch %d-%d (%d URLs)", i+1, end, len(batch))
+
+		err = deleteBatchEndpointData(ctx, tx, batch)
+		if err != nil {
+			return fmt.Errorf("failed to delete batch %d-%d: %w", i+1, end, err)
+		}
 	}
 
-	_, err = store.DB.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_info 
-		WHERE url = ANY($1)
-	`, pq.Array(endpointURLs))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_info: %v", err)
-	}
-
-	_, err = store.DB.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_metadata 
-		WHERE url = ANY($1)
-		AND id NOT IN (
-			SELECT DISTINCT metadata_id FROM fhir_endpoints_info WHERE metadata_id IS NOT NULL
-			UNION
-			SELECT DISTINCT metadata_id FROM fhir_endpoints_info_history WHERE metadata_id IS NOT NULL
-		)
-	`, pq.Array(endpointURLs))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_metadata: %v", err)
-	}
-
-	_, err = store.DB.ExecContext(ctx, `
-		DELETE FROM endpoint_organization 
-		WHERE url = ANY($1)
-	`, pq.Array(endpointURLs))
-	if err != nil {
-		log.Errorf("Failed to delete from endpoint_organization: %v", err)
-	}
-
-	_, err = store.DB.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_availability 
-		WHERE url = ANY($1)
-	`, pq.Array(endpointURLs))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_availability: %v", err)
-	}
-
-	result, err := store.DB.ExecContext(ctx, `
+	// Step 2: Delete from fhir_endpoints (this should be last)
+	result, err := tx.ExecContext(ctx, `
 		DELETE FROM fhir_endpoints 
-		WHERE list_source = $1
-	`, listSource)
+		WHERE list_source = ANY($1)
+	`, pq.Array(listSources))
 	if err != nil {
 		return fmt.Errorf("failed to delete from fhir_endpoints: %w", err)
 	}
 
 	rowsAffected, _ := result.RowsAffected()
-	log.Infof("Deleted %d endpoints from fhir_endpoints for list source: %s", rowsAffected, listSource)
+	log.Infof("Deleted %d records from fhir_endpoints", rowsAffected)
+
+	return nil
+}
+
+func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) error {
+	// Delete in order of foreign key dependencies
+
+	// 1. Delete from fhir_endpoint_organizations first
+	result, err := tx.ExecContext(ctx, `
+		DELETE FROM fhir_endpoint_organizations 
+		WHERE id IN (
+			SELECT m.org_database_id 
+			FROM fhir_endpoints e, fhir_endpoint_organizations_map m 
+			WHERE e.id = m.id 
+			AND e.url = ANY($1)
+		)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from fhir_endpoint_organizations: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from fhir_endpoint_organizations", rowsAffected)
+	} else {
+		log.Infof("No records to delete from fhir_endpoint_organizations")
+	}
+
+	// 2. Delete from fhir_endpoint_organizations_map
+	result, err = tx.ExecContext(ctx, `
+		DELETE FROM fhir_endpoint_organizations_map 
+		WHERE id IN (
+			SELECT id FROM fhir_endpoints 
+			WHERE url = ANY($1)
+		)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from fhir_endpoint_organizations_map: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from fhir_endpoint_organizations_map", rowsAffected)
+	} else {
+		log.Infof("No records to delete from fhir_endpoint_organizations_map")
+	}
+
+	// 3. Delete from fhir_endpoints_info_history
+	result, err = tx.ExecContext(ctx, `
+		DELETE FROM fhir_endpoints_info_history 
+		WHERE url = ANY($1)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from fhir_endpoints_info_history: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from fhir_endpoints_info_history", rowsAffected)
+	} else {
+		log.Infof("No records to delete from fhir_endpoints_info_history")
+	}
+
+	// 4. Delete from fhir_endpoints_info
+	result, err = tx.ExecContext(ctx, `
+		DELETE FROM fhir_endpoints_info 
+		WHERE url = ANY($1)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from fhir_endpoints_info: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from fhir_endpoints_info", rowsAffected)
+	} else {
+		log.Infof("No records to delete from fhir_endpoints_info")
+	}
+
+	// 5. Delete from endpoint_organization
+	result, err = tx.ExecContext(ctx, `
+		DELETE FROM endpoint_organization 
+		WHERE url = ANY($1)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from endpoint_organization: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from endpoint_organization", rowsAffected)
+	} else {
+		log.Infof("No records to delete from endpoint_organization")
+	}
+
+	// 6. Delete from fhir_endpoints_availability
+	result, err = tx.ExecContext(ctx, `
+		DELETE FROM fhir_endpoints_availability 
+		WHERE url = ANY($1)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from fhir_endpoints_availability: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from fhir_endpoints_availability", rowsAffected)
+	} else {
+		log.Infof("No records to delete from fhir_endpoints_availability")
+	}
+
+	// 7. Delete from fhir_endpoints_metadata
+	result, err = tx.ExecContext(ctx, `
+		DELETE FROM fhir_endpoints_metadata 
+		WHERE url = ANY($1)
+	`, pq.Array(urls))
+	if err != nil {
+		log.Errorf("Failed to delete from fhir_endpoints_metadata: %v", err)
+		return err
+	}
+	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
+		log.Infof("Deleted %d records from fhir_endpoints_metadata", rowsAffected)
+	} else {
+		log.Infof("No records to delete from fhir_endpoints_metadata")
+	}
 
 	return nil
 }
