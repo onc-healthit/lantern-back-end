@@ -77,9 +77,10 @@ get_fhir_endpoints_tbl <- function() {
     sql("SELECT url, endpoint_names, info_created, info_updated, list_source, 
                 vendor_name, capability_fhir_version, fhir_version, format, 
                 http_response, response_time_seconds, smart_http_response, errors, 
-                availability, cap_stat_exists, kind, 
-                requested_fhir_version, is_chpl, status 
-         FROM fhir_endpoint_comb_mv")) %>%
+                kind, availability, requested_fhir_version, is_chpl,
+                cap_stat_exists, status 
+         FROM fhir_endpoint_comb_mv
+         ORDER BY vendor_name, list_source, url, requested_fhir_version")) %>%
     collect()
   
   res
@@ -352,6 +353,15 @@ get_org_active_information <- function(db_connection) {
     res
 }
 
+get_org_url_information <- function(db_connection) {
+
+  res <- tbl(db_connection,
+    sql("SELECT org_id, org_url FROM fhir_endpoint_organization_url")) %>%
+    collect()
+
+    res
+}
+
 get_org_identifiers_information <- function(db_connection) {
 
   res <- tbl(db_connection,"fhir_endpoint_organization_identifiers") %>%
@@ -509,6 +519,11 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
     collect() %>%
     tidyr::replace_na(list(organization_name = "Unknown")) %>%
     mutate(organization_name = if_else(organization_name == "", "Unknown", organization_name))
+
+  # result <- result %>%
+  #   mutate(organization_id = as.integer(organization_id)) %>%
+  #   left_join(get_org_url_information(db_connection),
+  #       by = c("organization_id" = "org_id"))
 
   return(result)
 }
