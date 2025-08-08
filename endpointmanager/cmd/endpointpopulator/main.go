@@ -105,17 +105,6 @@ func main() {
 		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
 	}
 
-	addListSourceStatement := `
-	INSERT INTO list_source_info (
-		list_source,
-		is_chpl
-	)
-	SELECT $1, $2
-	WHERE
-    NOT EXISTS (
-        SELECT list_source FROM list_source_info WHERE list_source = $3
-    );
-	`
 	var listSource string
 	if listURL != "" {
 		listSource = listURL
@@ -123,6 +112,26 @@ func main() {
 		listSource = source
 	}
 
-	_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, isChpl, listSource)
-	helpers.FailOnError("Adding source to list_source database error: ", sourceErr)
+	// UPDATED: Insert/Update list source info with timestamp
+	addListSourceStatement := `
+	INSERT INTO list_source_info (
+		list_source,
+		is_chpl,
+		updated_at
+	)
+	VALUES ($1, $2, NOW())
+	ON CONFLICT (list_source) 
+	DO UPDATE SET 
+		updated_at = NOW(), 
+		is_chpl = $2
+	`
+
+	_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, isChpl)
+	if sourceErr != nil {
+		log.Errorf("Error updating list source timestamp: %v", sourceErr)
+	} else {
+		log.Infof("Updated timestamp for list source: %s (CHPL: %v)", listSource, isChpl)
+	}
+
+	log.Infof("Population completed successfully for source: %s", listSource)
 }
