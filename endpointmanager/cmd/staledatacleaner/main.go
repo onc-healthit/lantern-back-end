@@ -34,6 +34,7 @@ func main() {
 	// Check if start time was passed as argument
 	var cutoffTime time.Time
 	if len(os.Args) >= 2 {
+		// argument1: name of file & argument2: population start time
 		startTimeStr := os.Args[1]
 		cutoffTime, err = time.Parse(time.RFC3339, startTimeStr)
 		if err != nil {
@@ -41,8 +42,8 @@ func main() {
 		}
 		log.Infof("Using provided population start time as cutoff: %v", cutoffTime)
 	} else {
-		// Fallback for manual testing
-		cutoffTime = time.Now().Add(-1 * time.Hour)
+		// Fallback for manual testing/debugging (only runs when no time is provided with the main.go file)
+		cutoffTime = time.Now().Add(-1 * time.Hour) //Delete anything older than 1 hour
 		log.Warnf("No start time provided, using fallback cutoff: %v", cutoffTime)
 	}
 
