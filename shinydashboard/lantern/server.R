@@ -840,6 +840,7 @@ current_endpoint <- reactive({
     splitString <- strsplit(input$endpoint_popup, "&&")[[1]]
     endpointURL <- splitString[1]
     endpoint_requested_fhir_version <- splitString[2]
+    endpoint_vendor_name <- splitString[3]
   } else {
     # Only URL is provided (from Organizations tab)
     endpointURL <- input$endpoint_popup
@@ -857,7 +858,7 @@ current_endpoint <- reactive({
       endpoint_requested_fhir_version <- res$requested_fhir_version[1]
     }
   }
-  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
+  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version, vendor_name = endpoint_vendor_name)
   current_endpoint_list
 })
 
@@ -865,7 +866,7 @@ current_endpoint <- reactive({
 ### CHPL Products Modal Page ###
 endpoint_products <- reactive({
   endpoint <- current_endpoint()
-  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 })
 
@@ -892,14 +893,14 @@ endpoint_products_page <- function() {
 endpoint_implementation_guides <- reactive({
   endpoint <- current_endpoint()
 
-  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   implementation_guides
 })
 
 endpoint_profiles <- reactive({
   endpoint <- current_endpoint()
 
-  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   profiles
 
 })
@@ -938,21 +939,21 @@ required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 endpoint_fields <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "false")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "false")
   res
 })
 
 endpoint_extensions <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "true")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "true")
   res
 })
 
 endpoint_resources <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 
 })
@@ -960,7 +961,7 @@ endpoint_resources <- reactive({
 endpoint_smart_capabilities <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 
 })
@@ -1278,8 +1279,8 @@ output$endpoint_http_response_table <- reactable::renderReactable({
 
   endpoint <- current_endpoint()
 
-  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
-  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
+  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, db_connection)
+  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
 
   page <- fluidPage(
     h1("Endpoint Details"),
