@@ -26,6 +26,7 @@ ui <- dashboardPage(
       menuItem("Dashboard", tabName = "dashboard_tab", icon = tags$i(class = "fa fa-dashboard", "aria-hidden" = "true", role = "presentation", "aria-label" = "dashboard icon")),
       menuItem("Endpoints", tabName = "endpoints_tab", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon")),
       menuItem("Organizations", tabName = "organizations_tab", icon = tags$i(class = "fa fa-hospital", "aria-hidden" = "true", role = "presentation", "aria-label" = "hospital icon")),
+      menuItem("Payer Registration", tabName = "payer_registration_tab", icon = tags$i(class = "fa fa-user-plus", "aria-hidden" = "true", role = "presentation", "aria-label" = "user-plus icon")),
       menuItem("Resources", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
       menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
@@ -165,6 +166,9 @@ ui <- dashboardPage(
       ),
       tabItem("endpoints_tab",
               endpointsmodule_UI("endpoints_page")
+      ),
+      tabItem("payer_registration_tab",
+        payerregistrationmodule_UI("payer_registration")
       ),
       tabItem("downloads_tab",
               downloadsmodule_UI("downloads_page")

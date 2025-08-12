@@ -30,6 +30,7 @@ module_files:
   - "modules/dashboardmodule.R"
   - "modules/downloadsmodule.R"
   - "modules/endpointsmodule.R"
+  - "modules/payerregistrationmodule.R"
   - "modules/fieldsmodule.R"
   - "modules/capabilitystatementsizemodule.R"
   - "modules/securitymodule.R"
