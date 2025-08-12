@@ -238,6 +238,13 @@ payerregistrationmodule_UI <- function(id) {
 payerregistrationmodule <- function(input, output, session) {
   ns <- session$ns
 
+  # ---- Logging helper ----
+  log_submission <- function(event, details = "") {
+    stamp <- format(Sys.time(), "%Y-%m-%d %H:%M:%S %Z")
+    message(sprintf("[PAYER_REG][%s][session=%s][event=%s] %s",
+                    stamp, session$token, event, details))
+  }
+
   # Helper operator for null coalescing
   `%||%` <- function(a, b) if (is.null(a)) b else a
 
@@ -407,19 +414,25 @@ payerregistrationmodule <- function(input, output, session) {
 
   # ----------------- Submit -----------------
   observeEvent(input$submit_registration, {
-    
+    errors <- c()
+
     # Validate form
     errors <- validate_form()
 
     if (length(errors) > 0) {
-      showNotification("Please fix the errors in the form before submitting.", type = "error", duration = 5)
+      log_submission("submit_invalid", paste(errors, collapse = "; "))
+      showNotification("Please fix the errors in the form before submitting.",
+                       type = "error", duration = 5)
       return()
     }
     
     # Check reCAPTCHA
-    if (!input$recaptcha_verified) {
-      showNotification("Please verify that you are not a robot.", 
-                      type = "error", duration = 5)
+    if (!isTRUE(input$recaptcha_verified)) {
+      log_submission("captcha_fail",
+                     paste("FHIR Endpoint:", input$fhir_endpoint,
+                           "Contact Email:", input$contact_email))
+      showNotification("Please verify that you are not a robot.",
+                       type = "error", duration = 5)
       return()
     }
     
@@ -445,6 +458,18 @@ payerregistrationmodule <- function(input, output, session) {
     # For now, we'll just show a success message
     
     tryCatch({
+      # --- SUCCESS LOG (before clearing form) ---
+      log_submission(
+        "submit_ok",
+        paste(
+          "FHIR Endpoint:", input$fhir_endpoint,
+          "| Contact Email:", input$contact_email,
+          "| Endpoint Type:", input$fhir_type %||% "",
+          "| Org Name:", input$org_name %||% "",
+          "| Extra Orgs:", length(get_additional_orgs_data())
+        )
+      )
+      
       # Simulate form submission
       # save_payer_registration(form_data)
       
