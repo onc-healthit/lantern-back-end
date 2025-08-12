@@ -26,13 +26,12 @@ payerregistrationmodule_UI <- function(id) {
         # FHIR Endpoint Section
         div(
           style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
-          h4("FHIR Endpoint", style = "margin-bottom: 15px; color: #333; margin-top: 0;"),
-          
+
           # FHIR Endpoint URL
           div(
             style = "margin-bottom: 12px;",
             textInput(ns("fhir_endpoint"), 
-                     label = NULL, 
+                     label = "FHIR Endpoint", 
                      placeholder = "Enter FHIR endpoint URL",
                      width = "100%"),
             uiOutput(ns("fhir_endpoint_error_msg"))
@@ -41,10 +40,8 @@ payerregistrationmodule_UI <- function(id) {
           # User-facing website
           div(
             style = "margin-bottom: 12px;",
-            label = tags$label("User-facing website for the endpoint", 
-                              style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
             textInput(ns("user_website"), 
-                     label = NULL, 
+                     label = "User-facing website for the endpoint", 
                      placeholder = "Enter website URL",
                      width = "100%")
           ),
@@ -52,10 +49,8 @@ payerregistrationmodule_UI <- function(id) {
           # Type of FHIR Endpoint
           div(
             style = "margin-bottom: 0;",
-            label = tags$label("Type of FHIR Endpoint", 
-                              style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
             selectInput(ns("fhir_type"), 
-                       label = NULL,
+                       label = "Type of FHIR Endpoint",
                        choices = list(
                          "Select" = "",
                          "Payer to payer API" = "payer_to_payer",
@@ -76,20 +71,16 @@ payerregistrationmodule_UI <- function(id) {
             column(width = 6,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Name", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("org_name"), 
-                         label = NULL, 
+                         label = "Name", 
                          width = "100%")
               )
             ),
             column(width = 6,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Payer ID/ EDI ID", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("payer_id"), 
-                         label = NULL, 
+                         label = "Payer ID/ EDI ID", 
                          width = "100%")
               )
             )
@@ -99,20 +90,16 @@ payerregistrationmodule_UI <- function(id) {
             column(width = 6,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Address Line 1", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("address1"), 
-                         label = NULL, 
+                         label = "Address Line 1", 
                          width = "100%")
               )
             ),
             column(width = 6,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Address Line 2", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("address2"), 
-                         label = NULL, 
+                         label = "Address Line 2", 
                          width = "100%")
               )
             )
@@ -122,30 +109,24 @@ payerregistrationmodule_UI <- function(id) {
             column(width = 4,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("City", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("city"), 
-                         label = NULL, 
+                         label = "City", 
                          width = "100%")
               )
             ),
             column(width = 4,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("State", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("state"), 
-                         label = NULL, 
+                         label = "State", 
                          width = "100%")
               )
             ),
             column(width = 4,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Zipcode", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("zipcode"), 
-                         label = NULL, 
+                         label = "Zipcode", 
                          width = "100%")
               )
             )
@@ -177,20 +158,16 @@ payerregistrationmodule_UI <- function(id) {
             column(width = 6,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Contact name", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("contact_name"), 
-                         label = NULL, 
+                         label = "Contact name", 
                          width = "100%")
               )
             ),
             column(width = 6,
               div(
                 style = "margin-bottom: 12px;",
-                label = tags$label("Contact email", 
-                                  style = "color: #555; font-weight: normal; margin-bottom: 5px; display: block; font-size: 14px;"),
                 textInput(ns("contact_email"), 
-                         label = NULL, 
+                         label = "Contact email", 
                          width = "100%"),
                 uiOutput(ns("contact_email_error_msg"))
               )
