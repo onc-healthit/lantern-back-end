@@ -49,7 +49,7 @@ payerregistrationmodule_UI <- function(id) {
 
     # Main column layout
     fluidRow(
-      column(width = 8, offset = 2,
+      column(width = 8,
 
         # --- FHIR Endpoint Section ---
         div(
@@ -170,7 +170,7 @@ payerregistrationmodule_UI <- function(id) {
 
     # Contact Information and Submit Section
     fluidRow(
-      column(width = 8, offset = 2,
+      column(width = 8,
 
         # Contact Information Section
         div(
