@@ -28,6 +28,18 @@ payerregistrationmodule_UI <- function(id) {
       });
     ")),
 
+    # Info button
+    fluidRow(
+      column(width = 12,
+        actionButton(
+          ns("pr_show_info"),
+          "Info",
+          icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true",
+                        role = "presentation", "aria-label" = "question-circle icon")
+        )
+      )
+    ),
+
     # Top note banner
     fluidRow(
       column(width = 8,
@@ -467,4 +479,22 @@ payerregistrationmodule <- function(input, output, session) {
                       type = "error", duration = 10)
     })
   })
+
+  # ----------------- Info Modal -----------------
+  observeEvent(input$pr_show_info, {
+  showModal(modalDialog(
+    title = "Payer Registration – Information",
+    easyClose = TRUE,
+    size = "l",
+    p(HTML("
+      <b>What is this?</b><br>
+      This section will guide payers through the self-registration process.<br><br>
+      <b>How to use:</b><br>
+      1) Enter your FHIR endpoint URL and contact email (required).<br>
+      2) Optionally add organization details and additional organizations.<br>
+      3) Complete the CAPTCHA and submit.<br><br>
+      <i>(Replace this placeholder with final copy.)</i>
+    "))
+  ))
+})
 }
