@@ -184,21 +184,19 @@ organizationsmodule <- function(
         (is.null(input$org_search_query) || input$org_search_query == "")
     )
  
-    offset <- if (is_initial_load && org_page_state() == 1) {
-      20  # Skip first 20 rows on very first load
-    } else {
-      (org_page_state() - 1) * org_page_size
-    }
+    offset <- (org_page_state() - 1) * org_page_size
 
     # Build base query with parameterized approach
     query_str <- "
-      SELECT DISTINCT 
-        CASE 
-          WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
-          ELSE organization_name
-        END AS organization_name
-      FROM mv_endpoint_list_organizations
-      WHERE fhir_version IN ({fhir_versions*})"
+      SELECT organization_name
+      FROM (
+        SELECT DISTINCT
+          CASE 
+            WHEN organization_name IS NULL OR organization_name = '' THEN 'Unknown'
+            ELSE organization_name
+          END AS organization_name
+        FROM mv_endpoint_list_organizations
+        WHERE fhir_version IN ({fhir_versions*})"
     
     params <- list(fhir_versions = current_fhir)
 
@@ -221,7 +219,11 @@ organizationsmodule <- function(
     }
 
     # Add ordering and pagination
-    query_str <- paste0(query_str, " ORDER BY organization_name LIMIT {limit} OFFSET {offset}")
+    query_str <- paste0(query_str, " 
+        ) AS t
+        ORDER BY (organization_name ~ '[A-Za-z]') DESC,  -- Prioritize orgs with letters
+        organization_name ASC 
+        LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
     params$offset <- offset
 
