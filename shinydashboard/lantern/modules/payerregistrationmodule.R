@@ -19,20 +19,25 @@ payerregistrationmodule_UI <- function(id) {
     ")),
 
     # JS handler: view switcher
-    tags$script(HTML("
+    tags$script(HTML(sprintf("
       Shiny.addCustomMessageHandler('showRegistrationView', function(x){
         var form = document.getElementById(x.formId);
         var success = document.getElementById(x.successId);
         if (!form || !success) return;
+
         if (x.show === 'success') {
           form.style.display = 'none';
           success.style.display = '';
         } else {
           form.style.display = '';
           success.style.display = 'none';
+
+          // Reset any existing v2 checkbox widget(s) and clear Shiny token
+          try { if (window.grecaptcha && grecaptcha.reset) { grecaptcha.reset(); } } catch(e) {}
+          Shiny.setInputValue('%s', null, {priority: 'event', nonce: Math.random()});
         }
       });
-    ")),
+    ", ns("recaptcha_token")))),
 
     # === Tiny JS helper: toggle 'input-error' on an input by id ===
     tags$script(HTML("
@@ -223,25 +228,53 @@ payerregistrationmodule_UI <- function(id) {
             )
           ),
 
-          # reCAPTCHA and Submit Section
-          div(
-            style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
+          # --- reCAPTCHA  ---
+          tags$div(
+            class = "g-recaptcha",
+            `data-sitekey` = Sys.getenv("LANTERN_RECAPTCHA_SITE_KEY"),
+            `data-callback` = "onRecaptcha",
+            `data-expired-callback` = "onRecaptchaExpired",
+            `data-error-callback` = "onRecaptchaError"
+          ),
+          tags$script(src = "https://www.google.com/recaptcha/api.js"),
 
-            # reCAPTCHA placeholder
-            div(
-              style = "margin-bottom: 20px; padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; width: fit-content;",
-              checkboxInput(ns("recaptcha_verified"), "I'm not a robot", value = FALSE),
-              div(style = "font-size: 12px; color: #666; margin-top: 5px;", "reCAPTCHA", br(), "Privacy - Terms")
-            ),
+          # Success/expired/error callbacks
+          tags$script(HTML(sprintf("
+            function onRecaptcha(token) {
+              Shiny.setInputValue('%s', token, {priority: 'event'});
+            }
+            function onRecaptchaExpired() {
+              Shiny.setInputValue('%s', null, {priority: 'event', nonce: Math.random()});
+            }
+            function onRecaptchaError() {
+              Shiny.setInputValue('%s', null, {priority: 'event', nonce: Math.random()});
+            }
+          ", ns("recaptcha_token"), ns("recaptcha_token"), ns("recaptcha_token")))),
 
-            # Submit Button
-            div(
-              style = "text-align: left;",
-              actionButton(
-                ns("submit_registration"),
-                "SUBMIT",
-                style = "background-color: #9c27b0; color: white; border: none; padding: 12px 40px; border-radius: 4px; font-weight: bold; font-size: 16px;"
-              )
+          # Just-in-time sync on form submit
+          tags$script(HTML(sprintf("
+          $(document).on('click', '#%s', function() {
+            try {
+              var t = (window.grecaptcha && grecaptcha.getResponse) ? grecaptcha.getResponse() : null;
+              Shiny.setInputValue('%s', t || null, {priority: 'event', nonce: Math.random()});
+            } catch(e) { /* ignore */ }
+          });
+        ", ns("submit_registration"), ns("recaptcha_token")))),
+
+          # 6) Server-triggered reset: reset THIS widget + clear Shiny input
+          tags$script(HTML(sprintf("
+            Shiny.addCustomMessageHandler('resetRecaptcha', function(){
+              try { if (window.grecaptcha) grecaptcha.reset(); } catch(e) {}
+              Shiny.setInputValue('%s', null, {priority: 'event', nonce: Math.random()});
+            });
+          ", ns("recaptcha_token")))),
+
+          # Submit button
+          div(style = "margin-top: 16px;",
+            actionButton(
+              ns("submit_registration"),
+              "SUBMIT",
+              style = "background-color: #9c27b0; color: white; border: none; padding: 12px 40px; border-radius: 4px; font-weight: bold; font-size: 16px;"
             )
           ),
 
@@ -460,13 +493,33 @@ payerregistrationmodule <- function(input, output, session) {
       return()
     }
     
-    # Check reCAPTCHA
-    if (!isTRUE(input$recaptcha_verified)) {
+    # Obtain reCAPTCHA token
+    token <- input$recaptcha_token # set by JS callback
+    if (is.null(token) || identical(token, "")) {
+      log_submission("captcha_missing", "No reCAPTCHA token present")
+      showNotification("Please complete the CAPTCHA.", type = "error", duration = 5)
+      return()
+    }
+
+    res <- httr::POST(
+      url = "https://www.google.com/recaptcha/api/siteverify",
+      body = list(
+        secret = Sys.getenv("LANTERN_RECAPTCHA_SECRET"),
+        response = token
+      ),
+      encode = "form"
+    )
+
+    # Verify reCAPTCHA
+    verify <- httr::content(res)
+    if (!isTRUE(verify$success)) {
+      err <- tryCatch(paste(verify[["error-codes"]], collapse = ","), error = function(e) "unknown")
       log_submission("captcha_fail",
-                     paste("FHIR Endpoint:", input$fhir_endpoint,
-                           "Contact Email:", input$contact_email))
-      showNotification("Please verify that you are not a robot.",
-                       type = "error", duration = 5)
+                      paste("Error:", err,
+                      "| FHIR Endpoint:", input$fhir_endpoint,
+                      "| Contact Email:", input$contact_email))
+      showNotification("Please verify that you are not a robot.", type = "error", duration = 5)
+      session$sendCustomMessage('resetRecaptcha', list())
       return()
     }
     
@@ -512,6 +565,9 @@ payerregistrationmodule <- function(input, output, session) {
             show = "success")
       )
 
+      # Reset Captcha
+      session$sendCustomMessage('resetRecaptcha', list())
+
       # Simulate form submission
       # save_payer_registration(form_data)
       
@@ -537,7 +593,8 @@ payerregistrationmodule <- function(input, output, session) {
     updateTextInput(session, "zipcode", value = "")
     updateTextInput(session, "contact_name", value = "")
     updateTextInput(session, "contact_email", value = "")
-    updateCheckboxInput(session, "recaptcha_verified", value = FALSE)
+    # Reset Captcha
+    session$sendCustomMessage('resetRecaptcha', list())
     # Reset dynamic orgs
     additional_orgs_count(0)
 
