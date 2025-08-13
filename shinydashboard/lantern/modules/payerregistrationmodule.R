@@ -18,6 +18,22 @@ payerregistrationmodule_UI <- function(id) {
       }
     ")),
 
+    # JS handler: view switcher
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('showRegistrationView', function(x){
+        var form = document.getElementById(x.formId);
+        var success = document.getElementById(x.successId);
+        if (!form || !success) return;
+        if (x.show === 'success') {
+          form.style.display = 'none';
+          success.style.display = '';
+        } else {
+          form.style.display = '';
+          success.style.display = 'none';
+        }
+      });
+    ")),
+
     # === Tiny JS helper: toggle 'input-error' on an input by id ===
     tags$script(HTML("
       Shiny.addCustomMessageHandler('toggleInputError', function(x) {
@@ -59,177 +75,195 @@ payerregistrationmodule_UI <- function(id) {
       )
     ),
 
-    # Main column layout
-    fluidRow(
-      column(width = 8,
+    div(id = ns("form_container"),
+      # Main column layout
+      fluidRow(
+        column(width = 8,
 
-        # --- FHIR Endpoint Section ---
-        div(
-          style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
-
-          # FHIR Endpoint URL (static input; error below)
+          # --- FHIR Endpoint Section ---
           div(
-            style = "margin-bottom: 12px;",
-            textInput(
-              ns("fhir_endpoint"),
-              label = "FHIR Endpoint",
-              placeholder = "Enter FHIR endpoint URL",
-              width = "100%"
-            ),
-            uiOutput(ns("fhir_endpoint_error_msg"))
-          ),
+            style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
 
-          # User-facing website
-          div(
-            style = "margin-bottom: 12px;",
-            textInput(
-              ns("user_website"),
-              label = "User-facing website for the endpoint",
-              placeholder = "Enter website URL",
-              width = "100%"
-            )
-          ),
-
-          # Type of FHIR Endpoint
-          div(
-            style = "margin-bottom: 0;",
-            selectInput(
-              ns("fhir_type"),
-              label = "Type of FHIR Endpoint",
-              choices = list(
-                "Select" = "",
-                "Payer to payer API" = "payer_to_payer",
-                "Provider Access API" = "provider_access",
-                "Patient Access API" = "patient_access",
-                "Prior Authorization API" = "prior_authorization"
+            # FHIR Endpoint URL (static input; error below)
+            div(
+              style = "margin-bottom: 12px;",
+              textInput(
+                ns("fhir_endpoint"),
+                label = "FHIR Endpoint",
+                placeholder = "Enter FHIR endpoint URL",
+                width = "100%"
               ),
-              width = "100%"
-            )
-          )
-        ),
+              uiOutput(ns("fhir_endpoint_error_msg"))
+            ),
 
-        # --- Organization Section ---
-        div(
-          style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
-          h4("Organization", style = "margin-bottom: 15px; color: #333; margin-top: 0;"),
-
-          fluidRow(
-            column(width = 6,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("org_name"), label = "Name", width = "100%")
+            # User-facing website
+            div(
+              style = "margin-bottom: 12px;",
+              textInput(
+                ns("user_website"),
+                label = "User-facing website for the endpoint",
+                placeholder = "Enter website URL",
+                width = "100%"
               )
             ),
-            column(width = 6,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("payer_id"), label = "Payer ID/ EDI ID", width = "100%")
-              )
-            )
-          ),
 
-          fluidRow(
-            column(width = 6,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("address1"), label = "Address Line 1", width = "100%")
-              )
-            ),
-            column(width = 6,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("address2"), label = "Address Line 2", width = "100%")
+            # Type of FHIR Endpoint
+            div(
+              style = "margin-bottom: 0;",
+              selectInput(
+                ns("fhir_type"),
+                label = "Type of FHIR Endpoint",
+                choices = list(
+                  "Select" = "",
+                  "Payer to payer API" = "payer_to_payer",
+                  "Provider Access API" = "provider_access",
+                  "Patient Access API" = "patient_access",
+                  "Prior Authorization API" = "prior_authorization"
+                ),
+                width = "100%"
               )
             )
           ),
 
-          fluidRow(
-            column(width = 4,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("city"), label = "City", width = "100%")
+          # --- Organization Section ---
+          div(
+            style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
+            h4("Organization", style = "margin-bottom: 15px; color: #333; margin-top: 0;"),
+
+            fluidRow(
+              column(width = 6,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("org_name"), label = "Name", width = "100%")
+                )
+              ),
+              column(width = 6,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("payer_id"), label = "Payer ID/ EDI ID", width = "100%")
+                )
               )
             ),
-            column(width = 4,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("state"), label = "State", width = "100%")
+
+            fluidRow(
+              column(width = 6,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("address1"), label = "Address Line 1", width = "100%")
+                )
+              ),
+              column(width = 6,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("address2"), label = "Address Line 2", width = "100%")
+                )
               )
             ),
-            column(width = 4,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("zipcode"), label = "Zipcode", width = "100%")
+
+            fluidRow(
+              column(width = 4,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("city"), label = "City", width = "100%")
+                )
+              ),
+              column(width = 4,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("state"), label = "State", width = "100%")
+                )
+              ),
+              column(width = 4,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("zipcode"), label = "Zipcode", width = "100%")
+                )
               )
             )
-          )
-        ),
+          ),
 
-        # Additional Organizations (Dynamic)
-        uiOutput(ns("additional_orgs_ui")),
+          # Additional Organizations (Dynamic)
+          uiOutput(ns("additional_orgs_ui")),
 
-        # Add Additional Organization Button
-        div(
-          style = "text-align: center; margin: 20px 0;",
-          actionButton(
-            ns("add_organization"),
-            "+ ADD ADDITIONAL ORGANIZATION",
-            style = "background-color: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 14px;"
+          # Add Additional Organization Button
+          div(
+            style = "text-align: center; margin: 20px 0;",
+            actionButton(
+              ns("add_organization"),
+              "+ ADD ADDITIONAL ORGANIZATION",
+              style = "background-color: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 14px;"
+            )
           )
+        )
+      ),
+
+      # Contact Information and Submit Section
+      fluidRow(
+        column(width = 8,
+
+          # Contact Information Section
+          div(
+            style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
+            h4("Contact Information", style = "margin-bottom: 15px; color: #333; margin-top: 0;"),
+
+            fluidRow(
+              column(width = 6,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("contact_name"), label = "Contact name", width = "100%")
+                )
+              ),
+              column(width = 6,
+                div(
+                  style = "margin-bottom: 12px;",
+                  textInput(ns("contact_email"), label = "Contact email", width = "100%"),
+                  uiOutput(ns("contact_email_error_msg"))
+                )
+              )
+            )
+          ),
+
+          # reCAPTCHA and Submit Section
+          div(
+            style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
+
+            # reCAPTCHA placeholder
+            div(
+              style = "margin-bottom: 20px; padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; width: fit-content;",
+              checkboxInput(ns("recaptcha_verified"), "I'm not a robot", value = FALSE),
+              div(style = "font-size: 12px; color: #666; margin-top: 5px;", "reCAPTCHA", br(), "Privacy - Terms")
+            ),
+
+            # Submit Button
+            div(
+              style = "text-align: left;",
+              actionButton(
+                ns("submit_registration"),
+                "SUBMIT",
+                style = "background-color: #9c27b0; color: white; border: none; padding: 12px 40px; border-radius: 4px; font-weight: bold; font-size: 16px;"
+              )
+            )
+          ),
+
+          # Success/Error Messages
+          div(id = ns("message_area"), style = "margin-top: 20px;")
         )
       )
     ),
 
-    # Contact Information and Submit Section
-    fluidRow(
-      column(width = 8,
-
-        # Contact Information Section
-        div(
-          style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
-          h4("Contact Information", style = "margin-bottom: 15px; color: #333; margin-top: 0;"),
-
-          fluidRow(
-            column(width = 6,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("contact_name"), label = "Contact name", width = "100%")
-              )
-            ),
-            column(width = 6,
-              div(
-                style = "margin-bottom: 12px;",
-                textInput(ns("contact_email"), label = "Contact email", width = "100%"),
-                uiOutput(ns("contact_email_error_msg"))
-              )
-            )
+    div(
+      id = ns("success_container"),
+      style = "display:none; padding: 20px;",
+      h2("Payer endpoint Self Registration"),
+      div(style="margin-top: 10px; color: #2e7d32; font-weight: 600;",
+          "Thank you for registering your FHIR endpoint. We will contact you if additional information is required."
+      ),
+      div(style="margin-top: 24px;",
+          actionButton(
+            ns("new_registration"),
+            "+ REGISTER NEW FHIR ENDPOINT",
+            style = "background-color:#2962ff; color:#fff; border:none; padding:10px 16px; border-radius:4px; font-weight:600;"
           )
-        ),
-
-        # reCAPTCHA and Submit Section
-        div(
-          style = "background-color: #fff; padding: 20px; margin-bottom: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);",
-
-          # reCAPTCHA placeholder
-          div(
-            style = "margin-bottom: 20px; padding: 20px; border: 1px solid #ccc; background-color: #f9f9f9; width: fit-content;",
-            checkboxInput(ns("recaptcha_verified"), "I'm not a robot", value = FALSE),
-            div(style = "font-size: 12px; color: #666; margin-top: 5px;", "reCAPTCHA", br(), "Privacy - Terms")
-          ),
-
-          # Submit Button
-          div(
-            style = "text-align: left;",
-            actionButton(
-              ns("submit_registration"),
-              "SUBMIT",
-              style = "background-color: #9c27b0; color: white; border: none; padding: 12px 40px; border-radius: 4px; font-weight: bold; font-size: 16px;"
-            )
-          )
-        ),
-
-        # Success/Error Messages
-        div(id = ns("message_area"), style = "margin-top: 20px;")
       )
     )
   )
@@ -469,40 +503,51 @@ payerregistrationmodule <- function(input, output, session) {
           "| Extra Orgs:", length(get_additional_orgs_data())
         )
       )
-      
+
+      # Show the success screen
+      session$sendCustomMessage(
+        'showRegistrationView',
+        list(formId = ns("form_container"),
+            successId = ns("success_container"),
+            show = "success")
+      )
+
       # Simulate form submission
       # save_payer_registration(form_data)
       
-      # Clear form
-      updateTextInput(session, "fhir_endpoint", value = "")
-      updateTextInput(session, "user_website", value = "")
-      updateSelectInput(session, "fhir_type", selected = "")
-      updateTextInput(session, "org_name", value = "")
-      updateTextInput(session, "payer_id", value = "")
-      updateTextInput(session, "address1", value = "")
-      updateTextInput(session, "address2", value = "")
-      updateTextInput(session, "city", value = "")
-      updateTextInput(session, "state", value = "")
-      updateTextInput(session, "zipcode", value = "")
-      updateTextInput(session, "contact_name", value = "")
-      updateTextInput(session, "contact_email", value = "")
-      updateCheckboxInput(session, "recaptcha_verified", value = FALSE)
-      # Reset dynamic orgs
-      additional_orgs_count(0)
-      
-      # Show success message
-      output$message_area <- renderUI({
-        div(
-          style = "padding: 15px; background-color: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724;",
-          tags$strong("Success!"),
-          " Your payer endpoint registration has been submitted successfully. You will receive a confirmation email shortly."
-        )
-      })
     }, error = function(e) {
       # Show error message
       showNotification(paste("Error submitting registration:", e$message), 
                       type = "error", duration = 10)
     })
+  })
+
+  # ----------------- New Endpoint Button -----------------
+  observeEvent(input$new_registration, {
+    # Clear form fields
+    updateTextInput(session, "fhir_endpoint", value = "")
+    updateTextInput(session, "user_website", value = "")
+    updateSelectInput(session, "fhir_type", selected = "")
+    updateTextInput(session, "org_name", value = "")
+    updateTextInput(session, "payer_id", value = "")
+    updateTextInput(session, "address1", value = "")
+    updateTextInput(session, "address2", value = "")
+    updateTextInput(session, "city", value = "")
+    updateTextInput(session, "state", value = "")
+    updateTextInput(session, "zipcode", value = "")
+    updateTextInput(session, "contact_name", value = "")
+    updateTextInput(session, "contact_email", value = "")
+    updateCheckboxInput(session, "recaptcha_verified", value = FALSE)
+    # Reset dynamic orgs
+    additional_orgs_count(0)
+
+    # Hide success, show form
+    session$sendCustomMessage(
+      'showRegistrationView',
+      list(formId = ns("form_container"),
+          successId = ns("success_container"),
+          show = "form")
+    )
   })
 
   # ----------------- Info Modal -----------------
