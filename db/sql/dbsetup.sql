@@ -1499,6 +1499,19 @@ CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv (field, "FHI
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);
 
+-- Add capstat_usage_summary_mv
+CREATE MATERIALIZED VIEW capstat_usage_summary_mv AS
+SELECT 
+  field,
+  "FHIR Version",
+  "Developer",
+  is_used,
+  SUM("Endpoints") AS count
+FROM selected_fhir_endpoints_values_mv
+GROUP BY field, "FHIR Version", "Developer", is_used;
+
+CREATE INDEX idx_usage_summary_filters ON capstat_usage_summary_mv(field, "FHIR Version", "Developer", is_used);
+
 CREATE TABLE daily_querying_status (status VARCHAR(500));
 
 -- Lantern-839
@@ -2402,6 +2415,7 @@ CREATE TABLE fhir_endpoint_organization_url (
 );
 
 CREATE INDEX idx_fhir_endpoint_organization_url_org_id ON fhir_endpoint_organization_url (org_id);
+
 --Profiles Tab Pagination MV
 CREATE MATERIALIZED VIEW mv_profiles_paginated AS
 SELECT
