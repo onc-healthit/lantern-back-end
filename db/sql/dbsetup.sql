@@ -1499,7 +1499,53 @@ CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv (field, "FHI
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);
 
+-- Add capstat_usage_summary_mv
+CREATE MATERIALIZED VIEW capstat_usage_summary_mv AS
+SELECT 
+  field,
+  "FHIR Version",
+  "Developer",
+  is_used,
+  SUM("Endpoints") AS count
+FROM selected_fhir_endpoints_values_mv
+GROUP BY field, "FHIR Version", "Developer", is_used;
+
+CREATE INDEX idx_usage_summary_filters ON capstat_usage_summary_mv(field, "FHIR Version", "Developer", is_used);
+
+-- Add mv_profiles_paginated
+CREATE MATERIALIZED VIEW mv_profiles_paginated AS
+SELECT 
+  row_number() OVER (ORDER BY vendor_name, url, profileurl) AS page_id,
+  url,
+  profileurl,
+  profilename,
+  resource,
+  fhir_version,
+  vendor_name
+FROM (
+  SELECT DISTINCT 
+    url,
+    profileurl,
+    profilename,
+    resource,
+    fhir_version,
+    vendor_name
+  FROM endpoint_supported_profiles_mv
+) distinct_profiles
+ORDER BY vendor_name, url, profileurl;
+
+-- Create indexes for fast filtering and pagination
+CREATE UNIQUE INDEX mv_profiles_paginated_page_id_idx ON mv_profiles_paginated(page_id);
+CREATE INDEX mv_profiles_paginated_fhir_version_idx ON mv_profiles_paginated(fhir_version);
+CREATE INDEX mv_profiles_paginated_vendor_name_idx ON mv_profiles_paginated(vendor_name);
+CREATE INDEX mv_profiles_paginated_resource_idx ON mv_profiles_paginated(resource);
+CREATE INDEX mv_profiles_paginated_profileurl_idx ON mv_profiles_paginated(profileurl);
+
+-- Composite index for common filter combinations
+CREATE INDEX mv_profiles_paginated_composite_idx ON mv_profiles_paginated(vendor_name, fhir_version, resource);
+
 CREATE TABLE daily_querying_status (status VARCHAR(500));
+INSERT INTO daily_querying_status VALUES ('true');
 
 -- Lantern-839
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
@@ -1757,6 +1803,7 @@ CREATE INDEX idx_selected_security_endpoints_vendor_name ON selected_security_en
 CREATE INDEX idx_selected_security_endpoints_code ON selected_security_endpoints_mv (code);
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_unique_selected_security_endpoints ON selected_security_endpoints_mv (id, url, code);
+
 -- LANTERN-843
 -- Create materialized view for endpoint_organization_tbl
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_organization_tbl CASCADE;
@@ -1768,6 +1815,9 @@ CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
            FROM endpoint_export) sub
   GROUP BY sub.url
   ORDER BY sub.url;
+
+-- Create indexes for mv_endpoint_organization_tbl
+CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
 -- Create materialized view for security_endpoints_distinct_mv
 DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE;
@@ -1784,9 +1834,6 @@ FROM selected_security_endpoints_mv;
 -- Create indexes for security_endpoints_distinct_mv
 CREATE UNIQUE INDEX idx_unique_security_endpoints_distinct_mv ON security_endpoints_distinct_mv (url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code);
 CREATE INDEX idx_security_endpoints_distinct_filters  ON security_endpoints_distinct_mv(capability_fhir_version, code, vendor_name);
-
--- Create indexes for mv_endpoint_organization_tbl
-CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
 -- Create materialized view for endpoint_export_tbl
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
