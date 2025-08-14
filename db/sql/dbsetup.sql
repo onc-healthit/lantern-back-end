@@ -1770,6 +1770,7 @@ CREATE INDEX idx_selected_security_endpoints_vendor_name ON selected_security_en
 CREATE INDEX idx_selected_security_endpoints_code ON selected_security_endpoints_mv (code);
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_unique_selected_security_endpoints ON selected_security_endpoints_mv (id, url, code);
+
 -- LANTERN-843
 -- Create materialized view for endpoint_organization_tbl
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_organization_tbl CASCADE;
@@ -1781,6 +1782,9 @@ CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
            FROM endpoint_export) sub
   GROUP BY sub.url
   ORDER BY sub.url;
+
+-- Create indexes for mv_endpoint_organization_tbl
+CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
 -- Create materialized view for security_endpoints_distinct_mv
 DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE;
@@ -1797,9 +1801,6 @@ FROM selected_security_endpoints_mv;
 -- Create indexes for security_endpoints_distinct_mv
 CREATE UNIQUE INDEX idx_unique_security_endpoints_distinct_mv ON security_endpoints_distinct_mv (url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code);
 CREATE INDEX idx_security_endpoints_distinct_filters  ON security_endpoints_distinct_mv(capability_fhir_version, code, vendor_name);
-
--- Create indexes for mv_endpoint_organization_tbl
-CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
 -- Create materialized view for endpoint_export_tbl
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
