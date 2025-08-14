@@ -1,5 +1,9 @@
 library(shiny)
 library(shinydashboard)
+library(DBI)
+library(RPostgres)
+library(jsonlite)
+library(httr)
 
 payerregistrationmodule_UI <- function(id) {
   ns <- NS(id)
@@ -315,7 +319,145 @@ payerregistrationmodule <- function(input, output, session) {
   # Helper operator for null coalescing
   `%||%` <- function(a, b) if (is.null(a)) b else a
 
-  # ----------------- Validation -----------------
+  # ===================== DATABASE FUNCTIONS =====================
+  
+  # Function to save payer registration data to the database
+  save_payer_registration <- function(form_data) {
+    tryCatch({
+      # Begin transaction
+      dbBegin(db_connection)
+      
+      # 1. Insert into payers table
+      payer_query <- "
+        INSERT INTO payers (contact_name, contact_email, submission_time)
+        VALUES ($1, $2, $3)
+        RETURNING id
+      "
+      
+      payer_result <- dbGetQuery(
+        db_connection,
+        payer_query,
+        params = list(
+          form_data$contact_name %||% "",
+          form_data$contact_email,
+          form_data$submission_time
+        )
+      )
+      
+      payer_id <- payer_result$id[1]
+      
+      # 2. Insert main organization into payer_endpoints
+      main_org_address <- list(
+        address1 = form_data$address1 %||% "",
+        address2 = form_data$address2 %||% "",
+        city = form_data$city %||% "",
+        state = form_data$state %||% "",
+        zipcode = form_data$zipcode %||% ""
+      )
+      
+      endpoint_query <- "
+        INSERT INTO payer_endpoints (
+          payer_id, url, name, edi_id, address, user_facing_url
+        )
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id
+      "
+      
+      # Convert payer_id to integer, handle empty strings
+      edi_id_value <- if(is.null(form_data$payer_id) || form_data$payer_id == "") {
+        NA_integer_
+      } else {
+        tryCatch(as.integer(form_data$payer_id), error = function(e) NA_integer_)
+      }
+      
+      main_endpoint_result <- dbGetQuery(
+        db_connection,
+        endpoint_query,
+        params = list(
+          payer_id,
+          form_data$fhir_endpoint,
+          form_data$org_name %||% "",
+          edi_id_value,
+          toJSON(main_org_address, auto_unbox = TRUE),
+          form_data$user_website %||% ""
+        )
+      )
+      
+      main_endpoint_id <- main_endpoint_result$id[1]
+      
+      # 3. Insert additional organizations
+      if (length(form_data$additional_organizations) > 0) {
+        for (org in form_data$additional_organizations) {
+          if (!is.null(org$name) && org$name != "") {
+            add_org_address <- list(
+              address1 = org$address1 %||% "",
+              address2 = org$address2 %||% "",
+              city = org$city %||% "",
+              state = org$state %||% "",
+              zipcode = org$zipcode %||% ""
+            )
+            
+            # Convert additional org payer_id to integer
+            add_edi_id_value <- if(is.null(org$payer_id) || org$payer_id == "") {
+              NA_integer_
+            } else {
+              tryCatch(as.integer(org$payer_id), error = function(e) NA_integer_)
+            }
+            
+            dbGetQuery(
+              db_connection,
+              endpoint_query,
+              params = list(
+                payer_id,
+                form_data$fhir_endpoint, # Same endpoint URL
+                org$name,
+                add_edi_id_value,
+                toJSON(add_org_address, auto_unbox = TRUE),
+                form_data$user_website %||% ""
+              )
+            )
+          }
+        }
+      }
+      
+      # Note: payer_info table will be populated later in the population process
+      
+      # Commit transaction
+      dbCommit(db_connection)
+      
+      return(list(
+        success = TRUE,
+        payer_id = payer_id,
+        main_endpoint_id = main_endpoint_id,
+        message = "Payer registration saved successfully"
+      ))
+      
+    }, error = function(e) {
+      # Rollback transaction on error
+      dbRollback(db_connection)
+      
+      return(list(
+        success = FALSE,
+        error = as.character(e),
+        message = paste("Error saving payer registration:", e$message)
+      ))
+    })
+  }
+
+  # Function to check if email already exists
+  check_email_exists <- function(email) {
+    tryCatch({
+      query <- "SELECT COUNT(*) as count FROM payers WHERE LOWER(contact_email) = LOWER($1)"
+      result <- dbGetQuery(db_connection, query, params = list(email))
+      return(result$count[1] > 0)
+    }, error = function(e) {
+      log_submission("db_error", paste("Error checking email:", e$message))
+      return(FALSE) # Assume email doesn't exist if there's an error
+    })
+  }
+
+  # ===================== VALIDATION =====================
+  
   validate_form <- function() {
     errors <- list()
 
@@ -339,6 +481,14 @@ payerregistrationmodule <- function(input, output, session) {
       errors$fhir_endpoint <- "Please enter a valid URL (starting with http:// or https://)"
     }
 
+    # Check for duplicate email in database
+    if (!is.null(input$contact_email) && input$contact_email != "" && 
+        length(errors) == 0) { # Only check if no other email errors
+      if (check_email_exists(input$contact_email)) {
+        errors$contact_email <- "This email address has already been registered"
+      }
+    }
+
     errors
   }
 
@@ -349,6 +499,7 @@ payerregistrationmodule <- function(input, output, session) {
       div(class = "error-message", errs$fhir_endpoint)
     }
   })
+  
   output$contact_email_error_msg <- renderUI({
     errs <- validate_form()
     if ("contact_email" %in% names(errs)) {
@@ -370,7 +521,8 @@ payerregistrationmodule <- function(input, output, session) {
     ))
   })
 
-  # ----------------- Additional Orgs -----------------
+  # ===================== ADDITIONAL ORGANIZATIONS =====================
+  
   additional_orgs_count <- reactiveVal(0)
 
   output$additional_orgs_ui <- renderUI({
@@ -479,7 +631,8 @@ payerregistrationmodule <- function(input, output, session) {
     additional_orgs
   }
 
-  # ----------------- Submit -----------------
+  # ===================== FORM SUBMISSION =====================
+  
   observeEvent(input$submit_registration, {
     errors <- c()
 
@@ -541,44 +694,56 @@ payerregistrationmodule <- function(input, output, session) {
       submission_time = Sys.time()
     )
     
-    # TODO: Here we would typically save the data to a database
-    # For now, we'll just show a success message
-    
+    # Save to database
     tryCatch({
-      # --- SUCCESS LOG (before clearing form) ---
-      log_submission(
-        "submit_ok",
-        paste(
-          "FHIR Endpoint:", input$fhir_endpoint,
-          "| Contact Email:", input$contact_email,
-          "| Endpoint Type:", input$fhir_type %||% "",
-          "| Org Name:", input$org_name %||% "",
-          "| Extra Orgs:", length(get_additional_orgs_data())
+      # Save the payer registration data
+      save_result <- save_payer_registration(form_data)
+      
+      if (save_result$success) {
+        # --- SUCCESS LOG ---
+        log_submission(
+          "submit_ok",
+          paste(
+            "FHIR Endpoint:", input$fhir_endpoint,
+            "| Contact Email:", input$contact_email,
+            "| Endpoint Type:", input$fhir_type %||% "",
+            "| Org Name:", input$org_name %||% "",
+            "| Extra Orgs:", length(get_additional_orgs_data()),
+            "| Payer ID:", save_result$payer_id,
+            "| Endpoint ID:", save_result$main_endpoint_id
+          )
         )
-      )
 
-      # Show the success screen
-      session$sendCustomMessage(
-        'showRegistrationView',
-        list(formId = ns("form_container"),
-            successId = ns("success_container"),
-            show = "success")
-      )
+        # Show the success screen
+        session$sendCustomMessage(
+          'showRegistrationView',
+          list(formId = ns("form_container"),
+              successId = ns("success_container"),
+              show = "success")
+        )
 
-      # Reset Captcha
-      session$sendCustomMessage('resetRecaptcha', list())
-
-      # Simulate form submission
-      # save_payer_registration(form_data)
+        # Reset Captcha
+        session$sendCustomMessage('resetRecaptcha', list())
+        
+      } else {
+        # Database save failed
+        log_submission("db_save_fail", paste("Database error:", save_result$error))
+        showNotification(paste("Error saving registration:", save_result$message), 
+                        type = "error", duration = 10)
+        session$sendCustomMessage('resetRecaptcha', list())
+      }
       
     }, error = function(e) {
       # Show error message
+      log_submission("submit_error", paste("Unexpected error:", e$message))
       showNotification(paste("Error submitting registration:", e$message), 
                       type = "error", duration = 10)
+      session$sendCustomMessage('resetRecaptcha', list())
     })
   })
 
-  # ----------------- New Endpoint Button -----------------
+  # ===================== FORM RESET =====================
+  
   observeEvent(input$new_registration, {
     # Clear form fields
     updateTextInput(session, "fhir_endpoint", value = "")
@@ -607,21 +772,22 @@ payerregistrationmodule <- function(input, output, session) {
     )
   })
 
-  # ----------------- Info Modal -----------------
+  # ===================== INFO MODAL =====================
+  
   observeEvent(input$pr_show_info, {
-  showModal(modalDialog(
-    title = "Payer Registration – Information",
-    easyClose = TRUE,
-    size = "l",
-    p(HTML("
-      <b>What is this?</b><br>
-      This section will guide payers through the self-registration process.<br><br>
-      <b>How to use:</b><br>
-      1) Enter your FHIR endpoint URL and contact email (required).<br>
-      2) Optionally add organization details and additional organizations.<br>
-      3) Complete the CAPTCHA and submit.<br><br>
-      <i>(Replace this placeholder with final copy.)</i>
-    "))
-  ))
-})
+    showModal(modalDialog(
+      title = "Payer Registration – Information",
+      easyClose = TRUE,
+      size = "l",
+      p(HTML("
+        <b>What is this?</b><br>
+        This section will guide payers through the self-registration process.<br><br>
+        <b>How to use:</b><br>
+        1) Enter your FHIR endpoint URL and contact email (required).<br>
+        2) Optionally add organization details and additional organizations.<br>
+        3) Complete the CAPTCHA and submit.<br><br>
+        <i>Your registration will be reviewed and validated before being added to our system.</i>
+      "))
+    ))
+  })
 }
