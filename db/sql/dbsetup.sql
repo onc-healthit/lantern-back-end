@@ -1545,6 +1545,7 @@ CREATE INDEX mv_profiles_paginated_profileurl_idx ON mv_profiles_paginated(profi
 CREATE INDEX mv_profiles_paginated_composite_idx ON mv_profiles_paginated(vendor_name, fhir_version, resource);
 
 CREATE TABLE daily_querying_status (status VARCHAR(500));
+INSERT INTO daily_querying_status VALUES ('true');
 
 -- Lantern-839
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
