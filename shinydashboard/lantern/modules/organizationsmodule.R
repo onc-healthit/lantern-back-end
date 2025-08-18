@@ -436,7 +436,7 @@ organizationsmodule <- function(
     }
 
     # Add GROUP BY and ordering
-    query_str <- paste0(query_str, " 
+    query_str <- paste0(query_str, "
       GROUP BY organization_name, identifier, address, fhir_endpoint_url
       ORDER BY organization_name")
 
