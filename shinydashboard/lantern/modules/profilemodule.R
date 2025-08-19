@@ -45,6 +45,9 @@ profilemodule <- function(
   profile_page_state <- reactiveVal(1)
   profile_page_size <- 10
 
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
   # FAST COUNT: Get total count without loading all data
   profile_total_count <- reactive({
     req(sel_fhir_version(), sel_vendor())
@@ -93,59 +96,75 @@ profilemodule <- function(
     max(1, ceiling(total_count / profile_page_size))
   })
 
-  # Update page selector max when total pages change
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "profile_page_selector", 
-                      max = profile_total_pages(),
-                      value = profile_page_state())
+    new_page <- profile_page_state()
+    current_selector <- input$profile_page_selector
+    
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+      
+      isolate({  # This is the key fix to break feedback loops
+        updateNumericInput(session, "profile_page_selector", 
+                          max = profile_total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
   # Handle page selector input
   observeEvent(input$profile_page_selector, {
-    if (!is.null(input$profile_page_selector) && !is.na(input$profile_page_selector)) {
-      new_page <- max(1, min(input$profile_page_selector, profile_total_pages()))
-      profile_page_state(new_page)
+    # Get current input value
+    current_input <- input$profile_page_selector
+    
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
+        is.numeric(current_input) &&
+        current_input > 0) {
       
-      if (new_page != input$profile_page_selector) {
+      new_page <- max(1, min(current_input, profile_total_pages()))
+      
+      # Only update page state if it's actually different
+      if (new_page != profile_page_state()) {
+        profile_page_state(new_page)
+      }
+
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "profile_page_selector", value = new_page)
       }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "profile_page_selector", value = profile_page_state())
     }
-  })
+  }, ignoreInit = TRUE)  # Prevent firing on initialization
 
   # Handle next page button
   observeEvent(input$profile_next_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_next_time) && 
-        (current_time - session$userData$last_next_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_next_time <- current_time
     if (profile_page_state() < profile_total_pages()) {
       new_page <- profile_page_state() + 1
       profile_page_state(new_page)
-      updateNumericInput(session, "profile_page_selector", value = new_page)
     }
   })
 
   # Handle previous page button
   observeEvent(input$profile_prev_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_prev_time) && 
-        (current_time - session$userData$last_prev_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_prev_time <- current_time
     if (profile_page_state() > 1) {
       new_page <- profile_page_state() - 1
       profile_page_state(new_page)
-      updateNumericInput(session, "profile_page_selector", value = new_page)
     }
   })
 
   # Reset to first page on any filter/search change 
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_resource(), sel_profile(), input$profile_search_query), {
     profile_page_state(1)
-    updateNumericInput(session, "profile_page_selector", value = 1)
   })
 
   # Boundary condition handling using count 
@@ -169,9 +188,13 @@ profilemodule <- function(
     paste("of", profile_total_pages())
   })
 
-  # FAST PAGINATION: Only load the 10 rows needed for current page
+  # FAST PAGINATION: Only load the 10 rows needed for current page - WITH RACE CONDITION PROTECTION
   selected_fhir_endpoint_profiles <- reactive({
     req(sel_fhir_version(), sel_vendor())
+    
+    # Generate unique request ID 
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
     
     profile_offset <- (profile_page_state() - 1) * profile_page_size
     
@@ -219,15 +242,26 @@ profilemodule <- function(
     
     # Execute the query
     query <- do.call(glue_sql, c(list(base_query, .con = db_connection), params))
-    res <- tbl(db_connection, sql(query)) %>% collect()
+    result <- tbl(db_connection, sql(query)) %>% collect()
     
-    # Add clickable URLs only to the rows we're displaying
-    if (nrow(res) > 0) {
-      res <- res %>%
-        mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      
+      # Add clickable URLs only to the rows we're displaying
+      if (nrow(result) > 0) {
+        res <- result %>%
+          mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+      } else {
+        res <- result
+      }
+      
+      return(res)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
     }
-    
-    return(res)
   })
 
   output$profiles_table <- reactable::renderReactable({

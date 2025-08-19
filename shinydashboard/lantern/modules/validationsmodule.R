@@ -79,6 +79,9 @@ validationsmodule <- function(
   validations_page_size <- 10
   validation_page_state <- reactiveVal(1)
 
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
   # Get total using COUNT
   validation_total_pages <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
@@ -111,23 +114,55 @@ validationsmodule <- function(
     max(1, ceiling(count / validations_page_size))
   })
 
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "validation_page_selector", 
-                      max = validation_total_pages(),
-                      value = validation_page_state())
+    new_page <- validation_page_state()
+    current_selector <- input$validation_page_selector
+    
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+      
+      isolate({  # This is the key fix to break feedback loops
+        updateNumericInput(session, "validation_page_selector", 
+                          max = validation_total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
   # Handle page selector input
   observeEvent(input$validation_page_selector, {
-    if (!is.null(input$validation_page_selector) && !is.na(input$validation_page_selector)) {
-      new_page <- max(1, min(input$validation_page_selector, validation_total_pages()))
-      validation_page_state(new_page)
+    # Get current input value
+    current_input <- input$validation_page_selector
+    
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
+        is.numeric(current_input) &&
+        current_input > 0) {
+      
+      new_page <- max(1, min(current_input, validation_total_pages()))
+      
+      # Only update page state if it's actually different
+      if (new_page != validation_page_state()) {
+        validation_page_state(new_page)
+      }
 
-      if (new_page != input$validation_page_selector) {
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "validation_page_selector", value = new_page)
       }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "validation_page_selector", value = validation_page_state())
     }
-  })
+  }, ignoreInit = TRUE)  # Prevent firing on initialization
 
   output$validation_prev_page_ui <- renderUI({
     if (validation_page_state() > 1) {
@@ -145,32 +180,16 @@ validationsmodule <- function(
     }
   })
 
+  # Handle next page button
   observeEvent(input$validation_next_page, {
-    # Double-click protection
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_validation_next_time) && 
-        (current_time - session$userData$last_validation_next_time) < 300) {
-      return()  # Ignore rapid consecutive clicks
-    }
-    session$userData$last_validation_next_time <- current_time
-    
-    message("NEXT PAGE BUTTON CLICKED")
     if (validation_page_state() < validation_total_pages()) {
       new_page <- validation_page_state() + 1
       validation_page_state(new_page)
     }
   })
 
+  # Handle previous page button 
   observeEvent(input$validation_prev_page, {
-    # Double-click protection
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_validation_prev_time) && 
-        (current_time - session$userData$last_validation_prev_time) < 300) {
-      return()  # Ignore rapid consecutive clicks
-    }
-    session$userData$last_validation_prev_time <- current_time
-    
-    message("PREV PAGE BUTTON CLICKED")
     if (validation_page_state() > 1) {
       new_page <- validation_page_state() - 1
       validation_page_state(new_page)
@@ -189,11 +208,9 @@ validationsmodule <- function(
     HTML("<p>See additional validation details and failure information <a class=\"lantern-url\" href='#anchorid'>below</a></p>")
   })
 
-
   # Reset page to 1 whenever filters or selected rule changes
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_validation_group(), getReactableState("validation_details_table")$selected), {
     validation_page_state(1)
-    updateNumericInput(session, "validation_page_selector", value = 1)
   })
 
   # Function to directly query validation results plot data from materialized view
@@ -338,9 +355,13 @@ validationsmodule <- function(
   })
 
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
-  # Paginated using SQL LIMIT OFFSET
+  # Paginated using SQL LIMIT OFFSET - WITH RACE CONDITION PROTECTION
   paged_failed_validation_results <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    
+    # Generate unique request ID - THIS IS THE KEY FIX!
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
     
     # Get the selected rule if available
     selected_rule <- if (!is.null(getReactableState("validation_details_table")) && !is.null(getReactableState("validation_details_table")$selected)) {
@@ -379,13 +400,22 @@ validationsmodule <- function(
     )
     
     # Execute query
-    res <- dbGetQuery(db_connection, query)
+    result <- dbGetQuery(db_connection, query)
     
-    # Add clickable URL links
-    res <- res %>%
-      mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
-    
-    return(res)
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      
+      # Add clickable URL links
+      res <- result %>%
+        mutate(url = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
+      
+      return(res)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
   })
 
   output$validation_details_table <-  reactable::renderReactable({
@@ -465,7 +495,6 @@ validationsmodule <- function(
   output$failure_table_subtitle <- renderUI({
     p(paste("Rule: ", deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])))
   })
-
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
   output$validation_failure_table <- reactable::renderReactable({
