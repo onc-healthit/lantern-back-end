@@ -82,15 +82,26 @@ organizationsmodule <- function(
     return(length(current_vec) == length(all_vec) && setequal(current_vec, all_vec))
   })
 
-  # Calculate total pages using original array-based filtering
+  # Fixed count query that matches the data query exactly
   org_total_pages <- reactive({
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
 
     req(sel_fhir_version(), sel_vendor())
 
-    # Build parameterized query for count using the materialized view
-    count_query_str <- "SELECT COUNT(*) as count FROM mv_organizations_aggregated WHERE TRUE"
+    count_query_str <- "
+      WITH base_data AS (
+        SELECT
+          organization_name,
+          identifiers_html as identifier,
+          addresses_html as address,
+          org_urls_html as org_url,
+          endpoint_urls_html as url,
+          fhir_versions_array,
+          vendor_names_array
+        FROM mv_organizations_aggregated
+        WHERE TRUE"
+    
     count_params <- list()
 
     # Add FHIR version filter using array overlap
@@ -117,6 +128,47 @@ organizationsmodule <- function(
         vendor_names_html ILIKE {search_pattern})")
       count_params$search_pattern <- paste0("%", search_term, "%")
     }
+
+    # Close the base_data CTE and add the same filtering as the data query
+    count_query_str <- paste0(count_query_str, "
+      )
+      SELECT COUNT(*) as count FROM (
+        SELECT
+          organization_name,
+          identifier,
+          address,
+          org_url,
+          url,
+          -- Only show FHIR versions that match the current filter
+          string_agg(
+            DISTINCT fhir_version,
+            '<br/>'
+          ) as fhir_version,
+          -- Only show vendor names that match the current filter
+          string_agg(
+            DISTINCT vendor_name,
+            '<br/>'
+          ) as vendor_name
+        FROM base_data bd
+        CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
+        CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+        WHERE 1=1")
+
+    # Apply the same filters to the individual FHIR versions and vendors
+    if (!is_all_fhir_versions_selected()) {
+      count_query_str <- paste0(count_query_str, " AND fhir_version = ANY(ARRAY[{fhir_versions_display*}])")
+      count_params$fhir_versions_display <- fhir_versions
+    }
+
+    if (vendor != ui_special_values$ALL_DEVELOPERS) {
+      count_query_str <- paste0(count_query_str, " AND vendor_name = {vendor_display}")
+      count_params$vendor_display <- vendor
+    }
+
+    # Add GROUP BY to match the data query exactly
+    count_query_str <- paste0(count_query_str, "
+      GROUP BY organization_name, identifier, address, org_url, url
+    ) counted_results")
 
     # Execute count query
     if (length(count_params) > 0) {

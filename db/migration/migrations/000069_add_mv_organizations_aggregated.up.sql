@@ -4,7 +4,7 @@ DROP MATERIALIZED VIEW IF EXISTS mv_organizations_aggregated CASCADE;
 
 CREATE MATERIALIZED VIEW mv_organizations_aggregated AS
 WITH base_filtered_data AS (
-    -- Step 1: Replicate the exact R filtering logic from get_endpoint_list_matches
+    -- Step 1: Get the source data from mv_endpoint_list_organizations
     SELECT 
         mv.organization_name,
         mv.organization_id,
@@ -47,30 +47,20 @@ processed_data AS (
         END AS fhir_version,
         vendor_name
     FROM base_filtered_data
+    WHERE organization_id IS NOT NULL AND organization_id != '' AND organization_id != 'Unknown'
 ),
--- Step 3: Get organization IDs per organization name 
-org_ids_per_name AS (
-    SELECT 
-        organization_name,
-        array_agg(DISTINCT org_id) FILTER (WHERE org_id IS NOT NULL) as org_ids_array
-    FROM processed_data
-    GROUP BY organization_name
-),
--- Step 4: Get DISTINCT identifiers per organization (avoiding double aggregation)
+-- Step 3: Get DISTINCT identifiers per organization ID
 identifiers_raw AS (
     SELECT DISTINCT
-        opn.organization_name,
+        pd.org_id,
         fei.identifier
-    FROM org_ids_per_name opn
-    LEFT JOIN fhir_endpoint_organization_identifiers fei 
-        ON (opn.org_ids_array IS NOT NULL 
-            AND array_length(opn.org_ids_array, 1) > 0 
-            AND fei.org_id = ANY(opn.org_ids_array))
+    FROM processed_data pd
+    LEFT JOIN fhir_endpoint_organization_identifiers fei ON pd.org_id = fei.org_id
     WHERE fei.identifier IS NOT NULL
 ),
 identifiers_agg AS (
     SELECT 
-        organization_name,
+        org_id,
         string_agg(identifier, '<br/>') as identifiers_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
@@ -91,23 +81,20 @@ identifiers_agg AS (
                 )
         END as identifiers_csv
     FROM identifiers_raw
-    GROUP BY organization_name
+    GROUP BY org_id
 ),
--- Step 5: Get DISTINCT addresses per organization (avoiding double aggregation)
+-- Step 4: Get DISTINCT addresses per organization ID
 addresses_raw AS (
     SELECT DISTINCT
-        opn.organization_name,
+        pd.org_id,
         UPPER(fea.address) as address
-    FROM org_ids_per_name opn
-    LEFT JOIN fhir_endpoint_organization_addresses fea 
-        ON (opn.org_ids_array IS NOT NULL 
-            AND array_length(opn.org_ids_array, 1) > 0 
-            AND fea.org_id = ANY(opn.org_ids_array))
+    FROM processed_data pd
+    LEFT JOIN fhir_endpoint_organization_addresses fea ON pd.org_id = fea.org_id
     WHERE fea.address IS NOT NULL
 ),
 addresses_agg AS (
     SELECT 
-        organization_name,
+        org_id,
         string_agg(address, '<br/>') as addresses_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
@@ -128,29 +115,24 @@ addresses_agg AS (
                 )
         END as addresses_csv
     FROM addresses_raw
-    GROUP BY organization_name
+    GROUP BY org_id
 ),
--- Step 6: Get DISTINCT org URLs per organization with urn:uuid filtering
+-- Step 5: Get DISTINCT org URLs per organization ID with urn:uuid filtering
 urls_raw AS (
     SELECT DISTINCT
-        opn.organization_name,
-        -- FIXED: Apply the urn:uuid filtering 
+        pd.org_id,
+        -- Apply the urn:uuid filtering 
         CASE 
             WHEN feou.org_url LIKE 'urn:uuid:%' THEN ''
             ELSE feou.org_url
         END as org_url
-    FROM org_ids_per_name opn
-    LEFT JOIN fhir_endpoint_organization_url feou 
-        ON (opn.org_ids_array IS NOT NULL 
-            AND array_length(opn.org_ids_array, 1) > 0 
-            AND feou.org_id = ANY(opn.org_ids_array)
-            AND feou.org_url IS NOT NULL 
-            AND feou.org_url != '')
+    FROM processed_data pd
+    LEFT JOIN fhir_endpoint_organization_url feou ON pd.org_id = feou.org_id
     WHERE feou.org_url IS NOT NULL AND feou.org_url != ''
 ),
 urls_agg AS (
     SELECT 
-        organization_name,
+        org_id,
         string_agg(org_url, '<br/>') FILTER (WHERE org_url != '') as org_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
@@ -171,13 +153,15 @@ urls_agg AS (
                 )
         END as org_urls_csv
     FROM urls_raw
-    GROUP BY organization_name
+    GROUP BY org_id
 ),
--- Step 7: Replicate the R group_by/summarise logic 
+-- Step 6: Group by organization ID 
 endpoint_data_agg AS (
     SELECT 
-        organization_name,
-        -- HTML formatted endpoint URLs (no trimming for UI, only for CSV)
+        org_id,
+        -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
+        MAX(organization_name) as organization_name,
+        -- HTML formatted endpoint URLs
         string_agg(
             DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&quot,{priority: ''event''});"> ' || url || '</a>',
             '<br/>'
@@ -204,20 +188,21 @@ endpoint_data_agg AS (
         string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
         string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
         string_agg(DISTINCT vendor_name, E'\n') as vendor_names_csv,
-        -- Arrays for filtering (exactly as R code)
+        -- Arrays for filtering (exactly as original code)
         ARRAY(SELECT DISTINCT unnest(array_agg(fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
         ARRAY(SELECT DISTINCT unnest(array_agg(vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
         ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array
     FROM processed_data
-    GROUP BY organization_name
+    GROUP BY org_id  -- KEY CHANGE: Group by org_id instead of organization_name
 )
--- Step 8: Final select with the exact R filter logic
+-- Step 7: Final select with JOINs to get all related data per organization ID
 SELECT 
     eda.organization_name,
+    eda.org_id,
     -- For HTML display (pagination)
     COALESCE(ia.identifiers_html, '') as identifiers_html,
     COALESCE(aa.addresses_html, '') as addresses_html,
-	eda.endpoint_urls_html,
+    eda.endpoint_urls_html,
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
@@ -226,7 +211,7 @@ SELECT
     COALESCE(ia.identifiers_csv, '') as identifiers_csv,
     COALESCE(aa.addresses_csv, '') as addresses_csv,
     eda.endpoint_urls_csv,
-	COALESCE(ua.org_urls_csv, '') as org_urls_csv,
+    COALESCE(ua.org_urls_csv, '') as org_urls_csv,
     eda.fhir_versions_csv,
     eda.vendor_names_csv,
     
@@ -236,13 +221,15 @@ SELECT
     eda.urls_array
     
 FROM endpoint_data_agg eda
-LEFT JOIN identifiers_agg ia ON eda.organization_name = ia.organization_name
-LEFT JOIN addresses_agg aa ON eda.organization_name = aa.organization_name  
-LEFT JOIN urls_agg ua ON eda.organization_name = ua.organization_name
-WHERE eda.organization_name != 'UNKNOWN';
+LEFT JOIN identifiers_agg ia ON eda.org_id = ia.org_id
+LEFT JOIN addresses_agg aa ON eda.org_id = aa.org_id  
+LEFT JOIN urls_agg ua ON eda.org_id = ua.org_id
+WHERE eda.organization_name != 'UNKNOWN'
+ORDER BY eda.organization_name, eda.org_id;
 
 -- Create indexes for performance 
-CREATE UNIQUE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_name);
+CREATE UNIQUE INDEX idx_mv_orgs_agg_org_id ON mv_organizations_aggregated(org_id);
+CREATE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_name);
 CREATE INDEX idx_mv_orgs_agg_fhir_versions ON mv_organizations_aggregated USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_agg_vendor_names ON mv_organizations_aggregated USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_agg_urls ON mv_organizations_aggregated USING GIN(urls_array);
