@@ -192,21 +192,21 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 			organizationName[keyCount] = bundleEntry.Resource.Name
 
-            // Extract organization URL from telecom field when system is "url"
-            if bundleEntry.Resource.Telecom != nil {
-                telecomArr := bundleEntry.Resource.Telecom.([]interface{})
-                for _, telecom := range telecomArr {
-                    telecomMap := telecom.(map[string]interface{})
-                    if telecomMap["system"] != nil && telecomMap["system"].(string) == "url" {
-                        if telecomMap["value"] != nil && telecomMap["value"].(string) != "" {
-                            organizationURL[keyCount] = strings.TrimSpace(telecomMap["value"].(string))
-                            break // Use the first URL found
-                        }
-                    }
-                }
-            }
-		    keyCount++
-	    }
+			// Extract organization URL from telecom field when system is "url"
+			if bundleEntry.Resource.Telecom != nil {
+				telecomArr := bundleEntry.Resource.Telecom.([]interface{})
+				for _, telecom := range telecomArr {
+					telecomMap := telecom.(map[string]interface{})
+					if telecomMap["system"] != nil && telecomMap["system"].(string) == "url" {
+						if telecomMap["value"] != nil && telecomMap["value"].(string) != "" {
+							organizationURL[keyCount] = strings.TrimSpace(telecomMap["value"].(string))
+							break // Use the first URL found
+						}
+					}
+				}
+			}
+			keyCount++
+		}
 	}
 
 	for _, bundleEntry := range structBundle.Entries {
@@ -223,7 +223,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 					if len(org.Address) > 0 {
 						address := org.Address[0]
 						if address.PostalCode != "" {
-							organizationZip[org.Id] = strings.TrimSpace(address.PostalCode)
+							organizationZip[keyCount] = strings.TrimSpace(address.PostalCode)
 						}
 					}
 				}
