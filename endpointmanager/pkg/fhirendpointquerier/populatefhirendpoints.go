@@ -211,17 +211,34 @@ func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store
 		return err
 	}
 
-	for _, endpoint := range fhirEndpoints {
-		for _, org := range endpoint.OrganizationList {
-			err = store.DeleteFHIREndpointOrganization(ctx, org, endpoint.ID)
-			if err != nil {
-				log.Warn(err)
-				continue
-			}
-		}
+	if len(fhirEndpoints) == 0 {
+		log.WithFields(log.Fields{
+			"list_source": listSource,
+		}).Info("No stale organizations found")
+		return nil
 	}
 
-	log.Infof("Removed %d endpoints organizations from list source %s", len(fhirEndpoints), listSource)
+	totalOrgs := 0
+    for _, endpoint := range fhirEndpoints {
+        n := len(endpoint.OrganizationList)
+        totalOrgs += n
+
+        log.WithFields(log.Fields{
+            "endpoint_id": endpoint.ID,
+            "stale_orgs":  n,
+        }).Debug("Removing stale orgs for endpoint")
+
+        if err = store.DeleteFHIREndpointOrganizationMap(ctx, endpoint); err != nil {
+			log.WithError(err).Warn("Failed removing stale orgs for endpoint")
+			continue
+		}
+    }
+
+    log.WithFields(log.Fields{
+        "endpoints":   len(fhirEndpoints),
+        "orgs_removed": totalOrgs,
+        "list_source": listSource,
+    }).Info("Removed stale organizations")
 
 	return nil
 }
