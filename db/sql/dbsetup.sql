@@ -2482,11 +2482,21 @@ processed_data AS (
     FROM base_filtered_data
     WHERE organization_id IS NOT NULL AND organization_id != '' AND organization_id != 'Unknown'
 ),
--- Step 3: Get DISTINCT identifiers per organization ID
+-- Step 3: Get distinct org ID and split identifiers into type and value
 identifiers_raw AS (
     SELECT DISTINCT
         pd.org_id,
-        fei.identifier
+        -- Split identifier into type and value parts
+        CASE 
+            WHEN fei.identifier ~ '^[^:]+: ' THEN 
+                TRIM(substring(fei.identifier from '^([^:]+):'))
+            ELSE 'Unknown'
+        END as identifier_type,
+        CASE 
+            WHEN fei.identifier ~ '^[^:]+: ' THEN 
+                TRIM(substring(fei.identifier from '^[^:]+: (.*)$'))
+            ELSE fei.identifier
+        END as identifier_value
     FROM processed_data pd
     LEFT JOIN fhir_endpoint_organization_identifiers fei ON pd.org_id = fei.org_id
     WHERE fei.identifier IS NOT NULL
@@ -2494,25 +2504,44 @@ identifiers_raw AS (
 identifiers_agg AS (
     SELECT 
         org_id,
-        string_agg(identifier, '<br/>') as identifiers_html,
-        -- Truncate at complete lines to prevent CSV corruption
+        -- HTML format for identifier types
+        string_agg(identifier_type, '<br/>' ORDER BY identifier_type, identifier_value) as identifier_types_html,
+        -- HTML format for identifier values
+        string_agg(identifier_value, '<br/>' ORDER BY identifier_type, identifier_value) as identifier_values_html,
+        -- CSV format for identifier types
         CASE 
-            WHEN LENGTH(string_agg(identifier, E'\n')) <= 32765 
-            THEN string_agg(identifier, E'\n')
+            WHEN LENGTH(string_agg(identifier_type, E'\n' ORDER BY identifier_type, identifier_value)) <= 32765 
+            THEN string_agg(identifier_type, E'\n' ORDER BY identifier_type, identifier_value)
             ELSE 
-                -- Find the last complete line within 32765 chars
                 LEFT(
-                    string_agg(identifier, E'\n'), 
+                    string_agg(identifier_type, E'\n' ORDER BY identifier_type, identifier_value), 
                     GREATEST(
                         1,
                         CASE 
-                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier, E'\n'), 32765))) > 0
-                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier, E'\n'), 32765))) + 1
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier_type, E'\n' ORDER BY identifier_type, identifier_value), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier_type, E'\n' ORDER BY identifier_type, identifier_value), 32765))) + 1
                             ELSE 32765
                         END
                     )
                 )
-        END as identifiers_csv
+        END as identifier_types_csv,
+        -- CSV format for identifier values (maintain order and duplicates, truncate at complete lines)
+        CASE 
+            WHEN LENGTH(string_agg(identifier_value, E'\n' ORDER BY identifier_type, identifier_value)) <= 32765 
+            THEN string_agg(identifier_value, E'\n' ORDER BY identifier_type, identifier_value)
+            ELSE 
+                LEFT(
+                    string_agg(identifier_value, E'\n' ORDER BY identifier_type, identifier_value), 
+                    GREATEST(
+                        1,
+                        CASE 
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier_value, E'\n' ORDER BY identifier_type, identifier_value), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(identifier_value, E'\n' ORDER BY identifier_type, identifier_value), 32765))) + 1
+                            ELSE 32765
+                        END
+                    )
+                )
+        END as identifier_values_csv
     FROM identifiers_raw
     GROUP BY org_id
 ),
@@ -2632,16 +2661,18 @@ endpoint_data_agg AS (
 SELECT 
     eda.organization_name,
     eda.org_id,
-    -- For HTML display (pagination)
-    COALESCE(ia.identifiers_html, '') as identifiers_html,
+    -- For HTML display (pagination) - split identifier columns
+    COALESCE(ia.identifier_types_html, '') as identifier_types_html,
+    COALESCE(ia.identifier_values_html, '') as identifier_values_html,
     COALESCE(aa.addresses_html, '') as addresses_html,
     eda.endpoint_urls_html,
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
     
-    -- For CSV export  
-    COALESCE(ia.identifiers_csv, '') as identifiers_csv,
+    -- For CSV export - split identifier columns
+    COALESCE(ia.identifier_types_csv, '') as identifier_types_csv,
+    COALESCE(ia.identifier_values_csv, '') as identifier_values_csv,
     COALESCE(aa.addresses_csv, '') as addresses_csv,
     eda.endpoint_urls_csv,
     COALESCE(ua.org_urls_csv, '') as org_urls_csv,

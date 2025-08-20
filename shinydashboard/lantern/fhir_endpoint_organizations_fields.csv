@@ -1,6 +1,7 @@
 Field, Description
 organization_name, Name of the healthcare organization
-identifier, Facility identifiers of the organization
+identifier_type, Type of the facility identifiers of the organization
+identifier_value, Value of facility identifiers of the organization corresponding to the identifier type
 address, Physical addresses of the organization
 fhir_endpoint_url, Service base URLs of the FHIR endpoints used by the organization
 fhir_version, FHIR versions pulled from the endpoints' capability statements

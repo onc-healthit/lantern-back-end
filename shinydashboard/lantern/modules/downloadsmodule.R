@@ -123,14 +123,15 @@ downloadsmodule <- function(
     }
   )
 
-  # Create the format for the organization data csv using the same materialized view approach as organization tab
+  # Create the format for the organization data csv using the new split identifier columns
   organization_csv_format <- reactive({
     # Use the same materialized view query as the organization tab but without filters
     query_str <- "
       WITH base_data AS (
         SELECT 
           organization_name,
-          identifiers_csv as identifier,
+          identifier_types_csv as identifier_type,
+          identifier_values_csv as identifier_value,
           addresses_csv as address,
           org_urls_csv as org_url,
           endpoint_urls_csv as url,
@@ -140,7 +141,8 @@ downloadsmodule <- function(
       )
       SELECT 
         organization_name,
-        identifier,
+        identifier_type,
+        identifier_value,
         address,
         url AS fhir_endpoint_url,
         -- Show ALL FHIR versions (CSV format)
@@ -156,7 +158,7 @@ downloadsmodule <- function(
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
-      GROUP BY organization_name, identifier, address, fhir_endpoint_url
+      GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
       ORDER BY organization_name"
 
     # Execute the query

@@ -93,7 +93,8 @@ organizationsmodule <- function(
       WITH base_data AS (
         SELECT
           organization_name,
-          identifiers_html as identifier,
+          identifier_types_html as identifier_type,
+          identifier_values_html as identifier_value,
           addresses_html as address,
           org_urls_html as org_url,
           endpoint_urls_html as url,
@@ -121,7 +122,8 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       count_query_str <- paste0(count_query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        identifiers_html ILIKE {search_pattern} OR
+        identifier_types_html ILIKE {search_pattern} OR
+        identifier_values_html ILIKE {search_pattern} OR
         addresses_html ILIKE {search_pattern} OR
         endpoint_urls_html ILIKE {search_pattern} OR
         fhir_versions_html ILIKE {search_pattern} OR
@@ -135,7 +137,8 @@ organizationsmodule <- function(
       SELECT COUNT(*) as count FROM (
         SELECT
           organization_name,
-          identifier,
+          identifier_type,
+          identifier_value,
           address,
           org_url,
           url,
@@ -167,7 +170,7 @@ organizationsmodule <- function(
 
     # Add GROUP BY to match the data query exactly
     count_query_str <- paste0(count_query_str, "
-      GROUP BY organization_name, identifier, address, org_url, url
+      GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
     ) counted_results")
 
     # Execute count query
@@ -283,7 +286,8 @@ organizationsmodule <- function(
       WITH base_data AS (
         SELECT
           organization_name,
-          identifiers_html as identifier,
+          identifier_types_html as identifier_type,
+          identifier_values_html as identifier_value,
           addresses_html as address,
           org_urls_html as org_url,
           endpoint_urls_html as url,
@@ -311,7 +315,8 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       query_str <- paste0(query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        identifiers_html ILIKE {search_pattern} OR
+        identifier_types_html ILIKE {search_pattern} OR
+        identifier_values_html ILIKE {search_pattern} OR
         addresses_html ILIKE {search_pattern} OR
         endpoint_urls_html ILIKE {search_pattern} OR
         fhir_versions_html ILIKE {search_pattern} OR
@@ -324,7 +329,8 @@ organizationsmodule <- function(
       )
       SELECT
         organization_name,
-        identifier,
+        identifier_type,
+        identifier_value,
         address,
         org_url,
         url,
@@ -356,7 +362,7 @@ organizationsmodule <- function(
 
     # Add GROUP BY, ordering and pagination
     query_str <- paste0(query_str, "
-      GROUP BY organization_name, identifier, address, org_url, url
+      GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
       ORDER BY organization_name
       LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
@@ -383,9 +389,13 @@ organizationsmodule <- function(
             is.na(org_url) | org_url == "NA" ~ "",
             TRUE ~ org_url
           ),
-          identifier = case_when(
-            is.na(identifier) ~ "",
-            TRUE ~ identifier
+          identifier_type = case_when(
+            is.na(identifier_type) ~ "",
+            TRUE ~ identifier_type
+          ),
+          identifier_value = case_when(
+            is.na(identifier_value) ~ "",
+            TRUE ~ identifier_value
           ),
           address = case_when(
             is.na(address) ~ "",
@@ -411,14 +421,16 @@ organizationsmodule <- function(
       WITH base_data AS (
         SELECT
           organization_name,
-          identifiers_csv as identifier,
+          identifier_types_csv as identifier_type,
+          identifier_values_csv as identifier_value,
           addresses_csv as address,
           org_urls_csv as org_url,
           endpoint_urls_csv as url,
           fhir_versions_array,
           vendor_names_array,
           -- Include HTML fields for search functionality
-          identifiers_html,
+          identifier_types_html,
+          identifier_values_html,
           addresses_html,
           endpoint_urls_html,
           fhir_versions_html,
@@ -445,7 +457,8 @@ organizationsmodule <- function(
     if (!is.null(search_term) && search_term != "") {
       query_str <- paste0(query_str, " AND (
         organization_name ILIKE {search_pattern} OR 
-        identifiers_html ILIKE {search_pattern} OR
+        identifier_types_html ILIKE {search_pattern} OR
+        identifier_values_html ILIKE {search_pattern} OR
         addresses_html ILIKE {search_pattern} OR
         endpoint_urls_html ILIKE {search_pattern} OR
         fhir_versions_html ILIKE {search_pattern} OR
@@ -458,7 +471,8 @@ organizationsmodule <- function(
       )
       SELECT
         organization_name,
-        identifier,
+        identifier_type,
+        identifier_value,
         address,
         url AS fhir_endpoint_url,
         -- Only show FHIR versions that match the current filter (CSV format)
@@ -489,7 +503,7 @@ organizationsmodule <- function(
 
     # Add GROUP BY and ordering
     query_str <- paste0(query_str, "
-      GROUP BY organization_name, identifier, address, fhir_endpoint_url
+      GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
       ORDER BY organization_name")
 
     # Execute query
@@ -529,7 +543,8 @@ organizationsmodule <- function(
        columns = list(
          organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
                                     grouped = JS("function(cellInfo) {return cellInfo.value}")),
-         identifier = colDef(name = "Organization Identifiers", minWidth = 300, sortable = FALSE, html = TRUE),
+         identifier_type = colDef(name = "Identifier Type", minWidth = 75, sortable = FALSE, html = TRUE),
+         identifier_value = colDef(name = "Identifier Value", minWidth = 175, sortable = FALSE, html = TRUE),
          address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
          # org_url column is hidden from UI
