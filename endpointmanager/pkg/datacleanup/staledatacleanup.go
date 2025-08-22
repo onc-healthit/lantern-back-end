@@ -172,6 +172,8 @@ func deleteEndpointDataBatch(ctx context.Context, tx *sql.Tx, listSources []stri
 
 func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) error {
 	// Delete in order of foreign key dependencies
+	// REMOVED: fhir_endpoints_info, fhir_endpoints_info_history, fhir_endpoints_availability, fhir_endpoints_metadata
+	// These tables preserve history and metadata and should NOT be deleted
 
 	// 1. Delete from fhir_endpoint_organizations first
 	result, err := tx.ExecContext(ctx, `
@@ -211,37 +213,7 @@ func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) err
 		log.Infof("No records to delete from fhir_endpoint_organizations_map")
 	}
 
-	// 3. Delete from fhir_endpoints_info_history
-	result, err = tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_info_history 
-		WHERE url = ANY($1)
-	`, pq.Array(urls))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_info_history: %v", err)
-		return err
-	}
-	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
-		log.Infof("Deleted %d records from fhir_endpoints_info_history", rowsAffected)
-	} else {
-		log.Infof("No records to delete from fhir_endpoints_info_history")
-	}
-
-	// 4. Delete from fhir_endpoints_info
-	result, err = tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_info 
-		WHERE url = ANY($1)
-	`, pq.Array(urls))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_info: %v", err)
-		return err
-	}
-	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
-		log.Infof("Deleted %d records from fhir_endpoints_info", rowsAffected)
-	} else {
-		log.Infof("No records to delete from fhir_endpoints_info")
-	}
-
-	// 5. Delete from endpoint_organization
+	// 3. Delete from endpoint_organization
 	result, err = tx.ExecContext(ctx, `
 		DELETE FROM endpoint_organization 
 		WHERE url = ANY($1)
@@ -256,35 +228,7 @@ func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) err
 		log.Infof("No records to delete from endpoint_organization")
 	}
 
-	// 6. Delete from fhir_endpoints_availability
-	result, err = tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_availability 
-		WHERE url = ANY($1)
-	`, pq.Array(urls))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_availability: %v", err)
-		return err
-	}
-	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
-		log.Infof("Deleted %d records from fhir_endpoints_availability", rowsAffected)
-	} else {
-		log.Infof("No records to delete from fhir_endpoints_availability")
-	}
-
-	// 7. Delete from fhir_endpoints_metadata
-	result, err = tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints_metadata 
-		WHERE url = ANY($1)
-	`, pq.Array(urls))
-	if err != nil {
-		log.Errorf("Failed to delete from fhir_endpoints_metadata: %v", err)
-		return err
-	}
-	if rowsAffected, _ := result.RowsAffected(); rowsAffected > 0 {
-		log.Infof("Deleted %d records from fhir_endpoints_metadata", rowsAffected)
-	} else {
-		log.Infof("No records to delete from fhir_endpoints_metadata")
-	}
+	log.Info("Preserving fhir_endpoints_info, fhir_endpoints_info_history, fhir_endpoints_availability, and fhir_endpoints_metadata tables")
 
 	return nil
 }
