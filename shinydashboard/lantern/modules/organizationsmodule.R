@@ -100,7 +100,7 @@ organizationsmodule <- function(
           endpoint_urls_html as url,
           fhir_versions_array,
           vendor_names_array
-        FROM mv_organizations_aggregated
+        FROM mv_organizations_final
         WHERE TRUE"
     
     count_params <- list()
@@ -293,7 +293,7 @@ organizationsmodule <- function(
           endpoint_urls_html as url,
           fhir_versions_array,
           vendor_names_array
-        FROM mv_organizations_aggregated
+        FROM mv_organizations_final
         WHERE TRUE"
     
     params <- list()
@@ -435,7 +435,7 @@ organizationsmodule <- function(
           endpoint_urls_html,
           fhir_versions_html,
           vendor_names_html
-        FROM mv_organizations_aggregated
+        FROM mv_organizations_final
         WHERE TRUE"
     
     params <- list()
