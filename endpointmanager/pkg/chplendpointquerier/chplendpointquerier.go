@@ -218,7 +218,6 @@ var icareURL = "https://www.icare.com/endpoints.csv"
 var ezemrxURL = "https://www.ezemrx.com/fhir"
 var smilecdrURL = "https://smilecdr.com/docs/javascript_execution_environment/fhir_rest.html"
 var capellaEHRURL = "https://fhir-g10.capellaehr.com/fhir/r4/endpoints"
-var athenaServiceBaseURL = "https://service-base-urls.api.fhir.athena.io/athena-fhir-service-base-urls.json"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 
@@ -240,8 +239,6 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		AthenaCSVParser("https://fhir.athena.io/athena-fhir-urls/athenanet-fhir-base-urls.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, MyDataAthenaURL) {
 		Athenawebscraper("https://mydata.athenahealth.com/aserver", fileToWriteTo)
-	} else if URLsEqual(chplURL, athenaServiceBaseURL) {
-		AthenaBundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, OneMedicalURL) {
 		oneMedicalWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, unifyURL) {
