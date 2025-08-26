@@ -236,8 +236,13 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 				}
 
 				isPersisted := false
+				hadAnyMapped := len(endpointOrgMap[endpointId]) > 0
 
 				for _, keyCount := range endpointOrgMap[endpointId] {
+					// If active present and false -> skip this org
+					if status, ok := organizationActive[keyCount]; ok && status == "false" {
+						continue
+					}
 
 					isPersisted = true
 
@@ -283,8 +288,10 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 
 				// Append only the endpoint URL if the organization data is not parsed
 				if !isPersisted {
-					entry.URL = strings.TrimSpace(entryURL)
-					lanternEntryList = append(lanternEntryList, entry)
+					if !hadAnyMapped {
+						entry.URL = strings.TrimSpace(entryURL)
+						lanternEntryList = append(lanternEntryList, entry)
+					}
 				}
 			}
 		}
