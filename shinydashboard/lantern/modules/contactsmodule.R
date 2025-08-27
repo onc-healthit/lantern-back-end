@@ -55,7 +55,7 @@ contactsmodule <- function(
 
     # Calculate total pages based on filtered data
     contacts_total_pages <- reactive({
-      total_records <- nrow(selected_contacts_without_limit() %>% distinct(url, fhir_version))
+      total_records <- nrow(selected_contacts_without_limit() %>% distinct(url, fhir_version, vendor_name))
       max(1, ceiling(total_records / contacts_page_size))
     })
 
@@ -143,7 +143,7 @@ contactsmodule <- function(
         
         # ESSENTIAL CHANGE: Get unique URLs first, then paginate
         query_str <- "
-        SELECT DISTINCT ON (url) *
+        SELECT *
         FROM mv_contacts_info 
         WHERE fhir_version IN ({vals*})"
         
@@ -184,7 +184,7 @@ contactsmodule <- function(
 
         # Process the results - no need for grouping/distinct since SQL handles it
         res <- res %>%
-            mutate(linkurl = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
+            mutate(linkurl = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", requested_fhir_version, "&&", vendor_name, "&quot,{priority: \'event\'});\">", url, "</a>")) %>%
             rowwise() %>%
             mutate(contact_name = ifelse(is.na(contact_name), ifelse(is.na(contact_value), "-", "N/A"), toString(contact_name))) %>%
             mutate(contact_type = ifelse(is.na(contact_type), "-", toString(contact_type))) %>%
@@ -201,7 +201,7 @@ contactsmodule <- function(
         
         # Same query as main but without LIMIT OFFSET
         query_str <- "
-        SELECT DISTINCT ON (url) *
+        SELECT *
         FROM mv_contacts_info 
         WHERE fhir_version IN ({vals*})"
         

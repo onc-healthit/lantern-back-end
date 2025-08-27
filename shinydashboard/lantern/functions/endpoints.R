@@ -230,10 +230,6 @@ get_vendor_list <- function(endpoint_export_tbl) {
 
 # Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
 get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name, page_size = -1, offset = -1, search_query = NULL) {
-  
-  message("PAGESIZE: ", page_size)
-  message("OFFSET: ", offset)
-
   # Create the base query string
   query_str <- "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n 
             FROM mv_resource_interactions
@@ -246,10 +242,8 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
   }
 
   # Add a filter for vendor name if a specific vendor is selected
-  if(vendor_name != 'All Developers'){
-    query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
-  }
-
+  query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
+  
   # Add search filter if present
   if (!is.null(search_query) && search_query != "") {
     pattern <- paste0("%", search_query, "%")

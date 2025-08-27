@@ -227,7 +227,7 @@ CREATE TABLE fhir_endpoints_info (
     metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
     requested_fhir_version  VARCHAR(500),
     capability_fhir_version VARCHAR(500),
-    CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version)
+    CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version, vendor_id)
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -510,7 +510,7 @@ CREATE MATERIALIZED VIEW mv_response_tally AS
 WITH response_counts AS (
     SELECT 
         fem.http_response,
-        count(*) AS response_count
+        count(distinct(fei.url)) AS response_count
     FROM fhir_endpoints_info fei
     JOIN fhir_endpoints_metadata fem 
         ON fei.metadata_id = fem.id
@@ -737,12 +737,82 @@ WITH response_by_vendor AS (
 response_all_devs AS (
     SELECT
         'ALL_DEVELOPERS' AS vendor_name,
-        http_code,
-        code_label,
-        -- Cast the sum to an integer to ensure it's not displayed as a decimal
-        SUM(count_endpoints)::INTEGER AS count_endpoints
-    FROM response_by_vendor
-    GROUP BY http_code, code_label
+        m.http_response AS http_code,
+        CASE 
+            WHEN m.http_response = 100 THEN 'Continue'
+            WHEN m.http_response = 101 THEN 'Switching Protocols'
+            WHEN m.http_response = 102 THEN 'Processing'
+            WHEN m.http_response = 103 THEN 'Early Hints'
+            WHEN m.http_response = 200 THEN 'OK'
+            WHEN m.http_response = 201 THEN 'Created'
+            WHEN m.http_response = 202 THEN 'Accepted'
+            WHEN m.http_response = 203 THEN 'Non-Authoritative Information'
+            WHEN m.http_response = 204 THEN 'No Content'
+            WHEN m.http_response = 205 THEN 'Reset Content'
+            WHEN m.http_response = 206 THEN 'Partial Content'
+            WHEN m.http_response = 207 THEN 'Multi-Status'
+            WHEN m.http_response = 208 THEN 'Already Reported'
+            WHEN m.http_response = 226 THEN 'IM Used'
+            WHEN m.http_response = 300 THEN 'Multiple Choices'
+            WHEN m.http_response = 301 THEN 'Moved Permanently'
+            WHEN m.http_response = 302 THEN 'Found'
+            WHEN m.http_response = 303 THEN 'See Other'
+            WHEN m.http_response = 304 THEN 'Not Modified'
+            WHEN m.http_response = 305 THEN 'Use Proxy'
+            WHEN m.http_response = 306 THEN 'Switch Proxy'
+            WHEN m.http_response = 307 THEN 'Temporary Redirect'
+            WHEN m.http_response = 308 THEN 'Permanent Redirect'
+            WHEN m.http_response = 400 THEN 'Bad Request'
+            WHEN m.http_response = 401 THEN 'Unauthorized'
+            WHEN m.http_response = 402 THEN 'Payment Required'
+            WHEN m.http_response = 403 THEN 'Forbidden'
+            WHEN m.http_response = 404 THEN 'Not Found'
+            WHEN m.http_response = 405 THEN 'Method Not Allowed'
+            WHEN m.http_response = 406 THEN 'Not Acceptable'
+            WHEN m.http_response = 407 THEN 'Proxy Authentication Required'
+            WHEN m.http_response = 408 THEN 'Request Timeout'
+            WHEN m.http_response = 409 THEN 'Conflict'
+            WHEN m.http_response = 410 THEN 'Gone'
+            WHEN m.http_response = 411 THEN 'Length Required'
+            WHEN m.http_response = 412 THEN 'Precondition Failed'
+            WHEN m.http_response = 413 THEN 'Payload Too Large'
+            WHEN m.http_response = 414 THEN 'Request URI Too Long'
+            WHEN m.http_response = 415 THEN 'Unsupported Media Type'
+            WHEN m.http_response = 416 THEN 'Requested Range Not Satisfiable'
+            WHEN m.http_response = 417 THEN 'Expectation Failed'
+            WHEN m.http_response = 418 THEN 'I''m a teapot'
+            WHEN m.http_response = 421 THEN 'Misdirected Request'
+            WHEN m.http_response = 422 THEN 'Unprocessable Entity'
+            WHEN m.http_response = 423 THEN 'Locked'
+            WHEN m.http_response = 424 THEN 'Failed Dependency'
+            WHEN m.http_response = 425 THEN 'Too Early'
+            WHEN m.http_response = 426 THEN 'Upgrade Required'
+            WHEN m.http_response = 428 THEN 'Precondition Required'
+            WHEN m.http_response = 429 THEN 'Too Many Requests'
+            WHEN m.http_response = 431 THEN 'Request Header Fields Too Large'
+            WHEN m.http_response = 451 THEN 'Unavailable for Legal Reasons'
+            WHEN m.http_response = 500 THEN 'Internal Server Error'
+            WHEN m.http_response = 501 THEN 'Not Implemented'
+            WHEN m.http_response = 502 THEN 'Bad Gateway'
+            WHEN m.http_response = 503 THEN 'Service Unavailable'
+            WHEN m.http_response = 504 THEN 'Gateway Timeout'
+            WHEN m.http_response = 505 THEN 'HTTP Version Not Supported'
+            WHEN m.http_response = 506 THEN 'Variant Also Negotiates'
+            WHEN m.http_response = 507 THEN 'Insufficient Storage'
+            WHEN m.http_response = 508 THEN 'Loop Detected'
+            WHEN m.http_response = 509 THEN 'Bandwidth Limit Exceeded'
+            WHEN m.http_response = 510 THEN 'Not Extended'
+            WHEN m.http_response = 511 THEN 'Network Authentication Required'
+            ELSE 'Other'
+        END AS code_label,
+        -- Cast the count to an integer
+        COUNT(DISTINCT f.url)::INTEGER AS count_endpoints
+    FROM fhir_endpoints_info f
+    LEFT JOIN fhir_endpoints_metadata m
+           ON f.metadata_id = m.id
+    WHERE m.http_response IS NOT NULL
+      AND f.requested_fhir_version = 'None'
+    GROUP BY m.http_response
 )
 SELECT 
     now() AS aggregation_date,
@@ -772,6 +842,7 @@ CREATE INDEX mv_http_responses_vendor_name_idx
 CREATE MATERIALIZED VIEW mv_resource_interactions AS
 WITH expanded_resources AS (
   SELECT
+    f.url as url,
     f.id AS endpoint_id,
     COALESCE(v.name, 'Unknown') AS vendor_name,
     CASE WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
@@ -808,9 +879,33 @@ aggregated_operations AS (
 
   FROM expanded_resources
   GROUP BY vendor_name, fhir_version, resource_type
+),
+all_devs_aggregated_operations AS (
+  WITH vendor_ops AS (
+    SELECT
+      url,
+      fhir_version,
+      resource_type,
+      vendor_name,
+      COUNT(DISTINCT endpoint_id) AS endpoint_count,
+      ARRAY_AGG(DISTINCT operation_name) AS operations
+    FROM expanded_resources
+    GROUP BY url, fhir_version, resource_type, vendor_name
+  )
+  SELECT DISTINCT ON (url, fhir_version, resource_type)
+    'All Developers' AS vendor_name,
+    fhir_version,
+    resource_type,
+    endpoint_count,
+    operations
+  FROM vendor_ops
+  ORDER BY url, fhir_version, resource_type, vendor_name
 )
 SELECT *
-FROM aggregated_operations;
+FROM aggregated_operations
+UNION ALL
+SELECT *
+FROM all_devs_aggregated_operations;
 
 CREATE UNIQUE INDEX mv_resource_interactions_uniq
   ON mv_resource_interactions (
@@ -993,7 +1088,7 @@ SELECT
     -- Generate URL modal link
     CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint." 
             onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>') 
+            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, '&&', e.vendor_name, ''',{priority: ''event''});">', e.url, '</a>') 
     AS "urlModal",
 
     -- Generate Condensed Endpoint Names
@@ -1281,7 +1376,7 @@ WHERE f.capability_fhir_version != ''
   AND f.requested_fhir_version = 'None';
 
 -- Create indexes for mv_capstat_sizes
-CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url);
+CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url, vendor_name);
 CREATE INDEX idx_mv_capstat_sizes_fhir ON mv_capstat_sizes_tbl(fhir_version);
 CREATE INDEX idx_mv_capstat_sizes_vendor ON mv_capstat_sizes_tbl(vendor_name);
 
@@ -1554,7 +1649,7 @@ t.expected,
 t.actual,
 t.comment,
 t.reference
-FROM ( SELECT COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
+FROM ( SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
         f.url,
             CASE
                 WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
@@ -1573,7 +1668,7 @@ FROM ( SELECT COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_nam
         FROM fhir_endpoints_info f
             JOIN validations v ON f.validation_result_id = v.validation_result_id
             LEFT JOIN vendors ON f.vendor_id = vendors.id
-        ORDER BY v.validation_result_id, v.rule_name) t;
+        ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) t;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
 ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual);
@@ -1699,7 +1794,7 @@ JOIN fhir_endpoints_info f ON e.url = f.url
 JOIN LATERAL (
     SELECT json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code
 ) codes ON true
-WHERE f.requested_fhir_version = 'None';
+WHERE f.requested_fhir_version = 'None' and f.vendor_id = (SELECT id FROM vendors WHERE name = e.vendor_name);
 
 --indexing 
 CREATE INDEX idx_security_endpoints_url ON security_endpoints_mv (url);
@@ -1744,7 +1839,10 @@ SELECT
     CONCAT(
         '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''', 
         se.url, 
-        '&&None'',{priority: ''event''});">', 
+        '&&None',
+        '&&', 
+        se.vendor_name,
+        ''',{priority: ''event''});">', 
         se.url, 
         '</a>'
     ) AS url_modal
@@ -1898,6 +1996,7 @@ WITH grouped AS (
   GROUP BY f.id, f.url, e.http_response, e.vendor_name, e.fhir_version
 )
 SELECT
+  DISTINCT ON (url)
   row_number() OVER () AS mv_id,
   id,
   url,
@@ -1934,7 +2033,8 @@ WITH base AS (
           WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) = 'object'::text
         )
  SELECT 
-   	row_number() OVER () AS mv_id,
+   	DISTINCT ON (base.url)
+    row_number() OVER () AS mv_id,
 	base.url,
     regexp_replace(regexp_replace(regexp_replace(base.organization_names, '[{}]'::text, ''::text, 'g'::text), '","'::text, '; '::text, 'g'::text), '"'::text, ''::text, 'g'::text) AS organization_names,
     base.vendor_name,
