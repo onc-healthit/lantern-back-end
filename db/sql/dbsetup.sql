@@ -2721,10 +2721,10 @@ SELECT
     fhir_versions_csv,
     vendor_names_csv,
     
-    -- Arrays for filtering (combine from all matching rows)
-    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(fhir_versions_array, ','), ','), ',')) AS elem ORDER BY elem) as fhir_versions_array,
-    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(vendor_names_array, ','), ','), ',')) AS elem ORDER BY elem) as vendor_names_array,
-    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, ','), ','), ',')) AS elem ORDER BY elem) as urls_array
+    -- Arrays for filtering (combine from all matching rows) - FIXED: Use |||| delimiter instead of comma
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(fhir_versions_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as fhir_versions_array,
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(vendor_names_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as vendor_names_array,
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array
     
 FROM mv_organizations_aggregated
 GROUP BY 
