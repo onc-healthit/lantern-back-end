@@ -520,15 +520,6 @@ UNION ALL
 SELECT *
 FROM all_devs_aggregated_operations;
 
-CREATE UNIQUE INDEX mv_resource_interactions_uniq
-  ON mv_resource_interactions (
-    vendor_name,
-    fhir_version,
-    resource_type,
-    endpoint_count,
-    operations
-  );
-
 CREATE INDEX mv_resource_interactions_vendor_name_idx
   ON mv_resource_interactions (vendor_name);
 
