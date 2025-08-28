@@ -593,7 +593,7 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_summary_query." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv(field, "FHIR Version", "Developer", is_used);" -U lantern -d lantern || {
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv(field, \"FHIR Version\", \"Developer\", is_used);" -U lantern -d lantern || { 
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_summary_query." >> $log_file
 }
 
