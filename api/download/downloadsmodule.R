@@ -35,12 +35,13 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
     WITH base_data AS (
       SELECT
         organization_name,
-        identifiers_csv as identifier,
+        identifier_types_html as identifier_type,
+        identifier_values_html as identifier_value,
         addresses_csv as address,
         endpoint_urls_csv as url,
         fhir_versions_array,
         vendor_names_array
-      FROM mv_organizations_aggregated
+      FROM mv_organizations_final
       WHERE TRUE"
 
   params <- list()
@@ -59,13 +60,13 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
 
   # Identifier filter
   if (!is.null(identifier)) {
-    query <- paste0(query, " AND identifiers_csv = {identifier_exact}")
-    params$identifier_exact <- paste0("NPI: ", identifier)
+    query <- paste0(query, " AND identifier_values_csv = {identifier_exact}")
+    params$identifier_exact <- paste0(identifier)
   }
 
   # HTI-1 filter
   if (!is.null(hti1) && hti1 == "present") {
-    query <- paste0(query, " AND ((identifiers_csv IS NOT NULL AND identifiers_csv <> '')",
+    query <- paste0(query, " AND ((identifier_values_csv IS NOT NULL AND identifier_values_csv <> '')",
                            " OR (addresses_csv IS NOT NULL AND addresses_csv <> ''))")
   }
 
@@ -74,7 +75,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
     )
     SELECT
       organization_name,
-      identifier,
+      identifier_type,
+      identifier_value,
       address,
       url AS fhir_endpoint_url,
       string_agg(DISTINCT fhir_version, E'\\n') AS fhir_version,
@@ -97,7 +99,7 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
 
   # Finalize
   query <- paste0(query, "
-    GROUP BY organization_name, identifier, address, fhir_endpoint_url
+    GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
     ORDER BY organization_name")
 
   # Build SQL safely
@@ -112,7 +114,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
   # Clean output
   df <- df %>%
     mutate(
-      identifier = ifelse(is.na(identifier), "", identifier),
+      identifier_type = ifelse(is.na(identifier_type), "", identifier_type),
+      identifier_value = ifelse(is.na(identifier_value), "", identifier_value),
       address = ifelse(is.na(address), "", address)
     )
 
