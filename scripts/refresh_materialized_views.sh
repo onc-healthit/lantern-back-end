@@ -1600,12 +1600,12 @@ docker exec -t lantern-back-end_postgres_1 psql -t -c "REFRESH MATERIALIZED VIEW
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh capstat_usage_summary_mv." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_usage_summary_filters;" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_usage_summary_filters." >> $log_file
+docker exec -t lantern-back-end_postgres_1 psql -t -c "DROP INDEX IF EXISTS idx_capstat_usage_summary_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_capstat_usage_summary_unique." >> $log_file
 }
 
-docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE INDEX idx_usage_summary_filters ON capstat_usage_summary_mv(field, \"FHIR Version\", \"Developer\", is_used);" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_usage_summary_filters." >> $log_file
+docker exec -t lantern-back-end_postgres_1 psql -t -c "CREATE UNIQUE INDEX idx_capstat_usage_summary_unique ON capstat_usage_summary_mv(field, \"FHIR Version\", \"Developer\", is_used);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_capstat_usage_summary_unique." >> $log_file
 }
 
 # Refresh and reindex mv_organizations_aggregated
