@@ -21,6 +21,13 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 	var firstUpdate time.Time
 	var firstUpdateOrg time.Time
 	var listsource = endpoints.Entries[0].ListSource
+
+	// Start-of-run summary
+	log.WithFields(log.Fields{
+		"entries":     len(endpoints.Entries),
+		"list_source": listsource,
+	}).Info("AddEndpointData: begin")
+
 	for i, endpoint := range endpoints.Entries {
 		select {
 		case <-ctx.Done():
@@ -45,11 +52,23 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 		endpoint.FHIRPatientFacingURI = uri
 
 		if isValidURL(uri) {
+			log.WithFields(log.Fields{
+				"url":         uri,
+				"list_source": endpoint.ListSource,
+				"has_org":     endpoint.OrganizationName != "" || endpoint.NPIID != "" || endpoint.OrganizationZipCode != "",
+			}).Debug("AddEndpointData: processing entry")
+
 			err := saveEndpointData(ctx, store, &endpoint)
 			if err != nil {
-				log.Warn(err)
+				log.WithError(err).Warn("AddEndpointData: save failed")
 				continue
 			}
+
+			log.WithFields(log.Fields{
+				"url":         uri,
+				"list_source": endpoint.ListSource,
+			}).Debug("AddEndpointData: save succeeded")
+
 			if firstUpdate.IsZero() {
 				// get time of update for first endpoint
 				fhirURL := endpoint.FHIRPatientFacingURI
@@ -71,6 +90,11 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 					continue
 				} else {
 					firstUpdate = existingEndpt.UpdatedAt
+					log.WithFields(log.Fields{
+						"url":          fhirURL,
+						"list_source":  endpoint.ListSource,
+						"first_update": firstUpdate,
+					}).Debug("AddEndpointData: set endpoint anchor time")
 				}
 			}
 			if firstUpdateOrg.IsZero() {
@@ -88,6 +112,12 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 					continue
 				} else {
 					firstUpdateOrg = existingOrg.UpdatedAt
+					log.WithFields(log.Fields{
+						"url":             fhirURL,
+						"list_source":     endpoint.ListSource,
+						"first_updateOrg": firstUpdateOrg,
+						"org_id":          existingOrg.ID,
+					}).Debug("AddEndpointData: set org anchor time")
 				}
 			}
 		}
@@ -109,6 +139,11 @@ func AddEndpointData(ctx context.Context, store *postgresql.Store, endpoints *fe
 // saveEndpointData formats the endpoint as a FHIREndpoint and then checks to see if it's in the database.
 // If it is, ignore it, if it isn't, add it to the database.
 func saveEndpointData(ctx context.Context, store *postgresql.Store, endpoint *fetcher.EndpointEntry) error {
+	log.WithFields(log.Fields{
+		"url":         endpoint.FHIRPatientFacingURI,
+		"list_source": endpoint.ListSource,
+	}).Debug("saveEndpointData: begin")
+
 	fhirEndpoint, err := formatToFHIREndpt(endpoint)
 	if err != nil {
 		return err
@@ -213,32 +248,33 @@ func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store
 
 	if len(fhirEndpoints) == 0 {
 		log.WithFields(log.Fields{
-			"list_source": listSource,
+			"list_source":   listSource,
+			"anchor_before": updateTime,
 		}).Info("No stale organizations found")
 		return nil
 	}
 
 	totalOrgs := 0
-    for _, endpoint := range fhirEndpoints {
-        n := len(endpoint.OrganizationList)
-        totalOrgs += n
+	for _, endpoint := range fhirEndpoints {
+		n := len(endpoint.OrganizationList)
+		totalOrgs += n
 
-        log.WithFields(log.Fields{
-            "endpoint_id": endpoint.ID,
-            "stale_orgs":  n,
-        }).Debug("Removing stale orgs for endpoint")
+		log.WithFields(log.Fields{
+			"endpoint_id": endpoint.ID,
+			"stale_orgs":  n,
+		}).Debug("Removing stale orgs for endpoint")
 
-        if err = store.DeleteFHIREndpointOrganizationMap(ctx, endpoint); err != nil {
+		if err = store.DeleteFHIREndpointOrganizationMap(ctx, endpoint); err != nil {
 			log.WithError(err).Warn("Failed removing stale orgs for endpoint")
 			continue
 		}
-    }
+	}
 
-    log.WithFields(log.Fields{
-        "endpoints":   len(fhirEndpoints),
-        "orgs_removed": totalOrgs,
-        "list_source": listSource,
-    }).Info("Removed stale organizations")
+	log.WithFields(log.Fields{
+		"endpoints":    len(fhirEndpoints),
+		"orgs_removed": totalOrgs,
+		"list_source":  listSource,
+	}).Info("Removed stale organizations")
 
 	return nil
 }

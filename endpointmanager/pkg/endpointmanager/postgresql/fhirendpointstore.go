@@ -8,6 +8,7 @@ import (
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 // prepared statements are left open to be used throughout the execution of the application
@@ -169,6 +170,13 @@ func (s *Store) GetFHIREndpointOrganizationByURLandListSource(ctx context.Contex
 	organization.OrganizationName = orgName
 	organization.OrganizationZipCode = orgZipCode
 	organization.OrganizationNPIID = orgNPIID
+
+	log.WithFields(log.Fields{
+		"url":         url,
+		"list_source": listSource,
+		"org_id":      organization.ID,
+		"updated_at":  organization.UpdatedAt,
+	}).Debug("GetFHIREndpointOrganizationByURLandListSource: selected anchor org")
 
 	return &organization, nil
 }
@@ -464,12 +472,24 @@ func (s *Store) UpdateFHIREndpointsNPIOrg(ctx context.Context, e *endpointmanage
 
 // AddOrUpdateFHIREndpoint adds the endpoint if it doesn't already exist. If it does exist, it updates the endpoint.
 func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+	log.WithFields(log.Fields{
+		"url":         e.URL,
+		"list_source": e.ListSource,
+		"orgs_in_req": len(e.OrganizationList),
+	}).Debug("AddOrUpdateFHIREndpoint: begin")
+
 	existingEndpt, err := s.GetFHIREndpointUsingURLAndListSource(ctx, e.URL, e.ListSource)
 	if err == sql.ErrNoRows {
 		err = s.AddFHIREndpoint(ctx, e)
 		if err != nil {
 			return errors.Wrap(err, "adding fhir endpoint to store failed")
 		}
+		log.WithFields(log.Fields{
+			"endpoint_id": e.ID,
+			"url":         e.URL,
+			"list_source": e.ListSource,
+			"orgs_added":  len(e.OrganizationList),
+		}).Info("AddOrUpdateFHIREndpoint: inserted new endpoint")
 	} else if err != nil {
 		return errors.Wrap(err, "getting fhir endpoint from store failed")
 	} else {
@@ -481,18 +501,35 @@ func (s *Store) AddOrUpdateFHIREndpoint(ctx context.Context, e *endpointmanager.
 		if err != nil {
 			return err
 		}
+		log.WithFields(log.Fields{
+			"endpoint_id": existingEndpt.ID,
+			"url":         existingEndpt.URL,
+			"list_source": existingEndpt.ListSource,
+			"orgs_upd":    len(existingEndpt.OrganizationList),
+		}).Debug("AddOrUpdateFHIREndpoint: updated endpoint")
 	}
 	return nil
 }
 
 // UpdateFHIREndpointOrganizations updates the FHIREndpoint's list of organizations
 func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+	log.WithFields(log.Fields{
+		"endpoint_id": e.ID,
+		"orgs_in_req": len(e.OrganizationList),
+	}).Debug("UpdateFHIREndpointOrganizations: begin")
 
 	for _, org := range e.OrganizationList {
 		organization, err := s.GetFHIREndpointOrganizationByInfo(ctx, e.ID, org)
 
 		// If the organization does not exist, add it to the database, otherwise update the updated time
 		if err == sql.ErrNoRows {
+			log.WithFields(log.Fields{
+				"endpoint_id": e.ID,
+				"org_name":    org.OrganizationName,
+				"npi":         org.OrganizationNPIID,
+				"zip":         org.OrganizationZipCode,
+			}).Debug("UpdateFHIREndpointOrganizations: adding new org")
+
 			err := s.AddFHIREndpointOrganization(ctx, org, e.ID)
 			if err != nil {
 				return errors.Wrap(err, "adding fhir endpoint to store failed")
@@ -501,6 +538,10 @@ func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpoint
 		} else if err != nil {
 			return errors.Wrap(err, "getting fhir endpoint organization from store failed")
 		} else {
+			log.WithFields(log.Fields{
+				"endpoint_id": e.ID,
+				"org_id":      organization.ID,
+			}).Debug("UpdateFHIREndpointOrganizations: refreshing org timestamp + children")
 
 			_, err := updateFHIREndpointOrganizationsUpdateTime.ExecContext(ctx, organization.ID)
 
@@ -566,10 +607,23 @@ func (s *Store) AddFHIREndpointOrganization(ctx context.Context, org *endpointma
 		return err
 	}
 
+	log.WithFields(log.Fields{
+		"endpoint_id": endpointID,
+		"org_id":      org.ID,
+		"org_name":    org.OrganizationName,
+		"npi":         org.OrganizationNPIID,
+		"zip":         org.OrganizationZipCode,
+	}).Info("AddFHIREndpointOrganization: inserted org")
+
 	err = s.AddFHIREndpointOrganizationMap(ctx, org.ID, endpointID)
 	if err != nil {
 		return err
 	}
+
+	log.WithFields(log.Fields{
+		"endpoint_id": endpointID,
+		"org_id":      org.ID,
+	}).Debug("AddFHIREndpointOrganization: inserted mapping")
 
 	err = s.AddFHIREndpointOrganizationIdentifiers(ctx, org.ID, org.OrganizationIdentifiers)
 	if err != nil {
@@ -620,6 +674,11 @@ func (s *Store) AddFHIREndpointOrganizationIdentifiers(ctx context.Context, orgI
 		}
 	}
 
+	log.WithFields(log.Fields{
+		"org_id":            orgID,
+		"identifiers_count": len(orgIdentifiers),
+	}).Debug("Upserting identifiers")
+
 	for _, identifier := range orgIdentifiers {
 		_, err = addFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, orgID, identifier.(string))
 		if err != nil {
@@ -649,6 +708,11 @@ func (s *Store) AddFHIREndpointOrganizationAddresses(ctx context.Context, orgID 
 		}
 	}
 
+	log.WithFields(log.Fields{
+		"org_id":          orgID,
+		"addresses_count": len(orgAddresses),
+	}).Debug("Upserting addresses")
+
 	for _, address := range orgAddresses {
 		_, err = addFHIREndpointOrganizationAddressStatement.ExecContext(ctx, orgID, address.(string))
 		if err != nil {
@@ -677,6 +741,11 @@ func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int
 			return err
 		}
 	}
+
+	log.WithFields(log.Fields{
+		"org_id": orgID,
+		"active": orgActive,
+	}).Debug("Upserting active")
 
 	// Only insert organization active data if it was provided in the FHIR bundle
 	if orgActive != "" {
@@ -708,6 +777,11 @@ func (s *Store) AddFHIREndpointOrganizationURL(ctx context.Context, orgID int, o
 		}
 	}
 
+	log.WithFields(log.Fields{
+		"org_id":  orgID,
+		"org_url": orgURL,
+	}).Debug("Upserting org URL")
+
 	// Only insert organization URL data if it was provided in the FHIR bundle
 	if orgURL != "" {
 		_, err = addFHIREndpointOrganizationURLStatement.ExecContext(ctx, orgID, orgURL)
@@ -733,6 +807,12 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		versionsResponseJSON = []byte("null")
 	}
 
+	log.WithFields(log.Fields{
+		"endpoint_id": e.ID,
+		"url":         e.URL,
+		"list_source": e.ListSource,
+	}).Debug("UpdateFHIREndpoint: updating endpoint row")
+
 	_, err = updateFHIREndpointStatement.ExecContext(ctx,
 		e.URL,
 		e.ListSource,
@@ -742,6 +822,11 @@ func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 	if err != nil {
 		return err
 	}
+
+	log.WithFields(log.Fields{
+		"endpoint_id": e.ID,
+		"orgs_in_req": len(e.OrganizationList),
+	}).Debug("UpdateFHIREndpoint: updating organizations")
 
 	err = s.UpdateFHIREndpointOrganizations(ctx, e)
 	if err != nil {
@@ -765,6 +850,11 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 
 // DeleteFHIREndpointOrganization deletes one organization and all related rows for a given endpoint.
 func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointmanager.FHIREndpointOrganization, endpointID int) error {
+	log.WithFields(log.Fields{
+		"endpoint_id": endpointID,
+		"org_id":      o.ID,
+	}).Debug("DeleteFHIREndpointOrganization: begin")
+
 	// 1) Delete Children First
 	if _, err := deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, o.ID); err != nil {
 		return err
@@ -789,13 +879,25 @@ func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointm
 		return err
 	}
 
+	log.WithFields(log.Fields{
+		"endpoint_id": endpointID,
+		"org_id":      o.ID,
+	}).Debug("DeleteFHIREndpointOrganization: done")
+
 	return nil
 }
 
 // DeleteFHIREndpointOrganizationMap removes the given endpoint's organizations in e.OrganizationList.
 func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
+
 	// Are we wiping everything or only a subset?
 	subsetOnly := len(e.OrganizationList) > 0
+
+	log.WithFields(log.Fields{
+		"endpoint_id": e.ID,
+		"subset_only": subsetOnly,
+		"orgs_in_req": len(e.OrganizationList),
+	}).Debug("DeleteFHIREndpointOrganizationMap: begin")
 
 	orgs := e.OrganizationList
 	if !subsetOnly {
@@ -817,11 +919,17 @@ func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpoi
 		if _, err := deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, e.ID); err != nil {
 			return err
 		}
+		log.WithFields(log.Fields{
+			"endpoint_id": e.ID,
+		}).Debug("DeleteFHIREndpointOrganizationMap: conditional cleanup executed")
 	} else {
 		// Full wipe: remove any map rows left for this endpoint
 		if _, err := deleteFHIREndpointOrganizationMapStatement.ExecContext(ctx, e.ID); err != nil {
 			return err
 		}
+		log.WithFields(log.Fields{
+			"endpoint_id": e.ID,
+		}).Debug("DeleteFHIREndpointOrganizationMap: full cleanup executed")
 	}
 
 	return nil

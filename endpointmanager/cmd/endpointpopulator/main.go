@@ -21,6 +21,17 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
 )
 
+func init() {
+	// send logs to stdout so they appear with your other prints
+	log.SetOutput(os.Stdout)
+
+	// nicer timestamps (optional)
+	log.SetFormatter(&log.TextFormatter{FullTimestamp: true})
+
+	// show debug logs from all packages using logrus
+	log.SetLevel(log.DebugLevel)
+}
+
 func main() {
 	var endpointsFile string
 	var source string
