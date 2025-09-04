@@ -759,7 +759,6 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		return err
 	}
 
-	err = s.DeleteFHIREndpointOrganizationMap(ctx, e)
 	return err
 }
 
@@ -794,33 +793,10 @@ func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointm
 
 // DeleteFHIREndpointOrganizationMap removes the given endpoint's organizations in e.OrganizationList.
 func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
-	// Are we wiping everything or only a subset?
-	subsetOnly := len(e.OrganizationList) > 0
 
-	orgs := e.OrganizationList
-	if !subsetOnly {
-		var err error
-		orgs, err = s.GetFHIREndpointOrganizations(ctx, e.ID)
-		if err != nil {
-			return err
-		}
-	}
-
-	for _, org := range orgs {
+	for _, org := range e.OrganizationList {
 		if err := s.DeleteFHIREndpointOrganization(ctx, org, e.ID); err != nil {
 			return errors.Wrap(err, "removing fhir endpoint organization failed")
-		}
-	}
-
-	if subsetOnly {
-		// Only clean up rows where org_database_id is already NULL
-		if _, err := deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, e.ID); err != nil {
-			return err
-		}
-	} else {
-		// Full wipe: remove any map rows left for this endpoint
-		if _, err := deleteFHIREndpointOrganizationMapStatement.ExecContext(ctx, e.ID); err != nil {
-			return err
 		}
 	}
 
