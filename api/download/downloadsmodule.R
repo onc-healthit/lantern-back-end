@@ -35,8 +35,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
     WITH base_data AS (
       SELECT
         organization_name,
-        identifier_types_html as identifier_type,
-        identifier_values_html as identifier_value,
+        identifier_types_csv as identifier_type,
+        identifier_values_csv as identifier_value,
         addresses_csv as address,
         endpoint_urls_csv as url,
         fhir_versions_array,
