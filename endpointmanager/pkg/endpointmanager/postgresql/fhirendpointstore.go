@@ -19,8 +19,6 @@ var deleteFHIREndpointOrganizationStatement *sql.Stmt
 var addFHIREndpointOrganizationMapStatement *sql.Stmt
 var getFHIREndpointOrganizationsByEndpointID *sql.Stmt
 var getFHIREndpointOrganizationByInfoStatement *sql.Stmt
-var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
-var deleteFHIREndpointOrganizationMapStatementConditional *sql.Stmt
 var updateFHIREndpointOrganizationsUpdateTime *sql.Stmt
 var updateProcessCompletionStatusStatement *sql.Stmt
 var addFHIREndpointOrganizationIdentifierStatement *sql.Stmt
@@ -880,18 +878,6 @@ func prepareFHIREndpointStatements(s *Store) error {
 	deleteFHIREndpointOrganizationStatement, err = s.DB.Prepare(`
 	DELETE FROM fhir_endpoint_organizations
 	WHERE id = $1`)
-	if err != nil {
-		return err
-	}
-	deleteFHIREndpointOrganizationMapStatement, err = s.DB.Prepare(`
-	DELETE FROM fhir_endpoint_organizations_map
-	WHERE id = $1`)
-	if err != nil {
-		return err
-	}
-	deleteFHIREndpointOrganizationMapStatementConditional, err = s.DB.Prepare(`
-	DELETE FROM fhir_endpoint_organizations_map
-	WHERE id = $1 AND org_database_id IS NULL`)
 	if err != nil {
 		return err
 	}
