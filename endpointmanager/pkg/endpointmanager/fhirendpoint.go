@@ -26,6 +26,7 @@ type FHIREndpoint struct {
 type FHIREndpointOrganization struct {
 	ID                      int
 	OrganizationName        string
+	OrganizationURL         string
 	OrganizationZipCode     string
 	OrganizationNPIID       string
 	OrganizationIdentifiers []interface{}

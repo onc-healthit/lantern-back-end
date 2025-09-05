@@ -59,55 +59,87 @@ resourcemodule <- function(  #nolint
   res_page_state <- reactiveVal(1)
   res_page_size <- 50
 
-  # Handle next page button
-  observeEvent(input$res_next_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_next_time) && 
-        (current_time - session$userData$last_next_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
+  # Compute total pages based on filtered data
+  res_total_pages <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_resources())
+
+    count_query <- get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), page_size = -1, offset = -1, search_query = input$res_search_query)
+    total <- nrow(count_query)
+    max(1, ceiling(total / res_page_size))
+  })
+
+  # Break the feedback loop with isolate()
+  observe({
+    new_page <- res_page_state()
+    current_selector <- input$res_page_selector
+    
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+      
+      isolate({  # This is the key fix to break feedback loops!
+        updateNumericInput(session, "res_page_selector", 
+                          max = res_total_pages(),
+                          value = new_page)
+      })
     }
-    session$userData$last_next_time <- current_time
-    new_page <- res_page_state() + 1
-    res_page_state(new_page)
+  })
+
+  # Handle page selector input
+  observeEvent(input$res_page_selector, {
+    # Get current input value
+    current_input <- input$res_page_selector
+    
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
+        is.numeric(current_input) &&
+        current_input > 0) {
+      
+      new_page <- max(1, min(current_input, res_total_pages()))
+      
+      # Only update page state if it's actually different
+      if (new_page != res_page_state()) {
+        res_page_state(new_page)
+      }
+
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
+        updateNumericInput(session, "res_page_selector", value = new_page)
+      }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "res_page_selector", value = res_page_state())
+    }
+  }, ignoreInit = TRUE)  # Prevent firing on initialization
+
+  # Handle next page button 
+  observeEvent(input$res_next_page, {
+    if (res_page_state() < res_total_pages()) {
+      new_page <- res_page_state() + 1
+      res_page_state(new_page)
+    }
   })
 
   # Handle previous page button
   observeEvent(input$res_prev_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_prev_time) && 
-        (current_time - session$userData$last_prev_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_prev_time <- current_time
     if (res_page_state() > 1) {
       new_page <- res_page_state() - 1
       res_page_state(new_page)
     }
   })
 
-  # Reset page when filters / search changes
+  # Reset to first page on any filter/search change 
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), input$res_search_query), {
     res_page_state(1)
-    updateNumericInput(session, "res_page_selector", value = 1)
-  })
-
-  # Sync page selector
-  observe({
-    updateNumericInput(session, "res_page_selector",
-                      max = res_total_pages(),
-                      value = res_page_state())
-  })
-
-  # Manual page input
-  observeEvent(input$res_page_selector, {
-    if (!is.null(input$res_page_selector) && !is.na(input$res_page_selector)) {
-      new_page <- max(1, min(input$res_page_selector, res_total_pages()))
-      res_page_state(new_page)
-
-      if (new_page != input$res_page_selector) {
-        updateNumericInput(session, "res_page_selector", value = new_page)
-      }
-    }
   })
 
   output$resource_prev_button_ui <- renderUI({
@@ -130,25 +162,31 @@ resourcemodule <- function(  #nolint
     paste("of", res_total_pages())
   })
 
-  # Compute total pages based on filtered data
-  res_total_pages <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_resources())
-
-    count_query <- get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), page_size = -1, offset = -1, search_query = input$res_search_query)
-    total <- nrow(count_query)
-    max(1, ceiling(total / res_page_size))
-  })
-
   # Original select_operations function unchanged (for plots)
   select_operations <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_resources())
     get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()))
   })
 
-  # Paginated select_operations function for the table
+  # Paginated select_operations function for the table - WITH RACE CONDITION PROTECTION
   paginated_select_operations <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_resources())
-    get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), res_page_size, (res_page_state() - 1) * res_page_size, input$res_search_query)
+    
+    # Generate unique request ID 
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
+    
+    result <- get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), res_page_size, (res_page_state() - 1) * res_page_size, input$res_search_query)
+    
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      return(result)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
   })
 
   number_resources <- reactive({
