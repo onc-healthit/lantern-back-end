@@ -275,11 +275,7 @@ organizationsmodule <- function(
         (is.null(input$org_search_query) || input$org_search_query == "")
     )
  
-    offset <- if (is_initial_load && org_page_state() == 1) {
-      20  # Skip first 20 rows on very first load
-    } else {
-      (org_page_state() - 1) * org_page_size
-    }
+    offset <- (org_page_state() - 1) * org_page_size
 
     # Build query that constructs filtered HTML based on selected filters
     query_str <- "
@@ -295,7 +291,7 @@ organizationsmodule <- function(
           vendor_names_array
         FROM mv_organizations_final
         WHERE TRUE"
-    
+
     params <- list()
 
     # Add FHIR version filter using array overlap
@@ -363,7 +359,8 @@ organizationsmodule <- function(
     # Add GROUP BY, ordering and pagination
     query_str <- paste0(query_str, "
       GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
-      ORDER BY organization_name
+      ORDER BY (organization_name ~ '[A-Za-z]') DESC,  -- Prioritize orgs with letters
+      organization_name ASC
       LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
     params$offset <- offset
