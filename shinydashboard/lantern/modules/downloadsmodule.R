@@ -137,7 +137,7 @@ downloadsmodule <- function(
           endpoint_urls_csv as url,
           fhir_versions_array,
           vendor_names_array
-        FROM mv_organizations_aggregated 
+        FROM mv_organizations_final 
       )
       SELECT 
         organization_name,
