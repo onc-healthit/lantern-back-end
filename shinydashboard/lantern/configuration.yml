@@ -39,6 +39,7 @@ module_files:
   - "modules/contactsmodule.R"
   - "modules/profilemodule.R"
   - "modules/organizationsmodule.R"
+  - "modules/developerfeedbackmodule.R"
 
 refresh_timeout_minutes:
   - 1440

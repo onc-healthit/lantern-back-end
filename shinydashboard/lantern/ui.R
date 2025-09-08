@@ -33,6 +33,7 @@ ui <- dashboardPage(
       menuItem("CapabilityStatement / Conformance Profiles", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "profile_tab"),
       menuItem("CapabilityStatement / Conformance Size", icon = tags$i(class = "fa fa-hdd-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "hdd-o icon"), tabName = "capabilitystatementsize_tab"),
       menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", "aria-hidden" = "true", role = "presentation", "aria-label" = "clipboard-check icon"), tabName = "validations_tab"),
+      menuItem("Developer Feedback", tabName = "developerfeedback_tab", icon = icon("chart-line")),
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
       menuItem("Contact Information", tabName = "contacts_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
@@ -192,6 +193,9 @@ ui <- dashboardPage(
       ),
       tabItem("validations_tab",
               validationsmodule_UI("validations_page")
+      ),
+      tabItem(tabName = "developerfeedback_tab",
+              developerfeedbackmodule_UI("developerfeedback_page")
       ),
       tabItem("security_tab",
               securitymodule_UI("security_page")
