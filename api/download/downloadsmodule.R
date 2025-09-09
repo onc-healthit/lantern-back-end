@@ -60,7 +60,7 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
 
   # Identifier filter
   if (!is.null(identifier)) {
-    query <- paste0(query, " AND identifier_values_csv = {identifier_exact}")
+    query <- paste0(query, " AND {identifier_exact} = ANY(string_to_array(identifier_values_csv, E'\\n'))")
     params$identifier_exact <- paste0(identifier)
   }
 
