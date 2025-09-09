@@ -374,10 +374,22 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 	// Assumes certification editions are years, which is the case as of 11/20/19.
 	existingCertEdition, err := strconv.Atoi(existingDbProd.CertificationEdition)
 	if err != nil {
+		log.Warnf("Edition parse failed (existing): product=%s chplid=%s edition=%q error=%v",
+			existingDbProd.Name,
+			existingDbProd.CHPLID,
+			existingDbProd.CertificationEdition,
+			err,
+		)
 		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
 	}
 	newCertEdition, err := strconv.Atoi(newDbProd.CertificationEdition)
 	if err != nil {
+		log.Warnf("Edition parse failed (new): product=%s chplid=%s edition=%q error=%v",
+			newDbProd.Name,
+			newDbProd.CHPLID,
+			newDbProd.CertificationEdition,
+			err,
+		)
 		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
 	}
 
@@ -412,6 +424,31 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// If the criteria lists are the same length but they are not equal, throw an error
 	if !certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
+		sortInts := func(in []int) []int {
+			out := append([]int(nil), in...)
+			sort.Ints(out)
+			return out
+		}
+
+		log.Warnf(`criteria differ with equal length (debug dump)
+		product=%s
+		chplid=%s
+		old_raw=%v
+		new_raw=%v
+		old_criteria=%v
+		new_criteria=%v
+		old_len=%d
+		new_len=%d`,
+			newDbProd.Name,
+			newDbProd.CHPLID,
+			existingDbProd.CertificationCriteria,
+			newDbProd.CertificationCriteria,
+			sortInts(existingDbProd.CertificationCriteria),
+			sortInts(newDbProd.CertificationCriteria),
+			len(existingDbProd.CertificationCriteria),
+			len(newDbProd.CertificationCriteria),
+		)
+
 		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
 	}
 
