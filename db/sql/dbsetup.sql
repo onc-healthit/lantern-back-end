@@ -1513,7 +1513,6 @@ GROUP BY field, "FHIR Version", "Developer", is_used;
 CREATE UNIQUE INDEX idx_capstat_usage_summary_unique ON capstat_usage_summary_mv(field, "FHIR Version", "Developer", is_used);
 
 CREATE TABLE daily_querying_status (status VARCHAR(500));
-INSERT INTO daily_querying_status VALUES ('true');
 
 -- Lantern-839
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
