@@ -2316,7 +2316,7 @@ WITH
 total_endpoints AS (
   SELECT 
     'Total Indexed Endpoints' AS status,
-    all_endpoints::integer AS endpoints,
+    indexed_endpoints::integer AS endpoints,
     1 AS sort_order
   FROM mv_endpoint_totals
   ORDER BY aggregation_date DESC
