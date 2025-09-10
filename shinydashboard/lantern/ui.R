@@ -266,7 +266,7 @@ ui <- dashboardPage(
       ),
       tabItem("release_notes",
               p(HTML('
-                Lantern displayed Organization\'s HTI-1 data as a modal with inline columns. The modal has now been replaced with separate columns for the HTI-1 data:<br/>
+                Lantern displayed Orgnaization\'s HTI-1 data as a modal, we now replaced modal with inline columns. You\'ll now see these fields as separate columns:<br/>
                 <ul>
                   <li>Organization Identifier Type</li>
                   <li>Organization Identifier</li>
