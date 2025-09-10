@@ -221,12 +221,22 @@ ui <- dashboardPage(
             p("Lantern queries its list of known FHIR endpoints once every 24 hours. 
               Setting the query interval to once every 24 hours means that over time Lantern will have queried each endpoint at exactly same hour of the day. 
               During each query Lantern records data from each endpoints’ Capability Statement in addition to the HTTP response code and response time associated with the request made to the endpoint."),
-            # --- New content ends here ---
             
             h3("Source Code"),
             p("The code behind Lantern can be found on GitHub ",
-              a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url"))
-          ),
+              a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url")),
+            
+            p("The Lantern application consists of the following services:"),
+            tags$ul(
+              tags$li("PostgreSQL – application database"),
+              tags$li("LanternMQ (RabbitMQ) – the message queue"),
+              tags$li("Capability Querier – queries the endpoints for their Capability Statements every 24 hours. Starting the service the first time will also query the endpoints."),
+              tags$li("Capability Receiver – receives the Capability Statements from the queue, performs validations and saves the results to the database table fhir_endpoints_info"),
+              tags$li("Endpoint Manager – sends endpoints to the capability querying queues"),
+              tags$li("Shinydashboard – the website")
+            )
+          )
+,
           downloadsmodule_UI("downloads_page")
         )
       ),
