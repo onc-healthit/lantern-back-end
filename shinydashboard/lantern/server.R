@@ -12,7 +12,7 @@ function(input, output, session) { #nolint
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "release_notes"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "contacts_tab", "release_notes"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -162,7 +162,7 @@ function(input, output, session) { #nolint
   page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
-     "downloads_tab" = "Downloads Page",
+     "documentation_tab" = "Documentation Page",
      "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implementation Page",
@@ -170,7 +170,6 @@ function(input, output, session) { #nolint
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
      "contacts_tab" = "Contact Information Page",
-     "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
@@ -233,7 +232,7 @@ function(input, output, session) { #nolint
   })
 
   output$htmlFooter <- renderUI({
-    if (input$side_menu %in% c("about_tab")) {
+    if (input$side_menu %in% c("documentation_tab")) {
       tags$footer(class = "footer",
         includeHTML("aboutInfo.html")
       )

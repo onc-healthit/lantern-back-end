@@ -316,16 +316,16 @@ $(document).ready(function() {
         }
   
         if (pageTitleText === "List of Endpoints") {
-          let downloads_tab_link = document.getElementById("downloads_page_link");
-          downloads_tab_link.addEventListener('click', function (e) {
-            let downloads_tab = document.querySelector("a[href = '#shiny-tab-downloads_tab']"); 
-            downloads_tab.click();
+          let documentation_tab_link = document.getElementById("documentation_page_link");
+          documentation_tab_link.addEventListener('click', function (e) {
+            let documentation_tab = document.querySelector("a[href = '#shiny-tab-documentation_tab']"); 
+            documentation_tab.click();
           });
   
-          downloads_tab_link.addEventListener('keyup', function (e) {
+          documentation_tab_link.addEventListener('keyup', function (e) {
             if (event.keyCode === 13) {
-              let downloads_tab = document.querySelector("a[href = '#shiny-tab-downloads_tab']"); 
-              downloads_tab.click();
+              let documentation_tab = document.querySelector("a[href = '#shiny-tab-documentation_tab']"); 
+              documentation_tab.click();
             }
           });
         }
