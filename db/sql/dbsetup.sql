@@ -1510,7 +1510,7 @@ SELECT
 FROM selected_fhir_endpoints_values_mv
 GROUP BY field, "FHIR Version", "Developer", is_used;
 
-CREATE INDEX idx_usage_summary_filters ON capstat_usage_summary_mv(field, "FHIR Version", "Developer", is_used);
+CREATE UNIQUE INDEX idx_capstat_usage_summary_unique ON capstat_usage_summary_mv(field, "FHIR Version", "Developer", is_used);
 
 CREATE TABLE daily_querying_status (status VARCHAR(500));
 INSERT INTO daily_querying_status VALUES ('true');
