@@ -2797,6 +2797,7 @@ RETURNS BOOLEAN AS $$
 DECLARE
     clean_name TEXT;
     score INTEGER := 0;
+    has_healthcare_context BOOLEAN := FALSE;
 BEGIN
     IF name_text IS NULL OR name_text = '' THEN
         RETURN FALSE;
@@ -2806,29 +2807,58 @@ BEGIN
     clean_name := regexp_replace(name_text, '<[^>]+>', '', 'g');
     clean_name := trim(clean_name);
     
+    -- Expanded healthcare/organization context detection
+    IF clean_name ~* '(^|\s)(HOSPITALS?|CLINICS?|CENTERS?|CENTRES?|HEALTH|HEALTHCARE|MEDICAL|SYSTEMS?|SERVICES?|LLC|CORPS?|CORPORATION|INC|INCORPORATED|LTD|LIMITED|ASSOCIATES|GROUP|FOUNDATION|INSTITUTE|UNIVERSITY|COLLEGE|PHARMACY|LABORATORY|LABS?|BEAUTY|WELLNESS|DENTAL|VISION|EYE|CARE|THERAPY|REHAB|REHABILITATION|PRACTICE|MEDICINE|DOCTOR|PHYSICIAN)(\s|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Additional medical degree and title detection
+    IF clean_name ~* '(^|\s)(MD|DO|DDS|DMD|DPM|DVM|PharmD|PhD|RN|NP|PA|LPN|CNA|RPh|OD|PT|OT|SLP|RD|MSW|LCSW|LMFT|PSYD|EDD|JD|CPA|DBA|PLLC|P\.?C\.?|P\.?A\.?)(\s|,|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Medical specialty detection
+    IF clean_name ~* '(^|\s)(FAMILY|INTERNAL|PRIMARY|URGENT|EMERGENCY|PEDIATRICS?|UROLOGY|DIABETES|LUNGS?|HEART|CANCER|CARDIOLOGY|CARDIAC|SURG|SURGEONS?|ENDOCRINOLOGY|ORTHOPEDIC|DERMATOLOGY|NEUROLOGY|ONCOLOGY|RADIOLOGY|PATHOLOGY|ANESTHESIA|PSYCHIATRY|PSYCHOLOGY|AUDIOLOGY|OPTOMETRY|PODIATRY|CHIROPRACTIC|OBSTETRICS|GYNECOLOGY|GASTROENTEROLOGY|PULMONOLOGY|NEPHROLOGY|RHEUMATOLOGY|HEMATOLOGY|INFECTIOUS|GERIATRIC|SPORTS|PAIN|WOUND|DIALYSIS|IMAGING|SURGICAL|REHABILITATION|BEHAVIORAL|MENTAL)(\s|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Healthcare organization names
+    IF clean_name ~* '(^|\s)(BAYCARE|KAISER|MAYO|CLEVELAND|JOHNS|HOPKINS|MEMORIAL|REGIONAL|COMMUNITY|MERCY|PROVIDENCE|ADVENTIST|BAPTIST|METHODIST|CATHOLIC|CHRISTIAN|PRESBYTERIAN|EPISCOPAL|HEALING|HEARTS|WELLNESS|CHRISTI|TERESA)(\s|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
     -- Strong address indicators
     IF clean_name ~ '^[0-9]+' THEN 
         score := score + 3; -- Starts with number
     END IF;
     
-    IF clean_name ~* '\b(St|Street|Ave|Avenue|Blvd|Boulevard|Rd|Road|Dr|Drive|Ln|Lane|Ct|Court|Cir|Circle|Way|Pl|Place|Pkwy|Parkway|Ter|Terrace)\b' THEN 
-        score := score + 3; -- Street suffix
+    -- Street suffix detection - concatenate the regex properly
+    IF clean_name ~* '(^|\s)(ST|STREET|AVE|AVENUE|BLVD|BOULEVARD|RD|ROAD|DR|DRIVE|LN|LANE|CT|COURT|CIR|CIRCLE|WAY|PL|PLACE|PKWY|PARKWAY|TER|TERRACE|HWY|HIGHWAY|EXPY|EXPRESSWAY|FWY|FREEWAY|RTE|ROUTE|TPKE|TURNPIKE|SQ|SQUARE|CTR|CENTER|PLZ|PLAZA|MALL|ALY|ALLEY|LOOP|PASS|PATH|TRCE|TRACE|TRL|TRAIL|RUN|CRK|CREEK|VW|VIEW|PT|POINT|HOLW|HOLLOW|MTN|MOUNTAIN|HLS|HILLS|PK|PARK|IS|ISLAND|BCH|BEACH|EST|ESTATES|LDG|LODGE)(\s|$)' THEN
+        score := score + 3;
     END IF;
     
-    IF clean_name ~* '\b(Suite|Ste|Apt|Apartment|Unit|Floor|Fl|Room|Rm|Building|Bldg|#)\b' THEN 
-        score := score + 2; -- Unit/suite
+    -- Special handling for "ST" - only count as street if no religious/healthcare context
+    IF clean_name ~* '(^|\s)ST(\s|$)' AND NOT has_healthcare_context AND NOT clean_name ~* '(SAINT|TERESA|FRANCIS|MARY|JOSEPH|JOHN|PAUL|PETER|MICHAEL|GABRIEL|CHRISTOPHER|ANTHONY|VINCENT|PATRICK|THOMAS|JAMES|ROBERT|ELIZABETH|ANNE|CATHERINE|MARGARET|BARBARA)' THEN
+        score := score + 3; -- ST as street
     END IF;
     
-    IF clean_name ~ '\b[0-9]{5}(-[0-9]{4})?\b' THEN 
-        score := score + 3; -- ZIP code
+    -- Unit detection
+    IF clean_name ~* '(^|\s)(SUITE|STE|APT|APARTMENT|UNIT|FLOOR|FL|ROOM|RM|BUILDING|BLDG|#)(\s|$)' THEN 
+        score := score + 2;
     END IF;
     
-    IF clean_name ~* '\b(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)\b' THEN 
+    -- IMPROVED: ZIP code detection - handle both 5-digit and partial ZIP codes
+    IF clean_name ~ '[0-9]{5}(-[0-9]{3,4})?(\s|$)' THEN 
+        score := score + 3;
+    END IF;
+    
+    -- State detection - only apply if NOT in healthcare/business context
+    IF NOT has_healthcare_context AND clean_name ~* '(^|\s)(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)(\s|$)' THEN 
         score := score + 2; -- State abbreviation
     END IF;
     
-    -- Directional indicators
-    IF clean_name ~* '\b(North|South|East|West|N|S|E|W)\b' THEN 
+    -- Directional indicators 
+    IF clean_name ~* '(^|\s)(NORTH|SOUTH|EAST|WEST|N|S|E|W)(\s|$)' THEN 
         score := score + 1;
     END IF;
     
@@ -2837,14 +2867,9 @@ BEGIN
         score := score + 2;
     END IF;
     
-    -- Healthcare/organization keywords reduce address likelihood
-    IF clean_name ~* '\b(Hospital|Clinic|Center|Centre|Health|Medical|System|Services|LLC|Corp|Corporation|Inc|Incorporated|Ltd|Limited|Associates|Group|Foundation|Institute|University|College|Pharmacy|Laboratory|Labs?)\b' THEN
-        score := score - 3;
-    END IF;
-    
-    -- Additional org-like terms specific to healthcare
-    IF clean_name ~* '\b(Family|Internal|Primary|Urgent|Emergency|Pediatric|Cardiology|Orthopedic|Dental|Vision|Eye|Care)\b' THEN
-        score := score - 2;
+    -- Strong penalty for clear healthcare/business context
+    IF has_healthcare_context THEN
+        score := score - 6;
     END IF;
     
     RETURN score >= 4;
