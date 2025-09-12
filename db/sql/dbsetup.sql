@@ -3246,8 +3246,8 @@ SELECT
     -- Quality metrics
     COUNT(*) FILTER (WHERE has_valid_name) as organizations_with_valid_names,
     COUNT(*) FILTER (WHERE has_valid_address) as organizations_with_valid_addresses,
-    COUNT(*) FILTER (WHERE overall_quality_score >= 2) as high_quality_organizations,
-    COUNT(*) FILTER (WHERE overall_quality_score <= 1) as low_quality_organizations,
+    COUNT(*) FILTER (WHERE overall_quality_score = 3) as high_quality_organizations,
+    COUNT(*) FILTER (WHERE overall_quality_score < 3) as low_quality_organizations,
     
     -- Conformance breakdown
     COUNT(*) FILTER (WHERE identifier_conformance_category = 'Fully Conformant') as fully_conformant,
