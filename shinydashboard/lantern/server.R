@@ -162,7 +162,7 @@ function(input, output, session) { #nolint
   page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
-     "downloads_tab" = "Downloads Page",
+     "downloads_tab" = "Downloads / API Page",
      "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implementation Page",
