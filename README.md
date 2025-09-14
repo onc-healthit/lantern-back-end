@@ -53,7 +53,7 @@ This removes all docker images, networks, and local volumes.
     This starts all of the following services:
     * **PostgreSQL** - application database (port 5432)
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
-    * **Capability Querier** - queries the endpoints for their Capability Statements every 23 hours. Starting the service the first time will also query the endpoints.
+    * **Capability Querier** - queries the endpoints for their Capability Statements every 24 hours.
     * **Capability Receiver** - receives the Capability Statements from the queue, performs validations and saves the results to the database table `fhir_endpoints_info`
     * **Endpoint Manager** - sends endpoints to the capability querying queues
     *	**Shinydashboard** – the website (localhost:8090)
@@ -77,13 +77,7 @@ This removes all docker images, networks, and local volumes.
     This runs the following tasks inside the endpoint manager container:
     * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
     * the **CHPL querier**, which requests Health IT product, vendor, and certification information from CHPL and adds these to the database
-    * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval.
-
-3. **If you want to re-query and re-receive capability statements outside the refresh interval**, run the following:
-
-    ```bash
-    docker restart lantern-back-end_endpoint_manager_1
-    ```
+    * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 24 hour query interval.
 
 ### Development Environment
 
@@ -96,7 +90,7 @@ This removes all docker images, networks, and local volumes.
     This starts all of the following services:
     * **PostgreSQL** - application database (localhost:5432)
     * **LanternMQ (RabbitMQ)** - the message queue (localhost:15672)
-    * **Capability Querier** - queries the endpoints for their FHIR Capability Statements every 23 hours. Starting the service the first time will also query the endpoints.
+    * **Capability Querier** - queries the endpoints for their FHIR Capability Statements every 24 hours.
     * **Capability Receiver** - receives the Capability Statements from the queue, performs validations and saves the results to the database table `fhir_endpoints_info`
     * **Endpoint Manager** - sends endpoints to the capability querying queues
     *	**Shinydashboard** – the website (localhost:3838)
@@ -127,19 +121,7 @@ This removes all docker images, networks, and local volumes.
        This runs the following tasks inside the endpoint manager container:
          * the **endpoint populator**, which iterates over the list of endpoint sources and adds them to the database.
         * the **CHPL querier**, which requests Health IT product, vendor, and certification information from CHPL and adds these to the database
-        * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 23 hour query interval.
-
-       The `populate_db.sh` script expects the `dev_resources` directory to contain the following files:
-         * **endpoint_pfile.csv** - endpoint_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html
-         * **npidata_pfile.csv** - npidata_pfile from the data dissemination package downloaded from https://download.cms.gov/nppes/NPI_Files.html 
-         **Note**: This file can take a very long time to load so for development purposes, the load time can be reduced by only using the first 100000 entries. The first 100000 entries can be obtained by running `head -n 100000 npidata_pfile_20050523-20191110.csv >> npidata_pfile.csv`. Alternatively, running `make update_source_data` adds truncated npi files to the `dev_resources` directory as well.
-
-
-3. **If you want to re-query and re-receive Capability Statements outside the refresh interval** run the following:
-
-    ```bash
-    docker restart lantern-back-end_endpoint_manager_1
-    ```
+        * the **data validator**, which ensures that the amount of data in the database can successfully be quried in the 24 hour query interval.
 
 ## Stop Lantern
 
