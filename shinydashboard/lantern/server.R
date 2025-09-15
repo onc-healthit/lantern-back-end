@@ -12,7 +12,7 @@ function(input, output, session) { #nolint
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -154,6 +154,10 @@ function(input, output, session) { #nolint
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$validation_group))
+
+      callModule(
+        developerfeedbackmodule,
+        "developerfeedback_page")  
     }
   })
 
@@ -174,7 +178,8 @@ function(input, output, session) { #nolint
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
-     "validations_tab" = "Validations Page"
+     "validations_tab" = "Validations Page",
+     "developerfeedback_tab" = "Developer Feedback / Data Quality"
   )
 
   output$resource_tab_popup <- renderUI({
