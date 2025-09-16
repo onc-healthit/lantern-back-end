@@ -82,8 +82,10 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
 			if err == sql.ErrNoRows {
 				newVendor := &endpointmanager.Vendor{
-					Name: vendorName,
-					URL:  "https://1up.health",
+					Name:          vendorName,
+					URL:           "https://1up.health",
+					CHPLID:        2000000000,
+					DeveloperCode: "2000000000",
 				}
 				err = store.AddVendor(ctx, newVendor)
 				if err != nil {
@@ -105,8 +107,10 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
 			if err == sql.ErrNoRows {
 				newVendor := &endpointmanager.Vendor{
-					Name: vendorName,
-					URL:  "",
+					Name:          vendorName,
+					URL:           "",
+					CHPLID:        2000000001,
+					DeveloperCode: "2000000001",
 				}
 				err = store.AddVendor(ctx, newVendor)
 				if err != nil {
