@@ -97,6 +97,29 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 			ep.VendorID = vendorMatch.ID
 			return nil
 		}
+
+		// --- Special handling for non-CHPL source: State Medicaid ---
+		if fhirEndpoint.ListSource == "StateMedicaid" {
+			vendorName := "State Medicaid"
+
+			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
+			if err == sql.ErrNoRows {
+				newVendor := &endpointmanager.Vendor{
+					Name: vendorName,
+					URL:  "",
+				}
+				err = store.AddVendor(ctx, newVendor)
+				if err != nil {
+					return errors.Wrap(err, "failed to insert State Medicaid as new vendor")
+				}
+				ep.VendorID = newVendor.ID
+				return nil
+			} else if err != nil {
+				return errors.Wrap(err, "error checking for existing State Medicaid vendor")
+			}
+			ep.VendorID = vendorMatch.ID
+			return nil
+		}
 	}
 
 	if ep.CapabilityStatement == nil {
