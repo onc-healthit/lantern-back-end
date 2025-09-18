@@ -1566,7 +1566,7 @@ WITH DATA;
  CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
 
 CREATE MATERIALIZED VIEW mv_validation_results_plot AS
-SELECT ROW NUMBER() OVER () as row_id,
+SELECT ROW_NUMBER() OVER () as row_id,
 z.url,
 z.fhir_version,
 z.vendor_name,

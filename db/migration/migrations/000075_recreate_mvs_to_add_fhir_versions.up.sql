@@ -784,7 +784,7 @@ DROP MATERIALIZED VIEW IF EXISTS mv_validation_details CASCADE; --done
 DROP MATERIALIZED VIEW IF EXISTS mv_validation_results_plot CASCADE; --done
 
 CREATE MATERIALIZED VIEW mv_validation_results_plot AS
-SELECT ROW NUMBER() OVER () as row_id,
+SELECT ROW_NUMBER() OVER () as row_id,
 z.url,
 z.fhir_version,
 z.vendor_name,
