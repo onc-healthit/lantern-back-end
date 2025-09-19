@@ -597,7 +597,7 @@ WHERE f.capability_fhir_version != ''
   AND f.requested_fhir_version = 'None';
 
 -- Create indexes for mv_capstat_sizes
-CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url);
+CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url, vendor_name);
 CREATE INDEX idx_mv_capstat_sizes_fhir ON mv_capstat_sizes_tbl(fhir_version);
 CREATE INDEX idx_mv_capstat_sizes_vendor ON mv_capstat_sizes_tbl(vendor_name);
 
@@ -1121,6 +1121,29 @@ ORDER BY
 CREATE UNIQUE INDEX idx_mv_auth_type_count ON mv_auth_type_count("Code", "FHIR Version");
 CREATE INDEX idx_mv_auth_type_count_fhir ON mv_auth_type_count("FHIR Version");
 CREATE INDEX idx_mv_auth_type_count_endpoints ON mv_auth_type_count("Endpoints"); 
+
+CREATE MATERIALIZED VIEW mv_endpoint_totals AS
+WITH latest_metadata AS (
+    SELECT max(updated_at) AS last_updated
+    FROM fhir_endpoints_metadata
+), 
+totals AS (
+    SELECT 
+        -- Count (url, fhir_version) combinations to match Endpoints tab logic
+        (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
+        (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
+        FROM fhir_endpoints_info fei
+        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
+)
+SELECT 
+    now() AS aggregation_date,
+    totals.all_endpoints,
+    totals.indexed_endpoints,
+    greatest(totals.all_endpoints - totals.indexed_endpoints, 0) AS nonindexed_endpoints,
+    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
+FROM totals;
+
+CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_totals;
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_response_tally;

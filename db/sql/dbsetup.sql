@@ -1287,7 +1287,7 @@ WHERE f.capability_fhir_version != ''
   AND f.requested_fhir_version = 'None';
 
 -- Create indexes for mv_capstat_sizes
-CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url);
+CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url, vendor_name);
 CREATE INDEX idx_mv_capstat_sizes_fhir ON mv_capstat_sizes_tbl(fhir_version);
 CREATE INDEX idx_mv_capstat_sizes_vendor ON mv_capstat_sizes_tbl(vendor_name);
 
