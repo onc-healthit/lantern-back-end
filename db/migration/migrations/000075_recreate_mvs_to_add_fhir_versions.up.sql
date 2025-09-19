@@ -1528,7 +1528,8 @@ WITH original AS (
    FROM fhir_endpoints_info f
      JOIN vendors v ON f.vendor_id = v.id
      JOIN fhir_endpoints_metadata m ON f.metadata_id = m.id
-  WHERE f.requested_fhir_version::text = 'None'::text AND m.smart_http_response = 200)
+  WHERE f.requested_fhir_version::text = 'None'::text AND m.smart_http_response = 200
+  AND json_typeof(f.smart_response -> 'capabilities') = 'array')
 SELECT row_number() OVER () AS mv_id,
        original.*
 FROM original;
