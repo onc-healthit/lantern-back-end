@@ -1681,11 +1681,11 @@ CREATE UNIQUE INDEX mv_validation_details_unique_idx ON mv_validation_details(ru
 
 -- Materialized view for validation failures
 CREATE MATERIALIZED VIEW mv_validation_failures AS
-SELECT fhir_version, url, expected, actual, vendor_name, rule_name, reference
+SELECT row_id, fhir_version, url, expected, actual, vendor_name, rule_name, reference
 FROM mv_validation_results_plot
 WHERE valid = 'false';
 
-CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(url, fhir_version, vendor_name, rule_name);
+CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(row_id, url, fhir_version, vendor_name, rule_name);
 CREATE INDEX mv_validation_failures_url_idx ON mv_validation_failures(url);
 CREATE INDEX mv_validation_failures_fhir_version_idx ON mv_validation_failures(fhir_version);
 CREATE INDEX mv_validation_failures_vendor_name_idx ON mv_validation_failures(vendor_name);
