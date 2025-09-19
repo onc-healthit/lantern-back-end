@@ -915,6 +915,7 @@ CREATE INDEX mv_validation_failures_reference_idx ON mv_validation_failures(refe
 
 -- Security Tab MVs
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_security_counts CASCADE; -- done (recreate: depends on mv_endpoint_totals + mv_response_tally + mv_get_security_endpoints)
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_totals CASCADE; -- needs to be dropped and recreated since it depends on selected_fhir_endpoints_mv which got dropped and recreated again for the endpoints tab
 DROP MATERIALIZED VIEW IF EXISTS mv_auth_type_count CASCADE; -- done (recreate: depends on mv_get_security_endpoints)
 DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE; -- done (recreate: depends on selected_security_endpoints_mv)
 DROP MATERIALIZED VIEW IF EXISTS selected_security_endpoints_mv CASCADE; -- done (recreate: depends on security_endpoints_mv)
