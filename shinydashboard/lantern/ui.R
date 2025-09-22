@@ -36,8 +36,8 @@ ui <- dashboardPage(
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
       menuItem("Contact Information", tabName = "contacts_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
-      menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
-      menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
+      menuItem("Documentation", tabName = "documentation_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+      menuItem("Release Notes", tabName = "release_notes", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
       style = "white-space: normal"
     )
   ),
@@ -166,9 +166,81 @@ ui <- dashboardPage(
       tabItem("endpoints_tab",
               endpointsmodule_UI("endpoints_page")
       ),
-      tabItem("downloads_tab",
-              downloadsmodule_UI("downloads_page")
+      tabItem("documentation_tab",
+        tagList(
+          # --- About section merged into Documentation tab ---
+          tags$picture(
+            tags$source(srcset = "images/lantern-logo@1x.webp", type = "image/webp"),
+            tags$img(src = "images/lantern-logo@1x.png", width = "300", height = "100", alt = "Lantern Logo", loading = "lazy")
+          ),
+          br(),
+          div(
+            class = "footer",
+            includeHTML("about-lantern.html"),
+            
+            h3("Endpoint Data"),
+            p("The Lantern project uses publicly available endpoint lists to generate an aggregated list of FHIR API endpoints. 
+              The majority of lists now come from the Certified Health IT Product List (CHPL) by querying the /search API for g(10) certified products. 
+              Outside of CHPL, there are a few publicly available lists that Lantern has included:"),
+            tags$ul(
+              tags$li("CareEvolution"),
+              tags$li("1upHealth"),
+              tags$li("Medicaid state endpoint file"),
+              tags$li("Payer endpoints - Medicare has a patient access API similar to the EHR API; health plans are required to provide these APIs similar to EHRs.")
+            ),
+            p("The minimum required information that needs to be included in endpoint lists is the FHIR endpoint base URL and organization names, locations and facility identifiers (as per the HTI-1 Final Rule) for each FHIR endpoint. 
+              Lantern will parse all the above information from the FHIR bundle if available."),
+            p("The FHIR Capability Statements retrieved from these endpoints have the capacity to list software names and versions. 
+              However, inclusion of this data is inconsistent and does not clearly map to CHPL. If the list is from CHPL, the one or more software products associated with it are mapped to the endpoints from the list. 
+              Furthermore, the FHIR Capability Statements do not have the capacity to link the FHIR endpoint to an organization, so Lantern relies on the organization names and other organization data reported by the FHIR endpoint list data sources to link a FHIR endpoint with an organization."),
+            
+            h3("Developer Data"),
+            p("Developer data is parsed from the CHPL “/developers” API. Entries represent developers of certified health IT software products. 
+              The table below includes the list of fields that Lantern uses; additional fields can be found in ", a("CHPL’s documentation.", href = "https://chpl.healthit.gov/#/resources/api")),
+            
+            h3("Software Product Data"),
+            p("Software product data is parsed from the CHPL “/search/v3” API. Software products returned at this route represent certified health IT products that have been registered in the CHPL. 
+              The table below includes the list of fields that Lantern uses; additional fields can be found in ", a("CHPL’s documentation.", href = "https://chpl.healthit.gov/#/resources/api")),
+            
+            h3("Data Validations"),
+            p("The Lantern system runs validations on the endpoints and stores the results in the validations database table. 
+              Lantern will run the set of base validations against all endpoints and will run FHIR version-specific validations depending on the version of FHIR advertised in the Capability Statement."),
+            
+            h3("Linking Endpoints to Developers"),
+            p("Most of the endpoints in Lantern are from endpoint lists in CHPL, so the developer is already associated with an endpoint list. 
+              Mapping in this case is simple since it is pulled from the CHPL entry and saved to any endpoint in the developer’s list."),
+            p("However, there are still lists in Lantern that are not from CHPL where the developer is not included. 
+              In this case, Lantern links FHIR endpoints to developers using developer names reported both in the publisher field of the Capability Statement and the CHPL developers list."),
+            p("When a capability statement is received, the following matching steps are performed:"),
+            tags$ol(
+              tags$li("Normalize both the reported publisher from the Capability Statement and all of the CHPL developer names by converting all names to lowercase and removing words like 'inc.', 'llc', 'corp', etc. Finish by removing trailing punctuation."),
+              tags$li("Iterate over the entire list of normalized developer names from the CHPL developers list. If the normalized developer name is a substring of the publisher's name or vice versa, then the developer is considered to be a match.")
+            ),
+            
+            h3("Query Intervals"),
+            p("Lantern queries its list of known FHIR endpoints once every 24 hours. 
+              Setting the query interval to once every 24 hours means that over time Lantern will have queried each endpoint at exactly same hour of the day. 
+              During each query Lantern records data from each endpoints’ Capability Statement in addition to the HTTP response code and response time associated with the request made to the endpoint."),
+            
+            h3("Source Code"),
+            p("The code behind Lantern can be found on GitHub ",
+              a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url")),
+            
+            p("The Lantern application consists of the following services:"),
+            tags$ul(
+              tags$li("PostgreSQL – application database"),
+              tags$li("LanternMQ (RabbitMQ) – the message queue"),
+              tags$li("Capability Querier – queries the endpoints for their Capability Statements every 24 hours. Starting the service the first time will also query the endpoints."),
+              tags$li("Capability Receiver – receives the Capability Statements from the queue, performs validations and saves the results to the database table fhir_endpoints_info"),
+              tags$li("Endpoint Manager – sends endpoints to the capability querying queues"),
+              tags$li("Shinydashboard – the website")
+            )
+          )
+,
+          downloadsmodule_UI("downloads_page")
+        )
       ),
+
       tabItem("organizations_tab",
               organizationsmodule_UI("organizations_page")
       ),
@@ -202,22 +274,64 @@ ui <- dashboardPage(
       tabItem("contacts_tab",
               contactsmodule_UI("contacts_page")
       ),
-      tabItem("about_tab",
-              tags$picture(
-                tags$source(srcset = "images/lantern-logo@1x.webp", type = "image/webp"),
-                tags$img(src = "images/lantern-logo@1x.png", width = "300", height = "100", alt = "Lantern Logo", loading = "lazy")
-              ),
-              br(),
-              div(
-                class = "footer",
-                includeHTML("about-lantern.html"),
-                p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
-                a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank", class = "lantern-url")),
-                h3("Source Code"),
-                p("The code behind Lantern can be found on GitHub ",
-                a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url"))
-              )
-        )
+      tabItem("release_notes",
+              p(HTML('
+                Lantern displayed Orgnaization\'s HTI-1 data as a modal, we now replaced modal with inline columns. You\'ll now see these fields as separate columns:<br/>
+                <ul>
+                  <li>Organization Identifier Type</li>
+                  <li>Organization Identifier</li>
+                  <li>Organization Name</li>
+                  <li>Organization Address</li>
+                </ul>
+
+                Lantern now shows only organizations that are marked as "active" in their respective FHIR bundles.<br/><br/>
+
+                <b>Download (page-level):</b> Added a Download Organizations action that returns data based on the filters applied on the page.<br/>
+                <ul>
+                  <li>No filters → downloads all rows.</li>
+                  <li>With filters → downloads filtered rows.</li>
+                </ul>
+
+                <b>Performance:</b> General speed improvements on the Organizations page<br/><br/>
+
+                <b>New Organizations Download API:</b><br/>
+                <a href="https://lantern.healthit.gov/api/organizations/v1" target="_blank">
+                  https://lantern.healthit.gov/api/organizations/v1
+                </a><br/><br/>
+
+                <b>Access:</b> Call directly from a browser or tools like Postman.<br/>
+                <b>Filtering:</b> Use URL-encoded query parameters (you can combine them):<br/>
+                <ul>
+                  <li><code>developer</code> — filter by certified API developer name</li>
+                  <li><code>fhir_version</code> — comma-separated FHIR versions (e.g., 4.0.1)</li>
+                  <li><code>identifier</code> — exact organization identifier (e.g., NPI, Other)</li>
+                  <li><code>hti1</code> — use <code>hti1=present</code> to return only orgs with HTI-1 data</li>
+                </ul>
+
+                <b>Examples:</b><br/>
+                By Developer:<br/>
+                .../api/organizations/v1?developer=Cerner%20Corporation<br/><br/>
+                By NPI:<br/>
+                .../api/organizations/v1?identifier=1922195171<br/><br/>
+                By FHIR Version:<br/>
+                .../api/organizations/v1?fhir_version=4.0.1<br/><br/>
+                Only with HTI-1 Data:<br/>
+                .../api/organizations/v1?hti1=present<br/><br/>
+
+                <b>Organization Data visibility & ingestion notes</b><br/>
+                Lantern now ingests all organizations found in FHIR bundles, even when HTI-1 fields are missing. 
+                This can help developers spot gaps in their data and fix them.<br/><br/>
+
+                <b>Bug Fixes:</b>
+                <ul>
+                  <li>1UP was not showing as a developer though they have data. Fixed to display 1UP.</li>
+                  <li>Lantern organizations were grouped by Organization name on the UI, potentially grouping unrelated organizations. This issue is resolved and we no longer group by name.</li>
+                  <li>Organization page changes to display HTI-1 data as separate columns slowed down the page. Changes were made to improve the performance of this page.</li>
+                  <li>Organization page results were showing same data on pages 1 and 3 due to skipping organizations with bad names like a hyphen for a name. Resolved this issue.</li>
+                  <li>If an organization information is changed or removed, changes to backend data processing to keep the database clean. This is only a backend change, no impact to the data on the front-end.</li>
+                </ul>
+              '))
+      )
     ),
     uiOutput("htmlFooter"),
     

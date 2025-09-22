@@ -168,7 +168,7 @@ endpointsmodule <- function(
   })
 
   output$anchorlink <- renderUI({
-    HTML("<p>You may also download endpoint data by visiting the <a tabindex=\"0\" id=\"downloads_page_link\" class=\"lantern-url\">Downloads Page</a>.</p>")
+    HTML("<p>You may also download endpoint data by visiting the <a tabindex=\"0\" id=\"documentation_page_link\" class=\"lantern-url\">Documentation Page</a>.</p>")
   })
 
   # MATCHING ENDPOINTS: Count unique (url, fhir_version) combinations - the actual endpoints

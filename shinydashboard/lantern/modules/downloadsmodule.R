@@ -7,14 +7,10 @@ downloadsmodule_UI <- function(id) {
 
   tagList(
     fluidRow(
-      column(width = 12, style = "padding-bottom:20px",
-             p("The files below include the current endpoint data found on the endpoints tab in the CSV format,
-              and the endpoint tab table field descriptions in the CSV format.")
-      )
-    ),
-    fluidRow(
       column(width = 12,
               h2("CSV Download"),
+              p("The files below include the current endpoint data found on the endpoints tab in the CSV format,
+              and the endpoint tab table field descriptions in the CSV format."),
               downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
               downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
       ),
@@ -76,7 +72,7 @@ downloadsmodule_UI <- function(id) {
       )
     ),
     fluidRow(
-      column(width = 12, style = "padding-top:50px",
+      column(width = 12,
              htmlOutput(ns("note_text"))
       )
     )
