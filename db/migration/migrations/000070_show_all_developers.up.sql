@@ -589,7 +589,7 @@ CREATE INDEX mv_validation_results_plot_valid_idx ON mv_validation_results_plot(
 CREATE INDEX mv_validation_results_plot_reference_idx ON mv_validation_results_plot(reference);
 
 CREATE MATERIALIZED VIEW mv_validation_failures AS
-SELECT fhir_version, url, expected, actual, vendor_name, rule_name, reference
+SELECT row_id, fhir_version, url, expected, actual, vendor_name, rule_name, reference
 FROM mv_validation_results_plot
 WHERE valid = 'false';
 
