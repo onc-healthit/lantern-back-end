@@ -326,7 +326,7 @@ endpointsmodule <- function(
                             html = TRUE),
                   endpoint_names = colDef(show = FALSE, sortable = TRUE),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = TRUE, html = TRUE),
-                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = TRUE),
+                  vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = TRUE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = TRUE),
                   format = colDef(name = "Supported Formats", sortable = TRUE),
                   cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = TRUE),
@@ -349,7 +349,7 @@ endpointsmodule <- function(
              info_created = format(info_created, "%m/%d/%y %H:%M"),
              info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
       ungroup() %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)
   })
