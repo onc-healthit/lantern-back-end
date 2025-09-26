@@ -372,32 +372,22 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 
 	// Compare certification editions
 	// Assumes certification editions are years, which is the case as of 11/20/19.
-	existingCertEdition, err := strconv.Atoi(existingDbProd.CertificationEdition)
-	if err != nil {
-		log.Warnf("Edition parse failed (existing): product=%s chplid=%s edition=%q error=%v",
-			existingDbProd.Name,
-			existingDbProd.CHPLID,
-			existingDbProd.CertificationEdition,
-			err,
-		)
-		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
-	}
-	newCertEdition, err := strconv.Atoi(newDbProd.CertificationEdition)
-	if err != nil {
-		log.Warnf("Edition parse failed (new): product=%s chplid=%s edition=%q error=%v",
-			newDbProd.Name,
-			newDbProd.CHPLID,
-			newDbProd.CertificationEdition,
-			err,
-		)
-		return false, errors.Wrap(err, "unable to make certification edition into an integer - expect certification edition to be a year")
-	}
+	existingCertEdition, exOK := parseEdition(existingDbProd.CertificationEdition)
+	newCertEdition, newOK := parseEdition(newDbProd.CertificationEdition)
 
-	// if new prod has more recent cert edition, should update.
-	if newCertEdition > existingCertEdition {
-		return true, nil
-	} else if newCertEdition < existingCertEdition {
-		return false, nil
+	if exOK && newOK {
+		// if new prod has more recent cert edition, should update.
+		if newCertEdition > existingCertEdition {
+			return true, nil
+		} else if newCertEdition < existingCertEdition {
+			return false, nil
+		}
+	} else {
+		log.Debugf("Skipping edition comparison: existing=%q new=%q product=%s (%s)",
+			existingDbProd.CertificationEdition,
+			newDbProd.CertificationEdition,
+			existingDbProd.Name,
+			existingDbProd.CHPLID)
 	}
 
 	// cert editions are the same. if new prod has more recent cert date, should update.
@@ -422,13 +412,15 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return false, nil
 	}
 
-	// If the criteria lists are the same length but they are not equal, throw an error
+	// If the criteria lists are the same length but they are not equal, treat as a legitimate update
 	if !certificationCriteriaMatch(existingDbProd.CertificationCriteria, newDbProd.CertificationCriteria) {
 		sortInts := func(in []int) []int {
 			out := append([]int(nil), in...)
 			sort.Ints(out)
 			return out
 		}
+
+		log.Infof("Certification criteria differ for product %s (%s). Updating criteria set.", existingDbProd.Name, existingDbProd.CHPLID)
 
 		log.Warnf(`criteria differ with equal length (debug dump)
 		product=%s
@@ -449,7 +441,7 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 			len(newDbProd.CertificationCriteria),
 		)
 
-		return false, fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", existingDbProd.Name, existingDbProd.CHPLID, newDbProd.Name, newDbProd.CHPLID)
+		return true, nil
 	}
 
 	// If the new product has a different vendor ID, update it
@@ -504,4 +496,21 @@ func certificationCriteriaMatch(l1 []int, l2 []int) bool {
 		return out
 	})
 	return cmp.Equal(l1, l2, trans)
+}
+
+// parseEdition attempts to convert a CertificationEdition string into a year.
+// Returns (year, true) if the edition is a valid integer (e.g., "2025").
+// Returns (0, false) if the edition is blank or non-numeric.
+func parseEdition(s string) (int, bool) {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		log.Debugf("parseEdition: edition string is blank, skipping edition comparison")
+		return 0, false
+	}
+	year, err := strconv.Atoi(s)
+	if err != nil {
+		log.Debugf("parseEdition: unable to parse edition string %q, skipping edition comparison (err=%v)", s, err)
+		return 0, false
+	}
+	return year, true
 }
