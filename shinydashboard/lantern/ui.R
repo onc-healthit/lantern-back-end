@@ -240,7 +240,7 @@ ui <- dashboardPage(
                 includeHTML("about-lantern.html"),
                 p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
                 a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank", class = "lantern-url")),
-                h3("Source Code"),
+                h2("Source Code"),
                 p("The code behind Lantern can be found on GitHub ",
                 a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url"))
               )
