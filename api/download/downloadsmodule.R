@@ -30,7 +30,7 @@ download_data <- function() {
 
 
 # Get organization data and transform to csv
-get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, hti1 = NULL) {
+get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, organization_detail = NULL) {
   query <- "
     WITH base_data AS (
       SELECT
@@ -64,8 +64,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
     params$identifier_exact <- paste0(identifier)
   }
 
-  # HTI-1 filter
-  if (!is.null(hti1) && hti1 == "present") {
+  # Organization Detail filter
+  if (!is.null(organization_detail) && organization_detail == "present") {
     query <- paste0(query, " AND ((identifier_values_csv IS NOT NULL AND identifier_values_csv <> '')",
                            " OR (addresses_csv IS NOT NULL AND addresses_csv <> ''))")
   }
