@@ -178,16 +178,22 @@ func persistVendor(ctx context.Context,
 	}
 
 	if err == sql.ErrNoRows { // need to add new entry
+		log.Infof("Adding new vendor: name=%q chplid=%d devCode=%q", newDbVendor.Name, newDbVendor.CHPLID, newDbVendor.DeveloperCode)
+
 		err = store.AddVendor(ctx, newDbVendor)
 		if err != nil {
+			log.Warnf("AddVendor failed for vendor name=%q chplid=%d devCode=%q: %v", newDbVendor.Name, newDbVendor.CHPLID, newDbVendor.DeveloperCode, err)
 			return errors.Wrap(err, "adding vendor to store failed")
 		}
 	} else if err != nil {
 		return errors.Wrap(err, "getting vendor from store failed")
 	} else {
+		log.Infof("Updating existing vendor: id=%d name=%q chplid=%d devCode=%q", existingDbVendor.ID, newDbVendor.Name, newDbVendor.CHPLID, newDbVendor.DeveloperCode)
+
 		newDbVendor.ID = existingDbVendor.ID
 		err = store.UpdateVendor(ctx, newDbVendor)
 		if err != nil {
+			log.Warnf("UpdateVendor failed for vendor id=%d name=%q chplid=%d: %v", newDbVendor.ID, newDbVendor.Name, newDbVendor.CHPLID, err)
 			return errors.Wrap(err, "updating vendor to store failed")
 		}
 	}
