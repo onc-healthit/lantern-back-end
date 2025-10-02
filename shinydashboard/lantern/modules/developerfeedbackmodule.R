@@ -59,64 +59,43 @@ developerfeedbackmodule_UI <- function(id) {
     ),
     # Main content row
     fluidRow(
-      # Left column - Charts
+      # Left column - Charts and Tables
       column(width = 8,
-        tabsetPanel(
-          tabPanel("Overview Charts",
-            fluidRow(
-              column(width = 12,
-                h3("Data Quality Overview"),
-                plotOutput(ns("quality_overview_chart"), height = "400px")
-              )
-            ),
-            fluidRow(
-              column(width = 6,
-                h4("Identifier Type Validation"),
-                plotOutput(ns("identifier_chart"), height = "300px")
-              ),
-              column(width = 6,
-                h4("Organization Name Quality"),
-                plotOutput(ns("name_chart"), height = "300px")
-              )
-            ),
-            fluidRow(
-              column(width = 12,
-                h4("Address Completeness"),
-                plotOutput(ns("address_chart"), height = "300px")
-              )
-            )
+        # Data Quality Overview
+        fluidRow(
+          column(width = 12,
+            h3("Data Quality Overview"),
+            plotOutput(ns("quality_overview_chart"), height = "400px")
+          )
+        ),
+        # Identifier Type Analysis
+        fluidRow(
+          column(width = 6,
+            h3("Identifier Type Distribution"),
+            plotOutput(ns("identifier_type_distribution_chart"), height = "350px")
           ),
-          tabPanel("Identifier Type Analysis",
-            fluidRow(
-              column(width = 6,
-                h3("Identifier Type Distribution"),
-                plotOutput(ns("identifier_type_distribution_chart"), height = "400px")
-              ),
-              column(width = 6,
-                h3("Conformance by Type"),
-                plotOutput(ns("conformance_by_type_chart"), height = "400px")
-              )
-            ),
-            fluidRow(
-              column(width = 12,
-                h4("Organization Identifier Status Breakdown"),
-                plotOutput(ns("organization_identifier_status_chart"), height = "300px")
-              )
-            ),
-            fluidRow(
-              column(width = 12,
-                h4("Identifier Type Details"),
-                reactable::reactableOutput(ns("identifier_type_table"))
-              )
-            )
-          ),
-          tabPanel("Detailed Issues",
-            fluidRow(
-              column(width = 12,
-                h3("Data Quality Issues by Category"),
-                reactable::reactableOutput(ns("issues_detail_table"))
-              )
-            )
+          column(width = 6,
+            h3("Conformance by Type"),
+            plotOutput(ns("conformance_by_type_chart"), height = "350px")
+          )
+        ),
+        fluidRow(
+          column(width = 12,
+            h4("Organization Identifier Status Breakdown"),
+            plotOutput(ns("organization_identifier_status_chart"), height = "300px")
+          )
+        ),
+        fluidRow(
+          column(width = 12,
+            h4("Identifier Type Details"),
+            reactable::reactableOutput(ns("identifier_type_table"))
+          )
+        ),
+        # Detailed Issues
+        fluidRow(
+          column(width = 12, style = "margin-top: 20px;",
+            h3("Data Quality Issues by Category"),
+            reactable::reactableOutput(ns("issues_detail_table"))
           )
         )
       ),
@@ -485,7 +464,7 @@ developerfeedbackmodule <- function(
     paste0(format(invalid_only_count, big.mark = ","), " (", invalid_only_percentage, "%)")
   })
   
-  # Chart outputs using pre-computed data - FIXED
+  # Chart outputs using pre-computed data
   output$quality_overview_chart <- renderPlot({
     req(quality_summary())  # Ensure data is available
     
@@ -534,107 +513,7 @@ developerfeedbackmodule <- function(
             legend.position = "bottom")
   }, height = 400)
   
-  # Individual charts
-  output$identifier_chart <- renderPlot({
-    req(quality_summary())
-    
-    summary <- quality_summary()
-    
-    # Ensure we have numeric data
-    valid_count <- as.numeric(summary$valid_identifier_count)
-    total_count <- as.numeric(summary$total_orgs)
-    invalid_count <- total_count - valid_count
-    
-    if (total_count == 0) {
-      return(
-        ggplot() + 
-          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6) +
-          xlim(0, 1) + ylim(0, 1) + theme_void()
-      )
-    }
-    
-    pie_data <- data.frame(
-      Status = c("Valid", "Invalid"),
-      Count = c(valid_count, invalid_count),
-      stringsAsFactors = FALSE
-    )
-    
-    ggplot(pie_data, aes(x = "", y = Count, fill = Status)) +
-      geom_col() +
-      coord_polar("y", start = 0) +
-      scale_fill_manual(values = c("Valid" = "#28a745", "Invalid" = "#dc3545")) +
-      labs(title = paste0("Valid: ", summary$identifier_percentage, "%")) +
-      theme_void() +
-      theme(legend.position = "bottom")
-  }, height = 300)
-  
-  output$name_chart <- renderPlot({
-    req(quality_summary())
-    
-    summary <- quality_summary()
-    
-    # Ensure we have numeric data
-    valid_count <- as.numeric(summary$valid_name_count)
-    total_count <- as.numeric(summary$total_orgs)
-    invalid_count <- total_count - valid_count
-    
-    if (total_count == 0) {
-      return(
-        ggplot() + 
-          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6) +
-          xlim(0, 1) + ylim(0, 1) + theme_void()
-      )
-    }
-    
-    pie_data <- data.frame(
-      Status = c("Quality", "Needs Improvement"),
-      Count = c(valid_count, invalid_count),
-      stringsAsFactors = FALSE
-    )
-    
-    ggplot(pie_data, aes(x = "", y = Count, fill = Status)) +
-      geom_col() +
-      coord_polar("y", start = 0) +
-      scale_fill_manual(values = c("Quality" = "#007bff", "Needs Improvement" = "#ffc107")) +
-      labs(title = paste0("Quality: ", summary$name_percentage, "%")) +
-      theme_void() +
-      theme(legend.position = "bottom")
-  }, height = 300)
-  
-  output$address_chart <- renderPlot({
-    req(quality_summary())
-    
-    summary <- quality_summary()
-    
-    # Ensure we have numeric data
-    valid_count <- as.numeric(summary$valid_address_count)
-    total_count <- as.numeric(summary$total_orgs)
-    invalid_count <- total_count - valid_count
-    
-    if (total_count == 0) {
-      return(
-        ggplot() + 
-          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6) +
-          xlim(0, 1) + ylim(0, 1) + theme_void()
-      )
-    }
-    
-    pie_data <- data.frame(
-      Status = c("Complete", "Incomplete"),
-      Count = c(valid_count, invalid_count),
-      stringsAsFactors = FALSE
-    )
-    
-    ggplot(pie_data, aes(x = "", y = Count, fill = Status)) +
-      geom_col() +
-      coord_polar("y", start = 0) +
-      scale_fill_manual(values = c("Complete" = "#fd7e14", "Incomplete" = "#6c757d")) +
-      labs(title = paste0("Complete: ", summary$address_percentage, "%")) +
-      theme_void() +
-      theme(legend.position = "bottom")
-  }, height = 300)
-  
-  # Organization identifier status breakdown chart - FIXED
+  # Organization identifier status breakdown chart
   output$organization_identifier_status_chart <- renderPlot({
     req(identifier_type_summary())
     
@@ -740,7 +619,7 @@ developerfeedbackmodule <- function(
         theme_void() + xlim(0, 1) + ylim(0, 1) +
         labs(title = "Chart Error")
     })
-  }, height = 400)
+  }, height = 350)
   
   # Conformance by type chart
   output$conformance_by_type_chart <- renderPlot({
@@ -785,7 +664,7 @@ developerfeedbackmodule <- function(
            x = "Identifier Type",
            y = "Count") +
       theme_minimal()
-  }, height = 400)
+  }, height = 350)
   
   # Identifier type detail table with pre-computed data
   output$identifier_type_table <- reactable::renderReactable({
