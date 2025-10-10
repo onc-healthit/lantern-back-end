@@ -1,24 +1,48 @@
 # Define base user interface
-ui <- dashboardPage(
+ui <- shinydashboardPlus::dashboardPage(
+  skin = "blue",
   dashboardHeader(
     title = "Lantern Dashboard",
     titleWidth = 200,
     tags$li(
       class = "dropdown",
-        column(
-          width = 12,
-          align = "right",
-          span(textOutput("version"),
-               style = "color: white; font-size: 16px; line-height: 45px")
+      column(
+        width = 12,
+        align = "right",
+        div(
+          style = "display: flex; align-items: center; justify-content: flex-end;",
+          span(
+            textOutput("version"),
+            style = "color: white; font-size: 16px; line-height: 45px; margin-right: 8px;"
+          ),
+          actionButton(
+            "show_release_notes", "",
+            icon = tags$i(
+              class = "fa fa-question-circle",
+              "aria-hidden" = "true",
+              role = "presentation",
+              "aria-label" = "question-circle icon"
+            ),
+            style = "background-color: transparent; border: none; color: white;"
+          )
         )
+      )
     ),
-    tags$li(a(href = "https://github.com/onc-healthit/lantern-back-end",
+    tags$li(
+      a(
+        href = "https://github.com/onc-healthit/lantern-back-end",
         tags$picture(
           tags$source(srcset = "images/GitHub-Mark-Light-32px.webp", type = "image/webp"),
-          tags$img(src = "images/GitHub-Mark-Light-32px.png", width = "19", height = "19", alt = "Github logo")
+          tags$img(
+            src = "images/GitHub-Mark-Light-32px.png",
+            width = "19", height = "19",
+            alt = "Github logo"
+          )
         ),
-        title = "Github Link"),
-      class = "dropdown")
+        title = "Github Link"
+      ),
+      class = "dropdown"
+    )
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
@@ -33,10 +57,11 @@ ui <- dashboardPage(
       menuItem("CapabilityStatement / Conformance Profiles", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "profile_tab"),
       menuItem("CapabilityStatement / Conformance Size", icon = tags$i(class = "fa fa-hdd-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "hdd-o icon"), tabName = "capabilitystatementsize_tab"),
       menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", "aria-hidden" = "true", role = "presentation", "aria-label" = "clipboard-check icon"), tabName = "validations_tab"),
+      menuItem("Developer Feedback", tabName = "developerfeedback_tab", icon = icon("chart-line")),
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
       menuItem("Contact Information", tabName = "contacts_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
-      menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+      menuItem("Downloads / API", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
       menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
       style = "white-space: normal"
     )
@@ -93,9 +118,9 @@ ui <- dashboardPage(
       ")),
       
       # Non-blocking CSS loading
-      tags$link(rel = "preload", href = "css/lantern-styles.min.css", as = "style"),
-      tags$link(rel = "stylesheet", href = "css/lantern-styles.min.css", media = "print", onload = "this.media='all'"),
-      tags$noscript(tags$link(rel = "stylesheet", href = "css/lantern-styles.min.css")),
+      tags$link(rel = "preload", href = "css/lantern-styles.css", as = "style"),
+      tags$link(rel = "stylesheet", href = "css/lantern-styles.css", media = "print", onload = "this.media='all'"),
+      tags$noscript(tags$link(rel = "stylesheet", href = "css/lantern-styles.css")),
       
       # Script to fix duplicate h2 issue
       tags$script(HTML("
@@ -151,8 +176,8 @@ ui <- dashboardPage(
     tags$noscript(tags$iframe(src = "https://www.googletagmanager.com/ns.html?id=GTM-KC3FP96", height = "0", width = "0", style = "display:none;visibility:hidden")),
     
     development_banner(devbanner),
-    uiOutput("resource_tab_popup"),
-    h1(textOutput("page_title")),
+  uiOutput("resource_tab_popup"),
+  uiOutput("page_header"),
     uiOutput("show_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
@@ -193,6 +218,9 @@ ui <- dashboardPage(
       tabItem("validations_tab",
               validationsmodule_UI("validations_page")
       ),
+      tabItem(tabName = "developerfeedback_tab",
+              developerfeedbackmodule_UI("developerfeedback_page")
+      ),
       tabItem("security_tab",
               securitymodule_UI("security_page")
       ),
@@ -213,11 +241,11 @@ ui <- dashboardPage(
                 includeHTML("about-lantern.html"),
                 p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
                 a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank", class = "lantern-url")),
-                h3("Source Code"),
+                h2("Source Code"),
                 p("The code behind Lantern can be found on GitHub ",
                 a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url"))
               )
-        )
+      )
     ),
     uiOutput("htmlFooter"),
     

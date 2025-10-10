@@ -22,4 +22,31 @@ COPY shiny-server.conf  /etc/shiny-server/shiny-server.conf
 
 WORKDIR /.
 COPY renv.lock renv.lock
+# Install system dependencies required to compile packages like 'curl' and spatial libs (terra)
+RUN apt-get update && \
+		DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+			build-essential \
+			libcurl4-openssl-dev \
+			pkg-config \
+			curl \
+			libssl-dev \
+			libxml2-dev \
+			ca-certificates \
+			git \
+			gdal-bin \
+			libgdal-dev \
+			proj-bin \
+			libproj-dev \
+			libgeos-dev \
+			libudunits2-dev \
+			cmake \
+			libharfbuzz-dev \
+			libfribidi-dev \
+			libfreetype6-dev \
+			libpng-dev \
+			libcairo2-dev \
+			libglib2.0-dev \
+			libfontconfig1-dev && \
+		rm -rf /var/lib/apt/lists/*
+
 RUN R -e 'renv::restore()'

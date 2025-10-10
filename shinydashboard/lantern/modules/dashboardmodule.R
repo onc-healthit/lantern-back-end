@@ -2,6 +2,10 @@ library(shiny)
 library(shinydashboard)
 library(readr)
 library(scales)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(highcharter)
 
 custom_column_small <- function(...) {
     tags$div(
@@ -44,37 +48,122 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
+  tags$style(HTML('\n+      /* Hover lift for status cards */\n+      .status-card {\n+        transition: transform 0.18s ease, box-shadow 0.18s ease;\n+        will-change: transform;\n+        cursor: default;\n+      }\n+      .status-card:hover {\n+        transform: translateY(-8px);\n+        box-shadow: 0 12px 30px rgba(0,0,0,0.35);\n+        z-index: 5;\n+      }\n+      .status-card .status-icon {\n+        transition: transform 0.18s ease;\n+      }\n+      .status-card:hover .status-icon {\n+        transform: translateY(-2px) scale(1.03);\n+      }\n+      /* Plot card styling - mirrors status card lift and shadow */\n+      .plot-card {\n+        background: #ffffff;\n+        padding: 12px;\n+        border-radius: 8px;\n+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);\n+        transition: transform 0.18s ease, box-shadow 0.18s ease;\n+        overflow: hidden; /* ensure rounded corners clip plot content */\n+      }\n+      .plot-card:hover {\n+        transform: translateY(-8px);\n+        box-shadow: 0 12px 30px rgba(0,0,0,0.18);\n+        z-index: 4;\n+      }\n+      .plot-card svg, .plot-card canvas {\n+        display: block;\n+        border-radius: 6px;\n+      }\n+    ')),
     fluidRow(
-      infoBoxOutput(ns("updated_time_box"), width = 4),
-      infoBoxOutput(ns("total_endpoints_box"), width = 4),
-      infoBoxOutput(ns("indexed_endpoints_box"), width = 4)
+    column(width = 4,
+       div(class = "status-box-wrapper",
+         div(class = "status-card success",
+           div(class = "status-header",
+             div(class = "status-icon", HTML('<i class="fa fa-clock" aria-hidden="true" role="presentation" aria-label="clock icon"></i>')),
+             div(class = "status-title", "Endpoints Last Queried")
+           ),
+           div(class = "status-value", textOutput(ns("updated_time_box"))),
+           div(class = "status-subtitle", span(class = "pulse"), "Operational")
+         )
+       )
     ),
-    h2("Current endpoint responses:"),
-    fluidRow(
-      valueBoxOutput(ns("http_200_box")),
-      valueBoxOutput(ns("http_404_box")),
-      valueBoxOutput(ns("http_503_box"))
+    column(width = 4,
+       div(class = "status-box-wrapper",
+         div(class = "status-card warning",
+           div(class = "status-header",
+             div(class = "status-icon", HTML('<i class="glyphicon glyphicon-fire" aria-hidden="true" role="presentation" aria-label="fire icon"></i>')),
+             div(class = "status-title", "Total Endpoints")
+           ),
+           div(class = "status-value", textOutput(ns("total_endpoints_box"))),
+           div(class = "status-subtitle", "Slow responses")
+         )
+       )
     ),
-    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon")),
-    h2("Endpoint Counts by Developer and FHIR Version"),
+    column(width = 4,
+       div(class = "status-box-wrapper",
+         div(class = "status-card error",
+           div(class = "status-header",
+             div(class = "status-icon", HTML('<i class="glyphicon glyphicon-flash" aria-hidden="true" role="presentation" aria-label="flash icon"></i>')),
+             div(class = "status-title", "Indexed Endpoints")
+           ),
+           div(class = "status-value", textOutput(ns("indexed_endpoints_box"))),
+           div(class = "status-subtitle", "Non-responsive")
+         )
+       )
+    )
+    ),
+
+    # spacer between top row and second row of status cards
+    tags$div(style = "height: 18px;"),
+
     fluidRow(
-      custom_column_small(
-            reactable::reactableOutput((ns("fhir_vendor_table")))
+    column(width = 3,
+       div(class = "status-box-wrapper",
+         div(class = "status-card success",
+           div(class = "status-header",
+             div(class = "status-icon", "✓"),
+             div(class = "status-title", "Healthy Endpoints")
+           ),
+           div(class = "status-value", textOutput(ns("total_endpoints_box_plain"))),
+           div(class = "status-subtitle", span(class = "pulse"), "Operational")
+         )
+       )
+    ),
+    column(width = 3,
+       div(class = "status-box-wrapper",
+         div(class = "status-card warning",
+           div(class = "status-header",
+             div(class = "status-icon", "⚠"),
+             div(class = "status-title", "Degraded Performance")
+           ),
+           div(class = "status-value", textOutput(ns("degraded_count"))),
+           div(class = "status-subtitle", "Slow responses")
+         )
+       )
+    ),
+    column(width = 3,
+       div(class = "status-box-wrapper",
+         div(class = "status-card error",
+           div(class = "status-header",
+             div(class = "status-icon", "✕"),
+             div(class = "status-title", "Failed Endpoints")
+           ),
+           div(class = "status-value", textOutput(ns("failed_count"))),
+           div(class = "status-subtitle", "Non-responsive")
+         )
+       )
+    ),
+    column(width = 3,
+       div(class = "status-box-wrapper",
+         div(class = "status-card info",
+           div(class = "status-header",
+             div(class = "status-icon", "⚡"),
+             div(class = "status-title", "Avg Response Time")
+           ),
+           div(class = "status-value", textOutput(ns("avg_response_time"))),
+           div(class = "status-subtitle", "Avg latency")
+         )
+       )
+    )
+    ),
+
+    tags$hr(),
+    fluidRow(
+      column(width = 6,
+        # response plot moved into the left column (was fhir_vendor_table)
+        h3("All Endpoint Responses"),
+        uiOutput("show_http_vendor_filters"),
+        div(class = "plot-card",
+          highcharter::highchartOutput(ns("response_code_plot"))
+        )
       ),
-      custom_column_large(
-              uiOutput(ns("vendors_plot")),
-             htmlOutput(ns("note_text"))
+      column(width = 6,
+        # vendors_plot reduced to half page (col-md-6)
+        div(class = "plot-card",
+          uiOutput(ns("vendors_plot"))
+        )
       )
     ),
-    h3("All Endpoint Responses"),
-    uiOutput("show_http_vendor_filters"),
     fluidRow(
-      custom_column_small(
-             tableOutput(ns("http_code_table")),
-             p("All HTTP response codes ever received and count of endpoints which returned that code at some point in history"),
-      ),
-      custom_column_large(
-           plotOutput(ns("response_code_plot"))
+      column(width = 12,
+        # fhir_vendor_table moved here (previously the full-width response plot)
+        reactable::reactableOutput(ns("fhir_vendor_table")),
+          htmlOutput(ns("note_text"))
       )
     ),
     tags$p("*An endpoint is considered to be an \"Indexed Endpoint\" when it has been queried by the Lantern system at least once. If an endpoint has never been queried by the Lantern system yet, it will not be counted towards the total number of \"Indexed Endpoints\".", style = "font-style: italic;")
@@ -166,27 +255,45 @@ dashboard <- function(
   # create a summary table to show the response codes received along with
   # the description for each code
 
-  output$updated_time_box <- renderInfoBox({
-    infoBox(
-      "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
-      color = "purple"
-    )
+  output$updated_time_box <- renderText({
+    val <- tryCatch({ get_endpoint_last_updated(db_tables) }, error = function(e) { NA })
+    if (is.na(val) || is.null(val)) return("-")
+    as.character(val)
   })
 
-  output$total_endpoints_box <- renderInfoBox({
-    infoBox(
-      "Total Endpoints", get_endpoint_totals_list(db_tables)$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
-      color = "blue"
-    )
+  output$total_endpoints_box <- renderText({
+    val <- tryCatch({ get_endpoint_totals_list(db_tables)$all_endpoints }, error = function(e) { NA })
+    if (is.na(val) || is.null(val)) return("-")
+    format(val, big.mark = ",")
   })
 
-  output$indexed_endpoints_box <- renderInfoBox({
-    infoBox(
-      "Indexed Endpoints*",
-      get_endpoint_totals_list(db_tables)$indexed_endpoints,
-      icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
-      color = "teal"
-    )
+  # Plain text outputs to feed the custom status cards
+  output$total_endpoints_box_plain <- renderText({
+    format(get_endpoint_totals_list(db_tables)$all_endpoints, big.mark = ",")
+  })
+
+  output$degraded_count <- renderText({
+    # fallback: use http_404 + http_503 as a rough degraded/failed metric if no dedicated metric exists
+    val <- tryCatch({ as.integer(get_response_tally_list(db_tables)$http_404 + get_response_tally_list(db_tables)$http_503) }, error = function(e) { NA })
+    format(ifelse(is.na(val), "-", val), big.mark = ",")
+  })
+
+  output$failed_count <- renderText({
+    val <- tryCatch({ as.integer(get_response_tally_list(db_tables)$http_503) }, error = function(e) { NA })
+    format(ifelse(is.na(val), "-", val), big.mark = ",")
+  })
+
+  output$avg_response_time <- renderText({
+    # Estimate: use a stored metric if available, else dash
+    avg <- tryCatch({ round(mean(na.omit(get_response_tally_list(db_tables)$response_time_mean)), 0) }, error = function(e) { NA })
+    if (is.na(avg)) return("- ms")
+    paste0(avg, " ms")
+  })
+
+  output$indexed_endpoints_box <- renderText({
+    val <- tryCatch({ get_endpoint_totals_list(db_tables)$indexed_endpoints }, error = function(e) { NA })
+    if (is.na(val) || is.null(val)) return("-")
+    format(val, big.mark = ",")
   })
 
   output$http_200_box <- renderValueBox({
@@ -210,71 +317,92 @@ dashboard <- function(
     )
   })
 
-  output$http_code_table <- renderTable(
-    selected_http_summary() %>%
-      rename("HTTP Response" = http_code, Status = code_label, Count = count_endpoints)
-  )
+  # http_code_table removed; response plot shows aggregated HTTP responses instead
 
   plot_height_vendors <- reactive({
-    max(fhirVendorTableSize() * 75, 400)
+    # Attempt to read the rendered plot width from clientData so we can ensure
+    # the width is at least 1.5x the height. Fallback to previous sizing logic
+    # when clientData is not yet available.
+    base_height <- max(fhirVendorTableSize() * 75, 400)
+    # clientData key for the output width uses the namespaced output id
+    out_id <- ns("vendor_share_plot")
+    width_key <- paste0("output_", out_id, "_width")
+    w <- session$clientData[[width_key]]
+    if (!is.null(w) && is.numeric(w) && w > 0) {
+      cap_height <- floor(w / 1.5)
+      # ensure a sensible minimum height
+      height <- max(min(base_height, cap_height), 240)
+      return(height)
+    }
+    base_height
   })
 
   output$vendors_plot <- renderUI({
-    plotOutput(ns("vendor_share_plot"), height = plot_height_vendors())
+    highcharter::highchartOutput(ns("vendor_share_plot"), height = plot_height_vendors())
   })
+  output$vendor_share_plot <- highcharter::renderHighchart({
+    vendor_plot_data <- prepare_vendor_data(db_tables) %>%
+      filter(n > 0)  # Filter out zero counts
 
-  output$vendor_share_plot <- renderCachedPlot({
-  vendor_plot_data <- prepare_vendor_data(db_tables) %>%
-    filter(n > 0)  # Filter out zero counts
+    # Determine top 10 vendors by total endpoints
+    top_vendors <- vendor_plot_data %>%
+      group_by(vendor_name) %>%
+      summarise(total_endpoints = sum(n, na.rm = TRUE)) %>%
+      arrange(desc(total_endpoints)) %>%
+      slice_head(n = 10) %>%
+      pull(vendor_name)
+
+    vendor_plot_data <- vendor_plot_data %>%
+      filter(vendor_name %in% top_vendors)
+
+    # Order vendors by total endpoints (descending)
+    vendor_levels <- vendor_plot_data %>%
+      group_by(vendor_name) %>%
+      summarise(total = sum(n, na.rm = TRUE)) %>%
+      arrange(desc(total)) %>%
+      pull(vendor_name)
+
+    # Build series per FHIR version (stacked columns)
+    versions <- vendor_plot_data %>% pull(fhir_version) %>% unique()
+    series_list <- lapply(versions, function(v) {
+      s <- vendor_plot_data %>%
+        filter(fhir_version == v) %>%
+        group_by(vendor_name) %>%
+        summarise(n = sum(n, na.rm = TRUE)) %>%
+        ungroup()
+      # align to vendor_levels and fill missing with 0
+      s_aligned <- data.frame(vendor_name = vendor_levels, stringsAsFactors = FALSE) %>%
+        left_join(s, by = "vendor_name") %>%
+        mutate(n = ifelse(is.na(n), 0, n))
+      list(name = as.character(v), data = as.list(s_aligned$n))
+    })
+
+    # Create 3D stacked column chart with 10k cap, simple data labels and tooltip
+    highchart() %>%
+      hc_chart(type = "column", options3d = list(enabled = TRUE, alpha = 15, beta = 15, depth = 60)) %>%
+      hc_xAxis(categories = vendor_levels, title = list(text = "Developer")) %>%
+      hc_yAxis(max = 10000, title = list(text = "Number of Endpoints")) %>%
+      hc_plotOptions(column = list(stacking = "normal", depth = 40, dataLabels = list(enabled = TRUE))) %>%
+      hc_add_series_list(series_list) %>%
+      hc_tooltip(pointFormat = "{series.name}: <b>{point.y}</b><br/>", shared = FALSE) %>%
+      hc_legend(enabled = TRUE) %>%
+      hc_title(text = "Top 10 Developers by Endpoint Count")
+  })
   
-  # Create ordered factor levels based on sort_order
-  # This ensures the plot shows vendors in the correct order
-  vendor_levels <- vendor_plot_data %>%
-    arrange(sort_order) %>%
-    distinct(vendor_name) %>%
-    pull(vendor_name)
-  
-  vendor_plot_data$vendor_name <- factor(
-    vendor_plot_data$vendor_name,
-    levels = vendor_levels
-  )
-  
-  ggplot(vendor_plot_data, aes(y = n, x = fct_rev(vendor_name), fill = fhir_version)) +
-    # Reduce bar width from 0.8 to 0.4 (half the current width)
-    geom_col(width = 0.4) +
-    geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
-    theme(legend.position = "top") +
-    theme(text = element_text(size = 15)) +
-    labs(fill = "FHIR Version",
-         x = "",
-         y = "Number of Endpoints",
-         title = "Endpoints by Developer and FHIR Version") +
-    scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
-    coord_flip()
-}, sizePolicy = sizeGrowthRatio(width = 400,
-                                height = 400,
-                                growthRate = 1.2),
-  res = 72, cache = "app", cacheKeyExpr = {
-    now("UTC")
-  }
-)
-  
-  output$response_code_plot <- renderCachedPlot({
-    ggplot(selected_http_summary() %>% mutate(http_code = as.factor(http_code), Response = paste(http_code, "-", code_label)), aes(x = http_code, fill = as.factor(Response), y = count_endpoints)) +
-    geom_bar(stat = "identity", show.legend = FALSE) +
-      geom_text(aes(label = stat(y), group = http_code),
-                stat = "summary", fun = sum, vjust = -1
-      ) +
-      theme(text = element_text(size = 15)) +
-      labs(fill = "Code",
-         title = "HTTP Response Codes Received from Endpoints During Most Recent Query",
-         x = "HTTP Response Received",
-         y = "Count of endpoints")
-  }, sizePolicy = sizeGrowthRatio(width = 400,
-                                  height = 400,
-                                  growthRate = 1.2),
-  res = 72, cache = "app", cacheKeyExpr = {
-    list(now("UTC"), sel_vendor())
+  output$response_code_plot <- renderHighchart({
+    pie_data <- selected_http_summary() %>%
+      mutate(Response = paste(http_code, "-", code_label)) %>%
+      group_by(Response) %>%
+      summarise(count = sum(count_endpoints, na.rm = TRUE)) %>%
+      ungroup()
+
+    highchart() %>%
+      hc_chart(type = "pie", options3d = list(enabled = TRUE, alpha = 45, beta = 0)) %>%
+      hc_plotOptions(pie = list(allowPointSelect = TRUE, cursor = "pointer", depth = 35)) %>%
+      hc_add_series(
+        type = "pie",
+        data = list_parse2(pie_data %>% select(Response, count))
+      )
   })
 
   observeEvent(input$show_info, {

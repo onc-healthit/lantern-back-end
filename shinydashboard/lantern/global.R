@@ -11,11 +11,28 @@ library(yaml)
 library(config)
 library(shiny)
 library(shinydashboard)
+library(fresh)
+library(shinydashboardPlus)
+library(shinyWidgets)
 library(tidyverse)
 library(shinybusy)
 shinyOptions(cache = memoryCache(max_size = 20e6, max_age = 3600))
 
-root <- ifelse(Sys.getenv("HOME") == "/home/shiny", ".", "lantern")
+# Create a lightweight theme using fresh to better match redesigned dashboard styles
+# Note: adminlte_color does not accept arbitrary color names across versions; keep parameters minimal.
+mytheme <- fresh::create_theme(
+  fresh::adminlte_color(
+    light_blue = "#1B5A7F"
+  ),
+  fresh::adminlte_sidebar(
+    dark_bg = "#1B5A7F",
+    dark_hover_bg = "#0f2740",
+    dark_color = "#ffffff"
+  )
+)
+fresh::use_theme(mytheme)
+
+root <- ifelse(Sys.getenv("HOME") == "/srv/shiny-server", ".", "/srv/shiny-server")
 config_yaml <- yaml::read_yaml(here(root, "configuration.yml"))
 purrr::walk(config_yaml$libraries, library, character.only = TRUE)
 purrr::walk(config_yaml$function_files, source)
@@ -32,11 +49,13 @@ validation_group_list <- fromJSON(here(root, "validation_groups.json"))
 validation_rules_descriptions <- fromJSON(here(root, "rule_descriptions.json"))
 validation_group_names <- names(validation_group_list)
 
-valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1", "4.1.0", "4.3.0-snapshot1", "4.3.0", "4.2.0", "4.4.0", "4.5.0", "4.6.0", "5.0.0-snapshot1", "5.0.0-ballot", "5.0.0-snapshot3", "5.0.0-draft-final", "5.0.0")
 
 dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
 stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
 r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+r4b <- c("4.1.0", "4.3.0-snapshot1", "4.3.0")
+r5 <- c("4.2.0", "4.4.0", "4.5.0", "4.6.0", "5.0.0-snapshot1", "5.0.0-ballot", "5.0.0-snapshot3", "5.0.0-draft-final", "5.0.0")
 
 # Define magic numbers for user interface
 ui_special_values <- list(

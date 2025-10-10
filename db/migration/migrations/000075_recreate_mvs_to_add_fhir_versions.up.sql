@@ -1,546 +1,9 @@
-CREATE OR REPLACE FUNCTION trigger_set_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+BEGIN;
 
--- LANTERN-825: Add history trigger and function
--- Update the history trigger
-CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $fhir_endpoints_info_historys$
-BEGIN
-    -- For INSERT/DELETE operations, always create history
-    IF (TG_OP = 'DELETE') THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'D', now(), user, OLD.*;
-        RETURN OLD;
-    ELSIF (TG_OP = 'INSERT') THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'I', now(), user, NEW.*;
-        RETURN NEW;
-    END IF;
+-- Drop dependent materialized views first (in dependency order)
 
-    -- For UPDATE operations, check if anything significant changed
-    IF (
-        NEW.id IS DISTINCT FROM OLD.id OR
-        NEW.healthit_mapping_id IS DISTINCT FROM OLD.healthit_mapping_id OR
-        NEW.vendor_id IS DISTINCT FROM OLD.vendor_id OR
-        NEW.url IS DISTINCT FROM OLD.url OR
-        NEW.tls_version IS DISTINCT FROM OLD.tls_version OR
-        NEW.mime_types IS DISTINCT FROM OLD.mime_types OR
-        NEW.capability_statement::text IS DISTINCT FROM OLD.capability_statement::text OR
-        NEW.validation_result_id IS DISTINCT FROM OLD.validation_result_id OR
-        NEW.included_fields::text IS DISTINCT FROM OLD.included_fields::text OR
-        NEW.operation_resource::text IS DISTINCT FROM OLD.operation_resource::text OR
-        NEW.supported_profiles::text IS DISTINCT FROM OLD.supported_profiles::text OR
-        NEW.created_at IS DISTINCT FROM OLD.created_at OR
-        NEW.smart_response::text IS DISTINCT FROM OLD.smart_response::text OR
-        NEW.requested_fhir_version IS DISTINCT FROM OLD.requested_fhir_version OR
-        NEW.capability_fhir_version IS DISTINCT FROM OLD.capability_fhir_version
-    ) THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'U', now(), user, NEW.*;
-    END IF;
-
-    RETURN NEW;
-END;
-$fhir_endpoints_info_historys$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION update_fhir_endpoint_availability_info() RETURNS TRIGGER AS $fhir_endpoints_availability$
-    DECLARE
-        okay_count       bigint;
-        all_count        bigint;
-    BEGIN
-        --
-        -- Create or update a row in fhir_endpoint_availabilty with new total http and 200 http count 
-        -- when an endpoint is inserted or updated in fhir_endpoint_info. Also calculate new 
-        -- endpoint availability precentage
-        SELECT http_200_count, http_all_count INTO okay_count, all_count FROM fhir_endpoints_availability WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
-        IF  NOT FOUND THEN
-            IF NEW.http_response = 200 THEN
-                INSERT INTO fhir_endpoints_availability(url, http_200_count, http_all_count, requested_fhir_version) VALUES (NEW.url, 1, 1, NEW.requested_fhir_version);
-                NEW.availability = 1.00;
-                RETURN NEW;
-            ELSE
-                INSERT INTO fhir_endpoints_availability(url, http_200_count, http_all_count, requested_fhir_version) VALUES (NEW.url, 0, 1, NEW.requested_fhir_version);
-                NEW.availability = 0.00;
-                RETURN NEW;
-            END IF;
-        ELSE
-            IF NEW.http_response = 200 THEN
-                UPDATE fhir_endpoints_availability SET http_200_count = okay_count + 1.0, http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
-                NEW.availability := (okay_count + 1.0) / (all_count + 1.0);
-                RETURN NEW;
-            ELSE
-                UPDATE fhir_endpoints_availability SET http_all_count = all_count + 1.0 WHERE url = NEW.url AND requested_fhir_version = NEW.requested_fhir_version;
-                NEW.availability := (okay_count) / (all_count + 1.0);
-                RETURN NEW;
-            END IF;
-        END IF;
-    END;
-$fhir_endpoints_availability$ LANGUAGE plpgsql;
-
-CREATE TABLE npi_organizations (
-    id                          SERIAL PRIMARY KEY,
-    npi_id                      VARCHAR(500) UNIQUE,
-    name                        VARCHAR(500),
-    secondary_name              VARCHAR(500),
-    location                    JSONB,
-    taxonomy                    VARCHAR(500), -- Taxonomy code mapping: http://www.wpc-edi.com/reference/codelists/healthcare/health-care-provider-taxonomy-code-set/
-    normalized_name             VARCHAR(500),
-    normalized_secondary_name   VARCHAR(500),
-    created_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at                  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE npi_contacts (
-    id                                  SERIAL PRIMARY KEY,
-    npi_id                              VARCHAR(500),
-    endpoint_type                       VARCHAR(500),
-    endpoint_type_description           VARCHAR(500),
-    endpoint                            VARCHAR(500),
-    valid_url                           BOOLEAN,
-    affiliation                         VARCHAR(500),
-    endpoint_description                VARCHAR(500),
-    affiliation_legal_business_name     VARCHAR(500),
-    use_code                            VARCHAR(500),
-    use_description                     VARCHAR(500),
-    other_use_description               VARCHAR(500),
-    content_type                        VARCHAR(500),
-    content_description                 VARCHAR(500),
-    other_content_description           VARCHAR(500),
-    location                            JSONB,
-    created_at                          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at                          TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE vendors (
-    id                      SERIAL PRIMARY KEY,
-    name                    VARCHAR(500) UNIQUE,
-    developer_code          VARCHAR(500) UNIQUE,
-    url                     VARCHAR(500),
-    location                JSONB,
-    status                  VARCHAR(500),
-    last_modified_in_chpl   TIMESTAMPTZ,
-    chpl_id                 INTEGER UNIQUE,
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE healthit_products (
-    id                      SERIAL PRIMARY KEY,
-    name                    VARCHAR(500),
-    version                 VARCHAR(500),
-    vendor_id               INT REFERENCES vendors(id) ON DELETE CASCADE,
-    location                JSONB,
-    authorization_standard  VARCHAR(500),
-    api_syntax              VARCHAR(500),
-    api_url                 VARCHAR(500),
-    certification_criteria  JSONB,
-    certification_status    VARCHAR(500),
-    certification_date      DATE,
-    certification_edition   VARCHAR(500),
-    last_modified_in_chpl   DATE,
-    chpl_id                 VARCHAR(500),
-    practice_type           VARCHAR(500),
-    acb                     VARCHAR(500),
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT healthit_product_info UNIQUE(name, version)
-);
-
-CREATE TABLE healthit_products_map (
-    id SERIAL,
-    healthit_product_id INT REFERENCES healthit_products(id) ON DELETE SET NULL,
-    CONSTRAINT unique_id_healthit_product UNIQUE(id, healthit_product_id)
-);
-
-CREATE TABLE certification_criteria (
-    id                        SERIAL PRIMARY KEY,
-    certification_id          INTEGER,
-	cerification_number       VARCHAR(500),
-	title                     VARCHAR(500),
-	certification_edition_id  INTEGER,
-	certification_edition     VARCHAR(500),
-	description               VARCHAR(500),
-	removed                   BOOLEAN,
-    created_at                TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at                TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE fhir_endpoints (
-    id                      SERIAL PRIMARY KEY,
-    url                     VARCHAR(500),
-    list_source             VARCHAR(500),
-    versions_response       JSONB,
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT fhir_endpoints_unique UNIQUE(url, list_source)
-);
-
-CREATE TABLE fhir_endpoint_organizations (
-    id                      SERIAL PRIMARY KEY,
-    organization_name       VARCHAR(500),
-    organization_zipcode    VARCHAR(500),
-    organization_npi_id    VARCHAR(500),
-    updated_at             TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE fhir_endpoint_organizations_map (
-    id INT REFERENCES fhir_endpoints(id) ON DELETE SET NULL,
-    org_database_id INT REFERENCES fhir_endpoint_organizations(id) ON DELETE SET NULL
-);
-
-CREATE TABLE fhir_endpoints_metadata (
-    id                      SERIAL PRIMARY KEY,
-    url                     VARCHAR(500),
-    http_response           INTEGER,
-    availability            DECIMAL(5,4),
-    errors                  VARCHAR(500),
-    response_time_seconds   DECIMAL(7,4),
-    smart_http_response     INTEGER,
-    requested_fhir_version VARCHAR(500) DEFAULT 'None',
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE validation_results (
-    id                      SERIAL PRIMARY KEY
-);
-
-CREATE TABLE fhir_endpoints_info (
-    id                      SERIAL PRIMARY KEY,
-    healthit_mapping_id     INT, -- should link to healthit_products_map(id). not using 'reference' because the referenced id might have multiple entries and thus is not a primary key
-    vendor_id               INT REFERENCES vendors(id) ON DELETE SET NULL, 
-    url                     VARCHAR(500),
-    tls_version             VARCHAR(500),
-    mime_types              VARCHAR(500)[],
-    capability_statement    JSON,
-    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
-    included_fields         JSONB,
-    operation_resource      JSONB,
-    supported_profiles      JSONB,
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSON,
-    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
-    requested_fhir_version  VARCHAR(500),
-    capability_fhir_version VARCHAR(500),
-    CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version, vendor_id)
-);
-
-CREATE TABLE fhir_endpoints_info_history (
-    operation               CHAR(1) NOT NULL,
-    entered_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    user_id                 VARCHAR(500),
-    id                      INT, -- should link to fhir_endpoints_info(id). not using 'reference' because if the original is deleted, we still want the historical copies to remain and keep the ID so they can be linked to one another.
-    healthit_mapping_id     INT, -- should link to healthit_products_map(id). not using 'reference' because if the referenced product is deleted, we still want the historical copies to retain the ID.
-    vendor_id               INT,  -- should link to vendor_id(id). not using 'reference' because if the referenced vendor is deleted, we still want the historical copies to retain the ID.
-    url                     VARCHAR(500),
-    tls_version             VARCHAR(500),
-    mime_types              VARCHAR(500)[],
-    capability_statement    JSON,
-    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL,
-    included_fields         JSONB,
-    operation_resource      JSONB,
-    supported_profiles      JSONB,
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    smart_response          JSON, 
-    metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
-    requested_fhir_version  VARCHAR(500),
-    capability_fhir_version VARCHAR(500)
-);
-
-CREATE TABLE endpoint_organization (
-    url                     VARCHAR(500),
-    organization_npi_id     VARCHAR(500),
-    confidence              NUMERIC (5, 3),
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT endpoint_org PRIMARY KEY (url, organization_npi_id)
-);
-
-CREATE TABLE list_source_info (
-    list_source            VARCHAR(500),
-    is_chpl                BOOLEAN 
-);
-
-CREATE TABLE product_criteria (
-    healthit_product_id      INT REFERENCES healthit_products(id) ON DELETE CASCADE,
-    certification_id         INTEGER,
-    certification_number     VARCHAR(500),
-    created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT product_crit  PRIMARY KEY (healthit_product_id, certification_id)
-);
-
-CREATE TABLE fhir_endpoints_availability (
-    url             VARCHAR(500),
-    http_200_count       BIGINT,
-    http_all_count       BIGINT,
-    requested_fhir_version  VARCHAR(500) DEFAULT 'None',
-    created_at              TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE validations (
-    rule_name               VARCHAR(500),
-    valid                   BOOLEAN,
-    expected                VARCHAR(500),
-    actual                  VARCHAR(500),
-    comment                 VARCHAR(500),
-    reference               VARCHAR(500),
-    implementation_guide    VARCHAR(500),
-    validation_result_id    INT REFERENCES validation_results(id) ON DELETE SET NULL
-);
-
-CREATE TABLE info_history_pruning_metadata (
-    id                                  SERIAL PRIMARY KEY,
-    started_on                          timestamp with time zone NOT NULL DEFAULT now(),
-    ended_on                            timestamp with time zone,
-    successful                          boolean NOT NULL DEFAULT false,
-    num_rows_processed                  integer NOT NULL DEFAULT 0,
-    num_rows_pruned                     integer NOT NULL DEFAULT 0,
-    query_int_start_date                timestamp with time zone NOT NULL,
-    query_int_end_date                  timestamp with time zone NOT NULL
-);
-
-CREATE TRIGGER set_timestamp_fhir_endpoints
-BEFORE UPDATE ON fhir_endpoints
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_fhir_endpoint_organizations
-BEFORE UPDATE ON fhir_endpoint_organizations
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_npi_organization
-BEFORE UPDATE ON npi_organizations
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_vendors
-BEFORE UPDATE ON vendors
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_healthit_products
-BEFORE UPDATE ON healthit_products
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_certification_criteria
-BEFORE UPDATE ON certification_criteria
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_fhir_endpoints_info
-BEFORE UPDATE ON fhir_endpoints_info
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_fhir_endpoints_metadata
-BEFORE UPDATE ON fhir_endpoints_metadata
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_endpoint_organization
-BEFORE UPDATE ON endpoint_organization
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_product_criteria
-BEFORE UPDATE ON product_criteria
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
-CREATE TRIGGER set_timestamp_fhir_endpoint_availability
-BEFORE UPDATE ON fhir_endpoints_availability
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
--- captures history for the fhir_endpoint_info table
-CREATE TRIGGER add_fhir_endpoint_info_history_trigger
-AFTER INSERT OR UPDATE OR DELETE on fhir_endpoints_info
-FOR EACH ROW
-WHEN (current_setting('metadata.setting', 't') IS NULL OR current_setting('metadata.setting', 't') = 'FALSE')
-EXECUTE PROCEDURE add_fhir_endpoint_info_history();
-
--- increments total number of times http status returned for endpoint 
-CREATE TRIGGER update_fhir_endpoint_availability_trigger
-BEFORE INSERT OR UPDATE on fhir_endpoints_metadata
-FOR EACH ROW
-EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
-
-CREATE or REPLACE VIEW joined_export_tables AS
-SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
-    endpt_orgnames.organization_ids AS endpoint_ids,
-    vendors.name as vendor_name,
-    endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
-    endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
-    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement::jsonb != 'null' AND endpts.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
-    endpts_info.capability_fhir_version AS FHIR_VERSION,
-    endpts_info.capability_statement->>'publisher' AS PUBLISHER,
-    endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME,
-    endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
-    endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
-    endpts_info.capability_statement->'format' AS FORMAT,
-    endpts_info.capability_statement->>'kind' AS KIND,
-    endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
-    endpts_info.requested_fhir_version, endpts_metadata.availability
-FROM fhir_endpoints AS endpts
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
-LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
-LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
-FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
-WHERE fe.id = fom.id AND fom.org_database_id = fo.id
-GROUP BY fom.id) as endpt_orgnames ON endpts.id = endpt_orgnames.id;
-
-CREATE or REPLACE VIEW endpoint_export AS
-SELECT export_tables.url, export_tables.list_source, export_tables.endpoint_names,
-    export_tables.endpoint_ids,
-	export_tables.vendor_name,
-    export_tables.tls_version, export_tables.mime_types, export_tables.http_response,
-    export_tables.response_time_seconds, export_tables.smart_http_response, export_tables.errors,
-    export_tables.cap_stat_exists,
-    export_tables.fhir_version,
-    export_tables.publisher,
-    export_tables.software_name,
-    export_tables.software_version,
-    export_tables.software_releasedate,
-    export_tables.format,
-    export_tables.kind,
-    export_tables.info_updated,
-    export_tables.info_created,
-    export_tables.requested_fhir_version,
-    export_tables.availability,
-    list_source_info.is_chpl
-FROM joined_export_tables AS export_tables
-LEFT JOIN list_source_info ON export_tables.list_source = list_source_info.list_source;
-
-CREATE or REPLACE VIEW organization_location AS
-    SELECT export_tables.url, export_tables.endpoint_names, export_tables.fhir_version,
-    export_tables.requested_fhir_version, export_tables.vendor_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
-    orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, orgs.npi_id as NPI_ID,
-    links.confidence AS MATCH_SCORE
-FROM endpoint_organization AS links
-RIGHT JOIN joined_export_tables AS export_tables ON links.url = export_tables.url
-LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id
-WHERE links.confidence > .97 AND orgs.Location->>'zipcode' IS NOT null;
-
-CREATE INDEX fhir_endpoints_url_idx ON fhir_endpoints (url);
-CREATE INDEX fhir_endpoints_info_url_idx ON fhir_endpoints_info (url);
-CREATE INDEX fhir_endpoints_info_history_url_idx ON fhir_endpoints_info_history (url);
-CREATE INDEX endpoint_organization_url_idx ON endpoint_organization (url);
-
-CREATE INDEX fhir_endpoint_organizations_id ON fhir_endpoint_organizations (id);
-CREATE INDEX fhir_endpoint_organizations_name ON fhir_endpoint_organizations (organization_name);
-CREATE INDEX fhir_endpoint_organizations_zipcode ON fhir_endpoint_organizations (organization_zipcode);
-CREATE INDEX fhir_endpoint_organizations_npi_id ON fhir_endpoint_organizations (organization_npi_id);
-
-CREATE INDEX vendor_id_idx ON vendors (id);
-CREATE INDEX fhir_endpoints_info_vendor_id_idx ON fhir_endpoints_info (vendor_id);
-CREATE INDEX fhir_endpoints_info_history_vendor_id_idx ON fhir_endpoints_info_history (vendor_id);
-
-CREATE INDEX npi_organizations_npi_id_idx ON npi_organizations (npi_id);
-CREATE INDEX endpoint_organization_npi_id_idx ON endpoint_organization (organization_npi_id);
-
-CREATE INDEX vendor_name_idx ON vendors (name);
-CREATE INDEX implementation_guide_idx ON fhir_endpoints_info ((capability_statement->>'implementationGuide'));
-CREATE INDEX field_idx ON fhir_endpoints_info ((included_fields->> 'Field'));
-CREATE INDEX exists_idx ON fhir_endpoints_info ((included_fields->> 'Exists'));
-CREATE INDEX extension_idx ON fhir_endpoints_info ((included_fields->> 'Extension'));
-
-CREATE INDEX resource_type_idx ON fhir_endpoints_info (((capability_statement::json#>'{rest,0,resource}') ->> 'type'));
-
-CREATE INDEX capstat_url_idx ON fhir_endpoints_info ((capability_statement->>'url'));
-CREATE INDEX capstat_version_idx ON fhir_endpoints_info ((capability_statement->>'version'));
-CREATE INDEX capstat_name_idx ON fhir_endpoints_info ((capability_statement->>'name'));
-CREATE INDEX capstat_title_idx ON fhir_endpoints_info ((capability_statement->>'title'));
-CREATE INDEX capstat_date_idx ON fhir_endpoints_info ((capability_statement->>'date'));
-CREATE INDEX capstat_publisher_idx ON fhir_endpoints_info ((capability_statement->>'publisher'));
-CREATE INDEX capstat_description_idx ON fhir_endpoints_info ((capability_statement->>'description'));
-CREATE INDEX capstat_purpose_idx ON fhir_endpoints_info ((capability_statement->>'purpose'));
-CREATE INDEX capstat_copyright_idx ON fhir_endpoints_info ((capability_statement->>'copyright'));
-
-CREATE INDEX capstat_software_name_idx ON fhir_endpoints_info ((capability_statement->'software'->>'name'));
-CREATE INDEX capstat_software_version_idx ON fhir_endpoints_info ((capability_statement->'software'->>'version'));
-CREATE INDEX capstat_software_releaseDate_idx ON fhir_endpoints_info ((capability_statement->'software'->>'releaseDate'));
-CREATE INDEX capstat_implementation_description_idx ON fhir_endpoints_info ((capability_statement->'implementation'->>'description'));
-CREATE INDEX capstat_implementation_url_idx ON fhir_endpoints_info ((capability_statement->'implementation'->>'url'));
-CREATE INDEX capstat_implementation_custodian_idx ON fhir_endpoints_info ((capability_statement->'implementation'->>'custodian'));
-
-CREATE INDEX capability_fhir_version_idx ON fhir_endpoints_info (capability_fhir_version);
-CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_version);
-
-CREATE INDEX security_code_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security,service}'->'coding'->>'code'));
-CREATE INDEX security_service_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security}' -> 'service' ->> 'text'));
-
-CREATE INDEX smart_capabilities_idx ON fhir_endpoints_info ((smart_response->>'capabilities'));
-
-CREATE INDEX location_zipcode_idx ON npi_organizations ((location->>'zipcode'));
-
-CREATE INDEX info_metadata_id_idx ON fhir_endpoints_info (metadata_id);
-CREATE INDEX info_history_metadata_id_idx ON fhir_endpoints_info_history (metadata_id);
-CREATE INDEX metadata_id_idx ON fhir_endpoints_metadata (id);
-
-CREATE INDEX healthit_product_name_version_idx ON healthit_products (name, version);
-CREATE INDEX metadata_response_time_idx ON fhir_endpoints_metadata(response_time_seconds);
-CREATE INDEX metadata_requested_version_idx ON fhir_endpoints_metadata(requested_fhir_version);
-CREATE INDEX metadata_url_idx ON fhir_endpoints_metadata(url);
-
--- LANTERN-759
-CREATE INDEX validations_val_res_id_idx ON validations (validation_result_id);
-CREATE INDEX fhir_endpoints_info_validation_result_id_idx ON fhir_endpoints_info (validation_result_id); 
-CREATE INDEX fhir_endpoints_info_history_entered_at_idx ON fhir_endpoints_info_history (entered_at);
-CREATE INDEX fhir_endpoints_info_history_operation_idx ON fhir_endpoints_info_history (operation);
-CREATE INDEX fhir_endpoints_info_history_requested_fhir_version_idx ON fhir_endpoints_info_history (requested_fhir_version);
-CREATE INDEX healthit_products_certification_status_idx ON healthit_products (certification_status);
-CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
-CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
-CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
-
-
-
-CREATE MATERIALIZED VIEW mv_response_tally AS
-WITH response_counts AS (
-    SELECT 
-        fem.http_response,
-        count(distinct(fei.url)) AS response_count
-    FROM fhir_endpoints_info fei
-    JOIN fhir_endpoints_metadata fem 
-        ON fei.metadata_id = fem.id
-    WHERE fei.requested_fhir_version = 'None'
-    GROUP BY fem.http_response
-)
-SELECT 
-    COALESCE(SUM(
-        CASE 
-            WHEN http_response = 200 THEN response_count 
-            ELSE 0 
-        END), 0) AS http_200,
-    COALESCE(SUM(
-        CASE 
-            WHEN http_response <> 200 THEN response_count 
-            ELSE 0 
-        END), 0) AS http_non200,
-    COALESCE(SUM(
-        CASE 
-            WHEN http_response = 404 THEN response_count 
-            ELSE 0 
-        END), 0) AS http_404,
-    COALESCE(SUM(
-        CASE 
-            WHEN http_response = 503 THEN response_count 
-            ELSE 0 
-        END), 0) AS http_503
-FROM response_counts;
-
-CREATE UNIQUE INDEX idx_mv_response_tally_http_code ON mv_response_tally(http_200);
+-- Dashboard Tab 
+DROP MATERIALIZED VIEW IF EXISTS mv_vendor_fhir_counts CASCADE; --done
 
 CREATE MATERIALIZED VIEW mv_vendor_fhir_counts AS
 WITH vendor_totals AS (
@@ -647,280 +110,13 @@ CREATE UNIQUE INDEX idx_mv_vendor_fhir_counts_unique ON mv_vendor_fhir_counts(ve
 
 
 
--- LANTERN-831
-CREATE MATERIALIZED VIEW mv_http_responses AS
-WITH response_by_vendor AS (
-    SELECT
-        CASE
-            WHEN v.name IS NULL OR v.name = '' THEN 'Unknown'
-            ELSE v.name
-        END AS vendor_name,
-        m.http_response AS http_code,
-        CASE 
-            WHEN m.http_response = 100 THEN 'Continue'
-            WHEN m.http_response = 101 THEN 'Switching Protocols'
-            WHEN m.http_response = 102 THEN 'Processing'
-            WHEN m.http_response = 103 THEN 'Early Hints'
-            WHEN m.http_response = 200 THEN 'OK'
-            WHEN m.http_response = 201 THEN 'Created'
-            WHEN m.http_response = 202 THEN 'Accepted'
-            WHEN m.http_response = 203 THEN 'Non-Authoritative Information'
-            WHEN m.http_response = 204 THEN 'No Content'
-            WHEN m.http_response = 205 THEN 'Reset Content'
-            WHEN m.http_response = 206 THEN 'Partial Content'
-            WHEN m.http_response = 207 THEN 'Multi-Status'
-            WHEN m.http_response = 208 THEN 'Already Reported'
-            WHEN m.http_response = 226 THEN 'IM Used'
-            WHEN m.http_response = 300 THEN 'Multiple Choices'
-            WHEN m.http_response = 301 THEN 'Moved Permanently'
-            WHEN m.http_response = 302 THEN 'Found'
-            WHEN m.http_response = 303 THEN 'See Other'
-            WHEN m.http_response = 304 THEN 'Not Modified'
-            WHEN m.http_response = 305 THEN 'Use Proxy'
-            WHEN m.http_response = 306 THEN 'Switch Proxy'
-            WHEN m.http_response = 307 THEN 'Temporary Redirect'
-            WHEN m.http_response = 308 THEN 'Permanent Redirect'
-            WHEN m.http_response = 400 THEN 'Bad Request'
-            WHEN m.http_response = 401 THEN 'Unauthorized'
-            WHEN m.http_response = 402 THEN 'Payment Required'
-            WHEN m.http_response = 403 THEN 'Forbidden'
-            WHEN m.http_response = 404 THEN 'Not Found'
-            WHEN m.http_response = 405 THEN 'Method Not Allowed'
-            WHEN m.http_response = 406 THEN 'Not Acceptable'
-            WHEN m.http_response = 407 THEN 'Proxy Authentication Required'
-            WHEN m.http_response = 408 THEN 'Request Timeout'
-            WHEN m.http_response = 409 THEN 'Conflict'
-            WHEN m.http_response = 410 THEN 'Gone'
-            WHEN m.http_response = 411 THEN 'Length Required'
-            WHEN m.http_response = 412 THEN 'Precondition Failed'
-            WHEN m.http_response = 413 THEN 'Payload Too Large'
-            WHEN m.http_response = 414 THEN 'Request URI Too Long'
-            WHEN m.http_response = 415 THEN 'Unsupported Media Type'
-            WHEN m.http_response = 416 THEN 'Requested Range Not Satisfiable'
-            WHEN m.http_response = 417 THEN 'Expectation Failed'
-            WHEN m.http_response = 418 THEN 'I''m a teapot'
-            WHEN m.http_response = 421 THEN 'Misdirected Request'
-            WHEN m.http_response = 422 THEN 'Unprocessable Entity'
-            WHEN m.http_response = 423 THEN 'Locked'
-            WHEN m.http_response = 424 THEN 'Failed Dependency'
-            WHEN m.http_response = 425 THEN 'Too Early'
-            WHEN m.http_response = 426 THEN 'Upgrade Required'
-            WHEN m.http_response = 428 THEN 'Precondition Required'
-            WHEN m.http_response = 429 THEN 'Too Many Requests'
-            WHEN m.http_response = 431 THEN 'Request Header Fields Too Large'
-            WHEN m.http_response = 451 THEN 'Unavailable for Legal Reasons'
-            WHEN m.http_response = 500 THEN 'Internal Server Error'
-            WHEN m.http_response = 501 THEN 'Not Implemented'
-            WHEN m.http_response = 502 THEN 'Bad Gateway'
-            WHEN m.http_response = 503 THEN 'Service Unavailable'
-            WHEN m.http_response = 504 THEN 'Gateway Timeout'
-            WHEN m.http_response = 505 THEN 'HTTP Version Not Supported'
-            WHEN m.http_response = 506 THEN 'Variant Also Negotiates'
-            WHEN m.http_response = 507 THEN 'Insufficient Storage'
-            WHEN m.http_response = 508 THEN 'Loop Detected'
-            WHEN m.http_response = 509 THEN 'Bandwidth Limit Exceeded'
-            WHEN m.http_response = 510 THEN 'Not Extended'
-            WHEN m.http_response = 511 THEN 'Network Authentication Required'
-            ELSE 'Other'
-        END AS code_label,
-        -- Cast the count to an integer
-        COUNT(DISTINCT f.url)::INTEGER AS count_endpoints
-    FROM fhir_endpoints_info f
-    LEFT JOIN vendors v
-           ON f.vendor_id = v.id
-    LEFT JOIN fhir_endpoints_metadata m
-           ON f.metadata_id = m.id
-    WHERE m.http_response IS NOT NULL
-      AND f.requested_fhir_version = 'None'
-    GROUP BY v.name, m.http_response
-),
-response_all_devs AS (
-    SELECT
-        'ALL_DEVELOPERS' AS vendor_name,
-        m.http_response AS http_code,
-        CASE 
-            WHEN m.http_response = 100 THEN 'Continue'
-            WHEN m.http_response = 101 THEN 'Switching Protocols'
-            WHEN m.http_response = 102 THEN 'Processing'
-            WHEN m.http_response = 103 THEN 'Early Hints'
-            WHEN m.http_response = 200 THEN 'OK'
-            WHEN m.http_response = 201 THEN 'Created'
-            WHEN m.http_response = 202 THEN 'Accepted'
-            WHEN m.http_response = 203 THEN 'Non-Authoritative Information'
-            WHEN m.http_response = 204 THEN 'No Content'
-            WHEN m.http_response = 205 THEN 'Reset Content'
-            WHEN m.http_response = 206 THEN 'Partial Content'
-            WHEN m.http_response = 207 THEN 'Multi-Status'
-            WHEN m.http_response = 208 THEN 'Already Reported'
-            WHEN m.http_response = 226 THEN 'IM Used'
-            WHEN m.http_response = 300 THEN 'Multiple Choices'
-            WHEN m.http_response = 301 THEN 'Moved Permanently'
-            WHEN m.http_response = 302 THEN 'Found'
-            WHEN m.http_response = 303 THEN 'See Other'
-            WHEN m.http_response = 304 THEN 'Not Modified'
-            WHEN m.http_response = 305 THEN 'Use Proxy'
-            WHEN m.http_response = 306 THEN 'Switch Proxy'
-            WHEN m.http_response = 307 THEN 'Temporary Redirect'
-            WHEN m.http_response = 308 THEN 'Permanent Redirect'
-            WHEN m.http_response = 400 THEN 'Bad Request'
-            WHEN m.http_response = 401 THEN 'Unauthorized'
-            WHEN m.http_response = 402 THEN 'Payment Required'
-            WHEN m.http_response = 403 THEN 'Forbidden'
-            WHEN m.http_response = 404 THEN 'Not Found'
-            WHEN m.http_response = 405 THEN 'Method Not Allowed'
-            WHEN m.http_response = 406 THEN 'Not Acceptable'
-            WHEN m.http_response = 407 THEN 'Proxy Authentication Required'
-            WHEN m.http_response = 408 THEN 'Request Timeout'
-            WHEN m.http_response = 409 THEN 'Conflict'
-            WHEN m.http_response = 410 THEN 'Gone'
-            WHEN m.http_response = 411 THEN 'Length Required'
-            WHEN m.http_response = 412 THEN 'Precondition Failed'
-            WHEN m.http_response = 413 THEN 'Payload Too Large'
-            WHEN m.http_response = 414 THEN 'Request URI Too Long'
-            WHEN m.http_response = 415 THEN 'Unsupported Media Type'
-            WHEN m.http_response = 416 THEN 'Requested Range Not Satisfiable'
-            WHEN m.http_response = 417 THEN 'Expectation Failed'
-            WHEN m.http_response = 418 THEN 'I''m a teapot'
-            WHEN m.http_response = 421 THEN 'Misdirected Request'
-            WHEN m.http_response = 422 THEN 'Unprocessable Entity'
-            WHEN m.http_response = 423 THEN 'Locked'
-            WHEN m.http_response = 424 THEN 'Failed Dependency'
-            WHEN m.http_response = 425 THEN 'Too Early'
-            WHEN m.http_response = 426 THEN 'Upgrade Required'
-            WHEN m.http_response = 428 THEN 'Precondition Required'
-            WHEN m.http_response = 429 THEN 'Too Many Requests'
-            WHEN m.http_response = 431 THEN 'Request Header Fields Too Large'
-            WHEN m.http_response = 451 THEN 'Unavailable for Legal Reasons'
-            WHEN m.http_response = 500 THEN 'Internal Server Error'
-            WHEN m.http_response = 501 THEN 'Not Implemented'
-            WHEN m.http_response = 502 THEN 'Bad Gateway'
-            WHEN m.http_response = 503 THEN 'Service Unavailable'
-            WHEN m.http_response = 504 THEN 'Gateway Timeout'
-            WHEN m.http_response = 505 THEN 'HTTP Version Not Supported'
-            WHEN m.http_response = 506 THEN 'Variant Also Negotiates'
-            WHEN m.http_response = 507 THEN 'Insufficient Storage'
-            WHEN m.http_response = 508 THEN 'Loop Detected'
-            WHEN m.http_response = 509 THEN 'Bandwidth Limit Exceeded'
-            WHEN m.http_response = 510 THEN 'Not Extended'
-            WHEN m.http_response = 511 THEN 'Network Authentication Required'
-            ELSE 'Other'
-        END AS code_label,
-        -- Cast the count to an integer
-        COUNT(DISTINCT f.url)::INTEGER AS count_endpoints
-    FROM fhir_endpoints_info f
-    LEFT JOIN fhir_endpoints_metadata m
-           ON f.metadata_id = m.id
-    WHERE m.http_response IS NOT NULL
-      AND f.requested_fhir_version = 'None'
-    GROUP BY m.http_response
-)
-SELECT 
-    now() AS aggregation_date,
-    vendor_name,
-    http_code,
-    code_label,
-    count_endpoints
-FROM response_by_vendor
 
-UNION ALL
 
-SELECT
-    now() AS aggregation_date,
-    vendor_name,
-    http_code,
-    code_label,
-    count_endpoints
-FROM response_all_devs;
+-- Endpoints Tab
+DROP MATERIALIZED VIEW IF EXISTS selected_fhir_endpoints_mv CASCADE; --done (recreate: depends on fhir_endpoint_comb_mv)
+DROP MATERIALIZED VIEW IF EXISTS fhir_endpoint_comb_mv CASCADE; --done (recreate: depends on endpoint_export_mv)
+DROP MATERIALIZED VIEW IF EXISTS endpoint_export_mv CASCADE; --done 
 
-CREATE UNIQUE INDEX mv_http_responses_uniq
-  ON mv_http_responses (aggregation_date, vendor_name, http_code);
-
-CREATE INDEX mv_http_responses_vendor_name_idx
-  ON mv_http_responses (vendor_name);
-
--- LANTERN-832
-CREATE MATERIALIZED VIEW mv_resource_interactions AS
-WITH expanded_resources AS (
-  SELECT
-    f.url as url,
-    f.id AS endpoint_id,
-    COALESCE(v.name, 'Unknown') AS vendor_name,
-    CASE WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
-         ELSE f.capability_fhir_version
-    END AS fhir_version,
-
-    -- Extract resource type from the JSONB structure
-    resource_elem->>'type' AS resource_type,
-
-    -- Extract individual operation names (this expands into multiple rows)
-    COALESCE(interaction_elem->>'code', 'not specified') AS operation_name
-
-  FROM fhir_endpoints_info f
-  LEFT JOIN vendors v ON f.vendor_id = v.id
-
-  -- Expand the "resource" array
-  LEFT JOIN LATERAL json_array_elements((f.capability_statement->'rest')->0->'resource') resource_elem
-    ON TRUE
-
-	-- Expand the "interaction" array within each resource
-  LEFT JOIN LATERAL json_array_elements(resource_elem->'interaction') interaction_elem
-    ON TRUE
-	
-  WHERE f.requested_fhir_version = 'None'
-),
-aggregated_operations AS (
-  SELECT
-    vendor_name,
-    fhir_version,
-    resource_type,
-	COUNT(DISTINCT endpoint_id) AS endpoint_count,
-    -- Aggregate operations into an array
-    ARRAY_AGG(DISTINCT operation_name) AS operations
-
-  FROM expanded_resources
-  GROUP BY vendor_name, fhir_version, resource_type
-),
-all_devs_aggregated_operations AS (
-  WITH vendor_ops AS (
-    SELECT
-      url,
-      fhir_version,
-      resource_type,
-      vendor_name,
-      COUNT(DISTINCT endpoint_id) AS endpoint_count,
-      ARRAY_AGG(DISTINCT operation_name) AS operations
-    FROM expanded_resources
-    GROUP BY url, fhir_version, resource_type, vendor_name
-  )
-  SELECT DISTINCT ON (url, fhir_version, resource_type)
-    'All Developers' AS vendor_name,
-    fhir_version,
-    resource_type,
-    endpoint_count,
-    operations
-  FROM vendor_ops
-  ORDER BY url, fhir_version, resource_type, vendor_name
-)
-SELECT *
-FROM aggregated_operations
-UNION ALL
-SELECT *
-FROM all_devs_aggregated_operations;
-
-CREATE INDEX mv_resource_interactions_vendor_name_idx
-  ON mv_resource_interactions (vendor_name);
-
-CREATE INDEX mv_resource_interactions_fhir_version_idx
-  ON mv_resource_interactions (fhir_version);
-
-CREATE INDEX mv_resource_interactions_resource_type_idx
-  ON mv_resource_interactions (resource_type);
-
-CREATE INDEX mv_resource_interactions_operations_idx
-  ON mv_resource_interactions USING GIN (operations);
-
--- LANTERN-837
--- endpoint_export_mv
 CREATE MATERIALIZED VIEW endpoint_export_mv AS
 WITH endpoint_organizations AS (
     SELECT DISTINCT url, UNNEST(endpoint_names) AS endpoint_name
@@ -991,10 +187,8 @@ LEFT JOIN list_source_info lsi
 LEFT JOIN grouped_organizations g 
     ON p.url = g.url;
 
--- Unique Index for refeshing the MV concurrently 
 CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
 
---fhir_endpoint_comb_mv
 CREATE MATERIALIZED VIEW fhir_endpoint_comb_mv AS 
 SELECT 
     ROW_NUMBER() OVER () AS id,
@@ -1054,7 +248,6 @@ FROM (
 --Unique index for refreshing the MV concurrently
 CREATE UNIQUE INDEX fhir_endpoint_comb_mv_unique_idx ON fhir_endpoint_comb_mv (id, url, list_source);
 
---selected_fhir_endpoints_mv
 CREATE MATERIALIZED VIEW selected_fhir_endpoints_mv AS
 SELECT 
     ROW_NUMBER() OVER () AS id,  -- Generate a unique sequential ID
@@ -1081,7 +274,7 @@ SELECT
     -- Generate URL modal link
     CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint." 
             onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, '&&', e.vendor_name, ''',{priority: ''event''});">', e.url, '</a>') 
+            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>') 
     AS "urlModal",
 
     -- Generate Condensed Endpoint Names
@@ -1110,32 +303,12 @@ CREATE INDEX idx_selected_fhir_endpoints_mv_vendor_name ON selected_fhir_endpoin
 CREATE INDEX idx_selected_fhir_endpoints_mv_availability ON selected_fhir_endpoints_mv(availability);
 CREATE INDEX idx_selected_fhir_endpoints_mv_is_chpl ON selected_fhir_endpoints_mv(is_chpl);
 
--- LANTERN-835
 
-CREATE MATERIALIZED VIEW mv_endpoint_totals AS
-WITH latest_metadata AS (
-    SELECT max(updated_at) AS last_updated
-    FROM fhir_endpoints_metadata
-), 
-totals AS (
-    SELECT 
-        -- Count (url, fhir_version) combinations to match Endpoints tab logic
-        (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
-        (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
-        FROM fhir_endpoints_info fei
-        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
-)
-SELECT 
-    now() AS aggregation_date,
-    totals.all_endpoints,
-    totals.indexed_endpoints,
-    greatest(totals.all_endpoints - totals.indexed_endpoints, 0) AS nonindexed_endpoints,
-    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
-FROM totals;
 
-CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
 
--- LANTERN-836: Contacts-MV
+
+--Contacts Tab
+DROP MATERIALIZED VIEW IF EXISTS mv_contacts_info CASCADE; --done
 
 CREATE MATERIALIZED VIEW mv_contacts_info AS
 WITH contact_info_extracted AS (
@@ -1265,9 +438,12 @@ CREATE INDEX idx_mv_contacts_info_has_contact ON mv_contacts_info(has_contact);
 
 CREATE INDEX idx_mv_contacts_info_contact_preference ON mv_contacts_info(contact_preference);
 
--- Lantern-856
--- Create materialized view for implementation_guide
-DROP MATERIALIZED VIEW IF EXISTS mv_implementation_guide CASCADE;
+
+
+
+--Implementation Guide Tab
+DROP MATERIALIZED VIEW IF EXISTS mv_implementation_guide CASCADE; --done
+
 CREATE MATERIALIZED VIEW mv_implementation_guide AS 
 
 SELECT
@@ -1296,6 +472,16 @@ WHERE f.requested_fhir_version = 'None';
 CREATE UNIQUE INDEX idx_mv_implementation_guide_unique ON mv_implementation_guide(url, fhir_version, implementation_guide, vendor_name);
 CREATE INDEX idx_mv_implementation_guide_vendor ON mv_implementation_guide(vendor_name);
 CREATE INDEX idx_mv_implementation_guide_fhir ON mv_implementation_guide(fhir_version);
+
+
+
+
+
+
+
+--Profiles Tab
+DROP MATERIALIZED VIEW IF EXISTS mv_profiles_paginated CASCADE; -- done (recreate: depends on endpoint_supported_profiles_mv)
+DROP MATERIALIZED VIEW IF EXISTS endpoint_supported_profiles_mv CASCADE; --done
 
 CREATE MATERIALIZED VIEW endpoint_supported_profiles_mv AS
 SELECT
@@ -1335,8 +521,46 @@ CREATE INDEX idx_profiles_fhir_version ON endpoint_supported_profiles_mv(fhir_ve
 CREATE INDEX idx_profiles_vendor_name ON endpoint_supported_profiles_mv(vendor_name);
 CREATE INDEX idx_profiles_profileurl ON endpoint_supported_profiles_mv(profileurl);
 
--- Lantern-852
-DROP MATERIALIZED VIEW IF EXISTS mv_capstat_sizes_tbl CASCADE;
+CREATE MATERIALIZED VIEW mv_profiles_paginated AS
+SELECT
+  row_number() OVER (ORDER BY vendor_name, url, profileurl) AS page_id,
+  url,
+  profileurl,
+  profilename,
+  resource,
+  fhir_version,
+  vendor_name
+FROM (
+  SELECT DISTINCT
+    url,
+    profileurl,
+    profilename,
+    resource,
+    fhir_version,
+    vendor_name
+  FROM endpoint_supported_profiles_mv
+) distinct_profiles
+ORDER BY vendor_name, url, profileurl;
+
+-- Create indexes for fast filtering and pagination
+CREATE UNIQUE INDEX mv_profiles_paginated_page_id_idx ON mv_profiles_paginated(page_id);
+CREATE INDEX mv_profiles_paginated_fhir_version_idx ON mv_profiles_paginated(fhir_version);
+CREATE INDEX mv_profiles_paginated_vendor_name_idx ON mv_profiles_paginated(vendor_name);
+CREATE INDEX mv_profiles_paginated_resource_idx ON mv_profiles_paginated(resource);
+CREATE INDEX mv_profiles_paginated_profileurl_idx ON mv_profiles_paginated(profileurl);
+
+
+
+
+
+
+
+
+
+
+
+-- Capstat Sizes Tab
+DROP MATERIALIZED VIEW IF EXISTS mv_capstat_sizes_tbl CASCADE; --done 
 
 CREATE MATERIALIZED VIEW mv_capstat_sizes_tbl AS
 SELECT
@@ -1378,78 +602,20 @@ CREATE INDEX idx_mv_capstat_sizes_fhir ON mv_capstat_sizes_tbl(fhir_version);
 CREATE INDEX idx_mv_capstat_sizes_vendor ON mv_capstat_sizes_tbl(vendor_name);
 
 
---LANTERN-848
-CREATE MATERIALIZED VIEW get_capstat_values_mv AS
-WITH valid_fhir_versions AS (
-    -- Dynamically extract all distinct FHIR versions from the dataset
-    SELECT DISTINCT 
-        CASE 
-            WHEN capability_fhir_version LIKE '%-%' THEN SPLIT_PART(capability_fhir_version, '-', 1)
-            ELSE capability_fhir_version
-        END AS version
-    FROM fhir_endpoints_info
-    WHERE capability_fhir_version IS NOT NULL
-)
-SELECT 
-    f.id AS endpoint_id,
-    f.vendor_id,
-    COALESCE(vendors.name, 'Unknown') AS vendor_name,
-    CASE 
-	    WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
-	    WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
-	    ELSE f.capability_fhir_version 
-	END AS fhir_version,
-    -- Extract the major version dynamically
-    CASE 
-        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
-        WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
-        ELSE f.capability_fhir_version 
-    END AS raw_filter_fhir_version,
-    -- Check dynamically against extracted valid FHIR versions
-    CASE 
-        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
-        WHEN (
-            CASE 
-                WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
-                ELSE f.capability_fhir_version 
-            END
-        ) IN (SELECT version FROM valid_fhir_versions) 
-        THEN (
-            CASE 
-                WHEN f.capability_fhir_version LIKE '%-%' THEN SPLIT_PART(f.capability_fhir_version, '-', 1)
-                ELSE f.capability_fhir_version 
-            END
-        ) 
-        ELSE 'Unknown' 
-    END AS filter_fhir_version,
-    f.capability_statement->>'url' AS url,
-    f.capability_statement->>'version' AS version,
-    f.capability_statement->>'name' AS name,
-    f.capability_statement->>'title' AS title,
-    f.capability_statement->>'date' AS date,
-    f.capability_statement->>'publisher' AS publisher,
-    f.capability_statement->>'description' AS description,
-    f.capability_statement->>'purpose' AS purpose,
-    f.capability_statement->>'copyright' AS copyright,
-    f.capability_statement->'software'->>'name' AS software_name,
-    f.capability_statement->'software'->>'version' AS software_version,
-    f.capability_statement->'software'->>'releaseDate' AS software_release_date,
-    f.capability_statement->'implementation'->>'description' AS implementation_description,
-    f.capability_statement->'implementation'->>'url' AS implementation_url,
-    f.capability_statement->'implementation'->>'custodian' AS implementation_custodian
-FROM fhir_endpoints_info f
-LEFT JOIN vendors ON f.vendor_id = vendors.id
-WHERE f.capability_statement::jsonb != 'null'
-AND f.requested_fhir_version = 'None';
 
--- Create indexes for performance optimization
-CREATE INDEX idx_get_capstat_values_mv_endpoint_id ON get_capstat_values_mv(endpoint_id);
-CREATE INDEX idx_get_capstat_values_mv_vendor_id ON get_capstat_values_mv(vendor_id);
-CREATE INDEX idx_get_capstat_values_mv_filter_fhir_version ON get_capstat_values_mv(filter_fhir_version);
-CREATE INDEX idx_get_capstat_values_mv_vendor_name ON get_capstat_values_mv(vendor_name);
 
--- Create a unique composite index
-CREATE UNIQUE INDEX idx_get_capstat_values_mv_unique ON get_capstat_values_mv(endpoint_id, vendor_id, filter_fhir_version);
+
+
+
+
+
+--Values tab MVs drop in order
+DROP MATERIALIZED VIEW IF EXISTS capstat_usage_summary_mv CASCADE; -- done (recreate: depends on selected_fhir_endpoints_values_mv)
+DROP MATERIALIZED VIEW IF EXISTS selected_fhir_endpoints_values_mv CASCADE; -- done (recreate: depends on get_capstat_values_mv + get_value_versions_mv)
+DROP MATERIALIZED VIEW IF EXISTS get_value_versions_mv CASCADE; -- done (recreate: depends on get_capstat_fields_mv)
+DROP MATERIALIZED VIEW IF EXISTS get_capstat_fields_mv CASCADE; -- done 
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY get_capstat_values_mv;
 
 CREATE MATERIALIZED VIEW get_capstat_fields_mv AS
 WITH valid_fhir_versions AS (
@@ -1589,11 +755,8 @@ CREATE INDEX idx_selected_fhir_endpoints_field ON selected_fhir_endpoints_values
 CREATE INDEX idx_selected_fhir_endpoints_field_value ON selected_fhir_endpoints_values_mv(field_value);
 CREATE INDEX idx_selected_fhir_endpoints_is_used ON selected_fhir_endpoints_values_mv(is_used);
 CREATE INDEX idx_summary_query ON selected_fhir_endpoints_values_mv (field, "FHIR Version", "Developer", is_used);
-
--- Create a unique composite index
 CREATE UNIQUE INDEX idx_selected_fhir_endpoints_unique ON selected_fhir_endpoints_values_mv("Developer", "FHIR Version", Field, field_value);
 
--- Add capstat_usage_summary_mv
 CREATE MATERIALIZED VIEW capstat_usage_summary_mv AS
 SELECT 
   field,
@@ -1606,50 +769,19 @@ GROUP BY field, "FHIR Version", "Developer", is_used;
 
 CREATE UNIQUE INDEX idx_capstat_usage_summary_unique ON capstat_usage_summary_mv(field, "FHIR Version", "Developer", is_used);
 
-CREATE TABLE daily_querying_status (status VARCHAR(500));
 
--- Lantern-839
-CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
-AS
-SELECT DISTINCT
-    endpoint_export.url,
-    COALESCE(
-        NULLIF(
-            btrim(
-                regexp_replace(name_id.cleaned_name, '\s+', ' ', 'g')
-            ), 
-        ''), 
-    'Unknown') AS organization_name,
-    
-    COALESCE(
-        name_id.cleaned_id::text,  -- Just cast to text
-        'Unknown'
-    ) AS organization_id,
-    
-    CASE
-        WHEN endpoint_export.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
-        ELSE endpoint_export.fhir_version
-    END AS fhir_version,
-    
-    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name
 
-FROM
-    endpoint_export
-LEFT JOIN LATERAL (
-    SELECT
-        name_elem AS cleaned_name,
-        id_elem AS cleaned_id
-    FROM
-        unnest(endpoint_export.endpoint_names, endpoint_export.endpoint_ids) AS u(name_elem, id_elem)
-) AS name_id ON TRUE
 
-WITH DATA;
 
- -- Create indexes for endpoint list organizations materialized view
- CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizations(fhir_version, vendor_name, url, organization_name, organization_id);
- CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
- CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
- CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
+
+
+
+
+
+--Validation Tab MVs
+DROP MATERIALIZED VIEW IF EXISTS mv_validation_failures CASCADE; -- done (recreate: depends on mv_validation_results_plot)
+DROP MATERIALIZED VIEW IF EXISTS mv_validation_details CASCADE; --done
+DROP MATERIALIZED VIEW IF EXISTS mv_validation_results_plot CASCADE; --done
 
 CREATE MATERIALIZED VIEW mv_validation_results_plot AS
 SELECT ROW_NUMBER() OVER () as row_id,
@@ -1671,7 +803,7 @@ FROM ( SELECT DISTINCT t.url,
         t.actual,
         t.comment,
         t.reference
-        FROM ( SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
+        FROM ( SELECT COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
                 f.url,
                     CASE
                         WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
@@ -1690,7 +822,7 @@ FROM ( SELECT DISTINCT t.url,
                 FROM fhir_endpoints_info f
                     JOIN validations v ON f.validation_result_id = v.validation_result_id
                     LEFT JOIN vendors ON f.vendor_id = vendors.id
-                ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) t) z;
+                ORDER BY v.validation_result_id, v.rule_name) t) z;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
 ON mv_validation_results_plot(row_id, url, fhir_version, vendor_name, rule_name, valid, expected, actual);
@@ -1701,7 +833,6 @@ CREATE INDEX mv_validation_results_plot_rule_idx ON mv_validation_results_plot(r
 CREATE INDEX mv_validation_results_plot_valid_idx ON mv_validation_results_plot(valid);
 CREATE INDEX mv_validation_results_plot_reference_idx ON mv_validation_results_plot(reference);
 
--- Materialized view for validation details
 CREATE MATERIALIZED VIEW mv_validation_details AS 
 WITH validation_data AS ( 
     SELECT 
@@ -1763,9 +894,8 @@ FROM (
 LEFT JOIN validation_versions vv ON vd.rule_name = vv.rule_name 
 ORDER BY vd.rule_name;
 
-CREATE UNIQUE INDEX mv_validation_details_unique_idx ON mv_validation_details(rule_name); 
+CREATE UNIQUE INDEX mv_validation_details_unique_idx ON mv_validation_details(rule_name);
 
--- Materialized view for validation failures
 CREATE MATERIALIZED VIEW mv_validation_failures AS
 SELECT row_id, fhir_version, url, expected, actual, vendor_name, rule_name, reference
 FROM mv_validation_results_plot
@@ -1778,7 +908,56 @@ CREATE INDEX mv_validation_failures_vendor_name_idx ON mv_validation_failures(ve
 CREATE INDEX mv_validation_failures_rule_name_idx ON mv_validation_failures(rule_name);
 CREATE INDEX mv_validation_failures_reference_idx ON mv_validation_failures(reference);
 
---LANTERN-security_tab_mv
+
+
+
+
+
+-- Security Tab MVs
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_security_counts CASCADE; -- done (recreate: depends on mv_endpoint_totals + mv_response_tally + mv_get_security_endpoints)
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_totals CASCADE; -- needs to be dropped and recreated since it depends on selected_fhir_endpoints_mv which got dropped and recreated again for the endpoints tab
+DROP MATERIALIZED VIEW IF EXISTS mv_auth_type_count CASCADE; -- done (recreate: depends on mv_get_security_endpoints)
+DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE; -- done (recreate: depends on selected_security_endpoints_mv)
+DROP MATERIALIZED VIEW IF EXISTS selected_security_endpoints_mv CASCADE; -- done (recreate: depends on security_endpoints_mv)
+DROP MATERIALIZED VIEW IF EXISTS security_endpoints_mv CASCADE; -- done
+DROP MATERIALIZED VIEW IF EXISTS mv_get_security_endpoints CASCADE; -- done
+
+CREATE MATERIALIZED VIEW mv_get_security_endpoints AS
+SELECT
+  f.id,
+  f.vendor_id,
+  COALESCE(v.name, 'Unknown') AS name,
+  CASE 
+    WHEN capability_fhir_version = '' THEN 'No Cap Stat'
+    WHEN position('-' in capability_fhir_version) > 0 THEN 
+      CASE
+        WHEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) IN 
+            ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
+             '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
+             '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
+             '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
+        THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
+        ELSE 'Unknown'
+      END
+    WHEN capability_fhir_version IN 
+        ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
+         '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
+         '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
+         '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
+    THEN capability_fhir_version
+    ELSE 'Unknown'
+  END AS fhir_version,
+  json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code,
+  json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' AS text
+FROM fhir_endpoints_info f 
+LEFT JOIN vendors v ON f.vendor_id = v.id
+WHERE requested_fhir_version = 'None';
+
+-- Create indexes for performance
+CREATE UNIQUE INDEX idx_mv_get_security_endpoints ON mv_get_security_endpoints(id, code);
+CREATE INDEX idx_mv_get_security_endpoints_name ON mv_get_security_endpoints(name);
+CREATE INDEX idx_mv_get_security_endpoints_fhir ON mv_get_security_endpoints(fhir_version);
+
 CREATE MATERIALIZED VIEW security_endpoints_mv AS
 SELECT 
     ROW_NUMBER() OVER () AS id,
@@ -1829,14 +1008,14 @@ JOIN fhir_endpoints_info f ON e.url = f.url
 JOIN LATERAL (
     SELECT json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code
 ) codes ON true
-WHERE f.requested_fhir_version = 'None' and f.vendor_id = (SELECT id FROM vendors WHERE name = e.vendor_name);
+WHERE f.requested_fhir_version = 'None';
 
---indexing 
+-- Indexing for security_endpoints_mv
 CREATE INDEX idx_security_endpoints_url ON security_endpoints_mv (url);
 CREATE INDEX idx_security_endpoints_fhir_version ON security_endpoints_mv (fhir_version_final);
 CREATE INDEX idx_security_endpoints_vendor_name ON security_endpoints_mv (vendor_name);
 CREATE INDEX idx_security_endpoints_code ON security_endpoints_mv (code);
---unique index
+-- Unique index
 CREATE UNIQUE INDEX idx_unique_security_endpoints ON security_endpoints_mv (id, url, vendor_name, code);
 
 CREATE MATERIALIZED VIEW selected_security_endpoints_mv AS
@@ -1874,10 +1053,7 @@ SELECT
     CONCAT(
         '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''', 
         se.url, 
-        '&&None',
-        '&&', 
-        se.vendor_name,
-        ''',{priority: ''event''});">', 
+        '&&None'',{priority: ''event''});">', 
         se.url, 
         '</a>'
     ) AS url_modal
@@ -1891,8 +1067,6 @@ CREATE INDEX idx_selected_security_endpoints_code ON selected_security_endpoints
 -- Create a unique composite index
 CREATE UNIQUE INDEX idx_unique_selected_security_endpoints ON selected_security_endpoints_mv (id, url, code);
 
--- Create materialized view for security_endpoints_distinct_mv
-DROP MATERIALIZED VIEW IF EXISTS security_endpoints_distinct_mv CASCADE;
 CREATE MATERIALIZED VIEW security_endpoints_distinct_mv AS
 SELECT DISTINCT
   url_modal AS url,
@@ -1905,44 +1079,7 @@ FROM selected_security_endpoints_mv;
 
 -- Create indexes for security_endpoints_distinct_mv
 CREATE UNIQUE INDEX idx_unique_security_endpoints_distinct_mv ON security_endpoints_distinct_mv (url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code);
-CREATE INDEX idx_security_endpoints_distinct_filters  ON security_endpoints_distinct_mv(capability_fhir_version, code, vendor_name);
-
--- LANTERN-864
-CREATE MATERIALIZED VIEW mv_get_security_endpoints AS
-SELECT
-  f.id,
-  f.vendor_id,
-  COALESCE(v.name, 'Unknown') AS name,
-  CASE 
-    WHEN capability_fhir_version = '' THEN 'No Cap Stat'
-    WHEN position('-' in capability_fhir_version) > 0 THEN 
-      CASE
-        WHEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) IN 
-            ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-             '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-             '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-             '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
-        THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
-        ELSE 'Unknown'
-      END
-    WHEN capability_fhir_version IN 
-        ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-         '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-         '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-         '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
-    THEN capability_fhir_version
-    ELSE 'Unknown'
-  END AS fhir_version,
-  json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code,
-  json_array_elements(capability_statement::json#>'{rest,0,security}' -> 'service')::json ->> 'text' AS text
-FROM fhir_endpoints_info f 
-LEFT JOIN vendors v ON f.vendor_id = v.id
-WHERE requested_fhir_version = 'None';
-
--- Create indexes for performance
-CREATE UNIQUE INDEX idx_mv_get_security_endpoints ON mv_get_security_endpoints(id, code);
-CREATE INDEX idx_mv_get_security_endpoints_name ON mv_get_security_endpoints(name);
-CREATE INDEX idx_mv_get_security_endpoints_fhir ON mv_get_security_endpoints(fhir_version);
+CREATE INDEX idx_security_endpoints_distinct_filters ON security_endpoints_distinct_mv(capability_fhir_version, code, vendor_name);
 
 CREATE MATERIALIZED VIEW mv_auth_type_count AS
 WITH endpoints_by_version AS (
@@ -1985,6 +1122,32 @@ ORDER BY
 CREATE UNIQUE INDEX idx_mv_auth_type_count ON mv_auth_type_count("Code", "FHIR Version");
 CREATE INDEX idx_mv_auth_type_count_fhir ON mv_auth_type_count("FHIR Version");
 CREATE INDEX idx_mv_auth_type_count_endpoints ON mv_auth_type_count("Endpoints"); 
+
+CREATE MATERIALIZED VIEW mv_endpoint_totals AS
+WITH latest_metadata AS (
+    SELECT max(updated_at) AS last_updated
+    FROM fhir_endpoints_metadata
+), 
+totals AS (
+    SELECT 
+        -- Count (url, fhir_version) combinations to match Endpoints tab logic
+        (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
+        (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
+        FROM fhir_endpoints_info fei
+        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
+)
+SELECT 
+    now() AS aggregation_date,
+    totals.all_endpoints,
+    totals.indexed_endpoints,
+    greatest(totals.all_endpoints - totals.indexed_endpoints, 0) AS nonindexed_endpoints,
+    (SELECT latest_metadata.last_updated FROM latest_metadata) AS last_updated
+FROM totals;
+
+CREATE UNIQUE INDEX idx_mv_endpoint_totals_date ON mv_endpoint_totals(aggregation_date);
+
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_totals;
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_response_tally;
 
 CREATE MATERIALIZED VIEW mv_endpoint_security_counts AS
 WITH 
@@ -2057,9 +1220,26 @@ ORDER BY sort_order;
 CREATE UNIQUE INDEX idx_mv_endpoint_security_counts ON mv_endpoint_security_counts("Status");
 
 
--- LANTERN-843
--- Create materialized view for endpoint_organization_tbl
+
+
+
+
+
+
+
+
+
+
+
+-- Smart Response Tab MV
+DROP MATERIALIZED VIEW IF EXISTS mv_selected_endpoints CASCADE; -- done (recreate: depends on mv_well_known_endpoints)
+DROP MATERIALIZED VIEW IF EXISTS mv_smart_response_capabilities CASCADE; -- done
+DROP MATERIALIZED VIEW IF EXISTS mv_well_known_no_doc CASCADE; -- done
+DROP MATERIALIZED VIEW IF EXISTS mv_well_known_endpoints CASCADE; -- done
+DROP MATERIALIZED VIEW IF EXISTS mv_http_pct CASCADE;  -- done (recreate: depends on mv_endpoint_export_tbl)
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE; --done
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_organization_tbl CASCADE;
+
 CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
  SELECT sub.url,
     array_agg(sub.endpoint_names_list ORDER BY sub.endpoint_names_list) AS endpoint_names_list
@@ -2072,8 +1252,6 @@ CREATE MATERIALIZED VIEW mv_endpoint_organization_tbl AS
 -- Create indexes for mv_endpoint_organization_tbl
 CREATE UNIQUE INDEX idx_mv_endpoint_list_org_url_uniq ON mv_endpoint_organization_tbl(url);
 
--- Create materialized view for endpoint_export_tbl
-DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_export_tbl CASCADE;
 CREATE MATERIALIZED VIEW mv_endpoint_export_tbl AS
 WITH base AS (
   SELECT 
@@ -2165,8 +1343,6 @@ CREATE INDEX idx_mv_endpoint_export_tbl_vendor ON mv_endpoint_export_tbl (vendor
 CREATE INDEX idx_mv_endpoint_export_tbl_fhir ON mv_endpoint_export_tbl (fhir_version);
 CREATE INDEX idx_mv_endpoint_export_tbl_vendor_fhir ON mv_endpoint_export_tbl (vendor_name, fhir_version);
 
--- Create materialized view for http_pct
-DROP MATERIALIZED VIEW IF EXISTS mv_http_pct CASCADE;
 CREATE MATERIALIZED VIEW mv_http_pct AS
 WITH grouped AS (
   SELECT
@@ -2183,7 +1359,6 @@ WITH grouped AS (
   GROUP BY f.id, f.url, e.http_response, e.vendor_name, e.fhir_version
 )
 SELECT
-  DISTINCT ON (url)
   row_number() OVER () AS mv_id,
   id,
   url,
@@ -2201,10 +1376,7 @@ CREATE INDEX idx_mv_http_pct_vendor ON mv_http_pct (vendor_name);
 CREATE INDEX idx_mv_http_pct_fhir ON mv_http_pct (fhir_version);
 CREATE INDEX idx_mv_http_pct_vendor_fhir ON mv_http_pct (vendor_name, fhir_version);
 
--- Create materialized view for well_known_endpoints
-DROP MATERIALIZED VIEW IF EXISTS mv_well_known_endpoints CASCADE;
 CREATE MATERIALIZED VIEW mv_well_known_endpoints AS
-
 WITH base AS (
          SELECT e.url,
             array_to_string(e.endpoint_names, ';'::text) AS organization_names,
@@ -2220,8 +1392,7 @@ WITH base AS (
           WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) = 'object'::text
         )
  SELECT 
-   	DISTINCT ON (base.url)
-    row_number() OVER () AS mv_id,
+   	row_number() OVER () AS mv_id,
 	base.url,
     regexp_replace(regexp_replace(regexp_replace(base.organization_names, '[{}]'::text, ''::text, 'g'::text), '","'::text, '; '::text, 'g'::text), '"'::text, ''::text, 'g'::text) AS organization_names,
     base.vendor_name,
@@ -2256,10 +1427,7 @@ CREATE INDEX idx_mv_well_known_vendor ON mv_well_known_endpoints(vendor_name);
 CREATE INDEX idx_mv_well_known_fhir ON mv_well_known_endpoints(fhir_version);
 CREATE INDEX idx_mv_well_known_vendor_fhir ON mv_well_known_endpoints(vendor_name, fhir_version);
 
--- Create materialized view for well_known_no_doc
-DROP MATERIALIZED VIEW IF EXISTS mv_well_known_no_doc CASCADE;
 CREATE MATERIALIZED VIEW mv_well_known_no_doc AS
-
 WITH base AS (
 	 SELECT f.id,
 		e.url,
@@ -2317,10 +1485,7 @@ CREATE INDEX idx_mv_well_known_no_doc_vendor ON mv_well_known_no_doc(vendor_name
 CREATE INDEX idx_mv_well_known_no_doc_fhir ON mv_well_known_no_doc(fhir_version);
 CREATE INDEX idx_mv_well_known_no_doc_vendor_fhir ON mv_well_known_no_doc(vendor_name, fhir_version);
 
--- Create materialized view for smart_response_capabilities
-DROP MATERIALIZED VIEW IF EXISTS mv_smart_response_capabilities CASCADE;
 CREATE MATERIALIZED VIEW mv_smart_response_capabilities AS
-
 WITH original AS (
  SELECT 
  	f.id,
@@ -2379,8 +1544,6 @@ CREATE INDEX idx_mv_smart_response_capabilities_capability ON mv_smart_response_
 CREATE INDEX idx_mv_smart_response_capabilities_vendor_fhir ON mv_smart_response_capabilities (vendor_name, fhir_version);
 CREATE INDEX idx_mv_smart_response_capabilities_capability_fhir ON mv_smart_response_capabilities (capability, fhir_version);
 
--- Create materialized view for selected_endpoints
-DROP MATERIALIZED VIEW IF EXISTS mv_selected_endpoints CASCADE;
 CREATE MATERIALIZED VIEW mv_selected_endpoints AS
 WITH original AS (
  SELECT
@@ -2409,10 +1572,16 @@ CREATE INDEX idx_mv_selected_endpoints_vendor ON mv_selected_endpoints(vendor_na
 CREATE INDEX idx_mv_selected_endpoints_fhir ON mv_selected_endpoints(capability_fhir_version);
 CREATE INDEX idx_mv_selected_endpoints_vendor_fhir ON mv_selected_endpoints(vendor_name, capability_fhir_version);
 
--- Lantern-854
--- Create materialized view for capstat_fields
-CREATE MATERIALIZED VIEW mv_capstat_fields AS 
 
+
+
+
+-- Fields Tab MV
+DROP MATERIALIZED VIEW IF EXISTS mv_capstat_values_extension CASCADE; -- done (recreate: depends on mv_capstat_fields)
+DROP MATERIALIZED VIEW IF EXISTS mv_capstat_values_fields CASCADE; -- done (recreate: depends on mv_capstat_fields)
+DROP MATERIALIZED VIEW IF EXISTS mv_capstat_fields CASCADE; -- done
+
+CREATE MATERIALIZED VIEW mv_capstat_fields AS 
 SELECT 
   f.id AS endpoint_id,
   f.vendor_id,
@@ -2442,9 +1611,7 @@ CREATE UNIQUE INDEX idx_mv_capstat_fields_unique ON mv_capstat_fields(endpoint_i
 CREATE INDEX idx_mv_capstat_fields_vendor ON mv_capstat_fields(vendor_name);
 CREATE INDEX idx_mv_capstat_fields_fhir ON mv_capstat_fields(fhir_version);
 
--- Create materialized view for capstat_fields_text
 CREATE MATERIALIZED VIEW mv_capstat_values_fields AS 
-
 WITH base AS (
   -- Start with the materialized view filtered on extension
   SELECT *
@@ -2486,9 +1653,7 @@ CREATE UNIQUE INDEX idx_mv_capstat_values_fields_unique ON mv_capstat_values_fie
 CREATE INDEX idx_mv_capstat_values_fields_field_version ON mv_capstat_values_fields(field_version);
 CREATE INDEX idx_mv_capstat_values_fields_fhir ON mv_capstat_values_fields(fhir_version);
 
--- Create materialized view for capstat_extension_text
 CREATE MATERIALIZED VIEW mv_capstat_values_extension AS 
-
 WITH base AS (
   -- Start with the materialized view filtered on extension
   SELECT *
@@ -2530,8 +1695,15 @@ CREATE UNIQUE INDEX idx_mv_capstat_values_extension_unique ON mv_capstat_values_
 CREATE INDEX idx_mv_capstat_values_extension_field_version ON mv_capstat_values_extension(field_version);
 CREATE INDEX idx_mv_capstat_values_extension_fhir ON mv_capstat_values_extension(fhir_version);
 
--- LANTERN-863
--- Create materialized view for removing resource fetcher
+
+
+
+
+
+
+
+-- Resources Tab MV
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_resource_types CASCADE; -- done
 
 CREATE MATERIALIZED VIEW mv_endpoint_resource_types AS
 SELECT 
@@ -2563,77 +1735,13 @@ CREATE INDEX idx_mv_endpoint_resource_types_fhir ON mv_endpoint_resource_types(f
 CREATE INDEX idx_mv_endpoint_resource_types_type ON mv_endpoint_resource_types(type);
 
 
--- LANTERN-838: Validation cleanup 
-CREATE INDEX fhir_endpoints_info_history_val_res_idx ON fhir_endpoints_info_history (validation_result_id);
 
-ALTER TABLE validations
-ADD CONSTRAINT fk_validations_validation_results
-FOREIGN KEY (validation_result_id) 
-REFERENCES validation_results(id)
-ON DELETE CASCADE;
+-- Organization Tab MV
+DROP MATERIALIZED VIEW IF EXISTS mv_organizations_final CASCADE; -- done
+DROP MATERIALIZED VIEW IF EXISTS mv_organizations_aggregated CASCADE; -- done
 
--- LANTERN-841: HTI-1 Final Rule Organization Data
-CREATE TABLE fhir_endpoint_organization_active (
-	org_id INT,
-	active VARCHAR(500)
-);
+REFRESH MATERIALIZED VIEW mv_endpoint_list_organizations;
 
-CREATE TABLE fhir_endpoint_organization_addresses (
-	org_id INT,
-	address VARCHAR(500)
-);
-
-CREATE TABLE fhir_endpoint_organization_identifiers (
-	org_id INT,
-	identifier VARCHAR(500)
-);
-
-CREATE INDEX idx_fhir_endpoint_organization_active_org_id ON fhir_endpoint_organization_active (org_id);
-
-CREATE INDEX idx_fhir_endpoint_organization_addresses_org_id ON fhir_endpoint_organization_addresses (org_id);
-
-CREATE INDEX idx_fhir_endpoint_organization_identifiers_org_id ON fhir_endpoint_organization_identifiers (org_id);
-
-CREATE TABLE fhir_endpoint_organization_url (
-	org_id INT,
-	org_url VARCHAR(500)
-);
-
-CREATE INDEX idx_fhir_endpoint_organization_url_org_id ON fhir_endpoint_organization_url (org_id);
-
---Profiles Tab Pagination MV
-CREATE MATERIALIZED VIEW mv_profiles_paginated AS
-SELECT
-  row_number() OVER (ORDER BY vendor_name, url, profileurl) AS page_id,
-  url,
-  profileurl,
-  profilename,
-  resource,
-  fhir_version,
-  vendor_name
-FROM (
-  SELECT DISTINCT
-    url,
-    profileurl,
-    profilename,
-    resource,
-    fhir_version,
-    vendor_name
-  FROM endpoint_supported_profiles_mv
-) distinct_profiles
-ORDER BY vendor_name, url, profileurl;
-
--- Create indexes for fast filtering and pagination
-CREATE UNIQUE INDEX mv_profiles_paginated_page_id_idx ON mv_profiles_paginated(page_id);
-CREATE INDEX mv_profiles_paginated_fhir_version_idx ON mv_profiles_paginated(fhir_version);
-CREATE INDEX mv_profiles_paginated_vendor_name_idx ON mv_profiles_paginated(vendor_name);
-CREATE INDEX mv_profiles_paginated_resource_idx ON mv_profiles_paginated(resource);
-CREATE INDEX mv_profiles_paginated_profileurl_idx ON mv_profiles_paginated(profileurl);
-
--- Composite index for common filter combinations
-CREATE INDEX mv_profiles_paginated_composite_idx ON mv_profiles_paginated(vendor_name, fhir_version, resource);
-
--- LANTERN-925: Improve pagination performance of the organization tab
 CREATE MATERIALIZED VIEW mv_organizations_aggregated AS
 WITH base_filtered_data AS (
     -- Step 1: Get the source data from mv_endpoint_list_organizations
@@ -2660,7 +1768,7 @@ processed_data AS (
             ELSE NULL
         END as org_id,
         url,
-        -- Replicate the consistent FHIR version processing
+        -- Replicate the consistent FHIR version processing with R4B and R5 versions
         CASE 
             WHEN fhir_version = '' OR fhir_version IS NULL THEN 'No Cap Stat'
             WHEN position('-' in fhir_version) > 0 THEN 
@@ -2900,7 +2008,6 @@ CREATE INDEX idx_mv_orgs_agg_fhir_versions ON mv_organizations_aggregated USING 
 CREATE INDEX idx_mv_orgs_agg_vendor_names ON mv_organizations_aggregated USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_agg_urls ON mv_organizations_aggregated USING GIN(urls_array);
 
---LANTERN-973: Group organizations in Org Table if all the fields are same except endpoint url
 CREATE MATERIALIZED VIEW mv_organizations_final AS
 SELECT 
     ROW_NUMBER() OVER (ORDER BY organization_name) as org_id,
@@ -2952,637 +2059,5 @@ CREATE INDEX idx_mv_orgs_final_fhir_versions ON mv_organizations_final USING GIN
 CREATE INDEX idx_mv_orgs_final_vendor_names ON mv_organizations_final USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_final_urls ON mv_organizations_final USING GIN(urls_array);
 
---LANTERN-976: Developer Feedback / Organization Data Quality with SQL Functions and Materialized Views
 
--- Function to validate NPI using Luhn algorithm 
-CREATE OR REPLACE FUNCTION validate_npi_luhn(npi TEXT) 
-RETURNS BOOLEAN AS $$
-DECLARE
-    digits INTEGER[];
-    checksum INTEGER := 0;
-    doubled INTEGER;
-    i INTEGER;
-BEGIN
-    -- Check if NPI is exactly 10 digits
-    IF length(npi) != 10 OR npi !~ '^[0-9]{10}$' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Convert string to array of integers
-    FOR i IN 1..10 LOOP
-        digits[i] := substring(npi FROM i FOR 1)::INTEGER;
-    END LOOP;
-    
-    -- Double digits in positions 1,3,5,7,9 (R uses 1-indexed positions)
-    FOR i IN 1..5 LOOP
-        doubled := digits[i*2-1] * 2;
-        IF doubled > 9 THEN
-            doubled := doubled - 9;
-        END IF;
-        checksum := checksum + doubled;
-    END LOOP;
-    
-    -- Add digits in positions 2,4,6,8,10
-    FOR i IN 1..5 LOOP
-        checksum := checksum + digits[i*2];
-    END LOOP;
-    
-    -- Add 24 and check modulo 10
-    checksum := checksum + 24;
-    RETURN (checksum % 10) = 0;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--- Function to check if name is address-like 
-CREATE OR REPLACE FUNCTION is_address_like(name_text TEXT)
-RETURNS BOOLEAN AS $$
-DECLARE
-    clean_name TEXT;
-    score INTEGER := 0;
-    has_healthcare_context BOOLEAN := FALSE;
-BEGIN
-    IF name_text IS NULL OR name_text = '' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Clean the name (remove HTML tags)
-    clean_name := regexp_replace(name_text, '<[^>]+>', '', 'g');
-    clean_name := trim(clean_name);
-    
-    -- Expanded healthcare/organization context detection
-    IF clean_name ~* '(^|\s)(HOSPITALS?|CLINICS?|CENTERS?|CENTRES?|HEALTH|HEALTHCARE|MEDICAL|SYSTEMS?|SERVICES?|LLC|CORPS?|CORPORATION|INC|INCORPORATED|LTD|LIMITED|ASSOCIATES|GROUP|FOUNDATION|INSTITUTE|UNIVERSITY|COLLEGE|PHARMACY|LABORATORY|LABS?|BEAUTY|WELLNESS|DENTAL|VISION|EYE|CARE|THERAPY|REHAB|REHABILITATION|PRACTICE|MEDICINE|DOCTOR|PHYSICIAN)(\s|$)' THEN
-        has_healthcare_context := TRUE;
-    END IF;
-    
-    -- Additional medical degree and title detection
-    IF clean_name ~* '(^|\s)(MD|DO|DDS|DMD|DPM|DVM|PharmD|PhD|RN|NP|PA|LPN|CNA|RPh|OD|PT|OT|SLP|RD|MSW|LCSW|LMFT|PSYD|EDD|JD|CPA|DBA|PLLC|P\.?C\.?|P\.?A\.?)(\s|,|$)' THEN
-        has_healthcare_context := TRUE;
-    END IF;
-    
-    -- Medical specialty detection
-    IF clean_name ~* '(^|\s)(FAMILY|INTERNAL|PRIMARY|URGENT|EMERGENCY|PEDIATRICS?|UROLOGY|DIABETES|LUNGS?|HEART|CANCER|CARDIOLOGY|CARDIAC|SURG|SURGEONS?|ENDOCRINOLOGY|ORTHOPEDIC|DERMATOLOGY|NEUROLOGY|ONCOLOGY|RADIOLOGY|PATHOLOGY|ANESTHESIA|PSYCHIATRY|PSYCHOLOGY|AUDIOLOGY|OPTOMETRY|PODIATRY|CHIROPRACTIC|OBSTETRICS|GYNECOLOGY|GASTROENTEROLOGY|PULMONOLOGY|NEPHROLOGY|RHEUMATOLOGY|HEMATOLOGY|INFECTIOUS|GERIATRIC|SPORTS|PAIN|WOUND|DIALYSIS|IMAGING|SURGICAL|REHABILITATION|BEHAVIORAL|MENTAL)(\s|$)' THEN
-        has_healthcare_context := TRUE;
-    END IF;
-    
-    -- Healthcare organization names
-    IF clean_name ~* '(^|\s)(BAYCARE|KAISER|MAYO|CLEVELAND|JOHNS|HOPKINS|MEMORIAL|REGIONAL|COMMUNITY|MERCY|PROVIDENCE|ADVENTIST|BAPTIST|METHODIST|CATHOLIC|CHRISTIAN|PRESBYTERIAN|EPISCOPAL|HEALING|HEARTS|WELLNESS|CHRISTI|TERESA)(\s|$)' THEN
-        has_healthcare_context := TRUE;
-    END IF;
-    
-    -- Strong address indicators
-    IF clean_name ~ '^[0-9]+' THEN 
-        score := score + 3; -- Starts with number
-    END IF;
-    
-    -- Street suffix detection - concatenate the regex properly
-    IF clean_name ~* '(^|\s)(ST|STREET|AVE|AVENUE|BLVD|BOULEVARD|RD|ROAD|DR|DRIVE|LN|LANE|CT|COURT|CIR|CIRCLE|WAY|PL|PLACE|PKWY|PARKWAY|TER|TERRACE|HWY|HIGHWAY|EXPY|EXPRESSWAY|FWY|FREEWAY|RTE|ROUTE|TPKE|TURNPIKE|SQ|SQUARE|CTR|CENTER|PLZ|PLAZA|MALL|ALY|ALLEY|LOOP|PASS|PATH|TRCE|TRACE|TRL|TRAIL|RUN|CRK|CREEK|VW|VIEW|PT|POINT|HOLW|HOLLOW|MTN|MOUNTAIN|HLS|HILLS|PK|PARK|IS|ISLAND|BCH|BEACH|EST|ESTATES|LDG|LODGE)(\s|$)' THEN
-        score := score + 3;
-    END IF;
-    
-    -- Special handling for "ST" - only count as street if no religious/healthcare context
-    IF clean_name ~* '(^|\s)ST(\s|$)' AND NOT has_healthcare_context AND NOT clean_name ~* '(SAINT|TERESA|FRANCIS|MARY|JOSEPH|JOHN|PAUL|PETER|MICHAEL|GABRIEL|CHRISTOPHER|ANTHONY|VINCENT|PATRICK|THOMAS|JAMES|ROBERT|ELIZABETH|ANNE|CATHERINE|MARGARET|BARBARA)' THEN
-        score := score + 3; -- ST as street
-    END IF;
-    
-    -- Unit detection
-    IF clean_name ~* '(^|\s)(SUITE|STE|APT|APARTMENT|UNIT|FLOOR|FL|ROOM|RM|BUILDING|BLDG|#)(\s|$)' THEN 
-        score := score + 2;
-    END IF;
-    
-    -- IMPROVED: ZIP code detection - handle both 5-digit and partial ZIP codes
-    IF clean_name ~ '[0-9]{5}(-[0-9]{3,4})?(\s|$)' THEN 
-        score := score + 3;
-    END IF;
-    
-    -- State detection - only apply if NOT in healthcare/business context
-    IF NOT has_healthcare_context AND clean_name ~* '(^|\s)(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)(\s|$)' THEN 
-        score := score + 2; -- State abbreviation
-    END IF;
-    
-    -- Directional indicators 
-    IF clean_name ~* '(^|\s)(NORTH|SOUTH|EAST|WEST|N|S|E|W)(\s|$)' THEN 
-        score := score + 1;
-    END IF;
-    
-    -- Multiple commas (address format)
-    IF length(clean_name) - length(replace(clean_name, ',', '')) >= 2 THEN 
-        score := score + 2;
-    END IF;
-    
-    -- Strong penalty for clear healthcare/business context
-    IF has_healthcare_context THEN
-        score := score - 6;
-    END IF;
-    
-    RETURN score >= 4;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--- Function to validate individual identifier 
-CREATE OR REPLACE FUNCTION validate_identifier_value(identifier_type TEXT, identifier_value TEXT)
-RETURNS TABLE(valid BOOLEAN, error_msg TEXT) AS $$
-BEGIN
-    IF identifier_value IS NULL OR trim(identifier_value) = '' THEN
-        RETURN QUERY SELECT FALSE, 'Missing identifier value';
-        RETURN;
-    END IF;
-    
-    identifier_type := upper(trim(identifier_type));
-    identifier_value := trim(identifier_value);
-    
-    IF identifier_type = 'NPI' THEN
-        -- us-core-16: NPI must be 10 digits
-        IF identifier_value !~ '^[0-9]{10}$' THEN
-            RETURN QUERY SELECT FALSE, 'NPI must be exactly 10 digits';
-            RETURN;
-        END IF;
-        
-        -- us-core-17: NPI check digit must be valid (Luhn algorithm)
-        IF NOT validate_npi_luhn(identifier_value) THEN
-            RETURN QUERY SELECT FALSE, 'NPI check digit is invalid (Luhn algorithm failed)';
-            RETURN;
-        END IF;
-        
-        RETURN QUERY SELECT TRUE, NULL::TEXT;
-        
-    ELSIF identifier_type = 'CLIA' THEN
-        -- us-core-18: CLIA number must be 10 digits with a letter "D" in third position
-        IF identifier_value !~ '^[0-9]{2}D[0-9]{7}$' THEN
-            RETURN QUERY SELECT FALSE, 'CLIA must be 10 characters: 2 digits + ''D'' + 7 digits';
-            RETURN;
-        END IF;
-        
-        RETURN QUERY SELECT TRUE, NULL::TEXT;
-        
-    ELSIF identifier_type = 'NAIC' THEN
-        -- us-core-19: NAIC must be 5 digits
-        IF identifier_value !~ '^[0-9]{5}$' THEN
-            RETURN QUERY SELECT FALSE, 'NAIC must be exactly 5 digits';
-            RETURN;
-        END IF;
-        
-        RETURN QUERY SELECT TRUE, NULL::TEXT;
-        
-    ELSE
-        -- Non-standard identifier type
-        RETURN QUERY SELECT FALSE, 'Non-standard identifier type (should use NPI, CLIA, or NAIC)';
-    END IF;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--- Function for comprehensive name validation 
-CREATE OR REPLACE FUNCTION is_valid_organization_name(org_name TEXT)
-RETURNS BOOLEAN AS $$
-DECLARE
-    clean_name TEXT;
-    special_chars INTEGER;
-    total_chars INTEGER;
-BEGIN
-    IF org_name IS NULL OR org_name = '' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Remove HTML tags and clean
-    clean_name := regexp_replace(org_name, '<[^>]+>', '', 'g');
-    clean_name := trim(clean_name);
-    
-    -- Minimum length check
-    IF length(clean_name) < 3 THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Placeholder patterns
-    IF upper(clean_name) IN ('-', '.', 'N/A', 'NA', 'UNKNOWN', 'TEST', 'EXAMPLE', 'TBD', 'TODO') THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Reject if all digits
-    IF clean_name ~ '^[0-9]+$' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Reject digits with only separators/symbols
-    IF clean_name ~ '^[0-9()/.\\-]+$' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Reject only non-word characters
-    IF clean_name ~ '^\W+$' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Reject phone number patterns
-    IF clean_name ~ '^\(?[0-9]{3}\)?[- ]?[0-9]{3}[- ]?[0-9]{4}$' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Reject if it looks like an address
-    IF is_address_like(clean_name) THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Check special character ratio (equivalent to original R logic)
-    total_chars := length(clean_name);
-    special_chars := length(regexp_replace(clean_name, '[a-zA-Z0-9 ]', '', 'g'));
-    
-    IF special_chars::DECIMAL / total_chars::DECIMAL > 0.3 THEN
-        RETURN FALSE;
-    END IF;
-    
-    RETURN TRUE;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--- Function for comprehensive address validation 
-CREATE OR REPLACE FUNCTION is_valid_organization_address(address_text TEXT)
-RETURNS BOOLEAN AS $$
-DECLARE
-    clean_address TEXT;
-    comma_count INTEGER;
-BEGIN
-    IF address_text IS NULL OR address_text = '' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Remove HTML tags and clean
-    clean_address := regexp_replace(address_text, '<[^>]+>', '', 'g');
-    clean_address := trim(clean_address);
-    
-    -- Minimum length check
-    IF length(clean_address) < 10 THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Check for placeholder addresses (equivalent to original R logic)
-    IF upper(clean_address) ~ '123 (MAIN|TEST) ST' OR upper(clean_address) ~ '123 (MAIN|TEST) STREET' THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Must have street number
-    IF NOT (clean_address ~ '[0-9]+') THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Must have city, state structure (at least 2 commas)
-    comma_count := length(clean_address) - length(replace(clean_address, ',', ''));
-    IF comma_count < 2 THEN
-        RETURN FALSE;
-    END IF;
-    
-    -- Must have ZIP code
-    IF NOT (clean_address ~ '[0-9]{5}') THEN
-        RETURN FALSE;
-    END IF;
-    
-    RETURN TRUE;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE;
-
--- 1. Complete organization quality materialized view with ALL original validations
-CREATE MATERIALIZED VIEW mv_organization_quality AS
-WITH base_org_data AS (
-    SELECT
-        org_id,
-        organization_name,
-        identifier_types_html,
-        identifier_values_html,
-        addresses_html,
-        vendor_names_array,
-        urls_array,
-        endpoint_urls_html
-    FROM mv_organizations_final
-),
-identifier_parsing AS (
-    SELECT 
-        org_id,
-        organization_name,
-        identifier_types_html,
-        identifier_values_html,
-        addresses_html,
-        vendor_names_array,
-        urls_array,
-        endpoint_urls_html,
-        
-        -- Check if identifier data exists (equivalent to original R logic)
-        CASE 
-            WHEN (identifier_types_html IS NULL OR identifier_types_html = '') AND 
-                 (identifier_values_html IS NULL OR identifier_values_html = '') THEN 'no_identifiers'
-            WHEN (identifier_types_html IS NULL OR identifier_types_html = '') OR 
-                 (identifier_values_html IS NULL OR identifier_values_html = '') THEN 'incomplete_data'
-            ELSE 'has_data'
-        END as identifier_data_status,
-        
-        -- Parse identifier types and values from HTML format
-        CASE 
-            WHEN identifier_types_html IS NULL OR identifier_types_html = '' THEN ARRAY[]::TEXT[]
-            ELSE string_to_array(
-                regexp_replace(
-                    regexp_replace(identifier_types_html, '<br/?>', '|', 'gi'), 
-                    '\s+', ' ', 'g'
-                ), '|'
-            )
-        END as parsed_types,
-        
-        CASE 
-            WHEN identifier_values_html IS NULL OR identifier_values_html = '' THEN ARRAY[]::TEXT[]
-            ELSE string_to_array(
-                regexp_replace(
-                    regexp_replace(identifier_values_html, '<br/?>', '|', 'gi'), 
-                    '\s+', ' ', 'g'
-                ), '|'
-            )
-        END as parsed_values
-        
-    FROM base_org_data
-),
-identifier_validation_detailed AS (
-    SELECT *,
-        -- Count total identifiers
-        CASE 
-            WHEN identifier_data_status = 'no_identifiers' THEN 0
-            WHEN parsed_types IS NULL THEN 0
-            ELSE COALESCE(array_length(parsed_types, 1), 0)
-        END as total_identifier_count,
-        
-        -- Comprehensive identifier validation using the new functions
-        CASE 
-            WHEN identifier_data_status = 'no_identifiers' THEN 0
-            WHEN identifier_data_status = 'incomplete_data' THEN 0
-            WHEN parsed_types IS NULL OR parsed_values IS NULL THEN 0
-            WHEN COALESCE(array_length(parsed_types, 1), 0) != COALESCE(array_length(parsed_values, 1), 0) THEN 0
-            ELSE (
-                SELECT COUNT(*)::INT
-                FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
-                WHERE (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
-            )
-        END as conformant_identifier_count,
-        
-        -- Detailed identifier counts by type with full validation
-        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) = 'NPI'), 0)::INT as npi_count,
-        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) = 'CLIA'), 0)::INT as clia_count,
-        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) = 'NAIC'), 0)::INT as naic_count,
-        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) NOT IN ('NPI', 'CLIA', 'NAIC') AND trim(t) != ''), 0)::INT as other_count,
-        
-        -- Valid counts by type using full validation functions
-        COALESCE((
-            SELECT COUNT(*)::INT
-            FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
-            WHERE upper(trim(itype)) = 'NPI' 
-              AND (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
-        ), 0) as npi_valid,
-        
-        COALESCE((
-            SELECT COUNT(*)::INT
-            FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
-            WHERE upper(trim(itype)) = 'CLIA' 
-              AND (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
-        ), 0) as clia_valid,
-        
-        COALESCE((
-            SELECT COUNT(*)::INT
-            FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
-            WHERE upper(trim(itype)) = 'NAIC' 
-              AND (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
-        ), 0) as naic_valid
-        
-    FROM identifier_parsing
-),
-quality_calculations AS (
-    SELECT *,
-        -- Identifier validation results
-        conformant_identifier_count > 0 as has_valid_identifiers,
-        CASE 
-            WHEN total_identifier_count = 0 THEN 0.0
-            ELSE (conformant_identifier_count::DECIMAL / total_identifier_count::DECIMAL * 100)
-        END as identifier_conformance_rate,
-        
-        -- Name validation using the comprehensive function
-        is_valid_organization_name(organization_name) as has_valid_name,
-        
-        -- Address validation using the comprehensive function
-        is_valid_organization_address(addresses_html) as has_valid_address,
-        
-        -- Calculate invalid counts
-        GREATEST(0, npi_count - npi_valid) as npi_invalid,
-        GREATEST(0, clia_count - clia_valid) as clia_invalid,
-        GREATEST(0, naic_count - naic_valid) as naic_invalid
-        
-    FROM identifier_validation_detailed
-)
-SELECT 
-    org_id,
-    organization_name,
-    identifier_types_html,
-    identifier_values_html,
-    addresses_html,
-    vendor_names_array,
-    urls_array,
-    endpoint_urls_html,
-    identifier_data_status,
-    total_identifier_count,
-    conformant_identifier_count,
-    ROUND(identifier_conformance_rate::NUMERIC, 1) as identifier_conformance_rate,
-    has_valid_identifiers,
-    has_valid_name,
-    has_valid_address,
-    
-    -- Identifier counts by type
-    npi_count,
-    clia_count,
-    naic_count,
-    other_count,
-    npi_valid,
-    clia_valid,
-    naic_valid,
-    npi_invalid,
-    clia_invalid,
-    naic_invalid,
-    other_count as other_invalid, -- All "other" types are invalid
-    
-    -- Overall quality score (0-3)
-    (CASE WHEN has_valid_identifiers THEN 1 ELSE 0 END +
-     CASE WHEN has_valid_name THEN 1 ELSE 0 END +
-     CASE WHEN has_valid_address THEN 1 ELSE 0 END) as overall_quality_score,
-     
-    -- Conformance categories
-    CASE 
-        WHEN identifier_conformance_rate = 100 THEN 'Fully Conformant'
-        WHEN identifier_conformance_rate >= 50 THEN 'Partially Conformant'
-        WHEN conformant_identifier_count > 0 THEN 'Minimally Conformant'
-        ELSE 'Non-Conformant'
-    END as identifier_conformance_category,
-    
-    -- Status categories
-    CASE 
-        WHEN identifier_data_status = 'no_identifiers' THEN 'no_identifiers'
-        WHEN conformant_identifier_count = 0 THEN 'invalid_only'
-        WHEN conformant_identifier_count = total_identifier_count THEN 'all_valid'
-        ELSE 'mixed_valid_invalid'
-    END as identifier_status
-    
-FROM quality_calculations;
-
--- Create indexes
-CREATE UNIQUE INDEX idx_mv_organization_quality_complete_org_id ON mv_organization_quality(org_id);
-CREATE INDEX idx_mv_organization_quality_complete_vendor ON mv_organization_quality USING GIN(vendor_names_array);
-CREATE INDEX idx_mv_organization_quality_complete_valid_id ON mv_organization_quality(has_valid_identifiers);
-CREATE INDEX idx_mv_organization_quality_complete_valid_name ON mv_organization_quality(has_valid_name);
-CREATE INDEX idx_mv_organization_quality_complete_valid_address ON mv_organization_quality(has_valid_address);
-CREATE INDEX idx_mv_organization_quality_complete_conformance ON mv_organization_quality(identifier_conformance_category);
-CREATE INDEX idx_mv_organization_quality_complete_status ON mv_organization_quality(identifier_status);
-CREATE INDEX idx_mv_organization_quality_complete_score ON mv_organization_quality(overall_quality_score);
-
--- 2. Update summary views to use the complete validation data
-CREATE MATERIALIZED VIEW mv_organization_quality_summary AS
-SELECT 
-    vendor_name,
-    COUNT(*) as total_organizations,
-    
-    -- Identifier validation summary
-    COUNT(*) FILTER (WHERE has_valid_identifiers) as organizations_with_valid_identifiers,
-    COUNT(*) FILTER (WHERE identifier_status = 'no_identifiers') as organizations_with_no_identifiers,
-    COUNT(*) FILTER (WHERE identifier_status = 'invalid_only') as organizations_with_invalid_only,
-    COUNT(*) FILTER (WHERE identifier_status = 'all_valid') as organizations_all_valid,
-    COUNT(*) FILTER (WHERE identifier_status = 'mixed_valid_invalid') as organizations_mixed_valid,
-    
-    -- Quality metrics
-    COUNT(*) FILTER (WHERE has_valid_name) as organizations_with_valid_names,
-    COUNT(*) FILTER (WHERE has_valid_address) as organizations_with_valid_addresses,
-    COUNT(*) FILTER (WHERE overall_quality_score = 3) as high_quality_organizations,
-    COUNT(*) FILTER (WHERE overall_quality_score < 3) as low_quality_organizations,
-    
-    -- Conformance breakdown
-    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Fully Conformant') as fully_conformant,
-    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Partially Conformant') as partially_conformant,
-    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Minimally Conformant') as minimally_conformant,
-    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Non-Conformant') as non_conformant,
-    
-    -- Averages
-    ROUND(AVG(identifier_conformance_rate), 1) as avg_conformance_rate,
-    ROUND(AVG(overall_quality_score), 2) as avg_quality_score,
-    
-    -- Percentages
-    ROUND(COUNT(*) FILTER (WHERE has_valid_identifiers)::DECIMAL / COUNT(*)::DECIMAL * 100, 1) as identifier_percentage,
-    ROUND(COUNT(*) FILTER (WHERE has_valid_name)::DECIMAL / COUNT(*)::DECIMAL * 100, 1) as name_percentage,
-    ROUND(COUNT(*) FILTER (WHERE has_valid_address)::DECIMAL / COUNT(*)::DECIMAL * 100, 1) as address_percentage
-
-FROM (
-    SELECT 
-        UNNEST(vendor_names_array) as vendor_name,
-        has_valid_identifiers,
-        identifier_status,
-        has_valid_name,
-        has_valid_address,
-        overall_quality_score,
-        identifier_conformance_category,
-        identifier_conformance_rate
-    FROM mv_organization_quality
-    
-    UNION ALL
-    
-    -- Add "All Developers" summary
-    SELECT 
-        'All Developers' as vendor_name,
-        has_valid_identifiers,
-        identifier_status,
-        has_valid_name,
-        has_valid_address,
-        overall_quality_score,
-        identifier_conformance_category,
-        identifier_conformance_rate
-    FROM mv_organization_quality
-) vendor_expanded
-GROUP BY vendor_name;
-
--- Create index
-CREATE UNIQUE INDEX idx_mv_org_quality_summary_complete_vendor ON mv_organization_quality_summary(vendor_name);
-
--- 3. Update identifier summary view
-CREATE MATERIALIZED VIEW mv_organization_identifier_summary AS  
-SELECT 
-    vendor_name,
-    SUM(npi_count) as total_npi,
-    SUM(clia_count) as total_clia,
-    SUM(naic_count) as total_naic,
-    SUM(other_count) as total_other,
-    SUM(CASE WHEN total_identifier_count = 0 THEN 1 ELSE 0 END) as total_no_identifiers,
-    SUM(npi_valid) as total_npi_valid,
-    SUM(clia_valid) as total_clia_valid,
-    SUM(naic_valid) as total_naic_valid,
-    SUM(npi_invalid) as total_npi_invalid,
-    SUM(clia_invalid) as total_clia_invalid,
-    SUM(naic_invalid) as total_naic_invalid,
-    SUM(other_invalid) as total_other_invalid,
-    SUM(total_identifier_count) as total_all_identifiers,
-    SUM(conformant_identifier_count) as total_all_conformant,
-    
-    -- Percentages
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(npi_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
-        ELSE 0
-    END as npi_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(clia_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1) 
-        ELSE 0
-    END as clia_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(naic_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
-        ELSE 0  
-    END as naic_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(other_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
-        ELSE 0
-    END as other_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(conformant_identifier_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
-        ELSE 0
-    END as conformance_rate
-    
-FROM (
-    SELECT 
-        UNNEST(vendor_names_array) as vendor_name,
-        npi_count, clia_count, naic_count, other_count,
-        npi_valid, clia_valid, naic_valid, npi_invalid, clia_invalid, naic_invalid, other_invalid,
-        total_identifier_count, conformant_identifier_count
-    FROM mv_organization_quality
-    
-    UNION ALL
-    
-    -- Add "All Developers" summary  
-    SELECT 
-        'All Developers' as vendor_name,
-        npi_count, clia_count, naic_count, other_count,
-        npi_valid, clia_valid, naic_valid, npi_invalid, clia_invalid, naic_invalid, other_invalid,
-        total_identifier_count, conformant_identifier_count
-    FROM mv_organization_quality
-) vendor_expanded
-GROUP BY vendor_name;
-
--- Create index
-CREATE UNIQUE INDEX idx_mv_org_identifier_summary_complete_vendor ON mv_organization_identifier_summary(vendor_name);
-
-CREATE MATERIALIZED VIEW IF NOT EXISTS mv_developer_endpoint_summary AS
-SELECT
-    vendor_name AS developer_name,
-    COUNT(DISTINCT jet.url) AS total_endpoints_count,
-    SUM(CASE WHEN http_response = 200 THEN 1 ELSE 0 END) AS healthy_endpoints_count,
-    CASE WHEN SUM(CASE WHEN http_response = 200 THEN 1 ELSE 0 END) >= GREATEST(1, FLOOR(0.8 * COUNT(DISTINCT jet.url))) THEN 'Healthy' ELSE 'Degraded' END AS status,
-    AVG(response_time_seconds) FILTER (WHERE response_time_seconds IS NOT NULL) AS avg_response_time_seconds,
-    -- uptime percentage: derive per-endpoint availability if available in fhir_endpoints_availability, else approximate by http_200/http_all where available
-    AVG(COALESCE( fe_availability.availability, NULLIF(COALESCE(NULLIF(fe_http_all.http_200_count,0),0),0) )) AS uptime_pct
-FROM joined_export_tables jet
-LEFT JOIN (
-    SELECT url, requested_fhir_version, (http_200_count / http_all_count) as availability
-    FROM fhir_endpoints_availability
-) fe_availability
-    ON jet.url = fe_availability.url AND jet.requested_fhir_version = fe_availability.requested_fhir_version
-LEFT JOIN (
-    SELECT url, SUM(http_200_count) AS http_200_count, SUM(http_all_count) AS http_all_count
-    FROM fhir_endpoints_availability
-    GROUP BY url
-) fe_http_all
-    ON jet.url = fe_http_all.url
-GROUP BY vendor_name;
-
--- Index to speed lookups by developer
-CREATE INDEX IF NOT EXISTS idx_mv_dev_endpoint_summary_developer ON mv_developer_endpoint_summary (developer_name);
+COMMIT;

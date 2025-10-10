@@ -4,7 +4,7 @@ api_information_source_name, Organization names associated with the endpoint rep
 created_at, Timestamp of the endpoint's record creation in the Lantern database
 updated, Timestamp of the last update of the endpoint's record
 list_source, Name or URL of the list source that included the endpoint
-certified_api_developer_name, Name of the API developer associated with the endpoint
+api_developer_name, Name of the API developer associated with the endpoint
 capability_fhir_version, FHIR version that is pulled from the endpoint's capability statement
 format, A list of the formats supported by the endpoint using their content types
 http_response, HTTP response received from querying the endpoint's metadata url

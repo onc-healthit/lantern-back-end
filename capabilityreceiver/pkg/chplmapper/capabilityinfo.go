@@ -47,12 +47,25 @@ type ChplCertifiedProduct struct {
 
 type ChplMapResults struct {
 	ChplProductIDs []string
-	ChplDeveloper  string
+	ChplDeveloper  []string
 }
 
 // MatchEndpointToVendor creates the database association between the endpoint and the vendor,
 // and the endpoint and the healht IT product.
-func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, listSourceMap map[string]ChplMapResults) error {
+func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, developerName string) error {
+
+	if len(developerName) > 0 {
+		// No errors thrown means a vendor with developer name was found and can be set on ep
+		vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
+		if err == sql.ErrNoRows {
+			log.Infof("No vendor found matching the CHPL endpoint list developer name. Ensure the vendor table is not empty.")
+			return nil
+		} else if err != nil {
+			return errors.Wrap(err, "error matching the CHPL endpoint list developer name to a vendor for endpoint")
+		}
+		ep.VendorID = vendorMatch.ID
+		return nil
+	}
 
 	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
 	if err != nil {
@@ -60,21 +73,6 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	}
 
 	for _, fhirEndpoint := range fhirEndpointList {
-		developerName := listSourceMap[fhirEndpoint.ListSource].ChplDeveloper
-
-		if len(developerName) > 0 {
-			// No errors thrown means a vendor with developer name was found and can be set on ep
-			vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
-			if err == sql.ErrNoRows {
-				log.Infof("No vendor found matching the CHPL endpoint list developer name. Ensure the vendor table is not empty.")
-				return nil
-			} else if err != nil {
-				return errors.Wrap(err, "error matching the CHPL endpoint list developer name to a vendor for endpoint")
-			}
-			ep.VendorID = vendorMatch.ID
-			return nil
-		}
-
 		// --- Special handling for non-CHPL source: 1up Health ---
 		if fhirEndpoint.ListSource == "https://1up.health/fhir-endpoint-directory" {
 			vendorName := "1upHealth"
@@ -82,8 +80,10 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
 			if err == sql.ErrNoRows {
 				newVendor := &endpointmanager.Vendor{
-					Name: vendorName,
-					URL:  "https://1up.health",
+					Name:          vendorName,
+					URL:           "https://1up.health",
+					CHPLID:        2000000000,
+					DeveloperCode: "2000000000",
 				}
 				err = store.AddVendor(ctx, newVendor)
 				if err != nil {
@@ -93,6 +93,31 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 				return nil
 			} else if err != nil {
 				return errors.Wrap(err, "error checking for existing 1upHealth vendor")
+			}
+			ep.VendorID = vendorMatch.ID
+			return nil
+		}
+
+		// --- Special handling for non-CHPL source: State Medicaid ---
+		if fhirEndpoint.ListSource == "StateMedicaid" {
+			vendorName := "State Medicaid"
+
+			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
+			if err == sql.ErrNoRows {
+				newVendor := &endpointmanager.Vendor{
+					Name:          vendorName,
+					URL:           "",
+					CHPLID:        2000000001,
+					DeveloperCode: "2000000001",
+				}
+				err = store.AddVendor(ctx, newVendor)
+				if err != nil {
+					return errors.Wrap(err, "failed to insert State Medicaid as new vendor")
+				}
+				ep.VendorID = newVendor.ID
+				return nil
+			} else if err != nil {
+				return errors.Wrap(err, "error checking for existing State Medicaid vendor")
 			}
 			ep.VendorID = vendorMatch.ID
 			return nil
@@ -114,7 +139,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 }
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
-func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, productIds []string) error {
 
 	softwareName := ""
 	softwareVersion := ""
@@ -142,20 +167,12 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		}
 	}
 
-	// If endpoint's list source found in CHPL endpoint list, match to product associated with that list source
-	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
-	if err != nil {
-		return errors.Wrap(err, "error getting fhir endpoints from DB")
-	}
-
-	for _, fhirEndpoint := range fhirEndpointList {
-		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
-		if len(chplIDList) > 0 {
-			chplIDArr = append(chplIDArr, chplIDList...)
-		}
+	if len(productIds) > 0 {
+		chplIDArr = append(chplIDArr, productIds...)
 	}
 
 	var healthITProductsArr []*endpointmanager.HealthITProduct
+	var err error
 	if len(softwareName) != 0 {
 		healthITProductsArr, err = store.GetActiveHealthITProductsUsingName(ctx, softwareName)
 		if err != nil {
@@ -176,6 +193,8 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 			}
 		}
 	}
+
+	log.Info("chplIDArr: ", chplIDArr, "\n")
 
 	for _, chplID := range chplIDArr {
 		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
@@ -359,7 +378,7 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 			var listSource = obj.ListSourceURL
 			var softwareProducts = obj.SoftwareProducts
 
-			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: []string{}}
 
 			chplID := ""
 
@@ -372,9 +391,8 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 			}
 
 			if listSource != "" {
-				if len(softwareProducts) > 0 {
-					// Developer is the same for all products, just grab first one
-					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+				for _, softwareProduct := range softwareProducts {
+					chplMapResult.ChplDeveloper = append(chplMapResult.ChplDeveloper, softwareProduct.Developer.Name)
 				}
 
 				softwareListMap[listSource] = chplMapResult

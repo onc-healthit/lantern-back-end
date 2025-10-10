@@ -12,7 +12,7 @@ function(input, output, session) { #nolint
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -154,7 +154,75 @@ function(input, output, session) { #nolint
         reactive(input$fhir_version),
         reactive(input$vendor),
         reactive(input$validation_group))
+
+      callModule(
+        developerfeedbackmodule,
+        "developerfeedback_page")  
     }
+  })
+
+  observeEvent(input$show_release_notes, {
+    showModal(modalDialog(
+      title = paste0(version_title, " - Release Notes"),
+       p(HTML('
+                Lantern displayed Organization\'s HTI-1 data as a modal, we now replaced modal with inline columns. You\'ll now see these fields as separate columns:<br/>
+                <ul>
+                  <li>Organization Identifier Type</li>
+                  <li>Organization Identifier</li>
+                  <li>Organization Name</li>
+                  <li>Organization Address</li>
+                </ul>
+
+                Lantern now shows only organizations that are marked as "active" in their respective FHIR bundles.<br/><br/>
+
+                <b>Download (page-level):</b> Added a Download Organizations action that returns data based on the filters applied on the page.<br/>
+                <ul>
+                  <li>No filters → downloads all rows.</li>
+                  <li>With filters → downloads filtered rows.</li>
+                </ul>
+
+                <b>Performance:</b> General speed improvements on the Organizations page<br/><br/>
+
+                <b>New Organizations Download API:</b><br/>
+                <a href="https://lantern.healthit.gov/api/organizations/v1" target="_blank">
+                  https://lantern.healthit.gov/api/organizations/v1
+                </a><br/><br/>
+
+                <b>Access:</b> Call directly from a browser or tools like Postman.<br/>
+                <b>Filtering:</b> Use URL-encoded query parameters (you can combine them):<br/>
+                <ul>
+                  <li><code>developer</code> — filter by certified API developer name</li>
+                  <li><code>fhir_version</code> — comma-separated FHIR versions (e.g., 4.0.1)</li>
+                  <li><code>identifier</code> — exact organization identifier (e.g., NPI, Other)</li>
+                  <li><code>hti1</code> — use <code>hti1=present</code> to return only orgs with HTI-1 data</li>
+                </ul>
+
+                <b>Examples:</b><br/>
+                By Developer:<br/>
+                .../api/organizations/v1?developer=Cerner%20Corporation<br/><br/>
+                By NPI:<br/>
+                .../api/organizations/v1?identifier=1922195171<br/><br/>
+                By FHIR Version:<br/>
+                .../api/organizations/v1?fhir_version=4.0.1<br/><br/>
+                Only with HTI-1 Data:<br/>
+                .../api/organizations/v1?hti1=present<br/><br/>
+
+                <b>Organization Data visibility & ingestion notes</b><br/>
+                Lantern now ingests all organizations found in FHIR bundles, even when HTI-1 fields are missing. 
+                This can help developers spot gaps in their data and fix them.<br/><br/>
+
+                <b>Bug Fixes:</b>
+                <ul>
+                  <li>1UP was not showing as a developer though they have data. Fixed to display 1UP.</li>
+                  <li>Lantern organizations were grouped by Organization name on the UI, potentially grouping unrelated organizations. This issue is resolved and we no longer group by name.</li>
+                  <li>Organization page changes to display HTI-1 data as separate columns slowed down the page. Changes were made to improve the performance of this page.</li>
+                  <li>Organization page results were showing same data on pages 1 and 3 due to skipping organizations with bad names like a hyphen for a name. Resolved this issue.</li>
+                  <li>If an organization information is changed or removed, changes to backend data processing to keep the database clean. This is only a backend change, no impact to the data on the front-end.</li>
+                </ul>
+                <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>
+              ')),
+      easyClose = TRUE
+    ))
   })
 
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
@@ -162,7 +230,7 @@ function(input, output, session) { #nolint
   page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
-     "downloads_tab" = "Downloads Page",
+     "downloads_tab" = "Downloads / API Page",
      "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implementation Page",
@@ -174,7 +242,8 @@ function(input, output, session) { #nolint
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
-     "validations_tab" = "Validations Page"
+     "validations_tab" = "Validations Page",
+     "developerfeedback_tab" = "Developer Feedback / Data Quality"
   )
 
   output$resource_tab_popup <- renderUI({
@@ -246,6 +315,17 @@ function(input, output, session) { #nolint
   output$page_title <- renderText(page_name())
   output$version <- renderText(version_title)
 
+  output$page_header <- renderUI({
+    if (input$side_menu == "dashboard_tab") {
+      div(style = "text-align: center; margin: 8px 0 18px 0;",
+          tags$h1("Lantern Dashboard", style = "color: #1B5A7F; margin: 0; font-size: 34px; font-weight: 800;"),
+          tags$div("Monitoring of FHIR endpoints across healthcare systems", style = "color: #1B5A7F; font-size: 16px; font-weight: 600; margin-top: 8px;")
+      )
+    } else {
+      tags$h1(textOutput("page_title"))
+    }
+  })
+
   observeEvent(input$fhirversion_selectall, {
     if (input$fhirversion_selectall == 0) {
       return(NULL)
@@ -272,7 +352,7 @@ function(input, output, session) { #nolint
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for specific tabs
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab")) {
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab", "values_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
@@ -840,6 +920,7 @@ current_endpoint <- reactive({
     splitString <- strsplit(input$endpoint_popup, "&&")[[1]]
     endpointURL <- splitString[1]
     endpoint_requested_fhir_version <- splitString[2]
+    endpoint_vendor_name <- splitString[3]
   } else {
     # Only URL is provided (from Organizations tab)
     endpointURL <- input$endpoint_popup
@@ -857,7 +938,7 @@ current_endpoint <- reactive({
       endpoint_requested_fhir_version <- res$requested_fhir_version[1]
     }
   }
-  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
+  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version, vendor_name = endpoint_vendor_name)
   current_endpoint_list
 })
 
@@ -865,7 +946,7 @@ current_endpoint <- reactive({
 ### CHPL Products Modal Page ###
 endpoint_products <- reactive({
   endpoint <- current_endpoint()
-  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 })
 
@@ -892,14 +973,14 @@ endpoint_products_page <- function() {
 endpoint_implementation_guides <- reactive({
   endpoint <- current_endpoint()
 
-  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   implementation_guides
 })
 
 endpoint_profiles <- reactive({
   endpoint <- current_endpoint()
 
-  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   profiles
 
 })
@@ -938,21 +1019,21 @@ required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 endpoint_fields <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "false")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "false")
   res
 })
 
 endpoint_extensions <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "true")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "true")
   res
 })
 
 endpoint_resources <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 
 })
@@ -960,7 +1041,7 @@ endpoint_resources <- reactive({
 endpoint_smart_capabilities <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 
 })
@@ -1278,8 +1359,8 @@ output$endpoint_http_response_table <- reactable::renderReactable({
 
   endpoint <- current_endpoint()
 
-  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
-  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
+  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, db_connection)
+  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
 
   page <- fluidPage(
     h1("Endpoint Details"),

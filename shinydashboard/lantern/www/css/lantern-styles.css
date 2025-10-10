@@ -282,3 +282,86 @@
     font-weight: bold!important;
     color: white!important;
   }
+
+/* Additional dashboard styling inspired by dashboard.html */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header { text-align: center; margin-bottom: 3rem; position: relative; }
+.header h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; }
+
+.status-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.status-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.028), rgba(0,0,0,0.02));
+  border-radius: 14px;
+  padding: 1.2rem;
+  position: relative;
+  overflow: visible;
+  /* layered shadow to give depth */
+  box-shadow: 0 6px 18px rgba(2,6,23,0.65), 0 1px 0 rgba(255,255,255,0.02) inset;
+  transform: translateZ(0);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.status-card::after {
+  /* soft ground shadow under the card to reinforce 3D */
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -10px;
+  height: 18px;
+  background: radial-gradient(closest-side, rgba(0,0,0,0.6), rgba(0,0,0,0.08));
+  filter: blur(8px);
+  z-index: -1;
+  opacity: 0.95;
+  border-radius: 50%;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+.status-card:hover {
+  transform: translateY(-8px) rotateX(1deg);
+  box-shadow: 0 22px 40px rgba(2,6,23,0.75), 0 2px 0 rgba(255,255,255,0.02) inset;
+}
+.status-card .status-header { display:flex; justify-content:space-between; align-items:center; }
+.status-card .status-icon {
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  /* subtle bevel via gradient and inner shadow */
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  box-shadow: 0 6px 12px rgba(0,0,0,0.45), inset 0 -2px 6px rgba(0,0,0,0.25);
+}
+.status-card .status-icon i, .status-card .status-icon svg { pointer-events: none; }
+.status-card.success .status-icon { background:#10b981 }
+.status-card.warning .status-icon { background:#f59e0b }
+.status-card.error .status-icon { background:#ef4444 }
+.status-card.info .status-icon { background:#3b82f6 }
+.status-card .status-value { font-size:2rem; font-weight:800; margin-top:0.5rem; }
+.status-subtitle { color:#94a3b8 }
+
+.charts-section { display:grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+.chart-container { background: rgba(255,255,255,0.04); border-radius: 12px; padding: 1rem; }
+.chart-title { font-size: 1.25rem; font-weight:700; }
+
+.table-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 1rem; }
+.data-table { width:100%; border-collapse: separate; border-spacing:0; }
+.data-table th { background: rgba(255,255,255,0.06); padding:0.75rem; font-weight:600; font-size:0.85rem; }
+.data-table td { padding:0.75rem; border-bottom:1px solid rgba(255,255,255,0.03); }
+.data-table tr:hover { background: rgba(255,255,255,0.02); }
+
+.status-badge { display:inline-flex; padding:0.25rem 0.6rem; border-radius: 999px; font-weight:700; text-transform:uppercase; font-size:0.7rem }
+.status-badge.healthy { background: rgba(16,185,129,0.12); color:#10b981; border:1px solid rgba(16,185,129,0.2) }
+.status-badge.degraded { background: rgba(245,158,11,0.12); color:#f59e0b; border:1px solid rgba(245,158,11,0.2) }
+.status-badge.critical { background: rgba(239,68,68,0.12); color:#ef4444; border:1px solid rgba(239,68,68,0.2) }
+
+@media (max-width: 768px) {
+  .charts-section { grid-template-columns: 1fr }
+  .status-grid { grid-template-columns: repeat(2, 1fr) }
+  .header h1 { font-size: 2rem }
+}
