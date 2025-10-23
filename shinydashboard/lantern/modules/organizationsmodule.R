@@ -3,44 +3,171 @@ library(purrr)
 library(reactable)
 library(leaflet)
 library(glue)
+library(htmltools)
 
 organizationsmodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
+    # Custom CSS for modern styling - matching endpoints tab
+    tags$head(
+      tags$style(HTML(paste0("
+        /* Modern table styling */
+        .modern-organizations-table {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        .modern-organizations-table .rt-table {
+          border: 1px solid #e1e4e8;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        
+        .modern-organizations-table .rt-thead {
+          background: linear-gradient(to bottom, #f8f9fa 0%, #f1f3f5 100%);
+          border-bottom: 2px solid #dee2e6;
+        }
+        
+        .modern-organizations-table .rt-th {
+          color: #495057;
+          font-weight: 600;
+          font-size: 13px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          padding: 12px 8px;
+          border-right: 1px solid #e9ecef;
+        }
+        
+        .modern-organizations-table .rt-td {
+          padding: 12px 8px;
+          border-right: 1px solid #f1f3f5;
+          font-size: 14px;
+          color: #212529;
+        }
+        
+        .modern-organizations-table .rt-tr:hover {
+          background-color: #f8f9fa;
+          transition: background-color 0.2s ease;
+        }
+        
+        .modern-organizations-table .rt-tr-striped {
+          background-color: #fafbfc;
+        }
+        
+        /* Modern search box */
+        #", ns("org_search_query"), " {
+          border: 2px solid #e1e4e8;
+          border-radius: 8px;
+          padding: 10px 16px;
+          font-size: 14px;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        #", ns("org_search_query"), ":focus {
+          border-color: #667eea;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          outline: none;
+        }
+        
+        /* Modern buttons */
+        .modern-nav-button {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .modern-nav-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .modern-nav-button:active {
+          transform: translateY(0);
+        }
+        
+        /* Page selector */
+        #", ns("org_page_selector"), " {
+          border: 2px solid #e1e4e8;
+          border-radius: 6px;
+          text-align: center;
+          font-weight: 600;
+        }
+        
+        /* Download buttons */
+        .btn-primary {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          border-radius: 8px;
+          padding: 10px 20px;
+          font-weight: 500;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Info note styling */
+        .org-note {
+          background: #f8f9fa;
+          border-left: 4px solid #667eea;
+          padding: 12px 16px;
+          border-radius: 4px;
+          margin: 16px 0;
+        }
+        
+        /* Organization name styling - expanded row header */
+        .modern-organizations-table .rt-tr-group-header {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          font-weight: 600;
+        }
+      ")))
+    ),
     fluidRow(
-      h2("Endpoint List Organizations")
+      h2(style = "margin-top:0; color: #212529; font-weight: 600;", "Endpoint List Organizations")
     ),
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              downloadButton(ns("download_data"), "Download Organization Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon"))
-      ),
-    ),
-    fluidRow(
-      column(6, 
-        textInput(ns("org_search_query"), "Search Organizations")
       )
     ),
     fluidRow(
-      p("This table shows the organization name listed for each endpoint in the endpoint list it appears in."),
-      reactable::reactableOutput(ns("endpoint_list_orgs_table")),
+      column(6, 
+        tags$label("Search Organizations:", style = "font-weight: 600; color: #495057; margin-bottom: 8px;"),
+        textInput(ns("org_search_query"), label = NULL, placeholder = "Search by organization, address, endpoint...")
+      )
+    ),
+    fluidRow(
+      p("This table shows the organization name listed for each endpoint in the endpoint list it appears in.", 
+        style = "color: #6c757d; margin-top: 16px;"),
+      div(class = "modern-organizations-table",
+          reactable::reactableOutput(ns("endpoint_list_orgs_table"))
+      ),
       htmlOutput(ns("note_text"))
     ),
     fluidRow(
       column(3, 
-        div(style = "display: flex; justify-content: flex-start;", 
+        div(style = "display: flex; justify-content: flex-start; margin-top: 16px;", 
             uiOutput(ns("org_prev_button_ui"))
         )
       ),
       column(6,
-        div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
+        div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 16px;",
             numericInput(ns("org_page_selector"), label = NULL, value = 1, min = 1, step = 1, width = "80px"),
             textOutput(ns("org_page_info"), inline = TRUE)
         )
       ),
       column(3, 
-        div(style = "display: flex; justify-content: flex-end;",
+        div(style = "display: flex; justify-content: flex-end; margin-top: 16px;",
             uiOutput(ns("org_next_button_ui"))
         )
       )
@@ -481,7 +608,7 @@ organizationsmodule <- function(
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as api_developer_name
+        ) as vendor_name
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
@@ -515,7 +642,7 @@ organizationsmodule <- function(
     return(res)
   })
 
-  # Reactable output
+  # Reactable output with modern styling
   output$endpoint_list_orgs_table <- reactable::renderReactable({
      display_data <- paged_endpoint_list_orgs()
 
@@ -535,32 +662,106 @@ organizationsmodule <- function(
      reactable(
        display_data,
        defaultColDef = colDef(
-         align = "center"
+         align = "center",
+         headerStyle = list(
+           background = "#f8f9fa",
+           color = "#495057",
+           fontWeight = "600",
+           fontSize = "13px",
+           textTransform = "uppercase",
+           letterSpacing = "0.5px"
+         )
        ),
        columns = list(
-         organization_name = colDef(name = "Organization Name", sortable = TRUE, align = "left",
-                                    grouped = JS("function(cellInfo) {return cellInfo.value}")),
-         identifier_type = colDef(name = "Identifier Type", minWidth = 75, sortable = FALSE, html = TRUE),
-         identifier_value = colDef(name = "Identifier Value", minWidth = 175, sortable = FALSE, html = TRUE),
-         address = colDef(name = "Organization Addresses", minWidth = 300, sortable = FALSE, html = TRUE),
-         url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
-         # org_url column is hidden from UI
-         fhir_version = colDef(name = "FHIR Version", sortable = FALSE, html = TRUE),
-         vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
+         organization_name = colDef(
+           name = "Organization Name", 
+           sortable = TRUE, 
+           align = "left",
+           grouped = JS("function(cellInfo) {return cellInfo.value}"),
+           style = list(
+             fontWeight = "600",
+             fontSize = "15px",
+             color = "#212529"
+           )
+         ),
+         identifier_type = colDef(
+           name = "Identifier Type", 
+           minWidth = 75, 
+           sortable = FALSE, 
+           html = TRUE,
+           style = list(fontSize = "13px", color = "#495057")
+         ),
+         identifier_value = colDef(
+           name = "Identifier Value", 
+           minWidth = 175, 
+           sortable = FALSE, 
+           html = TRUE,
+           style = list(fontSize = "13px", color = "#495057")
+         ),
+         address = colDef(
+           name = "Organization Addresses", 
+           minWidth = 300, 
+           sortable = FALSE, 
+           html = TRUE,
+           style = list(fontSize = "13px", color = "#495057")
+         ),
+         url = colDef(
+           name = "FHIR Endpoint URL", 
+           minWidth = 300, 
+           sortable = FALSE, 
+           html = TRUE,
+           align = "left"
+         ),
+         fhir_version = colDef(
+           name = "FHIR Version", 
+           sortable = FALSE, 
+           html = TRUE,
+           cell = function(value) {
+             if (!is.na(value) && value != "") {
+               # Split by <br/> and create badges
+               versions <- strsplit(value, "<br/>")[[1]]
+               badges <- lapply(versions, function(v) {
+                 tags$span(
+                   class = "version-badge",
+                   style = "display: inline-block; margin: 2px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 4px 10px; border-radius: 10px; font-size: 11px; font-weight: 500;",
+                   v
+                 )
+               })
+               tags$div(badges)
+             } else {
+               value
+             }
+           }
+         ),
+         vendor_name = colDef(
+           name = "Certified API Developer Name", 
+           minWidth = 150, 
+           sortable = FALSE, 
+           html = TRUE,
+           style = list(fontSize = "13px", color = "#495057", fontWeight = "500")
+         )
        ),
        striped = TRUE,
        searchable = FALSE,
        showSortIcon = TRUE,
        highlight = TRUE,
        pagination = FALSE,
-       defaultExpanded = TRUE
+       defaultExpanded = TRUE,
+       bordered = FALSE
      )
    })
 
-  # Button UI outputs
+  # Button UI outputs with modern styling
   output$org_prev_button_ui <- renderUI({
     if (org_page_state() > 1) {
-      actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
+      actionButton(
+        ns("org_prev_page"), 
+        label = tagList(
+          tags$i(class = "fa fa-arrow-left", style = "margin-right: 8px;"),
+          "Previous"
+        ),
+        class = "modern-nav-button"
+      )
     } else {
       NULL  # Hide the button
     }
@@ -568,7 +769,14 @@ organizationsmodule <- function(
 
   output$org_next_button_ui <- renderUI({
     if (org_page_state() < org_total_pages()) {
-      actionButton(ns("org_next_page"), "Next", icon = icon("arrow-right"))
+      actionButton(
+        ns("org_next_page"),
+        label = tagList(
+          "Next",
+          tags$i(class = "fa fa-arrow-right", style = "margin-left: 8px;")
+        ),
+        class = "modern-nav-button"
+      )
     } else {
       NULL  # Hide the button
     }
@@ -603,7 +811,7 @@ organizationsmodule <- function(
       Resources (FHIR) endpoints published publicly by Certified API Developers in conformance
       with the ONC Cures Act Final Rule. This data, therefore, may not represent all FHIR endpoints
       in existence. Insights gathered from this data should be framed accordingly."
-    res <- paste("<div style='font-size: 18px;'><b>Note:</b>", note_info, "</div>")
+    res <- paste("<div class='org-note' style='font-size: 16px;'><b>Note:</b>", note_info, "</div>")
     HTML(res)
   })
 }

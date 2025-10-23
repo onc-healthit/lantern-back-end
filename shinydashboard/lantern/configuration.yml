@@ -22,7 +22,6 @@ libraries:
   - "fresh"
   - "shinydashboardPlus"
   - "shinyWidgets"
-  - "highcharter"
   - "shinybusy"
   - "reactable"
   - "shinyBS"
@@ -54,6 +53,7 @@ module_files:
   - "modules/profilemodule.R"
   - "modules/organizationsmodule.R"
   - "modules/developerfeedbackmodule.R"
+  - "modules/capstatdashboardmodule.R"
 
 refresh_timeout_minutes:
   - 1440

@@ -5,7 +5,7 @@ library(scales)
 library(dplyr)
 library(ggplot2)
 library(plotly)
-library(highcharter)
+library(echarts4r)
 
 custom_column_small <- function(...) {
     tags$div(
@@ -146,10 +146,10 @@ dashboard_UI <- function(id) {
     fluidRow(
       column(width = 6,
         # response plot moved into the left column (was fhir_vendor_table)
-        h3("All Endpoint Responses"),
+        h4(tags$b("HTTP Response Distribution")),
         uiOutput("show_http_vendor_filters"),
         div(class = "plot-card",
-          highcharter::highchartOutput(ns("response_code_plot"))
+          echarts4r::echarts4rOutput(ns("response_code_plot"), height = "520px")
         )
       ),
       column(width = 6,
@@ -160,10 +160,12 @@ dashboard_UI <- function(id) {
       )
     ),
     fluidRow(
-      column(width = 12,
-        # fhir_vendor_table moved here (previously the full-width response plot)
-        reactable::reactableOutput(ns("fhir_vendor_table")),
-          htmlOutput(ns("note_text"))
+    column(width = 12,
+      # fhir_vendor_table moved here (previously the full-width response plot)
+      div(class = "modern-endpoints-table",
+        reactable::reactableOutput(ns("fhir_vendor_table"))
+      ),
+        htmlOutput(ns("note_text"))
       )
     ),
     tags$p("*An endpoint is considered to be an \"Indexed Endpoint\" when it has been queried by the Lantern system at least once. If an endpoint has never been queried by the Lantern system yet, it will not be counted towards the total number of \"Indexed Endpoints\".", style = "font-style: italic;")
@@ -212,27 +214,102 @@ dashboard <- function(
   }
 
   output$fhir_vendor_table <-  reactable::renderReactable({
-    vendor_table_data <- prepare_vendor_data(db_tables)
-    if (is.null(fhirVendorTableSize())) {
-      fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
+    # Read the materialized view mv_developer_endpoint_summary directly and display columns as-is
+    vendor_table_data <- data.frame()
+    if (!is.null(db_tables) && !is.null(db_tables$mv_developer_endpoint_summary)) {
+      vendor_table_data <- tryCatch(
+        collect(db_tables$mv_developer_endpoint_summary),
+        error = function(e) {
+          tryCatch(as.data.frame(db_tables$mv_developer_endpoint_summary), error = function(e) data.frame())
+        }
+      )
     }
-    
-    # Create a filtered version of the data for the table display
-    display_data <- vendor_table_data %>%
-      select(vendor_name, fhir_version, n, percentage)
-      
-    reactable(display_data,
-                columns = list(
-                  vendor_name = colDef(name = "Vendor"),
-                  fhir_version = colDef(name = "FHIR Version"),
-                  n = colDef(name = "Count"),
-                  percentage = colDef(name = "FHIR Version %", format = colFormat(suffix = "%"))
-                ),
-                sortable = TRUE,
-                searchable = TRUE,
-                showSortIcon = TRUE,
-                defaultPageSize = (ceiling(nrow(vendor_table_data) / 2))
-    )
+
+    display_data <- if (is.null(vendor_table_data) || length(vendor_table_data) == 0) data.frame() else as.data.frame(vendor_table_data)
+
+    # track table size for layout logic
+    if (is.null(fhirVendorTableSize())) {
+      fhirVendorTableSize(ifelse(nrow(display_data) > 0, ceiling(nrow(display_data) / 2), 5))
+    }
+
+    # Render the table without mutating the data; only provide simple formatting where sensible
+    if (nrow(display_data) == 0) {
+      reactable::reactable(display_data,
+                  sortable = TRUE,
+                  searchable = TRUE,
+                  showSortIcon = TRUE,
+                  defaultPageSize = 5
+      )
+    } else {
+      cols <- list()
+      nm <- names(display_data)
+      if ("developer_name" %in% nm) cols$developer_name <- reactable::colDef(name = "Developer")
+      if ("total_endpoints_count" %in% nm) cols$total_endpoints_count <- reactable::colDef(name = "Total Endpoints", format = reactable::colFormat(separators = TRUE))
+      if ("healthy_endpoints_count" %in% nm) cols$healthy_endpoints_count <- reactable::colDef(name = "Healthy Endpoints", format = reactable::colFormat(separators = TRUE))
+      if ("status" %in% nm) cols$status <- reactable::colDef(
+        name = "Status",
+        sortable = TRUE,
+        cell = function(value) {
+          v <- as.character(value)
+          if (grepl("true", tolower(v))) {
+            div(class = "status-badge status-success", "Available")
+          } else if (grepl("false", tolower(v))) {
+            div(class = "status-badge status-error", "Not Available")
+          } else if (grepl("^critical$", tolower(v))) {
+            # map explicit 'Critical' status to a red error badge
+            div(class = "status-badge status-error", v)
+          } else if (grepl("^degraded$", tolower(v))) {
+            # map explicit 'Degraded' status to a yellow warning badge
+            div(class = "status-badge status-warning", v)
+          } else {
+            # fallback: show original value with an info badge
+            div(class = "status-badge status-info", v)
+          }
+        }
+      )
+      if ("avg_response_time_seconds" %in% nm) cols$avg_response_time_seconds <- reactable::colDef(name = "Avg Response Time (ms)", format = reactable::colFormat(digits = 2))
+      if ("uptime_pct" %in% nm) cols$uptime_pct <- reactable::colDef(
+        name = "Uptime %",
+        sortable = TRUE,
+        cell = function(value) {
+          uptime_num <- suppressWarnings(as.numeric(value))
+          if (is.na(uptime_num)) uptime_num <- 0
+
+          fill_color <- if (uptime_num >= 90) {
+            "#28a745"  # Green
+          } else if (uptime_num >= 70) {
+            "#ffc107"  # Yellow
+          } else if (uptime_num >= 50) {
+            "#fd7e14"  # Orange
+          } else {
+            "#dc3545"  # Red
+          }
+
+          div(
+            class = "availability-container",
+            div(
+              class = "availability-bar",
+              div(
+                class = "availability-fill",
+                style = list(
+                  width = paste0(uptime_num, "%"),
+                  background = fill_color
+                )
+              )
+            ),
+            div(class = "availability-text", style = list(color = fill_color), paste0(round(uptime_num, 1), "%"))
+          )
+        }
+      )
+
+      reactable::reactable(display_data,
+                  columns = cols,
+                  sortable = TRUE,
+                  searchable = TRUE,
+                  showSortIcon = TRUE,
+                  defaultPageSize = ifelse(nrow(display_data) > 0, ceiling(nrow(display_data) / 2), 5)
+      )
+    }
   })
 
   observeEvent(input$fhir_vendor_table_state$length, {
@@ -284,8 +361,29 @@ dashboard <- function(
   })
 
   output$avg_response_time <- renderText({
-    # Estimate: use a stored metric if available, else dash
-    avg <- tryCatch({ round(mean(na.omit(get_response_tally_list(db_tables)$response_time_mean)), 0) }, error = function(e) { NA })
+    # Run the requested SQL against the DB and compute mean of the returned values
+    avg <- tryCatch({
+      # Use the project's db_connection tbl/sql pattern when available
+  query <- "SELECT fem.response_time_seconds FROM fhir_endpoints_info fei JOIN fhir_endpoints_metadata fem ON fei.metadata_id = fem.id WHERE fei.requested_fhir_version = 'None' AND fem.response_time_seconds != -1"
+      # Prefer using tbl(db_connection, sql(...)) to stay consistent with project's DB handling
+      res <- tryCatch({
+        tbl(db_connection, sql(query)) %>% collect()
+      }, error = function(e) {
+        # fallback: try DBI::dbGetQuery if tbl/sql fails
+        tryCatch(DBI::dbGetQuery(db_connection, query), error = function(e) data.frame())
+      })
+
+      if (is.null(res) || nrow(res) == 0) return(NA_real_)
+
+      # extract column (first column expected to be http_response)
+  vals <- res[[1]]
+  vals_num <- suppressWarnings(as.numeric(vals))
+  if (all(is.na(vals_num))) return(NA_real_)
+  # compute mean in seconds, convert to milliseconds for display
+  mean_seconds <- mean(na.omit(vals_num))
+  round(mean_seconds * 1000, 0)
+    }, error = function(e) { NA })
+
     if (is.na(avg)) return("- ms")
     paste0(avg, " ms")
   })
@@ -338,71 +436,56 @@ dashboard <- function(
   })
 
   output$vendors_plot <- renderUI({
-    highcharter::highchartOutput(ns("vendor_share_plot"), height = plot_height_vendors())
+  div(style = "margin-top:200px;",
+    echarts4r::echarts4rOutput(ns("vendor_share_plot"), height = plot_height_vendors())
+  )
   })
-  output$vendor_share_plot <- highcharter::renderHighchart({
+  output$vendor_share_plot <- echarts4r::renderEcharts4r({
     vendor_plot_data <- prepare_vendor_data(db_tables) %>%
       filter(n > 0)  # Filter out zero counts
 
-    # Determine top 10 vendors by total endpoints
-    top_vendors <- vendor_plot_data %>%
-      group_by(vendor_name) %>%
-      summarise(total_endpoints = sum(n, na.rm = TRUE)) %>%
-      arrange(desc(total_endpoints)) %>%
-      slice_head(n = 10) %>%
-      pull(vendor_name)
-
-    vendor_plot_data <- vendor_plot_data %>%
-      filter(vendor_name %in% top_vendors)
-
-    # Order vendors by total endpoints (descending)
-    vendor_levels <- vendor_plot_data %>%
+    # Aggregate and take top 10 by number of endpoints
+    df_plot <- vendor_plot_data %>%
       group_by(vendor_name) %>%
       summarise(total = sum(n, na.rm = TRUE)) %>%
       arrange(desc(total)) %>%
-      pull(vendor_name)
+      slice_head(n = 10) %>%
+      ungroup()
 
-    # Build series per FHIR version (stacked columns)
-    versions <- vendor_plot_data %>% pull(fhir_version) %>% unique()
-    series_list <- lapply(versions, function(v) {
-      s <- vendor_plot_data %>%
-        filter(fhir_version == v) %>%
-        group_by(vendor_name) %>%
-        summarise(n = sum(n, na.rm = TRUE)) %>%
-        ungroup()
-      # align to vendor_levels and fill missing with 0
-      s_aligned <- data.frame(vendor_name = vendor_levels, stringsAsFactors = FALSE) %>%
-        left_join(s, by = "vendor_name") %>%
-        mutate(n = ifelse(is.na(n), 0, n))
-      list(name = as.character(v), data = as.list(s_aligned$n))
-    })
-
-    # Create 3D stacked column chart with 10k cap, simple data labels and tooltip
-    highchart() %>%
-      hc_chart(type = "column", options3d = list(enabled = TRUE, alpha = 15, beta = 15, depth = 60)) %>%
-      hc_xAxis(categories = vendor_levels, title = list(text = "Developer")) %>%
-      hc_yAxis(max = 10000, title = list(text = "Number of Endpoints")) %>%
-      hc_plotOptions(column = list(stacking = "normal", depth = 40, dataLabels = list(enabled = TRUE))) %>%
-      hc_add_series_list(series_list) %>%
-      hc_tooltip(pointFormat = "{series.name}: <b>{point.y}</b><br/>", shared = FALSE) %>%
-      hc_legend(enabled = TRUE) %>%
-      hc_title(text = "Top 10 Developers by Endpoint Count")
+    if (nrow(df_plot) == 0) {
+      # return an empty echarts object with a placeholder title
+      e_charts(data.frame(x = character(0), y = numeric(0))) %>%
+        e_title(text = "Top 10 Developers by Endpoint Count")
+    } else {
+      df_plot %>%
+        e_charts(vendor_name) %>%
+  e_bar(total, name = "Total Endpoints") %>%
+  # balanced grid so visual center lines up with pie
+  e_grid(left = "8%", right = "8%", containLabel = TRUE) %>%
+        e_tooltip(trigger = "axis") %>%
+        # reduce font size and wrap long developer names to multiple lines
+  e_x_axis(axisLabel = list(interval = 0, rotate = -30, fontSize = 10, formatter = htmlwidgets::JS("function(value){ return value.length > 18 ? value.replace(/(.{18})/g,'$1\\n') : value }") )) %>%
+  e_title(text = "Top 10 Developers by Endpoint Count") %>%
+        e_legend(show = FALSE)
+    }
   })
   
-  output$response_code_plot <- renderHighchart({
+  output$response_code_plot <- echarts4r::renderEcharts4r({
     pie_data <- selected_http_summary() %>%
       mutate(Response = paste(http_code, "-", code_label)) %>%
       group_by(Response) %>%
       summarise(count = sum(count_endpoints, na.rm = TRUE)) %>%
       ungroup()
 
-    highchart() %>%
-      hc_chart(type = "pie", options3d = list(enabled = TRUE, alpha = 45, beta = 0)) %>%
-      hc_plotOptions(pie = list(allowPointSelect = TRUE, cursor = "pointer", depth = 35)) %>%
-      hc_add_series(
-        type = "pie",
-        data = list_parse2(pie_data %>% select(Response, count))
-      )
+    if (is.null(pie_data) || nrow(pie_data) == 0) {
+      e_charts(data.frame(name = character(0), value = numeric(0)))
+    } else {
+      pie_data %>%
+        e_charts(Response) %>%
+        e_pie(count, radius = c("40%", "60%")) %>%
+        e_tooltip(trigger = "item", formatter = htmlwidgets::JS("function(params){ return params.name + ': <b>' + params.value + '</b>' }") ) %>%
+        e_legend(show = TRUE)
+    }
   })
 
   observeEvent(input$show_info, {

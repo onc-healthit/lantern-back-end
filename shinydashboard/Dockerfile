@@ -1,4 +1,4 @@
-FROM rocker/shiny-verse:4.1.3
+FROM --platform=linux/x86_64 rocker/shiny-verse:4.1.3
 ARG cert_dir
 ARG LANTERN_DBNAME
 ARG LANTERN_DBPORT
