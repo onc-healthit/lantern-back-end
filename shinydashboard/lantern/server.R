@@ -12,7 +12,7 @@ function(input, output, session) { #nolint
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab", "capstat_dash_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -141,6 +141,13 @@ function(input, output, session) { #nolint
         reactive(input$field))
 
       callModule(
+        capstatdashboardmodule,
+        "capstat_dashboard_page",
+        reactive(input$fhir_version),
+        reactive(input$vendor),
+        reactive(input$field))
+
+      callModule(
         contactsmodule,
         "contacts_page",
         reactive(input$fhir_version),
@@ -235,6 +242,7 @@ function(input, output, session) { #nolint
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implementation Page",
      "fields_tab" = "Fields Page",
+     "capstat_dash_tab" = "Capability Statement Dashboard Page",
      "profile_tab" = "Profile Page",
      "values_tab" = "Values Page",
      "contacts_tab" = "Contact Information Page",
@@ -265,7 +273,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab", "capstat_dashboard_tab")
   )
 
   fhir_version_no_capstat <- reactive(
