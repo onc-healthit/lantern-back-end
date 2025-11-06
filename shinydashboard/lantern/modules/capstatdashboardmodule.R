@@ -1,9 +1,10 @@
 # capstatdashboardmodule.R
-# CapabilityStatement Dashboard Module — reactive version (with Grid/Table toggle)
+# CapabilityStatement Dashboard Module — DB-backed KPIs + Mock Endpoint Grid/Table
 # ------------------------------------------------------------------------
 
 library(shiny)
 library(dplyr)
+library(dbplyr)
 library(reactable)
 library(ggplot2)
 library(scales)
@@ -43,22 +44,8 @@ capstatdashboardmodule_UI <- function(id) {
         font-weight: 600;
         margin: 0;
         line-height: 1.2;
-        text-shadow: 0 0.5px 0 rgba(0,0,0,0.05);
+        text-shadow: 0 0.5px 0 rgba(0, 0, 0, 0.05);
         letter-spacing: 0.3px;
-      }
-      .filter-card {
-        background: white;
-        border-radius: 12px;
-        padding: 18px 22px;
-        margin-bottom: 25px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-      }
-      .filter-card h3 {
-        color: #007bff;
-        font-weight: 600;
-        font-size: 18px;
-        margin-top: 0;
-        margin-bottom: 12px;
       }
       .chart-section {
         display: grid;
@@ -78,23 +65,6 @@ capstatdashboardmodule_UI <- function(id) {
         padding: 15px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.05);
       }
-      .view-endpoints-btn {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 16px;
-        font-weight: 500;
-        padding: 12px 24px;
-        margin-top: 10px;
-        margin-bottom: 30px;
-        transition: background-color 0.2s ease;
-      }
-      .view-endpoints-btn:hover {
-        background-color: #0069d9;
-      }
-
-      /* Updated Grid Card Styles with Hover Outline and Pagination */
       .endpoint-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -120,11 +90,6 @@ capstatdashboardmodule_UI <- function(id) {
         font-weight: 700;
         font-size: 16px;
       }
-      .endpoint-card .subtitle-link a {
-        color: #007bff !important;
-        text-decoration: underline;
-        font-size: 13px;
-      }
       .endpoint-card .kv {
         margin: 8px 0;
         font-size: 13px;
@@ -134,20 +99,6 @@ capstatdashboardmodule_UI <- function(id) {
         color: #6c757d;
         font-weight: 600;
         margin-right: 6px;
-      }
-      .endpoint-card .metrics {
-        margin-top: 10px;
-        font-size: 13px;
-        color: #444;
-      }
-      .endpoint-card .metrics .metric {
-        margin-right: 10px;
-        display: inline-block;
-      }
-      .endpoint-card hr {
-        border: none;
-        border-top: 1px solid #eee;
-        margin: 10px 0 12px 0;
       }
       .grid-pagination {
         text-align: center;
@@ -161,7 +112,6 @@ capstatdashboardmodule_UI <- function(id) {
         padding: 8px 14px;
         margin: 0 5px;
         font-size: 13px;
-        transition: background-color 0.2s ease;
       }
       .grid-pagination button:hover {
         background-color: #0069d9;
@@ -169,6 +119,17 @@ capstatdashboardmodule_UI <- function(id) {
       .grid-pagination span {
         margin: 0 10px;
         font-weight: 500;
+      }
+      .view-endpoints-btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 12px 24px;
+        margin-top: 10px;
+        margin-bottom: 30px;
       }
     ")),
 
@@ -178,57 +139,41 @@ capstatdashboardmodule_UI <- function(id) {
         div(class = "stats-bar",
             div(class = "stat-card",
                 h4("Total Capability Statements"),
-                div(class = "kpi-number", textOutput(ns("total_statements"), container = span))
+                div(class = "kpi-number", textOutput(ns("kpi_total_capstats"), container = span))
             ),
             div(class = "stat-card",
                 h4("Unique Vendors"),
-                div(class = "kpi-number", textOutput(ns("unique_vendors"), container = span))
+                div(class = "kpi-number", textOutput(ns("kpi_unique_vendors"), container = span))
             ),
             div(class = "stat-card",
-                h4("Average Fields per Statement"),
-                div(class = "kpi-number", textOutput(ns("avg_fields"), container = span))
+                h4("Average Fields per Endpoint"),
+                div(class = "kpi-number", textOutput(ns("kpi_avg_fields"), container = span))
             ),
             div(class = "stat-card",
                 h4("Distinct FHIR Versions"),
-                div(class = "kpi-number", textOutput(ns("distinct_fhir_versions"), container = span))
+                div(class = "kpi-number", textOutput(ns("kpi_distinct_versions"), container = span))
             )
-        ),
-
-        # --- Filters ---
-        div(class = "filter-card",
-            h3("Filters"),
-            fluidRow(
-              column(width = 4, selectInput(ns("fhir_select"), "FHIR Version",
-                                            choices = c("All", "3.0.1", "4.0.1", "4.1.0", "No Cap Stat"),
-                                            selected = "All")),
-              column(width = 4, selectInput(ns("vendor_select"), "Vendor",
-                                            choices = c("All Vendors", "Epic", "Cerner", "Athenahealth", "NextGen", "Allscripts"),
-                                            selected = "All Vendors"))
-            ),
-            div(style = "text-align:right; margin-top:10px;",
-                actionButton(ns("view_endpoints_btn"), "View All Capability Statements →",
-                             class = "view-endpoints-btn"))
         ),
 
         # --- Charts ---
         div(class = "chart-section",
             div(class = "chart-card",
-                h3("Top CapabilityStatement Fields by Occurrence"),
+                h3("Top CapabilityStatement Fields"),
                 plotOutput(ns("top_fields_plot"), height = "300px")
             ),
             div(class = "chart-card",
-                h3("Distribution of FHIR Versions"),
+                h3("FHIR Version Distribution"),
                 plotOutput(ns("fhir_version_plot"), height = "300px")
             )
         ),
 
-        # --- Vendor Summary Table ---
+        # --- Vendor Summary ---
         div(class = "reactable-table",
-            h3("Vendors by Capability Statement Count"),
-            reactableOutput(ns("developer_table"))
+            h3("Vendors by Endpoint Count (with CapabilityStatement)"),
+            reactableOutput(ns("vendor_summary_tbl"))
         ),
 
-        # --- Endpoint Grid/Table Section ---
+        # --- Endpoint Grid/Table Section (Mock Data) ---
         div(class = "reactable-table",
             h3("CapabilityStatement Details by Endpoint"),
             div(style = "text-align:right; margin-bottom:10px;",
@@ -241,93 +186,192 @@ capstatdashboardmodule_UI <- function(id) {
   )
 }
 
-
 capstatdashboardmodule <- function(input, output, session, fhir_version, vendor, field) {
   ns <- session$ns
   message("capstatdashboardmodule: server started")
 
-  # === Static Mock Example Data (aggregate-level) ===
-  all_data <- tibble(
-    vendor = rep(c("Epic", "Cerner", "Athenahealth", "NextGen", "Allscripts", "eClinicalWorks"), each = 3),
-    fhir_version = rep(c("3.0.1", "4.0.1", "4.1.0"), times = 6),
-    fields_per_statement = c(55, 48, 52, 43, 47, 50, 58, 54, 49, 46, 44, 53, 56, 57, 45, 52, 50, 48),
-    statements = c(2100, 1900, 1500, 2300, 1800, 1600, 1700, 1400, 900, 1250, 1100, 1000, 950, 870, 890, 720, 810, 650)
-  )
+  # -------------------------
+  # GLOBAL FILTERS (passed from dashboard)
+  # -------------------------
+  eff_vendor <- reactive({
+    v <- vendor()
+    if (is.null(v) || identical(v, "All Developers") || identical(v, "")) NULL else v
+  })
+  eff_versions <- reactive({
+    fv <- fhir_version()
+    if (is.null(fv) || length(fv) == 0) NULL else fv
+  })
 
-  # === Reactive Filtering ===
-  filtered_data <- reactive({
-    req(input$fhir_select, input$vendor_select)
-    df <- all_data
-    if (input$fhir_select != "All") {
-      df <- df %>% filter(fhir_version == input$fhir_select)
+  # -------------------------
+  # KPI DATA
+  # -------------------------
+  # ---- Scope driven by global filters ----
+  endpoints_scope <- reactive({
+    q <- tbl(db_connection, "selected_fhir_endpoints_mv") %>%
+      filter(cap_stat_exists == "true")   # character "true" in your MV
+
+    # apply global vendor filter only when a real vendor is chosen
+    v <- vendor()
+    if (!is.null(v) && length(v) == 1 && !identical(v, "All Developers") && nzchar(v)) {
+      q <- q %>% filter(vendor_name == !!v)
     }
-    if (input$vendor_select != "All Vendors") {
-      df <- df %>% filter(vendor == input$vendor_select)
+
+    # apply global fhir_version filter only when a non-empty vector is provided
+    fv <- fhir_version()
+    if (!is.null(fv) && length(fv) > 0) {
+      q <- q %>% filter(fhir_version %in% !!fv)
     }
-    df
+    q
   })
 
-  # === KPIs ===
-  output$total_statements <- renderText({
-    df <- filtered_data()
-    if (nrow(df) == 0) return("0")
-    format(sum(df$statements, na.rm = TRUE), big.mark = ",")
+  # small helper that turns empty/NULL into 0
+  pull_scalar_or_zero <- function(x) {
+    val <- tryCatch({ x %>% collect() %>% pull(1) }, error = function(e) numeric(0))
+    if (is.null(val) || length(val) == 0 || is.na(val)) 0 else val
+  }
+
+  output$kpi_total_capstats <- renderText({
+    n <- pull_scalar_or_zero(endpoints_scope() %>% summarise(n = n_distinct(id)))
+    format(n, big.mark = ",")
   })
 
-  output$unique_vendors <- renderText({
-    df <- filtered_data()
-    if (nrow(df) == 0) return("0")
-    n_distinct(df$vendor)
+  output$kpi_unique_vendors <- renderText({
+    n <- pull_scalar_or_zero(endpoints_scope() %>% summarise(n = n_distinct(vendor_name)))
+    format(n, big.mark = ",")
   })
 
-  output$avg_fields <- renderText({
-    df <- filtered_data()
-    if (nrow(df) == 0) return("0.0")
-    round(mean(df$fields_per_statement, na.rm = TRUE), 1)
+  output$kpi_distinct_versions <- renderText({
+    n <- pull_scalar_or_zero(endpoints_scope() %>% summarise(n = n_distinct(fhir_version)))
+    format(n, big.mark = ",")
   })
 
-  output$distinct_fhir_versions <- renderText({
-    df <- filtered_data()
-    if (nrow(df) == 0) return("0")
-    n_distinct(df$fhir_version)
-  })
+  output$kpi_avg_fields <- renderText({
+    req(db_connection)
 
-  # === Top Fields Plot (reactive to filters, single color) ===
-  output$top_fields_plot <- renderPlot({
-    df <- filtered_data()
-    fields <- c("status","kind","format","fhirVersion","implementationGuide",
-                "publisher","date","jurisdiction","version","description","contact","software.name")
-    set.seed(42 + nrow(df))
-    fields_data <- tibble(
-      field = fields,
-      statements = round(runif(length(fields), 0.6, 1.0) * sum(df$statements, na.rm = TRUE) / length(fields))
-    )
+    v <- vendor()
+    fv <- fhir_version()
 
-    if (nrow(fields_data) == 0 || sum(fields_data$statements, na.rm = TRUE) == 0) {
-      ggplot() + theme_void() +
-        labs(title = "Most Common CapabilityStatement Fields") +
-        annotate("text", x = 0, y = 0, label = "No data for current filters")
+    vendor_filter <- if (!is.null(v) && !identical(v, "All Developers") && nzchar(v)) {
+      glue::glue_sql("AND vendor_name = {v}", .con = db_connection)
     } else {
-      ggplot(fields_data, aes(x = reorder(field, statements), y = statements)) +
+      DBI::SQL("")
+    }
+
+    fhir_filter <- if (!is.null(fv) && length(fv) > 0) {
+      glue::glue_sql("AND fhir_version IN ({vals*})", vals = fv, .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    sql_query <- glue::glue_sql("
+      SELECT ROUND(AVG(field_count), 1) AS avg_fields_per_endpoint
+      FROM (
+        SELECT endpoint_id, COUNT(DISTINCT field) AS field_count
+        FROM mv_capstat_fields
+        WHERE exist = 'true' 
+          AND extension = 'false'
+          {vendor_filter}
+          {fhir_filter}
+        GROUP BY endpoint_id
+      ) sub;
+    ", .con = db_connection)
+
+    df <- DBI::dbGetQuery(db_connection, sql_query)
+
+    if (nrow(df) == 0 || is.na(df$avg_fields_per_endpoint)) {
+      return("0.0")
+    } else {
+      df$avg_fields_per_endpoint
+    }
+  })
+
+  # -------------------------
+  # CHARTS
+  # -------------------------
+  output$top_fields_plot <- renderPlot({
+    req(db_connection)
+
+    # Build filter clauses dynamically
+    vendor_filter <- if (!is.null(vendor()) && vendor() != "All Developers") {
+      glue::glue_sql("AND vendor_name = {vendor()}", .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    version_filter <- if (!is.null(fhir_version()) && length(fhir_version()) > 0) {
+      glue::glue_sql("AND fhir_version IN ({fhir_version()*})", .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    # Compose SQL query
+    sql_query <- glue::glue_sql("
+      SELECT field, COUNT(DISTINCT endpoint_id) AS endpoint_count
+      FROM mv_capstat_fields
+      WHERE exist = 'true' AND extension = 'false'
+      {vendor_filter}
+      {version_filter}
+      GROUP BY field
+      ORDER BY endpoint_count DESC
+      LIMIT 15;
+    ", .con = db_connection)
+
+    # Execute query
+    fields_agg <- DBI::dbGetQuery(db_connection, sql_query)
+
+    # Plot results
+    if (nrow(fields_agg) == 0) {
+      ggplot() +
+        theme_void() +
+        labs(title = 'Top CapabilityStatement Fields') +
+        annotate('text', x = 0, y = 0, label = 'No data for current filters')
+    } else {
+      ggplot(fields_agg, aes(x = reorder(field, endpoint_count), y = endpoint_count)) +
         geom_col(fill = "#007bff") +
         coord_flip() +
-        labs(x = "", y = "Statements", title = "Most Common CapabilityStatement Fields") +
-        theme_minimal(base_size = 13)
+        theme_minimal(base_size = 13) +
+        labs(x = "", y = "Endpoints", title = "Top CapabilityStatement Fields")
     }
   })
 
-  # === FHIR Version Pie (reactive) ===
   output$fhir_version_plot <- renderPlot({
-    df <- filtered_data() %>%
-      group_by(fhir_version) %>%
-      summarise(count = sum(statements), .groups = "drop")
+    req(db_connection)
 
-    if (nrow(df) == 0) {
-      ggplot() + theme_void() +
+    # Dynamic SQL filters
+    vendor_filter <- if (!is.null(vendor()) && vendor() != "All Developers") {
+      glue::glue_sql("AND vendor_name = {vendor()}", .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    version_filter <- if (!is.null(fhir_version()) && length(fhir_version()) > 0) {
+      glue::glue_sql("AND fhir_version IN ({fhir_version()*})", .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    # Compose query
+    sql_query <- glue::glue_sql("
+      SELECT fhir_version, COUNT(DISTINCT endpoint_id) AS endpoint_count
+      FROM mv_capstat_fields
+      WHERE exist = 'true' AND extension = 'false'
+      {vendor_filter}
+      {version_filter}
+      GROUP BY fhir_version
+      ORDER BY endpoint_count DESC;
+    ", .con = db_connection)
+
+    # Execute query
+    ver_agg <- DBI::dbGetQuery(db_connection, sql_query)
+
+    # Plot result
+    if (nrow(ver_agg) == 0) {
+      ggplot() +
+        theme_void() +
         labs(title = "FHIR Version Distribution") +
         annotate("text", x = 0, y = 0, label = "No data for current filters")
     } else {
-      ggplot(df, aes(x = "", y = count, fill = fhir_version)) +
+      ggplot(ver_agg, aes(x = "", y = endpoint_count, fill = fhir_version)) +
         geom_bar(stat = "identity", width = 1, color = "white") +
         coord_polar("y") +
         theme_void() +
@@ -335,129 +379,46 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
     }
   })
 
-  # === Vendor Summary Table ===
-  output$developer_table <- renderReactable({
-    df <- filtered_data() %>%
-      group_by(vendor) %>%
-      summarise(`Capability Statements` = sum(statements), .groups = "drop") %>%
-      arrange(desc(`Capability Statements`))
+  output$vendor_summary_tbl <- renderReactable({
+    req(db_connection)
 
-    reactable(
-      df,
-      columns = list(
-        vendor = colDef(name = "Vendor"),
-        `Capability Statements` = colDef(align = "right")
-      ),
-      sortable = TRUE,
-      striped = TRUE,
-      defaultPageSize = 6,
-      highlight = TRUE,
-      bordered = TRUE
-    )
-  })
-
-  # === Endpoint Grid/Table Data (mock, derived from filters) ===
-  # Create deterministic, filter-aware endpoint rows from aggregate slice
-  vendor_grid_data <- reactive({
-    df <- filtered_data()
-
-    if (nrow(df) == 0) {
-      return(tibble(
-        endpoint_name = character(0),
-        capability_url = character(0),
-        developer = character(0),
-        source = character(0),
-        fhir_version = character(0),
-        status = character(0),
-        instance = character(0),
-        resources = integer(0),
-        search_params = integer(0),
-        uptime = integer(0),
-        operations = integer(0)
-      ))
+    # Build reactive filters
+    vendor_filter <- if (!is.null(vendor()) && vendor() != "All Developers") {
+      glue::glue_sql("AND vendor_name = {vendor()}", .con = db_connection)
+    } else {
+      DBI::SQL("")
     }
 
-    # For each (vendor, version) row, create a couple of endpoints proportionally
-    rows <- purrr::pmap_dfr(df, function(vendor, fhir_version, fields_per_statement, statements) {
-      n <- max(1, round(statements / 1200))   # rough scaling for demo
-      tibble(
-        endpoint_name = paste(vendor, "Endpoint", seq_len(n)),
-        capability_url = paste0("https://api.", str_to_lower(gsub('[^A-Za-z]', '', vendor)), ".com/", fhir_version, "/metadata"),
-        developer = vendor,
-        source = sample(c("ONC", "CHPL", "Manual"), n, TRUE),
-        fhir_version = fhir_version,
-        status = sample(c("Active", "Inactive"), n, TRUE, prob = c(0.85, 0.15)),
-        instance = sample(c("Yes", "No"), n, TRUE, prob = c(0.7, 0.3)),
-        resources = round(runif(n, 30, 95)),
-        search_params = round(runif(n, 50, 160)),
-        uptime = round(runif(n, 90, 100)),
-        operations = round(runif(n, 2, 12))
-      )
-    })
-
-    # Ensure at least some rows
-    if (nrow(rows) == 0) {
-      rows <- tibble(
-        endpoint_name = "Sample Endpoint",
-        capability_url = "https://api.sample.com/fhir/metadata",
-        developer = "Sample Vendor",
-        source = "Manual",
-        fhir_version = "4.0.1",
-        status = "Active",
-        instance = "Yes",
-        resources = 56,
-        search_params = 120,
-        uptime = 98,
-        operations = 8
-      )
+    version_filter <- if (!is.null(fhir_version()) && length(fhir_version()) > 0) {
+      glue::glue_sql("AND fhir_version IN ({fhir_version()*})", .con = db_connection)
+    } else {
+      DBI::SQL("")
     }
-    rows
-  })
 
-  # === Toggle View State ===
-  view_mode <- reactiveVal("table")
-  grid_page <- reactiveVal(1)
-  page_size <- 9  # show 3x3 cards per page
+    # Compose SQL query
+    sql_query <- glue::glue_sql("
+      SELECT vendor_name,
+            COUNT(DISTINCT endpoint_id) AS endpoints_with_capstat
+      FROM mv_capstat_fields
+      WHERE exist = 'true'
+        AND extension = 'false'
+        {vendor_filter}
+        {version_filter}
+      GROUP BY vendor_name
+      ORDER BY endpoints_with_capstat DESC;
+    ", .con = db_connection)
 
-  observeEvent(input$toggle_view, {
-    new_mode <- ifelse(view_mode() == "table", "grid", "table")
-    view_mode(new_mode)
-    updateActionButton(session, "toggle_view",
-                      label = ifelse(new_mode == "table", "Switch to Grid View", "Switch to Table View"))
-    grid_page(1)  # reset pagination when toggled
-  })
+    # Execute
+    vdf <- DBI::dbGetQuery(db_connection, sql_query)
 
-  # === Pagination Handlers ===
-  observeEvent(input$grid_next, {
-    grid_page(grid_page() + 1)
-  })
-  observeEvent(input$grid_prev, {
-    if (grid_page() > 1) grid_page(grid_page() - 1)
-  })
-
-  # === Table View ===
-  output$grid_table <- renderReactable({
-    req(view_mode() == "table")
-    d <- vendor_grid_data()
+    # Render table
     reactable(
-      d,
+      vdf,
       columns = list(
-        endpoint_name = colDef(name = "Endpoint"),
-        capability_url = colDef(name = "Capability URL", cell = function(value) {
-          sprintf("<a href='%s' target='_blank'>%s</a>", value, value)
-        }, html = TRUE),
-        developer = colDef(name = "Developer"),
-        source = colDef(name = "Source"),
-        fhir_version = colDef(name = "FHIR Version"),
-        status = colDef(name = "Status"),
-        instance = colDef(name = "Instance"),
-        resources = colDef(name = "Resources", align = "right"),
-        search_params = colDef(name = "Search Params", align = "right"),
-        uptime = colDef(name = "Uptime (%)", align = "right"),
-        operations = colDef(name = "Operations", align = "right")
+        vendor_name = colDef(name = "Vendor"),
+        endpoints_with_capstat = colDef(name = "Endpoints with CapStat", align = "right")
       ),
       sortable = TRUE,
-      searchable = TRUE,
       striped = TRUE,
       defaultPageSize = 8,
       highlight = TRUE,
@@ -465,46 +426,143 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
     )
   })
 
-  # === Grid View (Paginated) ===
+  # --- Reactive SQL data fetch using mv_endpoint_capstat_metrics ---
+  endpoint_data <- reactive({
+    req(db_connection)
+
+    # Dynamic SQL filters
+    vendor_filter <- if (!is.null(vendor()) && vendor() != "All Developers") {
+      glue::glue_sql("AND e.vendor_name = {vendor()}", .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    version_filter <- if (!is.null(fhir_version()) && length(fhir_version()) > 0) {
+      glue::glue_sql("AND e.fhir_version IN ({fhir_version()*})", .con = db_connection)
+    } else {
+      DBI::SQL("")
+    }
+
+    # Compose SQL to join selected_fhir_endpoints_mv with mv_endpoint_capstat_metrics
+    sql_query <- glue::glue_sql("
+      SELECT 
+          e.id AS endpoint_id,
+          e.endpoint_names,
+          e.url,
+          e.vendor_name,
+          e.list_source,
+          e.fhir_version,
+          e.status,
+          COALESCE(m.resources, 0) AS resources,
+          COALESCE(m.search_params, 0) AS search_params,
+          COALESCE(m.operations, 0) AS operations
+      FROM selected_fhir_endpoints_mv e
+      LEFT JOIN mv_endpoint_capstat_metrics m ON e.url = m.url
+      WHERE e.cap_stat_exists = 'true'
+        {vendor_filter}
+        {version_filter}
+      ORDER BY e.vendor_name, e.endpoint_names;
+    ", .con = db_connection)
+
+    df <- DBI::dbGetQuery(db_connection, sql_query)
+    if (nrow(df) == 0) return(tibble())
+    df
+  })
+
+  # -------------------------
+  # ENDPOINT TABLE + GRID
+  # -------------------------
+
+  # # -------------------------
+  # # MOCK GRID/TABLE SECTION
+  # # -------------------------
+  # mock_data <- tibble(
+  #   endpoint_name = paste("Endpoint", seq_len(9)),
+  #   capability_url = paste0("https://api.example.com/", seq_len(9), "/metadata"),
+  #   developer = sample(c("Epic", "Cerner", "Athenahealth", "eCW", "NextGen"), 9, TRUE),
+  #   source = sample(c("ONC", "CHPL", "Manual"), 9, TRUE),
+  #   fhir_version = sample(c("3.0.1", "4.0.1", "4.1.0"), 9, TRUE),
+  #   status = sample(c("Active", "Inactive"), 9, TRUE, prob = c(0.85, 0.15)),
+  #   resources = sample(40:95, 9),
+  #   search_params = sample(60:140, 9),
+  #   operations = sample(2:12, 9)
+  # )
+
+  view_mode <- reactiveVal("table")
+  grid_page <- reactiveVal(1)
+  page_size <- 9
+
+  observeEvent(input$toggle_view, {
+    new_mode <- ifelse(view_mode() == "table", "grid", "table")
+    view_mode(new_mode)
+    updateActionButton(session, "toggle_view",
+                       label = ifelse(new_mode == "table", "Switch to Grid View", "Switch to Table View"))
+    grid_page(1)
+  })
+  observeEvent(input$grid_next, grid_page(grid_page() + 1))
+  observeEvent(input$grid_prev, if (grid_page() > 1) grid_page(grid_page() - 1))
+
+  output$grid_table <- renderReactable({
+    req(view_mode() == "table")
+    df <- endpoint_data()
+
+    if (nrow(df) == 0) {
+      return(reactable(tibble(Message = "No endpoints found for current filters.")))
+    }
+
+    reactable(
+      df,
+      columns = list(
+        endpoint_names = colDef(name = "Endpoint"),
+        url = colDef(name = "Capability URL", cell = function(x)
+          sprintf("<a href='%s' target='_blank'>%s</a>", x, x), html = TRUE),
+        vendor_name = colDef(name = "Vendor"),
+        list_source = colDef(name = "Source"),
+        fhir_version = colDef(name = "FHIR Version"),
+        status = colDef(name = "Status"),
+        resources = colDef(align = "right"),
+        search_params = colDef(align = "right"),
+        operations = colDef(align = "right")
+      ),
+      sortable = TRUE,
+      searchable = TRUE,
+      striped = TRUE,
+      highlight = TRUE,
+      bordered = TRUE,
+      defaultPageSize = 8
+    )
+  })
+
   output$grid_view_container <- renderUI({
     req(view_mode() == "grid")
-    d <- vendor_grid_data()
+    d <- endpoint_data()
 
-    # Calculate pages
     total_pages <- ceiling(nrow(d) / page_size)
     current_page <- grid_page()
     start_row <- ((current_page - 1) * page_size) + 1
     end_row <- min(start_row + page_size - 1, nrow(d))
-    d_page <- d[start_row:end_row, , drop = FALSE]
+    d_page <- d[start_row:end_row, ]
 
     if (nrow(d_page) == 0) {
       return(div(em("No endpoints for current filters.")))
     }
 
     tagList(
-      div(
-        class = "endpoint-grid",
-        lapply(seq_len(nrow(d_page)), function(i) {
-          row <- d_page[i, ]
-          div(class = "endpoint-card",
-              h4(row$endpoint_name),
-              div(class = "subtitle-link",
-                  tags$a(href = row$capability_url, target = "_blank", "View CapabilityStatement")
-              ),
-              tags$hr(),
-              div(class = "kv", tags$b("Developer:"), row$developer),
-              div(class = "kv", tags$b("Source:"), row$source),
-              div(class = "kv", tags$b("FHIR Version:"), row$fhir_version),
-              div(class = "kv", tags$b("Status:"), row$status),
-              div(class = "kv", tags$b("Instance:"), row$instance),
-              div(class = "metrics",
-                  span(class = "metric", tags$b("Resources:"), row$resources), " ",
-                  span(class = "metric", tags$b("Search Params:"), row$search_params), " ",
-                  span(class = "metric", tags$b("Uptime:"), paste0(row$uptime, "%")), " ",
-                  span(class = "metric", tags$b("Ops:"), row$operations)
-              )
-          )
-        })
+      div(class = "endpoint-grid",
+          lapply(seq_len(nrow(d_page)), function(i) {
+            row <- d_page[i, ]
+            div(class = "endpoint-card",
+                h4(row$endpoint_names),
+                div(class = "kv", tags$b("Vendor:"), row$vendor_name),
+                div(class = "kv", tags$b("Source:"), row$list_source),
+                div(class = "kv", tags$b("FHIR Version:"), row$fhir_version),
+                div(class = "kv", tags$b("Status:"), row$status),
+                tags$hr(),
+                div(class = "kv", tags$b("Resources:"), row$resources),
+                div(class = "kv", tags$b("Search Params:"), row$search_params),
+                div(class = "kv", tags$b("Operations:"), row$operations)
+            )
+          })
       ),
       div(class = "grid-pagination",
           actionButton(ns("grid_prev"), "← Prev"),
@@ -512,10 +570,5 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
           actionButton(ns("grid_next"), "Next →")
       )
     )
-  })
-
-    # --- Placeholder navigation action ---
-  observeEvent(input$view_endpoints_btn, {
-    message("Navigate to Endpoints Grid (mock action for now)")
   })
 }
