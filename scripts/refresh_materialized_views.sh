@@ -1585,4 +1585,37 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpo
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_param." >> $log_file
 }
 
+# Refresh mv_endpoint_interactions_extracted
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_interactions_extracted;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_interactions_extracted." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_interactions_extracted_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_interactions_extracted_unique." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_endpoint_interactions_extracted_unique ON mv_endpoint_interactions_extracted(endpoint_id, resource_type, interaction_code);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_interactions_extracted_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_interactions_extracted_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_interactions_extracted_vendor." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_interactions_extracted_vendor ON mv_endpoint_interactions_extracted(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_interactions_extracted_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_interactions_extracted_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_interactions_extracted_fhir." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_interactions_extracted_fhir ON mv_endpoint_interactions_extracted(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_interactions_extracted_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_interactions_extracted_url;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_interactions_extracted_url." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_interactions_extracted_url ON mv_endpoint_interactions_extracted(url);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_interactions_extracted_url." >> $log_file
+}
+
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
