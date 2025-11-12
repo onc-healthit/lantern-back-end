@@ -1205,7 +1205,7 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_resource_types_url." >> $log_file
 }
 
-docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_resource_types_url ON mv_endpoint_resource_url(url);" -U lantern -d lantern || {
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_resource_types_url ON mv_endpoint_resource_types(url);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_resource_types_url." >> $log_file
 }
 
@@ -1530,6 +1530,59 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_
 
 docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_org_identifier_summary_complete_vendor ON mv_organization_identifier_summary(vendor_name);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_org_identifier_summary_complete_vendor." >> $log_file
+}
+
+# Refresh mv_endpoint_search_params
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_search_params;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_search_params." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_search_params_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_search_params_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_endpoint_search_params_unique ON mv_endpoint_search_params(endpoint_id, resource_type, search_param);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_search_params_url;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_search_params_url." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_search_params_url ON mv_endpoint_search_params(url);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_url." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_search_params_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_search_params_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_search_params_vendor ON mv_endpoint_search_params(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_search_params_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_search_params_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_search_params_fhir ON mv_endpoint_search_params(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_search_params_resource;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_search_params_resource." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_search_params_resource ON mv_endpoint_search_params(resource_type);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_resource." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_search_params_param;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_search_params_param." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_search_params_param ON mv_endpoint_search_params(search_param);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_search_params_param." >> $log_file
 }
 
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file

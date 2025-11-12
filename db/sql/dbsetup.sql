@@ -2535,6 +2535,7 @@ CREATE INDEX idx_mv_capstat_values_extension_fhir ON mv_capstat_values_extension
 
 CREATE MATERIALIZED VIEW mv_endpoint_resource_types AS
 SELECT 
+    f.url as url
     f.id AS endpoint_id,
     f.vendor_id,
     COALESCE(vendors.name, 'Unknown') AS vendor_name,
@@ -2561,7 +2562,7 @@ CREATE UNIQUE INDEX idx_mv_endpoint_resource_types_unique ON mv_endpoint_resourc
 CREATE INDEX idx_mv_endpoint_resource_types_vendor ON mv_endpoint_resource_types(vendor_name);
 CREATE INDEX idx_mv_endpoint_resource_types_fhir ON mv_endpoint_resource_types(fhir_version);
 CREATE INDEX idx_mv_endpoint_resource_types_type ON mv_endpoint_resource_types(type);
-
+CREATE INDEX idx_mv_endpoint_resource_types_url ON mv_endpoint_resource_types(url);
 
 -- LANTERN-838: Validation cleanup 
 CREATE INDEX fhir_endpoints_info_history_val_res_idx ON fhir_endpoints_info_history (validation_result_id);
@@ -3586,3 +3587,37 @@ GROUP BY vendor_name;
 
 -- Index to speed lookups by developer
 CREATE INDEX IF NOT EXISTS idx_mv_dev_endpoint_summary_developer ON mv_developer_endpoint_summary (developer_name);
+
+-- Create materialized view for mv_endpoint_search_params
+CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_search_params AS
+SELECT DISTINCT
+    f.id AS endpoint_id,
+    f.url,
+    f.vendor_id,
+    COALESCE(v.name, 'Unknown') AS vendor_name,
+    CASE 
+        WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
+        WHEN position('-' in f.capability_fhir_version) > 0 THEN substring(f.capability_fhir_version from 1 for position('-' in f.capability_fhir_version) - 1)
+        WHEN f.capability_fhir_version IN (
+            '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0',
+            '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0',
+            '3.5a.0', '4.0.0', '4.0.1'
+        ) THEN f.capability_fhir_version
+        ELSE 'Unknown'
+    END AS fhir_version,
+    json_array_elements(f.capability_statement::json #> '{rest,0,resource}') ->> 'type' AS resource_type,
+    json_array_elements(
+        json_array_elements(f.capability_statement::json #> '{rest,0,resource}') -> 'searchParam'
+    ) ->> 'name' AS search_param
+FROM fhir_endpoints_info f
+LEFT JOIN vendors v ON f.vendor_id = v.id
+WHERE f.requested_fhir_version = 'None'
+ORDER BY resource_type, search_param;
+
+-- Create indexes for mv_endpoint_search_params
+CREATE UNIQUE INDEX idx_mv_endpoint_search_params_unique ON mv_endpoint_search_params(endpoint_id, resource_type, search_param);
+CREATE INDEX idx_mv_endpoint_search_params_url ON mv_endpoint_search_params(url);
+CREATE INDEX idx_mv_endpoint_search_params_vendor ON mv_endpoint_search_params(vendor_name);
+CREATE INDEX idx_mv_endpoint_search_params_fhir ON mv_endpoint_search_params(fhir_version);
+CREATE INDEX idx_mv_endpoint_search_params_resource ON mv_endpoint_search_params(resource_type);
+CREATE INDEX idx_mv_endpoint_search_params_param ON mv_endpoint_search_params(search_param);
