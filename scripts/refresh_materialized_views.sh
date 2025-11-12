@@ -1618,4 +1618,30 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpo
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_interactions_extracted_url." >> $log_file
 }
 
+# Refresh mv_endpoint_capstat_summary
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW mv_endpoint_capstat_summary;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_capstat_summary." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_capstat_summary_url;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_capstat_summary_url." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_capstat_summary_url ON mv_endpoint_capstat_summary(url);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_capstat_summary_url." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_capstat_summary_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_capstat_summary_vendor." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_capstat_summary_vendor ON mv_endpoint_capstat_summary(vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_capstat_summary_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_capstat_summary_fhir;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_capstat_summary_fhir." >> $log_file
+}
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpoint_capstat_summary_fhir ON mv_endpoint_capstat_summary(fhir_version);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_capstat_summary_fhir." >> $log_file
+}
+
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file

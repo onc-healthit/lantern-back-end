@@ -426,7 +426,7 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
     )
   })
 
-  # --- Reactive SQL data fetch using mv_endpoint_capstat_metrics ---
+  # --- Reactive SQL data fetch using mv_endpoint_capstat_summary ---
   endpoint_data <- reactive({
     req(db_connection)
 
@@ -443,7 +443,7 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
       DBI::SQL("")
     }
 
-    # Compose SQL to join selected_fhir_endpoints_mv with mv_endpoint_capstat_metrics
+    # Compose SQL to join selected_fhir_endpoints_mv with mv_endpoint_capstat_summary
     sql_query <- glue::glue_sql("
       SELECT 
           e.id AS endpoint_id,
@@ -455,9 +455,9 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
           e.status,
           COALESCE(m.resources, 0) AS resources,
           COALESCE(m.search_params, 0) AS search_params,
-          COALESCE(m.operations, 0) AS operations
+          COALESCE(m.interactions, 0) AS interactions
       FROM selected_fhir_endpoints_mv e
-      LEFT JOIN mv_endpoint_capstat_metrics m ON e.url = m.url
+      LEFT JOIN mv_endpoint_capstat_summary m ON e.url = m.url
       WHERE e.cap_stat_exists = 'true'
         {vendor_filter}
         {version_filter}
@@ -522,7 +522,7 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
         status = colDef(name = "Status"),
         resources = colDef(align = "right"),
         search_params = colDef(align = "right"),
-        operations = colDef(align = "right")
+        interactions = colDef(align = "right")
       ),
       sortable = TRUE,
       searchable = TRUE,
@@ -560,7 +560,7 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
                 tags$hr(),
                 div(class = "kv", tags$b("Resources:"), row$resources),
                 div(class = "kv", tags$b("Search Params:"), row$search_params),
-                div(class = "kv", tags$b("Operations:"), row$operations)
+                div(class = "kv", tags$b("Operations:"), row$interactions)
             )
           })
       ),
