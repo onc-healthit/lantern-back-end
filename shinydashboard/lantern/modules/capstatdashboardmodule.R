@@ -514,15 +514,21 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
       df,
       columns = list(
         endpoint_names = colDef(name = "Endpoint"),
-        url = colDef(name = "Capability URL", cell = function(x)
-          sprintf("<a href='%s' target='_blank'>%s</a>", x, x), html = TRUE),
+        url = colDef(
+          name = "Capability URL",
+          cell = function(x) {
+            full <- paste0(x, "/metadata")
+            sprintf("<a href='%s' target='_blank'>%s</a>", full, full)
+          },
+          html = TRUE
+        ),
         vendor_name = colDef(name = "Vendor"),
-        list_source = colDef(name = "Source"),
+        # list_source = colDef(name = "Source"),
         fhir_version = colDef(name = "FHIR Version"),
         status = colDef(name = "Status"),
-        resources = colDef(align = "right"),
-        search_params = colDef(align = "right"),
-        interactions = colDef(align = "right")
+        resources = colDef(name = "Resources", align = "right"),
+        search_params = colDef(name = "Search Parameters", align = "right"),
+        interactions = colDef(name = "Operations", align = "right")
       ),
       sortable = TRUE,
       searchable = TRUE,
@@ -554,7 +560,12 @@ capstatdashboardmodule <- function(input, output, session, fhir_version, vendor,
             div(class = "endpoint-card",
                 h4(row$endpoint_names),
                 div(class = "kv", tags$b("Vendor:"), row$vendor_name),
-                div(class = "kv", tags$b("Source:"), row$list_source),
+                div(
+                  class = "kv",
+                  tags$b("Capability URL:"),
+                  tags$a(href = paste0(row$url, "/metadata"), target = "_blank",
+                        paste0(row$url, "/metadata"))
+                ),
                 div(class = "kv", tags$b("FHIR Version:"), row$fhir_version),
                 div(class = "kv", tags$b("Status:"), row$status),
                 tags$hr(),
