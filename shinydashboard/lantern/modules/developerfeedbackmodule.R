@@ -12,163 +12,466 @@ developerfeedbackmodule_UI <- function(id) {
   ns <- NS(id)
   
   tagList(
+    # Custom CSS for modern styling
+    tags$head(
+      tags$style(HTML("
+        /* Modern card styling */
+        .modern-card {
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          padding: 20px;
+          margin-bottom: 20px;
+          transition: box-shadow 0.3s ease;
+        }
+        
+        .modern-card:hover {
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Enhanced info boxes */
+        .info-box {
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          transition: all 0.3s ease;
+          border: none;
+        }
+        
+        .info-box:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .info-box-icon {
+          border-radius: 8px 0 0 8px;
+        }
+        
+        /* Modern headers */
+        .page-header {
+          color: #1B5A7F;
+          font-weight: 600;
+          margin-bottom: 15px;
+          padding-bottom: 10px;
+          border-bottom: 3px solid #1B5A7F;
+        }
+        
+        .section-header {
+          color: #2c3e50;
+          font-weight: 600;
+          margin-top: 25px;
+          margin-bottom: 15px;
+          font-size: 1.3em;
+        }
+        
+        .subsection-header {
+          color: #34495e;
+          font-weight: 500;
+          margin-top: 15px;
+          margin-bottom: 10px;
+          font-size: 1.1em;
+        }
+        
+        /* Modern wellPanel styling */
+        .well {
+          background: white;
+          border: 1px solid #e0e0e0;
+          border-radius: 8px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+          padding: 20px;
+        }
+        
+        /* Modern progress bars */
+        .progress {
+          height: 8px;
+          border-radius: 4px;
+          background-color: #ecf0f1;
+          box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+          border-radius: 4px;
+          transition: width 0.6s ease;
+        }
+        
+        .progress-group {
+          margin-bottom: 20px;
+        }
+        
+        .progress-text {
+          font-weight: 500;
+          color: #2c3e50;
+        }
+        
+        /* Enhanced filter section */
+        .filter-section {
+          background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+          border-radius: 8px;
+          padding: 15px;
+          margin-bottom: 15px;
+        }
+        
+        /* Modern select inputs */
+        .selectize-input {
+          border-radius: 6px;
+          border: 1.5px solid #d0d0d0;
+          transition: all 0.3s ease;
+        }
+        
+        .selectize-input:hover {
+          border-color: #1B5A7F;
+        }
+        
+        .selectize-input:focus {
+          border-color: #1B5A7F;
+          box-shadow: 0 0 0 3px rgba(27, 90, 127, 0.1);
+        }
+        
+        /* Info line styling */
+        .info-line {
+          padding: 8px 0;
+          border-bottom: 1px solid #f0f0f0;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        
+        .info-line:last-child {
+          border-bottom: none;
+        }
+        
+        .info-line span:first-child {
+          color: #5a6c7d;
+          font-weight: 500;
+        }
+        
+        .info-line span:last-child {
+          color: #2c3e50;
+          font-weight: 600;
+        }
+        
+        /* Alert styling */
+        .alert {
+          border-radius: 8px;
+          border-left: 4px solid;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+          padding: 12px 15px;
+        }
+        
+        .alert-danger {
+          background-color: #fff5f5;
+          border-left-color: #dc3545;
+          color: #721c24;
+        }
+        
+        .alert-warning {
+          background-color: #fffbf0;
+          border-left-color: #ffc107;
+          color: #856404;
+        }
+        
+        .alert-info {
+          background-color: #f0f8ff;
+          border-left-color: #007bff;
+          color: #004085;
+        }
+        
+        .alert-success {
+          background-color: #f0fff4;
+          border-left-color: #28a745;
+          color: #155724;
+        }
+        
+        .alert-secondary {
+          background-color: #f8f9fa;
+          border-left-color: #6c757d;
+          color: #383d41;
+        }
+        
+        /* Download button styling */
+        .btn-download {
+          background: linear-gradient(135deg, #1B5A7F 0%, #2874a6 100%);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 12px 24px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 6px rgba(27, 90, 127, 0.3);
+        }
+        
+        .btn-download:hover {
+          background: linear-gradient(135deg, #2874a6 0%, #1B5A7F 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 4px 10px rgba(27, 90, 127, 0.4);
+        }
+        
+        /* Chart container styling */
+        .chart-container {
+          background: white;
+          border-radius: 8px;
+          padding: 15px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+          margin-bottom: 20px;
+        }
+        
+        /* Reactable modern styling */
+        .reactable {
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        /* Metric cards styling */
+        .metric-card {
+          background: white;
+          border-radius: 8px;
+          padding: 15px;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+          margin-bottom: 15px;
+        }
+        
+        .metric-title {
+          font-size: 0.9em;
+          color: #7f8c8d;
+          font-weight: 500;
+          margin-bottom: 8px;
+        }
+        
+        .metric-value {
+          font-size: 1.5em;
+          font-weight: 600;
+          color: #2c3e50;
+        }
+        
+        /* Maintain existing Lantern styles for accessibility */
+        a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible {
+          border: 4px solid #000 !important;
+          background-color: yellow !important;
+          color: black !important;
+          outline: none;
+        }
+      "))
+    ),
+    
     fluidRow(
-      h2("Organization Data Quality")
+      column(width = 12,
+        h2(class = "page-header", "Organization Data Quality Dashboard")
+      )
     ),
     fluidRow(
       column(width = 12,
-        p("This dashboard provides data quality metrics for organization data extracted from FHIR bundles. ",
-          "Use this information to improve the quality of organization data in your endpoint implementations.")
+        div(style = "background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); 
+                     padding: 15px; border-radius: 8px; margin-bottom: 20px; 
+                     border-left: 4px solid #1B5A7F;",
+          p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
+            tags$strong("About this dashboard:"), 
+            " This dashboard provides comprehensive data quality metrics for organization data extracted from FHIR bundles. ",
+            "Use this information to improve the quality of organization data in your endpoint implementations."
+          )
+        )
       )
     ),
-    # Summary cards row
+    
+    # Enhanced summary cards row
     fluidRow(
       column(width = 4,
         div(class = "info-box bg-blue",
           div(class = "info-box-icon",
-            tags$i(class = "fa fa-building")
+            tags$i(class = "fa fa-building", style = "font-size: 40px;")
           ),
           div(class = "info-box-content",
-            span(class = "info-box-text", "Total Organizations"),
-            span(class = "info-box-number", textOutput(ns("total_orgs"), inline = TRUE))
+            span(class = "info-box-text", style = "font-weight: 500;", "Total Organizations"),
+            span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;", 
+                 textOutput(ns("total_orgs"), inline = TRUE))
           )
         )
       ),
       column(width = 4,
         div(class = "info-box bg-green",
           div(class = "info-box-icon",
-            tags$i(class = "fa fa-check-circle")
+            tags$i(class = "fa fa-check-circle", style = "font-size: 40px;")
           ),
           div(class = "info-box-content",
-            span(class = "info-box-text", "Conforming Organization Data"),
-            span(class = "info-box-number", textOutput(ns("high_quality_count"), inline = TRUE))
+            span(class = "info-box-text", style = "font-weight: 500;", "Conforming Organizations"),
+            span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;", 
+                 textOutput(ns("high_quality_count"), inline = TRUE))
           )
         )
       ),
       column(width = 4,
         div(class = "info-box bg-red",
           div(class = "info-box-icon",
-            tags$i(class = "fa fa-exclamation-triangle")
+            tags$i(class = "fa fa-exclamation-triangle", style = "font-size: 40px;")
           ),
           div(class = "info-box-content",
-            span(class = "info-box-text", "Non-conforming Organization Data"),
-            span(class = "info-box-number", textOutput(ns("low_quality_count"), inline = TRUE))
+            span(class = "info-box-text", style = "font-weight: 500;", "Non-conforming Organizations"),
+            span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;", 
+                 textOutput(ns("low_quality_count"), inline = TRUE))
           )
         )
       )
     ),
+    
     # Main content row
     fluidRow(
       # Left column - Charts and Tables
       column(width = 8,
         # Data Quality Overview
-        fluidRow(
-          column(width = 12,
-            h3("Data Quality Overview"),
+        div(class = "modern-card",
+          h3(class = "section-header", 
+             tags$i(class = "fa fa-chart-bar", style = "margin-right: 8px;"), 
+             "Data Quality Overview"),
+          div(class = "chart-container",
             plotOutput(ns("quality_overview_chart"), height = "400px")
           )
         ),
+        
         # Identifier Type Analysis
-        fluidRow(
-          column(width = 6,
-            h3("Identifier Type Distribution"),
-            plotOutput(ns("identifier_type_distribution_chart"), height = "350px")
+        div(class = "modern-card",
+          h3(class = "section-header",
+             tags$i(class = "fa fa-id-card", style = "margin-right: 8px;"),
+             "Identifier Analysis"),
+          fluidRow(
+            column(width = 6,
+              div(class = "chart-container",
+                h4(class = "subsection-header", "Type Distribution"),
+                plotOutput(ns("identifier_type_distribution_chart"), height = "350px")
+              )
+            ),
+            column(width = 6,
+              div(class = "chart-container",
+                h4(class = "subsection-header", "Conformance by Type"),
+                plotOutput(ns("conformance_by_type_chart"), height = "350px")
+              )
+            )
           ),
-          column(width = 6,
-            h3("Conformance by Type"),
-            plotOutput(ns("conformance_by_type_chart"), height = "350px")
-          )
-        ),
-        fluidRow(
-          column(width = 12,
-            h4("Organization Identifier Status Breakdown"),
+          div(class = "chart-container",
+            h4(class = "subsection-header", "Organization Status Breakdown"),
             plotOutput(ns("organization_identifier_status_chart"), height = "300px")
-          )
-        ),
-        fluidRow(
-          column(width = 12,
-            h4("Identifier Type Details"),
+          ),
+          div(style = "margin-top: 20px;",
+            h4(class = "subsection-header", "Detailed Identifier Metrics"),
             reactable::reactableOutput(ns("identifier_type_table"))
           )
         ),
+        
         # Detailed Issues
-        fluidRow(
-          column(width = 12, style = "margin-top: 20px;",
-            h3("Data Quality Issues by Category"),
-            reactable::reactableOutput(ns("issues_detail_table"))
-          )
+        div(class = "modern-card", style = "margin-top: 20px;",
+          h3(class = "section-header",
+             tags$i(class = "fa fa-exclamation-circle", style = "margin-right: 8px;"),
+             "Data Quality Issues by Category"),
+          reactable::reactableOutput(ns("issues_detail_table"))
         )
       ),
+      
       # Right column - Filters and Summary
       column(width = 4,
-        wellPanel(
-          h4("Filters"),
-          selectInput(ns("vendor_filter"), 
-                     "Certified API Developer:", 
-                     choices = NULL,
-                     selected = "All Developers"),
-          hr(),
-          h4("Quality Metrics"),
-          div(id = "quality-metrics",
-            h5("Identifier Type Validation"),
-            div(class = "progress-group",
-              span(class = "progress-text", "Valid Identifiers"),
-              span(class = "float-right", textOutput(ns("identifier_percentage"), inline = TRUE)),
-              div(class = "progress progress-sm",
-                div(class = "progress-bar bg-green", 
-                    style = paste0("width: ", textOutput(ns("identifier_progress_width"), inline = TRUE)))
+        # Filters
+        div(class = "modern-card filter-section",
+          h4(style = "color: #1B5A7F; margin-top: 0;",
+             tags$i(class = "fa fa-filter", style = "margin-right: 8px;"),
+             "Filters"),
+          selectInput(
+            inputId = ns("vendor_filter"),
+            label = "Certified API Developer:",
+            choices = NULL,
+            selected = "All Developers"
+          )
+        ),
+        
+        # Quality Metrics
+        div(class = "modern-card",
+          h4(style = "color: #1B5A7F; margin-top: 0;",
+             tags$i(class = "fa fa-tachometer-alt", style = "margin-right: 8px;"),
+             "Quality Metrics"),
+          div(style = "margin-top: 15px;",
+            div(class = "metric-card",
+              div(class = "metric-title", "Identifier Type Validation"),
+              div(class = "progress-group",
+                div(style = "display: flex; justify-content: space-between; margin-bottom: 8px;",
+                  span(class = "progress-text", "Valid Identifiers"),
+                  span(style = "font-weight: 600; color: #28a745;", 
+                       textOutput(ns("identifier_percentage"), inline = TRUE))
+                ),
+                div(class = "progress",
+                  div(class = "progress-bar bg-success", 
+                      style = paste0("width: ", textOutput(ns("identifier_progress_width"), inline = TRUE)))
+                )
               )
             ),
-            h5("Organization Names"),
-            div(class = "progress-group",
-              span(class = "progress-text", "Quality Names"),
-              span(class = "float-right", textOutput(ns("name_percentage"), inline = TRUE)),
-              div(class = "progress progress-sm",
-                div(class = "progress-bar bg-blue", 
-                    style = paste0("width: ", textOutput(ns("name_progress_width"), inline = TRUE)))
+            div(class = "metric-card",
+              div(class = "metric-title", "Organization Names"),
+              div(class = "progress-group",
+                div(style = "display: flex; justify-content: space-between; margin-bottom: 8px;",
+                  span(class = "progress-text", "Quality Names"),
+                  span(style = "font-weight: 600; color: #007bff;", 
+                       textOutput(ns("name_percentage"), inline = TRUE))
+                ),
+                div(class = "progress",
+                  div(class = "progress-bar bg-primary", 
+                      style = paste0("width: ", textOutput(ns("name_progress_width"), inline = TRUE)))
+                )
               )
             ),
-            h5("Addresses"),
-            div(class = "progress-group",
-              span(class = "progress-text", "Complete Addresses"),
-              span(class = "float-right", textOutput(ns("address_percentage"), inline = TRUE)),
-              div(class = "progress progress-sm",
-                div(class = "progress-bar bg-orange", 
-                    style = paste0("width: ", textOutput(ns("address_progress_width"), inline = TRUE)))
+            div(class = "metric-card",
+              div(class = "metric-title", "Addresses"),
+              div(class = "progress-group",
+                div(style = "display: flex; justify-content: space-between; margin-bottom: 8px;",
+                  span(class = "progress-text", "Complete Addresses"),
+                  span(style = "font-weight: 600; color: #fd7e14;", 
+                       textOutput(ns("address_percentage"), inline = TRUE))
+                ),
+                div(class = "progress",
+                  div(class = "progress-bar bg-warning", 
+                      style = paste0("width: ", textOutput(ns("address_progress_width"), inline = TRUE)))
+                )
               )
             )
           )
         ),
-        wellPanel(
-          h4("Identifier Breakdown"),
-          div(id = "identifier-breakdown",
+        
+        # Identifier Breakdown
+        div(class = "modern-card",
+          h4(style = "color: #1B5A7F; margin-top: 0;",
+             tags$i(class = "fa fa-list-alt", style = "margin-right: 8px;"),
+             "Identifier Breakdown"),
+          div(id = "identifier-breakdown", style = "margin-top: 15px;",
             div(class = "info-line",
-              span("Organizations with valid identifiers: "),
-              textOutput(ns("valid_identifier_count_display"), inline = TRUE)
+              span("Valid identifiers:"),
+              span(textOutput(ns("valid_identifier_count_display"), inline = TRUE))
             ),
             div(class = "info-line",
-              span("Organizations with no identifier data: "),
-              textOutput(ns("no_identifier_count_display"), inline = TRUE)
+              span("No identifier data:"),
+              span(textOutput(ns("no_identifier_count_display"), inline = TRUE))
             ),
             div(class = "info-line",
-              span("Organizations with only invalid identifiers: "),
-              textOutput(ns("invalid_only_count_display"), inline = TRUE)
+              span("Only invalid identifiers:"),
+              span(textOutput(ns("invalid_only_count_display"), inline = TRUE))
             )
           )
         ),
-        wellPanel(
-          h4("Recommendations"),
+        
+        # Recommendations
+        div(class = "modern-card",
+          h4(style = "color: #1B5A7F; margin-top: 0;",
+             tags$i(class = "fa fa-lightbulb", style = "margin-right: 8px;"),
+             "Recommendations"),
           uiOutput(ns("recommendations"))
         )
       )
     ),
+    
     # Download section
     fluidRow(
-      column(width = 12, style = "padding-top: 20px;",
-        downloadButton(ns("download_feedback_report"), "Download Quality Report (CSV)", 
-                      icon = tags$i(class = "fa fa-download"))
-      )
+      column(width = 12, style = "padding-top: 20px; text-align: center;",
+        downloadButton(
+          outputId = ns("download_feedback_report"),
+          label = "Download Quality Report (CSV)",
+          class = "btn-download",
+          icon = icon("download")
         )
+      )
+    )
   )
 }
 
@@ -464,13 +767,12 @@ developerfeedbackmodule <- function(
     paste0(format(invalid_only_count, big.mark = ","), " (", invalid_only_percentage, "%)")
   })
   
-  # Chart outputs using pre-computed data
+  # Chart outputs using pre-computed data with modern theme
   output$quality_overview_chart <- renderPlot({
-    req(quality_summary())  # Ensure data is available
+    req(quality_summary())
     
     summary <- quality_summary()
     
-    # Create chart data with proper validation
     chart_data <- data.frame(
       Category = c("Identifier Type Validation", "Organization Name", "Address Completeness"),
       Valid = c(
@@ -486,31 +788,36 @@ developerfeedbackmodule <- function(
       stringsAsFactors = FALSE
     )
     
-    # Check if we have data
     if (sum(chart_data$Valid) == 0 && sum(chart_data$Invalid) == 0) {
       return(
         ggplot() + 
-          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6) +
-          xlim(0, 1) + ylim(0, 1) + theme_void() +
-          labs(title = "Data Quality Overview")
+          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6, color = "#7f8c8d") +
+          xlim(0, 1) + ylim(0, 1) + theme_void()
       )
     }
     
-    # Pivot data for visualization
     chart_data_long <- chart_data %>%
       pivot_longer(cols = c(Valid, Invalid), names_to = "Status", values_to = "Count")
     
     ggplot(chart_data_long, aes(x = Category, y = Count, fill = Status)) +
       geom_col(position = "dodge", width = 0.7) +
       geom_text(aes(label = format(Count, big.mark = ",")), 
-                position = position_dodge(width = 0.7), vjust = -0.5) +
+                position = position_dodge(width = 0.7), vjust = -0.5, 
+                fontface = "bold", size = 4) +
       scale_fill_manual(values = c("Valid" = "#28a745", "Invalid" = "#dc3545")) +
-      labs(title = "Data Quality Overview",
-           x = "Quality Category",
-           y = "Number of Organizations") +
+      labs(x = NULL, y = "Number of Organizations") +
       theme_minimal() +
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),
-            legend.position = "bottom")
+      theme(
+        axis.text.x = element_text(angle = 30, hjust = 1, size = 11, face = "bold"),
+        axis.text.y = element_text(size = 10),
+        axis.title.y = element_text(size = 12, face = "bold", margin = margin(r = 10)),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 11, face = "bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        plot.margin = margin(10, 10, 10, 10)
+      )
   }, height = 400)
   
   # Organization identifier status breakdown chart
@@ -520,9 +827,9 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     
     status_data <- data.frame(
-      Status = c("Organizations with Valid Identifiers", 
-                 "Organizations with No Identifiers", 
-                 "Organizations with Only Invalid Identifiers"),
+      Status = c("Valid Identifiers", 
+                 "No Identifiers", 
+                 "Only Invalid Identifiers"),
       Count = c(
         as.numeric(id_summary$orgs_with_valid),
         as.numeric(id_summary$orgs_with_no_identifiers),
@@ -531,7 +838,6 @@ developerfeedbackmodule <- function(
       stringsAsFactors = FALSE
     )
     
-    # Calculate percentages
     total_orgs <- sum(status_data$Count)
     if (total_orgs > 0) {
       status_data$Percentage <- round(status_data$Count / total_orgs * 100, 1)
@@ -539,86 +845,83 @@ developerfeedbackmodule <- function(
       status_data$Percentage <- 0
       return(
         ggplot() + 
-          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6) +
-          xlim(0, 1) + ylim(0, 1) + theme_void() +
-          labs(title = "Organization Breakdown by Identifier Status")
+          geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6, color = "#7f8c8d") +
+          xlim(0, 1) + ylim(0, 1) + theme_void()
       )
     }
     
-    # Define colors
-    colors <- c("Organizations with Valid Identifiers" = "#28a745",
-                "Organizations with No Identifiers" = "#6c757d", 
-                "Organizations with Only Invalid Identifiers" = "#dc3545")
+    colors <- c("Valid Identifiers" = "#28a745",
+                "No Identifiers" = "#6c757d", 
+                "Only Invalid Identifiers" = "#dc3545")
     
     ggplot(status_data, aes(x = reorder(Status, Count), y = Count, fill = Status)) +
-      geom_col(width = 0.7) +
+      geom_col(width = 0.6) +
       geom_text(aes(label = paste0(format(Count, big.mark = ","), "\n(", Percentage, "%)")), 
-                hjust = -0.1, size = 3.5) +
+                hjust = -0.1, size = 3.5, fontface = "bold") +
       scale_fill_manual(values = colors) +
       coord_flip() +
-      labs(title = "Organization Breakdown by Identifier Status",
-           x = "",
-           y = "Number of Organizations") +
+      labs(x = NULL, y = "Number of Organizations") +
       theme_minimal() +
-      theme(legend.position = "none",
-            axis.text.y = element_text(size = 10)) +
-      scale_x_discrete(labels = function(x) str_wrap(x, width = 25))
+      theme(
+        legend.position = "none",
+        axis.text.y = element_text(size = 10, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.title.x = element_text(size = 11, face = "bold", margin = margin(t = 10)),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank()
+      ) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.2)))
   }, height = 300)
   
   # Identifier type distribution chart
   output$identifier_type_distribution_chart <- renderPlot({
     req(identifier_type_summary())
     
-    tryCatch({
-      id_summary <- identifier_type_summary()
-      
-      chart_data <- data.frame(
-        Type = c("NPI", "CLIA", "NAIC", "Other", "No Identifier Data"),
-        Count = c(
-          as.numeric(id_summary$npi_count), 
-          as.numeric(id_summary$clia_count), 
-          as.numeric(id_summary$naic_count), 
-          as.numeric(id_summary$other_count), 
-          as.numeric(id_summary$no_identifier_count)
-        ),
-        stringsAsFactors = FALSE
+    id_summary <- identifier_type_summary()
+    
+    chart_data <- data.frame(
+      Type = c("NPI", "CLIA", "NAIC", "Other", "No Data"),
+      Count = c(
+        as.numeric(id_summary$npi_count), 
+        as.numeric(id_summary$clia_count), 
+        as.numeric(id_summary$naic_count), 
+        as.numeric(id_summary$other_count), 
+        as.numeric(id_summary$no_identifier_count)
+      ),
+      stringsAsFactors = FALSE
+    )
+    
+    chart_data <- chart_data[chart_data$Count > 0, ]
+    
+    if (nrow(chart_data) == 0) {
+      return(
+        ggplot() + 
+          geom_text(aes(x = 0.5, y = 0.5, label = "No identifier data found"), 
+                   size = 6, color = "#7f8c8d") +
+          theme_void() + xlim(0, 1) + ylim(0, 1)
       )
-      
-      # Filter out zero counts
-      chart_data <- chart_data[chart_data$Count > 0, ]
-      
-      if (nrow(chart_data) == 0) {
-        return(
-          ggplot() + 
-            geom_text(aes(x = 0.5, y = 0.5, label = "No identifier data found"), 
-                     size = 6) +
-            theme_void() + xlim(0, 1) + ylim(0, 1) +
-            labs(title = "Distribution of Identifier Types")
-        )
-      }
-      
-      # Define colors for different types
-      type_colors <- c("NPI" = "#28a745", "CLIA" = "#007bff", "NAIC" = "#fd7e14", 
-                      "Other" = "#dc3545", "No Identifier Data" = "#6c757d")
-      
-      ggplot(chart_data, aes(x = reorder(Type, Count), y = Count, fill = Type)) +
-        geom_col(width = 0.7) +
-        geom_text(aes(label = format(Count, big.mark = ",")), hjust = -0.1) +
-        scale_fill_manual(values = type_colors) +
-        coord_flip() +
-        labs(title = "Distribution of Identifier Types",
-             x = "Identifier Type",
-             y = "Count") +
-        theme_minimal() +
-        theme(legend.position = "none")
-      
-    }, error = function(e) {
-      ggplot() + 
-        geom_text(aes(x = 0.5, y = 0.5, label = paste("Error:", e$message)), 
-                 size = 4) +
-        theme_void() + xlim(0, 1) + ylim(0, 1) +
-        labs(title = "Chart Error")
-    })
+    }
+    
+    type_colors <- c("NPI" = "#28a745", "CLIA" = "#007bff", "NAIC" = "#fd7e14", 
+                    "Other" = "#dc3545", "No Data" = "#6c757d")
+    
+    ggplot(chart_data, aes(x = reorder(Type, Count), y = Count, fill = Type)) +
+      geom_col(width = 0.6) +
+      geom_text(aes(label = format(Count, big.mark = ",")), 
+                hjust = -0.1, fontface = "bold", size = 3.5) +
+      scale_fill_manual(values = type_colors) +
+      coord_flip() +
+      labs(x = NULL, y = "Count") +
+      theme_minimal() +
+      theme(
+        legend.position = "none",
+        axis.text.y = element_text(size = 10, face = "bold"),
+        axis.text.x = element_text(size = 10),
+        axis.title.x = element_text(size = 11, face = "bold", margin = margin(t = 10)),
+        panel.grid.major.y = element_blank(),
+        panel.grid.minor = element_blank()
+      ) +
+      scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
   }, height = 350)
   
   # Conformance by type chart
@@ -641,15 +944,14 @@ developerfeedbackmodule <- function(
       ),
       stringsAsFactors = FALSE
     ) %>%
-      filter(Valid + Invalid > 0)  # Only show types that have data
+      filter(Valid + Invalid > 0)
     
     if (nrow(conformance_data) == 0) {
       return(
         ggplot() + 
           geom_text(aes(x = 0.5, y = 0.5, label = "No conformance data available"), 
-                   size = 6) +
-          theme_void() + xlim(0, 1) + ylim(0, 1) +
-          labs(title = "Conformance by Identifier Type")
+                   size = 6, color = "#7f8c8d") +
+          theme_void() + xlim(0, 1) + ylim(0, 1)
       )
     }
     
@@ -658,15 +960,24 @@ developerfeedbackmodule <- function(
     
     ggplot(conformance_long, aes(x = Type, y = Count, fill = Status)) +
       geom_col(position = "stack") +
-      geom_text(aes(label = Count), position = position_stack(vjust = 0.5)) +
+      geom_text(aes(label = Count), position = position_stack(vjust = 0.5), 
+                fontface = "bold", color = "white", size = 4) +
       scale_fill_manual(values = c("Valid" = "#28a745", "Invalid" = "#dc3545")) +
-      labs(title = "US-Core Conformance by Type",
-           x = "Identifier Type",
-           y = "Count") +
-      theme_minimal()
+      labs(x = "Identifier Type", y = "Count") +
+      theme_minimal() +
+      theme(
+        axis.text.x = element_text(size = 11, face = "bold"),
+        axis.text.y = element_text(size = 10),
+        axis.title = element_text(size = 11, face = "bold"),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10, face = "bold"),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank()
+      )
   }, height = 350)
   
-  # Identifier type detail table with pre-computed data
+  # Identifier type detail table
   output$identifier_type_table <- reactable::renderReactable({
     req(identifier_type_summary())
     
@@ -722,42 +1033,63 @@ developerfeedbackmodule <- function(
     reactable(
       type_data,
       columns = list(
-        Identifier_Type = colDef(name = "Type", width = 120),
+        Identifier_Type = colDef(name = "Type", width = 120, 
+                                 style = list(fontWeight = 600)),
         Total_Count = colDef(name = "Total", format = colFormat(separators = TRUE), width = 80),
-        Valid_Count = colDef(name = "Valid", format = colFormat(separators = TRUE), width = 80),
-        Invalid_Count = colDef(name = "Invalid", format = colFormat(separators = TRUE), width = 80),
+        Valid_Count = colDef(name = "Valid", format = colFormat(separators = TRUE), width = 80,
+                            style = function(value) {
+                              if (value > 0) list(color = "#28a745", fontWeight = 600)
+                            }),
+        Invalid_Count = colDef(name = "Invalid", format = colFormat(separators = TRUE), width = 80,
+                              style = function(value) {
+                                if (value > 0) list(color = "#dc3545", fontWeight = 600)
+                              }),
         Conformance_Rate = colDef(
           name = "Conformance Rate", 
-          width = 120,
+          width = 130,
           cell = function(value) {
             if (value == "N/A") {
-              div(style = "color: #6c757d;", value)
+              div(style = "color: #6c757d; font-weight: 500;", value)
             } else {
               rate <- as.numeric(str_extract(value, "\\d+"))
               if (!is.na(rate)) {
                 if (rate >= 90) {
-                  div(style = "color: #28a745; font-weight: bold;", value)
+                  div(style = "color: #28a745; font-weight: 700; font-size: 14px;", value)
                 } else if (rate >= 70) {
-                  div(style = "color: #ffc107; font-weight: bold;", value)  
+                  div(style = "color: #ffc107; font-weight: 700; font-size: 14px;", value)  
                 } else {
-                  div(style = "color: #dc3545; font-weight: bold;", value)
+                  div(style = "color: #dc3545; font-weight: 700; font-size: 14px;", value)
                 }
               } else {
-                div(style = "color: #6c757d;", value)
+                div(style = "color: #6c757d; font-weight: 500;", value)
               }
             }
           }
         ),
         Percentage_of_Orgs = colDef(name = "% of Orgs", width = 100),
-        US_Core_Rules = colDef(name = "US-Core Rules", width = 150),
-        Validation_Requirements = colDef(name = "Format Requirements", minWidth = 200)
+        US_Core_Rules = colDef(name = "US-Core Rules", width = 150,
+                              style = list(fontSize = "13px", color = "#5a6c7d")),
+        Validation_Requirements = colDef(name = "Format Requirements", minWidth = 200,
+                                        style = list(fontSize = "13px", color = "#5a6c7d"))
       ),
       striped = TRUE,
-      highlight = TRUE
+      highlight = TRUE,
+      bordered = TRUE,
+      theme = reactableTheme(
+        borderColor = "#e0e0e0",
+        stripedColor = "#f8f9fa",
+        highlightColor = "#f0f8ff",
+        headerStyle = list(
+          background = "#1B5A7F",
+          color = "white",
+          fontWeight = 600,
+          fontSize = "14px"
+        )
+      )
     )
   })
   
-  # Issues detail table using pre-computed summaries
+  # Issues detail table
   output$issues_detail_table <- reactable::renderReactable({
     req(quality_summary(), identifier_type_summary())
     
@@ -802,26 +1134,49 @@ developerfeedbackmodule <- function(
     reactable(
       issues_data,
       columns = list(
-        Issue_Category = colDef(name = "Issue Category", width = 150),
-        Total_Count = colDef(name = "Total", format = colFormat(separators = TRUE)),
-        Valid_Count = colDef(name = "Valid", format = colFormat(separators = TRUE)),
-        Invalid_Count = colDef(name = "Invalid", format = colFormat(separators = TRUE)),
-        Success_Rate = colDef(name = "Success Rate", width = 100),
-        Common_Issues = colDef(name = "Common Issues", minWidth = 400),
+        Issue_Category = colDef(name = "Issue Category", width = 180,
+                               style = list(fontWeight = 600, color = "#2c3e50")),
+        Total_Count = colDef(name = "Total", format = colFormat(separators = TRUE), width = 90),
+        Valid_Count = colDef(name = "Valid", format = colFormat(separators = TRUE), width = 90,
+                            style = function(value) {
+                              list(color = "#28a745", fontWeight = 600)
+                            }),
+        Invalid_Count = colDef(name = "Invalid", format = colFormat(separators = TRUE), width = 90,
+                              style = function(value) {
+                                list(color = "#dc3545", fontWeight = 600)
+                              }),
+        Success_Rate = colDef(name = "Success Rate", width = 110,
+                             style = list(fontWeight = 600, fontSize = "14px")),
+        Common_Issues = colDef(name = "Common Issues", minWidth = 350,
+                              style = list(fontSize = "13px", color = "#5a6c7d", lineHeight = "1.5")),
         US_Core_Reference = colDef(
           name = "US-Core Reference",
           width = 150,
           cell = function(value) {
-            tags$a(href = value, target = "_blank", "View Specification")
+            tags$a(href = value, target = "_blank", 
+                  style = "color: #1B5A7F; font-weight: 500; text-decoration: none;",
+                  "View Specification")
           }
         )
       ),
       striped = TRUE,
-      highlight = TRUE
+      highlight = TRUE,
+      bordered = TRUE,
+      theme = reactableTheme(
+        borderColor = "#e0e0e0",
+        stripedColor = "#f8f9fa",
+        highlightColor = "#f0f8ff",
+        headerStyle = list(
+          background = "#1B5A7F",
+          color = "white",
+          fontWeight = 600,
+          fontSize = "14px"
+        )
+      )
     )
   })
   
-  # Enhanced recommendations using pre-computed data
+  # Enhanced recommendations
   output$recommendations <- renderUI({
     req(quality_summary(), identifier_type_summary())
     
@@ -829,14 +1184,15 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     recommendations <- list()
     
-    # No identifier data alert (highest priority)
+    # No identifier data alert
     if (id_summary$no_identifier_count > 0) {
       no_id_percentage <- round(id_summary$no_identifier_count / summary$total_orgs * 100, 1)
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-danger", style = "margin-bottom: 10px;",
-          tags$strong("Missing Identifier Data: "),
+        tags$div(class = "alert alert-danger",
+          tags$strong(tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"), 
+                     "Missing Identifier Data: "),
           paste0(format(id_summary$no_identifier_count, big.mark = ","), 
-                 " organizations (", no_id_percentage, "%) have no identifier data. "),
+                 " organizations (", no_id_percentage, "%) have no identifier data."),
           tags$br(),
           tags$small("Organizations must include at least one identifier (NPI, CLIA, or NAIC) to meet US-Core requirements.")
         )
@@ -847,10 +1203,11 @@ developerfeedbackmodule <- function(
     if (id_summary$orgs_with_invalid_only > 0) {
       invalid_only_percentage <- round(id_summary$orgs_with_invalid_only / summary$total_orgs * 100, 1)
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-danger", style = "margin-bottom: 10px;",
-          tags$strong("Organizations with Only Invalid Identifiers: "),
+        tags$div(class = "alert alert-danger",
+          tags$strong(tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
+                     "Organizations with Only Invalid Identifiers: "),
           paste0(format(id_summary$orgs_with_invalid_only, big.mark = ","), 
-                 " organizations (", invalid_only_percentage, "%) have identifiers but none are US-Core compliant. "),
+                 " organizations (", invalid_only_percentage, "%) have identifiers but none are US-Core compliant."),
           tags$br(),
           tags$small("Review identifier formats and ensure compliance with US-Core validation rules.")
         )
@@ -860,9 +1217,10 @@ developerfeedbackmodule <- function(
     # Identifier conformance recommendations
     if (summary$identifier_percentage < 80) {
       recommendations <- append(recommendations, 
-        tags$div(class = "alert alert-warning", style = "margin-bottom: 10px;",
-          tags$strong("US-Core Identifier Conformance Issues: "),
-          paste0("Only ", summary$identifier_percentage, "% of organizations have conformant identifiers. "),
+        tags$div(class = "alert alert-warning",
+          tags$strong(tags$i(class = "fa fa-clipboard-check", style = "margin-right: 5px;"),
+                     "US-Core Identifier Conformance Issues: "),
+          paste0("Only ", summary$identifier_percentage, "% of organizations have conformant identifiers."),
           tags$br(),
           tags$small("Ensure NPI identifiers are 10 digits with valid check digits, CLIA identifiers follow 2D7 format, and NAIC identifiers are 5 digits.")
         )
@@ -871,10 +1229,11 @@ developerfeedbackmodule <- function(
     
     if (id_summary$other_count > 0) {
       recommendations <- append(recommendations, 
-        tags$div(class = "alert alert-warning", style = "margin-bottom: 10px;",
-          tags$strong("Non-Standard Identifiers: "),
+        tags$div(class = "alert alert-warning",
+          tags$strong(tags$i(class = "fa fa-question-circle", style = "margin-right: 5px;"),
+                     "Non-Standard Identifiers: "),
           paste0("Found ", format(id_summary$other_count, big.mark = ","), 
-                 " non-standard identifier types. "),
+                 " non-standard identifier types."),
           tags$br(),
           tags$small("Use US-Core compliant types: NPI (healthcare providers), CLIA (laboratories), NAIC (insurance).")
         )
@@ -884,9 +1243,10 @@ developerfeedbackmodule <- function(
     # Specific validation error recommendations
     if (id_summary$npi_invalid > 0) {
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-warning", style = "margin-bottom: 10px;",
-          tags$strong("Invalid NPI Identifiers: "),
-          paste0(format(id_summary$npi_invalid, big.mark = ","), " NPIs failed validation (us-core-16/17). "),
+        tags$div(class = "alert alert-warning",
+          tags$strong(tags$i(class = "fa fa-id-badge", style = "margin-right: 5px;"),
+                     "Invalid NPI Identifiers: "),
+          paste0(format(id_summary$npi_invalid, big.mark = ","), " NPIs failed validation (us-core-16/17)."),
           tags$br(),
           tags$small("Verify NPIs are exactly 10 digits and have valid Luhn check digits.")
         )
@@ -895,9 +1255,10 @@ developerfeedbackmodule <- function(
     
     if (id_summary$clia_invalid > 0) {
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-warning", style = "margin-bottom: 10px;",
-          tags$strong("Invalid CLIA Identifiers: "),
-          paste0(format(id_summary$clia_invalid, big.mark = ","), " CLIAs failed validation (us-core-18). "),
+        tags$div(class = "alert alert-warning",
+          tags$strong(tags$i(class = "fa fa-flask", style = "margin-right: 5px;"),
+                     "Invalid CLIA Identifiers: "),
+          paste0(format(id_summary$clia_invalid, big.mark = ","), " CLIAs failed validation (us-core-18)."),
           tags$br(),
           tags$small("CLIA format must be: 2 digits + 'D' + 7 digits (e.g., '12D3456789').")
         )
@@ -906,9 +1267,10 @@ developerfeedbackmodule <- function(
     
     if (id_summary$naic_invalid > 0) {
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-warning", style = "margin-bottom: 10px;",
-          tags$strong("Invalid NAIC Identifiers: "),
-          paste0(format(id_summary$naic_invalid, big.mark = ","), " NAICs failed validation (us-core-19). "),
+        tags$div(class = "alert alert-warning",
+          tags$strong(tags$i(class = "fa fa-shield-alt", style = "margin-right: 5px;"),
+                     "Invalid NAIC Identifiers: "),
+          paste0(format(id_summary$naic_invalid, big.mark = ","), " NAICs failed validation (us-core-19)."),
           tags$br(),
           tags$small("NAIC identifiers must be exactly 5 digits.")
         )
@@ -917,8 +1279,9 @@ developerfeedbackmodule <- function(
     
     if (summary$name_percentage < 80) {
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-info", style = "margin-bottom: 10px;",
-          tags$strong("Name Quality: "),
+        tags$div(class = "alert alert-info",
+          tags$strong(tags$i(class = "fa fa-building", style = "margin-right: 5px;"),
+                     "Name Quality: "),
           "Use complete, meaningful organization names instead of placeholders."
         )
       )
@@ -926,8 +1289,9 @@ developerfeedbackmodule <- function(
     
     if (summary$address_percentage < 80) {
       recommendations <- append(recommendations,
-        tags$div(class = "alert alert-secondary", style = "margin-bottom: 10px;",
-          tags$strong("Address Issues: "),
+        tags$div(class = "alert alert-secondary",
+          tags$strong(tags$i(class = "fa fa-map-marker-alt", style = "margin-right: 5px;"),
+                     "Address Issues: "),
           "Include complete addresses with street, city, state, and ZIP code."
         )
       )
@@ -935,9 +1299,10 @@ developerfeedbackmodule <- function(
     
     if (length(recommendations) == 0) {
       recommendations <- list(
-        tags$div(class = "alert alert-success", style = "margin-bottom: 10px;",
-          tags$strong("Excellent US-Core compliance! "),
-          "Your organization data meets quality and conformance standards."
+        tags$div(class = "alert alert-success",
+          tags$strong(tags$i(class = "fa fa-check-circle", style = "margin-right: 8px;"),
+                     "Excellent US-Core compliance!"),
+          " Your organization data meets quality and conformance standards."
         )
       )
     }
@@ -945,7 +1310,7 @@ developerfeedbackmodule <- function(
     do.call(tagList, recommendations)
   })
   
-  # Download handler using detailed organization data
+  # Download handler
   output$download_feedback_report <- downloadHandler(
     filename = function() {
       paste0("organization_data_quality_report_", Sys.Date(), ".csv")
@@ -954,7 +1319,6 @@ developerfeedbackmodule <- function(
       data <- filtered_org_data()
       
       if (nrow(data) > 0) {
-        # Create a detailed report with the pre-computed validation results
         report_data <- data %>%
           mutate(
             identifier_issues = ifelse(!has_valid_identifiers, "Missing or incomplete identifier data", "Valid"),
@@ -1001,7 +1365,6 @@ developerfeedbackmodule <- function(
         
         write.csv(report_data, file, row.names = FALSE)
       } else {
-        # Write empty file with headers if no data
         empty_data <- data.frame(
           organization_name = character(0),
           has_valid_identifiers = logical(0),
