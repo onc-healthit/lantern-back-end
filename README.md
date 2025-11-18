@@ -197,12 +197,12 @@ There are three types of tests for Lantern and three corresponding commands:
 
 | make command | action |
 | --- | --- |
-|`make run` | runs docker-compose for a development environment |
-|`make run_prod` | runs docker-compose for a production environment |
-| `make stop` | runs docker-compose `down` for a development environment |
-| `make stop_prod` | runs docker-compose `down` for a development environment |
-| `make clean` | runs docker-compose `down` with the `--rmi local -v` tags to remove local images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean.
-| `make clean_remote` | runs docker-compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker-compose setups. Before running, it confirms with the user that they actually want to clean. |
+|`make run` | runs docker compose for a development environment |
+|`make run_prod` | runs docker compose for a production environment |
+| `make stop` | runs docker compose `down` for a development environment |
+| `make stop_prod` | runs docker compose `down` for a development environment |
+| `make clean` | runs docker compose `down` with the `--rmi local -v` tags to remove local images and volumes. Runs this for all docker compose setups. Before running, it confirms with the user that they actually want to clean.
+| `make clean_remote` | runs docker compose `down` with the `--rmi all -v` tags to remove all images and volumes. Runs this for all docker compose setups. Before running, it confirms with the user that they actually want to clean. |
 | `make test` | runs unit tests | 
 | `make test_int` | runs integration tests |
 |  `make test_e2e` | runs end-to-end tests |
@@ -503,11 +503,11 @@ go test -tags=integration ./...
 ## Running End to End Tests
 Running this command will build the project containers and then run e2e/integration_tests/*.go
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
+docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml up --build --abort-on-container-exit
 ```
 To bring down all containers and remove all volumes used in the end-to-end tests you can run:
 ```bash
-docker-compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down -v
+docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.test.yml down -v
 ```
 A successful test will show the following output before the docker containers are stopped.
 

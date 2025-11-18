@@ -81,7 +81,7 @@ The capability querier currently connects to the lantern message queue (RabbbitM
 
 ### Using Docker-Compose
 
-The capability querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+The capability querier has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker compose.
 
 ### Using the Individual Docker Container
 
