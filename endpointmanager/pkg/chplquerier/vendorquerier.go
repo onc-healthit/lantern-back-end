@@ -174,22 +174,22 @@ func persistVendor(ctx context.Context,
 
 	existingDbVendor, err := store.GetVendorUsingCHPLID(ctx, vendor.DeveloperID)
 	if err == sql.ErrNoRows {
+		// fallback: lookup by name
 		existingDbVendor, err = store.GetVendorUsingName(ctx, vendor.Name)
 	}
 
-	if err == sql.ErrNoRows { // need to add new entry
-		log.Infof("Adding new vendor: name=%q chplid=%d devCode=%q", newDbVendor.Name, newDbVendor.CHPLID, newDbVendor.DeveloperCode)
-
+	if err == sql.ErrNoRows {
+		// insert new entry
 		err = store.AddVendor(ctx, newDbVendor)
 		if err != nil {
 			log.Warnf("AddVendor failed for vendor name=%q chplid=%d devCode=%q: %v", newDbVendor.Name, newDbVendor.CHPLID, newDbVendor.DeveloperCode, err)
 			return errors.Wrap(err, "adding vendor to store failed")
 		}
 	} else if err != nil {
+		// db error
 		return errors.Wrap(err, "getting vendor from store failed")
 	} else {
-		log.Infof("Updating existing vendor: id=%d name=%q chplid=%d devCode=%q", existingDbVendor.ID, newDbVendor.Name, newDbVendor.CHPLID, newDbVendor.DeveloperCode)
-
+		// update vendor row
 		newDbVendor.ID = existingDbVendor.ID
 		err = store.UpdateVendor(ctx, newDbVendor)
 		if err != nil {
