@@ -81,7 +81,7 @@ The Capability Receiver currently connects to the lantern message queue (Rabbbit
 
 ### Using Docker-Compose
 
-The Capability Receiver has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker-compose.
+The Capability Receiver has been added to the application docker-compose file. See the [top-level README](../README.md) for how to run docker compose.
 
 ### Using the Individual Docker Container
 
