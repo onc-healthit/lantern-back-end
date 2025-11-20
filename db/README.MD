@@ -57,6 +57,7 @@ The list_source_info table stores information about whether each list source cam
 | ------------- |:-------------:| -----:|
 | list_source     | VARCHAR(500)  | Name/URL of list sources that Lantern collects  |
 | is_chpl     | BOOLEAN     |  Whether the list source comes from chpl (true) or not (false). |
+| updated_at  | TIMESTAMPTZ | Timestamp when this list source was last seen in CHPL response during population run. Used to identify stale sources. |
 
 
 ## fhir_endpoints_info table
