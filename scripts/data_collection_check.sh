@@ -17,7 +17,7 @@ QUERY_INTERVAL_SECONDS=$((${QUERY_INTERVAL}*60))
 DATE=$(date +%s)
 PASTDATE=$((${DATE}-${QUERY_INTERVAL_SECONDS}))
 QUERY=$(echo "SELECT count(*) FROM fhir_endpoints_info_history WHERE floor(extract(epoch from fhir_endpoints_info_history.updated_at)) BETWEEN ${PASTDATE} AND ${DATE}")
-COUNT=$(docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || {
+COUNT=$(docker exec -t lantern-back-end-postgres-1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || {
     echo "$current_datetime - Error: Database is down" >> $log_file
     echo "Error: Database is down" | /usr/bin/mail -s "Cron Job Error" ${EMAIL}
     exit 0
