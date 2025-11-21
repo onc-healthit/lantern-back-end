@@ -82,7 +82,7 @@ This removes all docker images, networks, and local volumes.
 3. **If you want to re-query and re-receive capability statements outside the refresh interval**, run the following:
 
     ```bash
-    docker restart lantern-back-end_endpoint_manager_1
+    docker restart lantern-back-end-endpoint_manager-1
     ```
 
 ### Development Environment
@@ -138,7 +138,7 @@ This removes all docker images, networks, and local volumes.
 3. **If you want to re-query and re-receive Capability Statements outside the refresh interval** run the following:
 
     ```bash
-    docker restart lantern-back-end_endpoint_manager_1
+    docker restart lantern-back-end-endpoint_manager-1
     ```
 
 ## Stop Lantern
@@ -180,7 +180,7 @@ The Lantern system was developed on Mac computers and the production and staging
     * If using Visual Studio Code for development, it can easily be changed by clicking an option in the bottom right-hand corner to change the end of line sequence 
   * In the wait-for-it.sh file in the scripts directory, change #!/usr/bin/env bash to #!/bin/bash 
   * The environmental variable for the CHPL API key may not work. If so, the key can be entered manually into endpointmanager/pkg/chplquerier/chplquerier.go file, where originally viper.GetString("chplapikey") 
-  * The make populatedb command in the Makefile may not work due to the machine generating the name of the container as lantern-back-end-endpoint_manager-1 rather than lantern-back-end_endpoint_manager_1. The fix is to change the make command to: docker exec -it lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh  
+  * The make populatedb command in the Makefile may not work due to the machine generating the name of the container as lantern-back-end-endpoint_manager-1 rather than lantern-back-end-endpoint_manager-1. The fix is to change the make command to: docker exec -it lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh  
     * This may also have to be done for any other make commands that specifically reference Docker containers 
 
 # Testing Lantern - Basic Flow
@@ -336,12 +336,12 @@ Change directory to the /scripts inside lantern-back-end and run:
     ./duplicate_info_history_check.sh
   ```
 
-This will start capturing the identifiers of repetitive entries in the fhir_endpoints_info_history table and store it in duplicateInfoHistoryIds.csv file inside the /home directory of the lantern-back-end_endpoint_manager_1 container.
+This will start capturing the identifiers of repetitive entries in the fhir_endpoints_info_history table and store it in duplicateInfoHistoryIds.csv file inside the /home directory of the lantern-back-end-endpoint_manager-1 container.
 
 To retrieve the csv file, change directory to /lantern-back-end and run:
 
  ```bash
-    docker cp lantern-back-end_endpoint_manager_1:/home/duplicateInfoHistoryIds.csv .
+    docker cp lantern-back-end-endpoint_manager-1:/home/duplicateInfoHistoryIds.csv .
   ```
 
 Step 2: Perform the history cleanup

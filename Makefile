@@ -38,14 +38,14 @@ update_source_data_prod:
 	@cd ./scripts; chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
 
 populatedb:
-	exec docker exec -it lantern-back-end_endpoint_manager_1 /etc/lantern/populatedb.sh
+	exec docker exec -it lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh
 
 populatedb_prod:
 	@cd ./scripts; chmod +rx populatedb_prod.sh; ./populatedb_prod.sh
 
 backup_database:
 	$(eval BACKUP=lantern_backup_$(shell date +%Y%m%d%H%M%S).sql)
-	@docker exec lantern-back-end_postgres_1 pg_dump -Fc -U lantern -d lantern > "${BACKUP}"
+	@docker exec lantern-back-end-postgres-1 pg_dump -Fc -U lantern -d lantern > "${BACKUP}"
 	@echo "Database was backed up to ${BACKUP}"
 
 # Example command: make create_archive start=2020-06-31 end=2021-06-31 file=archive_file.json
@@ -53,7 +53,7 @@ create_archive:
 	cd endpointmanager/cmd/archivefile; go run main.go $(start) $(end) $(file)
 	
 restore_database:
-	@docker exec -i lantern-back-end_postgres_1 pg_restore --clean --if-exists -U lantern -d lantern < $(file)
+	@docker exec -i lantern-back-end-postgres-1 pg_restore --clean --if-exists -U lantern -d lantern < $(file)
 	@echo "Database was restored from $(file)"
 
 migrate_database:
@@ -62,7 +62,7 @@ migrate_database:
 	docker run --env-file .env -e LANTERN_DBHOST=postgres_migrate --network=lantern-back-end_default migration; docker stop postgres_migrate; docker rm postgres_migrate
 
 history_pruning:
-	docker exec -it --workdir /go/src/app/cmd/historypruning lantern-back-end_endpoint_manager_1 go run main.go
+	docker exec -it --workdir /go/src/app/cmd/historypruning lantern-back-end-endpoint_manager-1 go run main.go
 
 lint:
 	make lint_go || exit $?
@@ -78,10 +78,10 @@ lint_R:
 	@cd ./scripts; chmod +rx lintr.sh; ./lintr.sh || exit 1
 
 csv_export:
-	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
+	cd endpointmanager/cmd/endpointexporter; go run main.go; docker cp lantern-back-end-postgres-1:/tmp/export.csv ../../../lantern_export_`date +%F`.csv
 
 chpl_report:
-	cd endpointmanager/cmd/CHPLreport; go run main.go; docker cp lantern-back-end_postgres_1:/tmp/export.csv ../../../lantern_chpl_report.csv
+	cd endpointmanager/cmd/CHPLreport; go run main.go; docker cp lantern-back-end-postgres-1:/tmp/export.csv ../../../lantern_chpl_report.csv
 
 test:
 	cd ./capabilityquerier; go test -covermode=atomic -race -count=1 -p 1 ./...
@@ -122,7 +122,7 @@ update_mods:
 	cd ./lanternmq; go get github.com/onc-healthit/lantern-back-end/endpointmanager@$(branch); go mod tidy;
 
 migrate_validations:
-	docker exec -it --workdir /go/src/app/cmd/migratevalidations lantern-back-end_capability_receiver_1 go run main.go $(direction)
+	docker exec -it --workdir /go/src/app/cmd/migratevalidations lantern-back-end-capability_receiver-1 go run main.go $(direction)
 
 migrate_resources:
-	docker exec -it --workdir /go/src/app/cmd/migrateresources lantern-back-end_capability_receiver_1 go run main.go $(direction)
+	docker exec -it --workdir /go/src/app/cmd/migrateresources lantern-back-end-capability_receiver-1 go run main.go $(direction)

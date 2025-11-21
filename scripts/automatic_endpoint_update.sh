@@ -10,7 +10,7 @@ current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
 
 chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
 
-docker exec lantern-back-end_endpoint_manager_1 /etc/lantern/populateEndpoints.sh || {
+docker exec lantern-back-end-endpoint_manager-1 /etc/lantern/populateEndpoints.sh || {
     echo "$current_datetime - Lantern failed to save endpoint information in database after endpoint resource list updates." >> $log_file
     echo "Lantern failed to save endpoint information in database after endpoint resource list updates." | /usr/bin/mail -s "Automatic endpoint update and database population error." ${EMAIL}
     exit 0
