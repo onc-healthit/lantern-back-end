@@ -477,8 +477,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		OfficePracticumURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, willowURL) {
 		WillowQuerierParser("https://ccdoc.phn.care/service-base-urls", fileToWriteTo)
-	} else if URLsEqual(chplURL, aidboxURL) {
-		AidboxQuerierParser(aidboxURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, aidboxURL) {
+		// 	AidboxQuerierParser(aidboxURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, dss2URL) {
 		BundleQuerierParser(dss2URL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cozevaURL) {
