@@ -17,6 +17,8 @@ libraries:
   - "xts"
   - "leaflet"
   - "jsonlite"
+  - "reactR"
+  - "htmltools"
 
 function_files:
   - "functions/db_connection.R"

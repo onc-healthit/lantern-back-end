@@ -53,6 +53,7 @@ ui <- dashboardPage(
       # Preconnect to external domains
       tags$link(rel = "preconnect", href = "https://www.googletagmanager.com"),
       tags$link(rel = "preconnect", href = "https://stats.g.doubleclick.net"),
+      tags$link(rel = "preconnect", href = "https://unpkg.com"),
       
       # Favicon with dimensions
       tags$link(rel = "shortcut icon", href = "images/favicon.webp", sizes = "32x32"),
@@ -220,7 +221,16 @@ ui <- dashboardPage(
         )
     ),
     uiOutput("htmlFooter"),
-    
+
+    # Load React libraries from CDN
+    tags$script(src = "https://unpkg.com/react@18/umd/react.production.min.js", crossorigin = "anonymous"),
+    tags$script(src = "https://unpkg.com/react-dom@18/umd/react-dom.production.min.js", crossorigin = "anonymous"),
+
+    # Load custom React components
+    tags$script(src = "js/endpoints-react-components.js", defer = TRUE),
+    tags$script(src = "js/security-react-components.js", defer = TRUE),
+    tags$script(src = "js/security-module-init.js", defer = TRUE),
+
     # Load accessibility script with defer and async
     tags$script(src = "js/accessibility.js", defer = TRUE, async = TRUE)
   )
