@@ -54,15 +54,20 @@ type ChplMapResults struct {
 // and the endpoint and the healht IT product.
 func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, developerName string) error {
 
+	log.Infof("[MatchEndpointToVendor] Starting match for URL=%s developerName=%s", ep.URL, developerName)
+
 	if len(developerName) > 0 {
-		// No errors thrown means a vendor with developer name was found and can be set on ep
+		log.Infof("[MatchEndpointToVendor] CHPL developer name provided directly: %s", developerName)
+
 		vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
 		if err == sql.ErrNoRows {
-			log.Infof("No vendor found matching the CHPL endpoint list developer name. Ensure the vendor table is not empty.")
+			log.Warnf("[MatchEndpointToVendor] No vendor found for CHPL developerName=%s", developerName)
 			return nil
 		} else if err != nil {
-			return errors.Wrap(err, "error matching the CHPL endpoint list developer name to a vendor for endpoint")
+			return errors.Wrap(err, "error matching CHPL developer name to vendor")
 		}
+
+		log.Infof("[MatchEndpointToVendor] Matched vendor %s (ID=%d)", vendorMatch.Name, vendorMatch.ID)
 		ep.VendorID = vendorMatch.ID
 		return nil
 	}
@@ -72,13 +77,20 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 		return errors.Wrap(err, "error getting fhir endpoints from DB")
 	}
 
-	for _, fhirEndpoint := range fhirEndpointList {
-		// --- Special handling for non-CHPL source: 1up Health ---
-		if fhirEndpoint.ListSource == "https://1up.health/fhir-endpoint-directory" {
-			vendorName := "1upHealth"
+	log.Infof("[MatchEndpointToVendor] Found %d DB FHIR endpoint records for URL=%s", len(fhirEndpointList), ep.URL)
 
+	for _, fhirEndpoint := range fhirEndpointList {
+		log.Infof("[MatchEndpointToVendor] Checking ListSource=%s for URL=%s", fhirEndpoint.ListSource, fhirEndpoint.URL)
+
+		// --- 1up special handling ---
+		if fhirEndpoint.ListSource == "https://1up.health/fhir-endpoint-directory" {
+			log.Infof("[MatchEndpointToVendor] Special-case match: 1upHealth")
+
+			vendorName := "1upHealth"
 			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
 			if err == sql.ErrNoRows {
+				log.Warn("[MatchEndpointToVendor] 1upHealth vendor not found — creating new vendor record")
+
 				newVendor := &endpointmanager.Vendor{
 					Name:          vendorName,
 					URL:           "https://1up.health",
@@ -89,21 +101,27 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 				if err != nil {
 					return errors.Wrap(err, "failed to insert 1upHealth as new vendor")
 				}
+				log.Infof("[MatchEndpointToVendor] Created new vendor 1upHealth (ID=%d)", newVendor.ID)
 				ep.VendorID = newVendor.ID
 				return nil
 			} else if err != nil {
 				return errors.Wrap(err, "error checking for existing 1upHealth vendor")
 			}
+
+			log.Infof("[MatchEndpointToVendor] Matched vendor 1upHealth (ID=%d)", vendorMatch.ID)
 			ep.VendorID = vendorMatch.ID
 			return nil
 		}
 
-		// --- Special handling for non-CHPL source: State Medicaid ---
+		// --- State Medicaid special handling ---
 		if fhirEndpoint.ListSource == "StateMedicaid" {
-			vendorName := "State Medicaid"
+			log.Infof("[MatchEndpointToVendor] Special-case match: StateMedicaid")
 
+			vendorName := "State Medicaid"
 			vendorMatch, err := store.GetVendorUsingName(ctx, vendorName)
 			if err == sql.ErrNoRows {
+				log.Warn("[MatchEndpointToVendor] Medicaid vendor not found — creating new vendor record")
+
 				newVendor := &endpointmanager.Vendor{
 					Name:          vendorName,
 					URL:           "",
@@ -114,25 +132,31 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 				if err != nil {
 					return errors.Wrap(err, "failed to insert State Medicaid as new vendor")
 				}
+				log.Infof("[MatchEndpointToVendor] Created new vendor State Medicaid (ID=%d)", newVendor.ID)
 				ep.VendorID = newVendor.ID
 				return nil
 			} else if err != nil {
-				return errors.Wrap(err, "error checking for existing State Medicaid vendor")
+				return errors.Wrap(err, "error checking for existing StateMedicaid vendor")
 			}
+
+			log.Infof("[MatchEndpointToVendor] Matched vendor State Medicaid (ID=%d)", vendorMatch.ID)
 			ep.VendorID = vendorMatch.ID
 			return nil
 		}
 	}
 
 	if ep.CapabilityStatement == nil {
+		log.Warn("[MatchEndpointToVendor] No capability statement available — cannot match vendor from CS")
 		return nil
 	}
 
+	log.Infof("[MatchEndpointToVendor] Falling back to capability statement matching")
 	vendorID, err := getVendorMatch(ctx, ep.CapabilityStatement, store)
 	if err != nil {
-		return errors.Wrap(err, "error matching the capability statement to a vendor for endpoint")
+		return errors.Wrap(err, "error matching capability statement to vendor")
 	}
 
+	log.Infof("[MatchEndpointToVendor] Result from CS vendor matching: vendorID=%d", vendorID)
 	ep.VendorID = vendorID
 
 	return nil
@@ -212,34 +236,42 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 }
 
 func getVendorMatch(ctx context.Context, capStat capabilityparser.CapabilityStatement, store *postgresql.Store) (int, error) {
+	log.Infof("[getVendorMatch] Attempting vendor match from capability statement")
+
 	var vendorID int
 	vendorsRaw, err := store.GetVendorNames(ctx)
 	if err != nil {
 		return 0, errors.Wrap(err, "error retrieving vendor list from database")
 	}
+
 	vendorsNorm := normalizeList(vendorsRaw)
 
 	match, err := publisherMatch(capStat, vendorsNorm, vendorsRaw)
+	log.Infof("[getVendorMatch] publisherMatch result: %s", match)
+
 	if err != nil {
-		return 0, errors.Wrap(err, "error matching vendors in database using capability statement publisher")
+		return 0, errors.Wrap(err, "error matching via capability statement publisher")
 	}
 
 	if match == "" {
 		match, err = hackMatch(capStat, vendorsNorm, vendorsRaw)
+		log.Infof("[getVendorMatch] hackMatch result: %s", match)
+
 		if err != nil {
-			return 0, errors.Wrap(err, "error matching vendors in database using method other than capability statement publisher")
+			return 0, errors.Wrap(err, "error matching via hackMatch")
 		}
 	}
 
 	if match == "" {
+		log.Warn("[getVendorMatch] No vendor match found — returning vendorID=0")
 		vendorID = 0
 	} else {
 		vendor, err := store.GetVendorUsingName(ctx, match)
 		if err != nil {
-			return 0, errors.Wrapf(err, "error retrieving vendor using name %s", match)
-		} else {
-			vendorID = vendor.ID
+			return 0, errors.Wrapf(err, "error retrieving vendor name %s", match)
 		}
+		log.Infof("[getVendorMatch] Matched vendor: %s (ID=%d)", vendor.Name, vendor.ID)
+		vendorID = vendor.ID
 	}
 
 	return vendorID, nil
@@ -280,13 +312,19 @@ func openProductLinksFile(filepath string) (map[string]map[string]string, error)
 }
 
 func publisherMatch(capStat capabilityparser.CapabilityStatement, vendorsNorm []string, vendorsRaw []string) (string, error) {
+	log.Infof("[publisherMatch] Attempting publisher-based match")
+
 	publisher, err := capStat.GetPublisher()
 	if err != nil {
 		return "", errors.Wrap(err, "unable to get vendor information from capability statement")
 	}
 	publisherNorm := normalizeName(publisher)
 
+	log.Infof("[publisherMatch] publisher=%s normalized=%s", publisher, publisherNorm)
+
 	match := matchName(publisherNorm, vendorsNorm, vendorsRaw)
+
+	log.Infof("[publisherMatch] match result=%s", match)
 
 	return match, nil
 }
