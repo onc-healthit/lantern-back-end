@@ -81,11 +81,48 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 	keyCount := 0
 
 	var structBundle FHIRBundle
+
+	// --- Logging for empty or invalid bundle input ---
+	trimmed := strings.TrimSpace(string(bundle))
+	preview := trimmed
+	if len(preview) > 50 {
+		preview = preview[:30]
+	}
+	// Minimal cleanup: only remove newlines so the log stays single-line
+	preview = strings.ReplaceAll(preview, "\n", " ")
+	preview = strings.ReplaceAll(preview, "\r", " ")
+
+	// Case 1: empty response body
+	if len(trimmed) == 0 {
+		log.Warnf("Empty FHIR bundle detected. \n URL=%s \n Size=0 bytes", chplURL)
+
+		// Case 2: HTML/XML (starts with '<')
+	} else if strings.HasPrefix(trimmed, "<") {
+		log.Warnf("Non-JSON response received. \n URL=%s. \n FirstBytes=\"%s\"", chplURL, preview)
+
+		// Case 3: Not JSON object or array
+	} else if !strings.HasPrefix(trimmed, "{") && !strings.HasPrefix(trimmed, "[") {
+		log.Warnf("Unexpected response format. \n URL=%s. Not JSON. \n FirstBytes=\"%s\"", chplURL, preview)
+	}
+
+	// --- Attempt JSON unmarshal ---
 	err := json.Unmarshal(bundle, &structBundle)
 	if err != nil {
+		// Additional logging for empty or malformed JSON
+		log.Errorf("Failed to unmarshal FHIR bundle. \n URL=%s \n Size=%d bytes \n Error=%v",
+			chplURL, len(bundle), err)
+
 		log.Warn("Handler is required for url ", chplURL)
 		log.Fatal("More details about the error: ", err)
 	}
+
+	// --- Bundle parsed but contains no entries ---
+	if len(structBundle.Entries) == 0 {
+		log.Warnf("Parsed FHIR bundle contains 0 entries. URL=%s Size=%d bytes",
+			chplURL, len(bundle),
+		)
+	}
+
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
 

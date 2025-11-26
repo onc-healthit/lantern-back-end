@@ -90,7 +90,7 @@ jq -c '.[]' CHPLEndpointResourcesList.json | while read endpoint; do
    then 
       cd ../../endpointmanager/cmd/chplendpointquerier
       echo "$current_datetime - Downloading $NAME Endpoint Sources..." >> $log_file
-      go run main.go $URL $FILENAME
+      go run main.go $URL $FILENAME 2>&1 | tee -a $log_file
       cd ../../../resources/prod_resources
       echo "$current_datetime - done" >> $log_file
    fi
