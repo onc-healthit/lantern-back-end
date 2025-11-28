@@ -576,7 +576,7 @@ endpoint_counts_base AS (
             -- Apply the dash rule: if there's a dash, trim after it
             WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
             -- If it's not in the valid list, mark as Unknown
-            WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0') THEN 'Unknown'
+            WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown'
             ELSE e.fhir_version
         END AS fhir_version,
         COUNT(DISTINCT e.url) AS n,
@@ -595,7 +595,7 @@ endpoint_counts_base AS (
         CASE
             WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
             WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
-            WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0') THEN 'Unknown'
+            WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown'
             ELSE e.fhir_version
         END,
         r.rank,
@@ -967,9 +967,8 @@ SELECT
         WHEN p.fhir_version_raw IN ('No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', 
                                   '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', 
                                   '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', 
-                                  '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', 
-                                  '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', 
-                                  '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0')
+                                  '4.0.0', '4.0.1', '4.1.0', '4.3.0', 
+                                  '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0')
             THEN p.fhir_version_raw
         ELSE 'Unknown'  
     END AS fhir_version,
@@ -1166,7 +1165,7 @@ endpoint_details AS (
     CASE 
       WHEN fhir_version = '' OR fhir_version IS NULL THEN 'No Cap Stat'
       WHEN position('-' in fhir_version) > 0 THEN substring(fhir_version from 1 for position('-' in fhir_version) - 1)
-      WHEN fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0') THEN 'Unknown'
+      WHEN fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown'
       ELSE fhir_version
     END AS fhir_version,
     requested_fhir_version
@@ -1285,7 +1284,7 @@ SELECT
              WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
              ELSE f.capability_fhir_version 
            END, '-', 1)
-         IN ('No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0')
+         IN ('No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0')
       THEN split_part(
              CASE 
                WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
@@ -1318,8 +1317,7 @@ SELECT
         'No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0',
         '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2',
         '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', 
-        '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-        '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0'
+        '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
       ]
     ) THEN split_part(f.capability_fhir_version, '-', 1)
     ELSE 'Unknown'
@@ -1360,9 +1358,8 @@ SELECT
              'No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2',
              '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0',
              '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0',
-             '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', 
-             '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', 
-             '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0'
+             '4.0.0', '4.0.1', '4.1.0', '4.3.0', 
+             '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
            )
       THEN REGEXP_REPLACE(
              CASE 
@@ -1463,9 +1460,8 @@ WITH valid_fhir_versions AS (
     SELECT unnest(ARRAY['No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', 
                          '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', 
                          '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', 
-                         '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', 
-                         '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', 
-                         '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0']) AS version
+                         '4.0.0', '4.0.1', '4.1.0', '4.3.0', 
+                         '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0']) AS version
 )
 SELECT 
     f.id AS endpoint_id,
@@ -1683,7 +1679,7 @@ FROM ( SELECT DISTINCT t.url,
                     CASE
                         WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
                         WHEN "position"(f.capability_fhir_version::text, '-'::text) > 0 THEN "substring"(f.capability_fhir_version::text, 1, "position"(f.capability_fhir_version::text, '-'::text) - 1)::character varying
-                        WHEN f.capability_fhir_version::text <> ALL (ARRAY['0.4.0'::character varying, '0.5.0'::character varying, '1.0.0'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, '1.1.0'::character varying, '1.2.0'::character varying, '1.4.0'::character varying, '1.6.0'::character varying, '1.8.0'::character varying, '3.0.0'::character varying, '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.3.0'::character varying, '3.5.0'::character varying, '3.5a.0'::character varying, '4.0.0'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.3.0-snapshot1'::character varying, '4.3.0'::character varying, '4.2.0'::character varying, '4.4.0'::character varying, '4.5.0'::character varying, '4.6.0'::character varying, '5.0.0-snapshot1'::character varying, '5.0.0-ballot'::character varying, '5.0.0-snapshot3'::character varying, '5.0.0-draft-final'::character varying, '5.0.0'::character varying]::text[]) THEN 'Unknown'::character varying
+                        WHEN f.capability_fhir_version::text <> ALL (ARRAY['0.4.0'::character varying, '0.5.0'::character varying, '1.0.0'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, '1.1.0'::character varying, '1.2.0'::character varying, '1.4.0'::character varying, '1.6.0'::character varying, '1.8.0'::character varying, '3.0.0'::character varying, '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.3.0'::character varying, '3.5.0'::character varying, '3.5a.0'::character varying, '4.0.0'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.3.0'::character varying, '4.2.0'::character varying, '4.4.0'::character varying, '4.5.0'::character varying, '4.6.0'::character varying, '5.0.0'::character varying]::text[]) THEN 'Unknown'::character varying
                         ELSE f.capability_fhir_version
                     END AS fhir_version,
                 v.rule_name,
@@ -1716,7 +1712,7 @@ WITH validation_data AS (
         CASE 
             WHEN capability_fhir_version = '' THEN 'No Cap Stat' 
             WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) 
-            WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0') THEN 'Unknown' 
+            WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown' 
             ELSE capability_fhir_version 
         END AS fhir_version, 
         rule_name, 
@@ -1734,8 +1730,8 @@ mapped_versions AS (
             WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
             WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
             WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
-            WHEN fhir_version IN ('4.1.0', '4.3.0-snapshot1', '4.3.0') THEN 'R4B'
-            WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0') THEN 'R5'
+            WHEN fhir_version IN ('4.1.0', '4.3.0') THEN 'R4B'
+            WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'R5'
             ELSE fhir_version
         END AS version_name,
         -- Add a sort order to maintain the original ordering
@@ -1743,8 +1739,8 @@ mapped_versions AS (
             WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 1 -- DSTU2
             WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 2 -- STU3
             WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 3 -- R4
-            WHEN fhir_version IN ('4.1.0', '4.3.0-snapshot1', '4.3.0') THEN 4 -- R4B
-            WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0') THEN 5 -- R5
+            WHEN fhir_version IN ('4.1.0', '4.3.0') THEN 4 -- R4B
+            WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 5 -- R5
             ELSE 6 -- Others
         END AS sort_order
     FROM validation_data
@@ -1825,8 +1821,7 @@ SELECT
         WHEN e.fhir_version IN (
             '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
             '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-            '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-            '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0'
+            '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
         ) 
         THEN e.fhir_version
         ELSE 'Unknown'
@@ -1927,16 +1922,14 @@ SELECT
         WHEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) IN 
             ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
              '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-             '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-             '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
+             '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
         THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
         ELSE 'Unknown'
       END
     WHEN capability_fhir_version IN 
         ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
          '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-         '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-         '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
+         '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
     THEN capability_fhir_version
     ELSE 'Unknown'
   END AS fhir_version,
@@ -2358,12 +2351,10 @@ WITH original AS (
                 '3.2.0'::character varying::text, '3.3.0'::character varying::text, 
                 '3.5.0'::character varying::text, '3.5a.0'::character varying::text, 
                 '4.0.0'::character varying::text, '4.0.1'::character varying::text,
-                '4.1.0'::character varying::text, '4.3.0-snapshot1'::character varying::text,
+                '4.1.0'::character varying::text, 
                 '4.3.0'::character varying::text, '4.2.0'::character varying::text,
                 '4.4.0'::character varying::text, '4.5.0'::character varying::text,
-                '4.6.0'::character varying::text, '5.0.0-snapshot1'::character varying::text,
-                '5.0.0-ballot'::character varying::text, '5.0.0-snapshot3'::character varying::text,
-                '5.0.0-draft-final'::character varying::text, '5.0.0'::character varying::text
+                '4.6.0'::character varying::text, '5.0.0'::character varying::text
             ]) THEN f.capability_fhir_version::text
             ELSE 'Unknown'::text
         END AS fhir_version,
@@ -2551,8 +2542,7 @@ SELECT
         WHEN f.capability_fhir_version IN (
             '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
             '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-            '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-            '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0'
+            '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
         ) 
             THEN f.capability_fhir_version
         ELSE 'Unknown'
@@ -2682,8 +2672,7 @@ processed_data AS (
             WHEN fhir_version IN 
                 ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
                  '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-                 '4.1.0', '4.3.0-snapshot1', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', 
-                 '5.0.0-snapshot1', '5.0.0-ballot', '5.0.0-snapshot3', '5.0.0-draft-final', '5.0.0', 'No Cap Stat')
+                 '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
             THEN fhir_version
             ELSE 'Unknown'
         END AS fhir_version,
