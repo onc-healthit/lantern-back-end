@@ -18,7 +18,7 @@ jq -c '.[]' /etc/lantern/resources/MedicareStateEndpointResourcesList.json | whi
     LISTURL=$(echo $endpoint | jq -c -r '.URL')
     
     if [ -f "/etc/lantern/resources/$FILENAME" ]; then
-        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" true $LISTURL >> $log_file 2>&1
+        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" false $LISTURL >> $log_file 2>&1
     fi
 done
 
