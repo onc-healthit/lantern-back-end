@@ -272,18 +272,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		log.Info("Inside saveMsgInDB")
 		log.Info("fhirEndpoint.URL: ", fhirEndpoint.URL, "\n")
 
-		// ---- CENTRALIZED vendor matching for NEW endpoints ----
-		if fhirEndpoint.VendorID == 0 {
-			log.Info("[NEW ENDPOINT] VendorID missing → performing vendor match")
-
-			err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, "")
-			if err != nil {
-				log.Warn("Vendor match failed for NEW endpoint: ", err)
-			} else {
-				log.Infof("Vendor matched successfully: VendorID=%d", fhirEndpoint.VendorID)
-			}
-		}
-
 		// Loop through list_sources to match CHPL developer/product if present
 		for _, fhirEp := range fhirEndpointList {
 
@@ -294,6 +282,17 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			productIds := softwareListMap[fhirEp.ListSource].ChplProductIDs
 
 			if len(developerNames) == 0 {
+				if fhirEp.ListSource == "https://1up.health/fhir-endpoint-directory" || fhirEp.ListSource == "StateMedicaid" {
+					log.Info("Special Handling for State Medicaid endpoints. Matching vendor again.")
+
+					err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, fhirEp.ListSource)
+					if err != nil {
+						log.Warn("Vendor match failed for NEW endpoint: ", err)
+					} else {
+						log.Infof("Vendor matched successfully: VendorID=%d", fhirEndpoint.VendorID)
+					}
+				}
+
 				// Insert into fhir_endpoints_info
 				err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
 				if err != nil {
@@ -352,20 +351,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 		log.Info("Inside else (existing endpoint)")
 
-		// ---- CENTRALIZED vendor matching for EXISTING endpoints ----
-		vendorWasMissing := existingEndpt.VendorID == 0
-
-		if vendorWasMissing {
-			log.Info("[EXISTING ENDPOINT] VendorID missing: performing vendor match")
-
-			err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, "")
-			if err != nil {
-				log.Warn("Vendor match failed: ", err)
-			} else {
-				log.Infof("Vendor matched successfully: VendorID=%d", existingEndpt.VendorID)
-			}
-		}
-
 		// Carry vendor & product IDs forward
 		fhirEndpoint.VendorID = existingEndpt.VendorID
 		fhirEndpoint.HealthITProductID = existingEndpt.HealthITProductID
@@ -384,9 +369,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 		// Determine if rows need to be rewritten
 		// i.e. if existing endpoint info does not equal stored endpoint info, or if vendorID is missing
-		needsRewrite := vendorWasMissing || !existingEndpt.EqualExcludeMetadata(fhirEndpoint)
-
-		if needsRewrite {
+		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) || existingEndpt.VendorID == 0 {
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
 			existingEndpt.SMARTResponseBytes = fhirEndpoint.SMARTResponseBytes
@@ -431,6 +414,17 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				productIds := softwareListMap[fhirEp.ListSource].ChplProductIDs
 
 				if len(developerNames) == 0 {
+					if fhirEp.ListSource == "https://1up.health/fhir-endpoint-directory" || fhirEp.ListSource == "StateMedicaid" {
+						log.Info("Special Handling for State Medicaid endpoints. Matching vendor again.")
+
+						err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, fhirEp.ListSource)
+						if err != nil {
+							log.Warn("Vendor match failed for NEW endpoint: ", err)
+						} else {
+							log.Infof("Vendor matched successfully: VendorID=%d", fhirEndpoint.VendorID)
+						}
+					}
+
 					err = store.AddFHIREndpointInfo(ctx, existingEndpt, metadataID)
 					if err != nil {
 						return fmt.Errorf("does exist, add to fhir_endpoints_info failed, %s", err)

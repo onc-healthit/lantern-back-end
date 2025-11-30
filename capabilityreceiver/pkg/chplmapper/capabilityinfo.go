@@ -57,33 +57,8 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 	log.Infof("[MatchEndpointToVendor] Starting match for URL=%s developerName=%s", ep.URL, developerName)
 
 	if len(developerName) > 0 {
-		log.Infof("[MatchEndpointToVendor] CHPL developer name provided directly: %s", developerName)
-
-		vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
-		if err == sql.ErrNoRows {
-			log.Warnf("[MatchEndpointToVendor] No vendor found for CHPL developerName=%s", developerName)
-			return nil
-		} else if err != nil {
-			return errors.Wrap(err, "error matching CHPL developer name to vendor")
-		}
-
-		log.Infof("[MatchEndpointToVendor] Matched vendor %s (ID=%d)", vendorMatch.Name, vendorMatch.ID)
-		ep.VendorID = vendorMatch.ID
-		return nil
-	}
-
-	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
-	if err != nil {
-		return errors.Wrap(err, "error getting fhir endpoints from DB")
-	}
-
-	log.Infof("[MatchEndpointToVendor] Found %d DB FHIR endpoint records for URL=%s", len(fhirEndpointList), ep.URL)
-
-	for _, fhirEndpoint := range fhirEndpointList {
-		log.Infof("[MatchEndpointToVendor] Checking ListSource=%s for URL=%s", fhirEndpoint.ListSource, fhirEndpoint.URL)
-
 		// --- 1up special handling ---
-		if fhirEndpoint.ListSource == "https://1up.health/fhir-endpoint-directory" {
+		if developerName == "https://1up.health/fhir-endpoint-directory" {
 			log.Infof("[MatchEndpointToVendor] Special-case match: 1upHealth")
 
 			vendorName := "1upHealth"
@@ -114,7 +89,7 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 		}
 
 		// --- State Medicaid special handling ---
-		if fhirEndpoint.ListSource == "StateMedicaid" {
+		if developerName == "StateMedicaid" {
 			log.Infof("[MatchEndpointToVendor] Special-case match: StateMedicaid")
 
 			vendorName := "State Medicaid"
@@ -143,6 +118,20 @@ func MatchEndpointToVendor(ctx context.Context, ep *endpointmanager.FHIREndpoint
 			ep.VendorID = vendorMatch.ID
 			return nil
 		}
+
+		log.Infof("[MatchEndpointToVendor] CHPL developer name provided directly: %s", developerName)
+
+		vendorMatch, err := store.GetVendorUsingName(ctx, developerName)
+		if err == sql.ErrNoRows {
+			log.Warnf("[MatchEndpointToVendor] No vendor found for CHPL developerName=%s", developerName)
+			return nil
+		} else if err != nil {
+			return errors.Wrap(err, "error matching CHPL developer name to vendor")
+		}
+
+		log.Infof("[MatchEndpointToVendor] Matched vendor %s (ID=%d)", vendorMatch.Name, vendorMatch.ID)
+		ep.VendorID = vendorMatch.ID
+		return nil
 	}
 
 	if ep.CapabilityStatement == nil {
