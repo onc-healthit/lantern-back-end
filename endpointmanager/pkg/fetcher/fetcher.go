@@ -29,7 +29,6 @@ type EndpointEntry struct {
 	OrganizationIdentifiers []interface{}
 	OrganizationAddresses   []interface{}
 	OrganizationActive      string
-	DeveloperName           string
 }
 
 // ListOfEndpoints is a structure for the whole EndpointSources file
@@ -98,16 +97,19 @@ func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source strin
 		}
 		result = LanternList{}.GetEndpoints(lanternList, source, listURL)
 
-		// If CSV file path is provided, read it and map developer_name to endpoints
+		// If CSV file path is provided, read it and override ListSource with developer_name
 		if csvFilePath != "" {
 			urlToDeveloperMap, err := readCSVDeveloperMapping(csvFilePath)
 			if err != nil {
 				return result, fmt.Errorf("error reading CSV file: %s", err)
 			}
-			// Apply developer_name to each endpoint based on URL
+			// Override ListSource with developer_name for vendor matching
+			// Skip "Unknown" entries to keep default ListSource
 			for i := range result.Entries {
 				if devName, ok := urlToDeveloperMap[result.Entries[i].FHIRPatientFacingURI]; ok {
-					result.Entries[i].DeveloperName = devName
+					if devName != "" && devName != "Unknown" {
+						result.Entries[i].ListSource = devName
+					}
 				}
 			}
 		}
