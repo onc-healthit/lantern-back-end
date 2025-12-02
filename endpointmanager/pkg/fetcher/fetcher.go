@@ -1,10 +1,12 @@
 package fetcher
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
@@ -27,6 +29,7 @@ type EndpointEntry struct {
 	OrganizationIdentifiers []interface{}
 	OrganizationAddresses   []interface{}
 	OrganizationActive      string
+	DeveloperName           string
 }
 
 // ListOfEndpoints is a structure for the whole EndpointSources file
@@ -44,7 +47,7 @@ type Endpoints interface {
 }
 
 // GetEndpointsFromFilepath parses a list of endpoints out of the file at the provided path
-func GetEndpointsFromFilepath(filePath string, format string, source string, listURL string) (ListOfEndpoints, error) {
+func GetEndpointsFromFilepath(filePath string, format string, source string, listURL string, csvFilePath string) (ListOfEndpoints, error) {
 	fmt.Printf("Getting endpoints from file: %s", filePath)
 	jsonFile, err := os.Open(filePath)
 	// If we os.Open returns an error then handle it
@@ -61,13 +64,13 @@ func GetEndpointsFromFilepath(filePath string, format string, source string, lis
 
 	validFormat := helpers.StringArrayContains(formats, format)
 	if validFormat {
-		return GetListOfEndpointsKnownFormat([]byte(byteValue), format, source, listURL)
+		return GetListOfEndpointsKnownFormat([]byte(byteValue), format, source, listURL, csvFilePath)
 	}
 	return GetListOfEndpoints([]byte(byteValue), source, listURL)
 }
 
 // GetListOfEndpointsKnownFormat parses a list of endpoints out of a given byte array
-func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source string, listURL string) (ListOfEndpoints, error) {
+func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source string, listURL string, csvFilePath string) (ListOfEndpoints, error) {
 	var result ListOfEndpoints
 	var initialList map[string]interface{}
 
@@ -94,6 +97,20 @@ func GetListOfEndpointsKnownFormat(rawendpts []byte, format string, source strin
 			return result, fmt.Errorf("lantern list not given in Lantern format: %s", err)
 		}
 		result = LanternList{}.GetEndpoints(lanternList, source, listURL)
+
+		// If CSV file path is provided, read it and map developer_name to endpoints
+		if csvFilePath != "" {
+			urlToDeveloperMap, err := readCSVDeveloperMapping(csvFilePath)
+			if err != nil {
+				return result, fmt.Errorf("error reading CSV file: %s", err)
+			}
+			// Apply developer_name to each endpoint based on URL
+			for i := range result.Entries {
+				if devName, ok := urlToDeveloperMap[result.Entries[i].FHIRPatientFacingURI]; ok {
+					result.Entries[i].DeveloperName = devName
+				}
+			}
+		}
 	} else if format == "FHIR" {
 		// based on: https://www.hl7.org/fhir/endpoint-examples-general-template.json.html
 		fhirList, err := convertInterfaceToList(initialList, "entry")
@@ -156,4 +173,46 @@ func convertInterfaceToList(list map[string]interface{}, ref string) ([]map[stri
 		formatList = append(formatList, elem)
 	}
 	return formatList, nil
+}
+
+// readCSVDeveloperMapping reads the CSV file and creates a map from URL to developer_name
+func readCSVDeveloperMapping(csvFilePath string) (map[string]string, error) {
+	urlToDeveloper := make(map[string]string)
+
+	file, err := os.Open(csvFilePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	reader.LazyQuotes = true
+
+	// Read all records
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	// Skip header row and process data
+	for i, record := range records {
+		if i == 0 {
+			// Skip header
+			continue
+		}
+
+		if len(record) < 3 {
+			continue // Skip malformed rows
+		}
+
+		// Column 0: State, Column 1: endpoint (URL), Column 2: developer_name
+		url := strings.TrimSpace(record[1])
+		developerName := strings.TrimSpace(record[2])
+
+		if url != "" {
+			urlToDeveloper[url] = developerName
+		}
+	}
+
+	return urlToDeveloper, nil
 }

@@ -25,6 +25,7 @@ func main() {
 	var endpointsFile string
 	var source string
 	var listURL string
+	var csvFilePath string
 	var format string
 	var isChpl bool
 
@@ -67,6 +68,14 @@ func main() {
 		isChpl, err = strconv.ParseBool(os.Args[4])
 		helpers.FailOnError("", err)
 		listURL = os.Args[5]
+	} else if len(os.Args) == 7 {
+		endpointsFile = os.Args[1]
+		format = os.Args[2]
+		source = os.Args[3]
+		isChpl, err = strconv.ParseBool(os.Args[4])
+		helpers.FailOnError("", err)
+		listURL = os.Args[5]
+		csvFilePath = os.Args[6]
 	} else if len(os.Args) == 3 {
 		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
 	} else if len(os.Args) == 4 {
@@ -75,7 +84,7 @@ func main() {
 		log.Fatalf("ERROR: Endpoints list command-line arguments are not correct")
 	}
 
-	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, format, source, listURL)
+	listOfEndpoints, err := fetcher.GetEndpointsFromFilepath(endpointsFile, format, source, listURL, csvFilePath)
 	if err != nil && strings.Contains(err.Error(), "incorrect reference value") {
 		log.Error("Endpoint List Parsing Error: ", err)
 	}
