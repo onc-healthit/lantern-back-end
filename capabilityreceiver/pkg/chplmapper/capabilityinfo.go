@@ -32,32 +32,33 @@ var fluffWords = []string{
 }
 
 var MedicaidListSourceToVendor = map[string]string{
-	"1up (Gainwell)":    "1up (Gainwell)",
-	"Acentra":           "Acentra",
-	"CNSI Provider One": "CNSI Provider One",
-	"Conduent":          "Conduent",
-	"Edifecs":           "Edifecs",
-	"Safhir from Onyx":  "Safhir from Onyx",
-	"Salesforce/MiHIN":  "Salesforce/MiHIN",
-	"State Developed":   "State Developed",
+	"1up (Gainwell)":      "1up (Gainwell)",
+	"Acentra":             "Acentra",
+	"CNSI Provider One":   "CNSI Provider One",
+	"Conduent":            "Conduent",
+	"Edifecs":             "Edifecs",
+	"Safhir from Onyx":    "Safhir from Onyx",
+	"Salesforce/MiHIN":    "Salesforce/MiHIN",
+	"State Developed":     "State Developed",
+	"Implemented":         "State Developed",
+	"Not Yet Implemented": "Not Yet Implemented",
 }
 
 var MedicaidUnknownListSources = map[string]bool{
-	"Implemented":         true,
-	"Not Yet Implemented": true,
-	"Offline":             true,
-	"StateMedicaid":       true,
+	"Offline":       true,
+	"StateMedicaid": true,
 }
 
 var MedicaidVendorCHPLIDs = map[string]int{
-	"1up (Gainwell)":    2000001001,
-	"Acentra":           2000001002,
-	"CNSI Provider One": 2000001003,
-	"Conduent":          2000001004,
-	"Edifecs":           2000001005,
-	"Safhir from Onyx":  2000001006,
-	"Salesforce/MiHIN":  2000001007,
-	"State Developed":   2000001008,
+	"1up (Gainwell)":      2000001001,
+	"Acentra":             2000001002,
+	"CNSI Provider One":   2000001003,
+	"Conduent":            2000001004,
+	"Edifecs":             2000001005,
+	"Safhir from Onyx":    2000001006,
+	"Salesforce/MiHIN":    2000001007,
+	"State Developed":     2000001008,
+	"Not Yet Implemented": 2000001009,
 }
 
 type details struct {
