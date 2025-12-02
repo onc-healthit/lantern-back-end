@@ -282,7 +282,7 @@ func setup() error {
 	}
 
 	// grab endpoints
-	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/")
+	endpoints, err = fetcher.GetEndpointsFromFilepath("../../../endpointmanager/resources/EpicEndpointSourcesDSTU2.json", "FHIR", "Epic", "https://epwebapps.acpny.com/FHIRproxy/api/FHIR/DSTU2/", "")
 
 	return err
 }
