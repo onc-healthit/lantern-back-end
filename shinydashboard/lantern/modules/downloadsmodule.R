@@ -108,7 +108,7 @@ downloadsmodule <- function(
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
              info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds)
   })
@@ -154,7 +154,7 @@ downloadsmodule <- function(
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as vendor_name
+        ) as api_developer_name
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name

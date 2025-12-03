@@ -32,11 +32,13 @@ validation_group_list <- fromJSON(here(root, "validation_groups.json"))
 validation_rules_descriptions <- fromJSON(here(root, "rule_descriptions.json"))
 validation_group_names <- names(validation_group_list)
 
-valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1", "4.1.0", "4.3.0", "4.2.0", "4.4.0", "4.5.0", "4.6.0", "5.0.0")
 
 dstu2 <- c("0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2")
 stu3 <- c("1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2")
 r4 <- c("3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1")
+r4b <- c("4.1.0", "4.3.0")
+r5 <- c("4.2.0", "4.4.0", "4.5.0", "4.6.0", "5.0.0")
 
 # Define magic numbers for user interface
 ui_special_values <- list(
