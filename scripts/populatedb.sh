@@ -9,8 +9,7 @@ set -e
 cd cmd/endpointpopulator
 
 # Populates the database with State Medicaid endpoints
-# Pass the CSV file path so main.go can read developer_name for each URL
-go run main.go /etc/lantern/resources/MedicaidState_EndpointSources.json Lantern StateMedicaid false StateMedicaid /etc/lantern/resources/medicaid-state-endpoints.csv >> $log_file 2>&1
+go run main.go /etc/lantern/resources/MedicaidState_EndpointSources.json Lantern StateMedicaid false StateMedicaid >> $log_file 2>&1
 
 jq -c '.[]' /etc/lantern/resources/MedicareStateEndpointResourcesList.json | while read endpoint; do
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')
