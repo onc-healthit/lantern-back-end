@@ -289,7 +289,7 @@ function(input, output, session) { #nolint
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
-      chplDropdown <- selectInput(inputId = "is_chpl", label = "From CHPL:", choices = c("True", "False", "All"), selected = "All", size = 1, selectize = FALSE)
+      chplDropdown <- selectInput(inputId = "is_chpl", label = "Source:", choices = c("CHPL", "State Medicaid", "Payer", "Other", "All"), selected = "All", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 3,

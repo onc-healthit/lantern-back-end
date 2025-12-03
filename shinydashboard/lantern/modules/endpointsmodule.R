@@ -197,7 +197,7 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- toupper(sel_is_chpl())
+      params$chpl <- sel_is_chpl()
     }
 
     if (sel_availability() != "0-100") {
@@ -254,7 +254,7 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- toupper(sel_is_chpl())
+      params$chpl <- sel_is_chpl()
     }
 
     if (sel_availability() != "0-100") {

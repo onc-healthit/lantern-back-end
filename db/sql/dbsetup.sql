@@ -264,7 +264,7 @@ CREATE TABLE endpoint_organization (
 
 CREATE TABLE list_source_info (
     list_source            VARCHAR(500),
-    is_chpl                BOOLEAN 
+    is_chpl                VARCHAR(500) 
 );
 
 CREATE TABLE product_criteria (
