@@ -51,7 +51,7 @@ downloadsmodule_UI <- function(id) {
           <code>developer</code> – Filter by certified API developer name.<br>
           <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
           <code>identifier</code> – Exact match on organization identifier (e.g., NPI).<br>
-          <code>organization_detail</code> – Use <code>organization_detail=present</code> to return only organizations with HTI-1 relevant data.
+          <code>organization_detail</code> – Use <code>organization_detail=present</code> to return only organizations with data.
           <br><br>
           
           All filters can be used independently or in combination.
@@ -61,7 +61,7 @@ downloadsmodule_UI <- function(id) {
           <code>?developer=Epic%20Systems%20Corporation&fhir_version=No%20Cap%20Stat,4.0.1</code>
           <br><br>
 
-          <u>Example 2:</u> Return organizations with identifier <i>1750581864</i> that have HTI-1 data:<br>
+          <u>Example 2:</u> Return organizations with identifier <i>1750581864</i> that have data:<br>
           <code>?identifier=1750581864&organization_detail=present</code>
           <br><br>
 

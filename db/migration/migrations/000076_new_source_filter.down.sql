@@ -8,8 +8,6 @@ UPDATE list_source_info SET is_chpl = TRUE WHERE is_chpl_old = 'CHPL';
 
 UPDATE list_source_info SET is_chpl = FALSE WHERE is_chpl_old <> 'CHPL';
 
-ALTER TABLE list_source_info DROP COLUMN is_chpl_old;
-
 DROP VIEW IF EXISTS endpoint_export CASCADE;
 
 CREATE or REPLACE VIEW endpoint_export AS
