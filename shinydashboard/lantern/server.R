@@ -161,9 +161,9 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = paste0(version_title, " - Release Notes"),
        p(HTML('
-                <b>State Medicaid Endpoints:</b> Lantern now displays data for the FHIR endpoints provided in the State Medicaid Agency (SMA) Provider Directory under the developer name "State Medicaid" on all tabs.<br/><br/>
+                <b>State Medicaid Endpoints:</b> Lantern now displays data for the FHIR endpoints provided in the State Medicaid Agency (SMA) Provider Directory under the source name "State Medicaid" on the Endpoints tab.<br/><br/>
 
-                <b>Organization data:</b> Lantern displayed Organization\'s data as a modal, we now replaced modal with inline columns. You\'ll now see these fields as separate columns:<br/>
+                <b>Organization data:</b> Lantern displays Organization\'s data as the following columns on the Organizations tab:<br/>
                 <ul>
                   <li>Organization Identifier Type</li>
                   <li>Organization Identifier</li>
@@ -179,14 +179,14 @@ function(input, output, session) { #nolint
                   <li>With filters → downloads filtered rows.</li>
                 </ul>
 
-                <b>Performance:</b> General speed improvements on the Organizations page<br/><br/>
+                <b>Performance:</b> Performance improvements to render the pages.<br/><br/>
 
                 <b>New Organizations Download API:</b><br/>
                 <a href="https://lantern.healthit.gov/api/organizations/v1" target="_blank">
                   https://lantern.healthit.gov/api/organizations/v1
                 </a><br/><br/>
 
-                <b>Access:</b> Call directly from a browser or tools like Postman.<br/>
+                <b>Access:</b> You can download the data by directly accessing the URL or by using tools like Postman.<br/>
                 <b>Filtering:</b> Use URL-encoded query parameters (you can combine them):<br/>
                 <ul>
                   <li><code>developer</code> — filter by certified API developer name</li>
@@ -206,15 +206,13 @@ function(input, output, session) { #nolint
                 .../api/organizations/v1?organization_detail=present<br/><br/>
 
                 <b>Organization Data visibility & ingestion notes</b><br/>
-                Lantern now ingests all organizations found in FHIR bundles, even when data fields are missing. 
+                Lantern now ingests all organizations found in FHIR bundles, even when data fields are missing.
                 This can help developers spot gaps in their data and fix them.<br/><br/>
 
                 <b>Bug Fixes:</b>
                 <ul>
                   <li>1UP was not showing as a developer though they have data. Fixed to display 1UP.</li>
                   <li>Lantern organizations were grouped by Organization name on the UI, potentially grouping unrelated organizations. This issue is resolved and we no longer group by name.</li>
-                  <li>Organization page changes to display data as separate columns slowed down the page. Changes were made to improve the performance of this page.</li>
-                  <li>Organization page results were showing same data on pages 1 and 3 due to skipping organizations with bad names like a hyphen for a name. Resolved this issue.</li>
                   <li>If an organization information is changed or removed, changes to backend data processing to keep the database clean. This is only a backend change, no impact to the data on the front-end.</li>
                 </ul>
                 <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>')),
