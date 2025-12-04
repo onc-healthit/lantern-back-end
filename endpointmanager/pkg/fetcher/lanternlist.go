@@ -16,7 +16,14 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 			fhirEntry := EndpointEntry{}
 			fhirEntry.FHIRPatientFacingURI = uri
 
-			if listURL != "" {
+			// Check if DeveloperName field exists in JSON
+			developerName, devNameOk := lanternList[entry]["DeveloperName"].(string)
+
+			// Set ListSource based on DeveloperName if available
+			// "Unknown" falls back to default listURL/source for capability statement matching
+			if devNameOk && developerName != "" && developerName != "Unknown" {
+				fhirEntry.ListSource = developerName
+			} else if listURL != "" {
 				fhirEntry.ListSource = listURL
 			} else if source != "" {
 				fhirEntry.ListSource = source
