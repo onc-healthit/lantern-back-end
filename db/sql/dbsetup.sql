@@ -2461,7 +2461,7 @@ FOREIGN KEY (validation_result_id)
 REFERENCES validation_results(id)
 ON DELETE CASCADE;
 
--- LANTERN-841: HTI-1 Final Rule Organization Data
+-- LANTERN-841: Organization Data
 CREATE TABLE fhir_endpoint_organization_active (
 	org_id INT,
 	active VARCHAR(500)

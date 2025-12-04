@@ -18,7 +18,7 @@ function(res) {
 
 #* @get /organizations/v1
 #* @param developer Filter by developer name (optional)
-#* @param organization_detail Filter by HTI-1 data presence: 'present' or 'absent' (optional)
+#* @param organization_detail Filter by data presence: 'present' or 'absent' (optional)
 #* @param identifier Filter by exact identifier value (optional)
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
 #* @description Download a CSV file containing daily organization data
