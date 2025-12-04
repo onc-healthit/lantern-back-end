@@ -41,7 +41,8 @@ var MedicaidListSourceToVendor = map[string]string{
 	"Salesforce/MiHIN":    "Salesforce/MiHIN",
 	"State Developed":     "State Developed",
 	"Implemented":         "State Developed",
-	"Not Yet Implemented": "Not Yet Implemented",
+	"Not Yet Implemented": "Not Available",
+	"Offline":             "Not Available",
 }
 
 var MedicaidUnknownListSources = map[string]bool{
@@ -50,15 +51,15 @@ var MedicaidUnknownListSources = map[string]bool{
 }
 
 var MedicaidVendorCHPLIDs = map[string]int{
-	"1up (Gainwell)":      2000001001,
-	"Acentra":             2000001002,
-	"CNSI Provider One":   2000001003,
-	"Conduent":            2000001004,
-	"Edifecs":             2000001005,
-	"Safhir from Onyx":    2000001006,
-	"Salesforce/MiHIN":    2000001007,
-	"State Developed":     2000001008,
-	"Not Yet Implemented": 2000001009,
+	"1up (Gainwell)":    2000001001,
+	"Acentra":           2000001002,
+	"CNSI Provider One": 2000001003,
+	"Conduent":          2000001004,
+	"Edifecs":           2000001005,
+	"Safhir from Onyx":  2000001006,
+	"Salesforce/MiHIN":  2000001007,
+	"State Developed":   2000001008,
+	"Not Available":     2000001009,
 }
 
 type details struct {
