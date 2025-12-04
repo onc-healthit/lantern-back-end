@@ -20,8 +20,8 @@ func (ll LanternList) GetEndpoints(lanternList []map[string]interface{}, source 
 			developerName, devNameOk := lanternList[entry]["DeveloperName"].(string)
 
 			// Set ListSource based on DeveloperName if available
-			// "Unknown" and "Offline" fall back to default listURL/source for capability statement matching
-			if devNameOk && developerName != "" && developerName != "Unknown" && developerName != "Offline" {
+			// "Unknown" falls back to default listURL/source for capability statement matching
+			if devNameOk && developerName != "" && developerName != "Unknown" {
 				fhirEntry.ListSource = developerName
 			} else if listURL != "" {
 				fhirEntry.ListSource = listURL
