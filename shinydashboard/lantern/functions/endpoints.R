@@ -604,6 +604,16 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
     mutate(default_version = gsub("\"|\"", "", as.character(default_version)))
 
     res$list_source <- paste0(resListSource$list_source, collapse = "\n")
+
+    # Replace with SMA Provider Directory if it matches specific values
+    sma_values <- c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed")
+
+    if (res$list_source %in% sma_values) {
+      res$list_source <- "State Medicaid Agency (SMA) Provider Directory"
+    }
+
     res$security <- paste0(resSecurity$security, collapse = ",")
     res$supported_versions <- resSupportedVersions$supported_versions
     res$default_version <- resSupportedVersions$default_version
