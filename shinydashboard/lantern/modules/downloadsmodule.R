@@ -107,10 +107,16 @@ downloadsmodule <- function(
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
-             info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
+             info_updated = format(info_updated, "%m/%d/%y %H:%M"),
+             list_source = ifelse(vendor_name %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed"), 
+                    "State Medicaid Agency (SMA) Provider Directory", 
+                    list_source)) %>%
       rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
+      rename(http_response_time_second = response_time_seconds) %>%
+      rename(source = is_chpl)
   })
 
   # Download csv of the field descriptions in the dataset csv
