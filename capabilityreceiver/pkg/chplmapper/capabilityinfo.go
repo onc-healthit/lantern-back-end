@@ -45,9 +45,9 @@ var MedicaidListSourceToVendor = map[string]string{
 	"Offline":             "Not Available",
 }
 
-// Add any StateMedicaid list sources that should be mapped to Unknown vendor
+// Add any State Medicaid list sources that should be mapped to Unknown vendor
 var MedicaidUnknownListSources = map[string]bool{
-	"StateMedicaid": true,
+	"State Medicaid": true,
 }
 
 var MedicaidVendorCHPLIDs = map[string]int{
