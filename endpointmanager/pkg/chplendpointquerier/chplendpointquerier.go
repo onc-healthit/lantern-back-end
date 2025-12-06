@@ -147,7 +147,8 @@ var officePracticumURL = "https://fhir-documentation.patientmedrecords.com/endpo
 var modernizingMedicineURL = "https://mm-fhir-endpoint-display.prod.fhir.ema-api.com/"
 var welligentURL = "https://fhir.qa.welligent.com/"
 var willowURL = "https://www.willowgladetechnologies.com/requirements"
-var aidboxURL = "https://aidbox.cx360.net/service-base-urls"
+
+// var aidboxURL = "https://aidbox.cx360.net/service-base-urls"
 var medicaURL = "https://code.medicasoft.us/fhir_r4_endpoints.html"
 var dss2URL = "https://dssjess-dev-web.dssinc.com/fhir/r4/endpoints"
 var cozevaURL = "https://fhir.cozeva.com/endpoints"
