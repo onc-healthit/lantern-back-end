@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -26,7 +25,7 @@ func main() {
 	var source string
 	var listURL string
 	var format string
-	var isChpl bool
+	var sourceCategory string
 
 	err := config.SetupConfig()
 	helpers.FailOnError("Error setting up config", err)
@@ -58,14 +57,12 @@ func main() {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		isChpl, err = strconv.ParseBool(os.Args[4])
-		helpers.FailOnError("", err)
+		sourceCategory = os.Args[4]
 	} else if len(os.Args) == 6 {
 		endpointsFile = os.Args[1]
 		format = os.Args[2]
 		source = os.Args[3]
-		isChpl, err = strconv.ParseBool(os.Args[4])
-		helpers.FailOnError("", err)
+		sourceCategory = os.Args[4]
 		listURL = os.Args[5]
 	} else if len(os.Args) == 3 {
 		log.Fatalf("ERROR: Missing endpoints list format command-line argument")
@@ -116,13 +113,20 @@ func main() {
         SELECT list_source FROM list_source_info WHERE list_source = $3
     );
 	`
-	var listSource string
-	if listURL != "" {
-		listSource = listURL
-	} else {
-		listSource = source
+
+	// Collect all unique ListSource values from endpoints
+	uniqueListSources := make(map[string]bool)
+	for _, endpoint := range listOfEndpoints.Entries {
+		if endpoint.ListSource != "" {
+			uniqueListSources[endpoint.ListSource] = true
+		}
 	}
 
-	_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, isChpl, listSource)
-	helpers.FailOnError("Adding source to list_source database error: ", sourceErr)
+	// Insert each unique ListSource into list_source_info table
+	for listSourceValue := range uniqueListSources {
+		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSourceValue, sourceCategory, listSourceValue)
+		if sourceErr != nil {
+			log.Warnf("Error adding list source '%s' to list_source_info: %v", listSourceValue, sourceErr)
+		}
+	}
 }
