@@ -114,19 +114,34 @@ func main() {
     );
 	`
 
-	// Collect all unique ListSource values from endpoints
-	uniqueListSources := make(map[string]bool)
-	for _, endpoint := range listOfEndpoints.Entries {
-		if endpoint.ListSource != "" {
-			uniqueListSources[endpoint.ListSource] = true
+	if sourceCategory == "State Medicaid" {
+		// State Medicaid: Collect all unique ListSource values (vendors) from endpoints
+		uniqueListSources := make(map[string]bool)
+		for _, endpoint := range listOfEndpoints.Entries {
+			if endpoint.ListSource != "" {
+				uniqueListSources[endpoint.ListSource] = true
+			}
 		}
-	}
 
-	// Insert each unique ListSource into list_source_info table
-	for listSourceValue := range uniqueListSources {
-		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSourceValue, sourceCategory, listSourceValue)
+		// Insert each unique ListSource into list_source_info table
+		for listSourceValue := range uniqueListSources {
+			_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSourceValue, sourceCategory, listSourceValue)
+			if sourceErr != nil {
+				log.Warnf("Error adding list source '%s' to list_source_info: %v", listSourceValue, sourceErr)
+			}
+		}
+	} else {
+		// CHPL/Payer/Other: Use original logic - insert single list source
+		var listSource string
+		if listURL != "" {
+			listSource = listURL
+		} else {
+			listSource = source
+		}
+
+		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, sourceCategory, listSource)
 		if sourceErr != nil {
-			log.Warnf("Error adding list source '%s' to list_source_info: %v", listSourceValue, sourceErr)
+			log.Warnf("Error adding list source '%s' to list_source_info: %v", listSource, sourceErr)
 		}
 	}
 }
