@@ -149,6 +149,8 @@ get_fhir_version_list <- function(endpoint_export_tbl, no_cap_stat) {
   fhir_version %in% dstu2 ~ "DSTU2",
   fhir_version %in% stu3 ~ "STU3",
   fhir_version %in% r4 ~ "R4",
+  fhir_version %in% r4b ~ "R4B",   
+  fhir_version %in% r5 ~ "R5",
   fhir_version == "Unknown" ~ "Unknown",
   TRUE ~ "No Cap Stat"
   ))
@@ -167,6 +169,18 @@ get_fhir_version_list <- function(endpoint_export_tbl, no_cap_stat) {
 
   r4Vals <- res %>%
     filter(fhir_version_name == "R4") %>%
+    select(fhir_version) %>%
+    split(.$fhir_version) %>%
+    purrr::map(~ .$fhir_version)
+
+  r4bVals <- res %>%
+    filter(fhir_version_name == "R4B") %>%
+    select(fhir_version) %>%
+    split(.$fhir_version) %>%
+    purrr::map(~ .$fhir_version)
+
+  r5Vals <- res %>%
+    filter(fhir_version_name == "R5") %>%
     select(fhir_version) %>%
     split(.$fhir_version) %>%
     purrr::map(~ .$fhir_version)
@@ -196,6 +210,16 @@ get_fhir_version_list <- function(endpoint_export_tbl, no_cap_stat) {
   if (length(r4Vals) > 0) {
     r4List <- list("R4" = r4Vals)
     fhir_version_list <- c(fhir_version_list, r4List)
+  }
+
+  if (length(r4bVals) > 0) {
+    r4bList <- list("R4B" = r4bVals)
+    fhir_version_list <- c(fhir_version_list, r4bList)
+  }
+
+  if (length(r5Vals) > 0) {
+    r5List <- list("R5" = r5Vals)
+    fhir_version_list <- c(fhir_version_list, r5List)
   }
 
   if (length(unknownVals) > 0) {
@@ -580,6 +604,16 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connecti
     mutate(default_version = gsub("\"|\"", "", as.character(default_version)))
 
     res$list_source <- paste0(resListSource$list_source, collapse = "\n")
+
+    # Replace with SMA Provider Directory if it matches specific values
+    sma_values <- c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed")
+
+    if (res$list_source %in% sma_values) {
+      res$list_source <- "State Medicaid Agency (SMA) Provider Directory"
+    }
+
     res$security <- paste0(resSecurity$security, collapse = ",")
     res$supported_versions <- resSupportedVersions$supported_versions
     res$default_version <- resSupportedVersions$default_version

@@ -197,7 +197,7 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- toupper(sel_is_chpl())
+      params$chpl <- sel_is_chpl()
     }
 
     if (sel_availability() != "0-100") {
@@ -254,7 +254,7 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- toupper(sel_is_chpl())
+      params$chpl <- sel_is_chpl()
     }
 
     if (sel_availability() != "0-100") {
@@ -326,7 +326,7 @@ endpointsmodule <- function(
                             html = TRUE),
                   endpoint_names = colDef(show = FALSE, sortable = TRUE),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = TRUE, html = TRUE),
-                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = TRUE),
+                  vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = TRUE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = TRUE),
                   format = colDef(name = "Supported Formats", sortable = TRUE),
                   cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = TRUE),
@@ -347,11 +347,17 @@ endpointsmodule <- function(
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
-             info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
+             info_updated = format(info_updated, "%m/%d/%y %H:%M"),
+             list_source = ifelse(list_source %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed"), 
+                    "State Medicaid Agency (SMA) Provider Directory", 
+                    list_source)) %>%
       ungroup() %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
+      rename(http_response_time_second = response_time_seconds) %>%
+      rename(source = is_chpl)
   })
 
   output$note_text <- renderUI({

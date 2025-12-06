@@ -51,7 +51,7 @@ downloadsmodule_UI <- function(id) {
           <code>developer</code> – Filter by certified API developer name.<br>
           <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
           <code>identifier</code> – Exact match on organization identifier (e.g., NPI).<br>
-          <code>hti1</code> – Use <code>hti1=present</code> to return only organizations with HTI-1 relevant data.
+          <code>organization_detail</code> – Use <code>organization_detail=present</code> to return only organizations with data.
           <br><br>
           
           All filters can be used independently or in combination.
@@ -61,8 +61,8 @@ downloadsmodule_UI <- function(id) {
           <code>?developer=Epic%20Systems%20Corporation&fhir_version=No%20Cap%20Stat,4.0.1</code>
           <br><br>
 
-          <u>Example 2:</u> Return organizations with identifier <i>1750581864</i> that have HTI-1 data:<br>
-          <code>?identifier=1750581864&hti1=present</code>
+          <u>Example 2:</u> Return organizations with identifier <i>1750581864</i> that have data:<br>
+          <code>?identifier=1750581864&organization_detail=present</code>
           <br><br>
 
           Developer names and other parameter values must match exactly as stored in the system.<br>
@@ -107,10 +107,16 @@ downloadsmodule <- function(
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
-             info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+             info_updated = format(info_updated, "%m/%d/%y %H:%M"),
+             list_source = ifelse(vendor_name %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed"), 
+                    "State Medicaid Agency (SMA) Provider Directory", 
+                    list_source)) %>%
+      rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
+      rename(http_response_time_second = response_time_seconds) %>%
+      rename(source = is_chpl)
   })
 
   # Download csv of the field descriptions in the dataset csv
@@ -154,7 +160,7 @@ downloadsmodule <- function(
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as vendor_name
+        ) as api_developer_name
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name

@@ -481,7 +481,7 @@ organizationsmodule <- function(
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as vendor_name
+        ) as api_developer_name
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
@@ -546,7 +546,7 @@ organizationsmodule <- function(
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
          # org_url column is hidden from UI
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE, html = TRUE),
-         vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
+         vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
        ),
        striped = TRUE,
        searchable = FALSE,

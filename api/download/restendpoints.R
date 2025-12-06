@@ -18,11 +18,11 @@ function(res) {
 
 #* @get /organizations/v1
 #* @param developer Filter by developer name (optional)
-#* @param hti1 Filter by HTI-1 data presence: 'present' or 'absent' (optional)
+#* @param organization_detail Filter by data presence: 'present' or 'absent' (optional)
 #* @param identifier Filter by exact identifier value (optional)
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
 #* @description Download a CSV file containing daily organization data
-function(res, developer = NULL, hti1 = NULL, identifier = NULL, fhir_version = NULL) {
+function(res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
   # Normalize and parse fhir_versions
   fhir_versions_vec <- if (!is.null(fhir_version)) {
     strsplit(fhir_version, ",")[[1]] %>% trimws()
@@ -52,21 +52,21 @@ function(res, developer = NULL, hti1 = NULL, identifier = NULL, fhir_version = N
     NULL
   }
 
-  # Validate hti1 flag
-  hti1_flag <- NULL
-  if (!is.null(hti1)) {
-    hti1 <- tolower(hti1)
-    if (hti1 == "present") {
-      hti1_flag <- hti1
+  # Validate organization_detail flag
+  organization_detail_flag <- NULL
+  if (!is.null(organization_detail)) {
+    organization_detail <- tolower(organization_detail)
+    if (organization_detail == "present") {
+      organization_detail_flag <- organization_detail
     } else {
       res$status <- 400
-      return(list(error = "Invalid value for 'hti1'. Only 'present' is supported."))
+      return(list(error = "Invalid value for 'organization_detail'. Only 'present' is supported."))
     }
   }
 
   # Log filters for debugging
   message("Organization API Filters - Developer: ", developer, 
-        ", HTI-1: ", hti1_flag, 
+        ", Organization Detail: ", organization_detail_flag, 
         ", Identifier: ", identifier, 
         ", FHIR Versions: ", paste(fhir_versions_vec, collapse = ", "))
 
@@ -102,13 +102,13 @@ function(res, developer = NULL, hti1 = NULL, identifier = NULL, fhir_version = N
     paste0("id_", gsub("[^A-Za-z0-9]", "", identifier))
   } else NULL
 
-  safe_hti1 <- if (!is.null(hti1_flag)) paste0("hti1_", hti1_flag) else NULL
+  safe_organization_detail <- if (!is.null(organization_detail_flag)) paste0("organization_detail_", organization_detail_flag) else NULL
 
   safe_fhir <- if (!is.null(filtered_fhir_versions)) {
     paste0("fhir_", gsub("[^A-Za-z0-9]", "", paste(filtered_fhir_versions, collapse = "_")))
   } else NULL
 
-  filename_parts <- c("fhir_endpoint_organizations", safe_developer, safe_identifier, safe_hti1, safe_fhir, st)
+  filename_parts <- c("fhir_endpoint_organizations", safe_developer, safe_identifier, safe_organization_detail, safe_fhir, st)
   filename <- paste0(paste(na.omit(filename_parts), collapse = "_"), ".csv")  
 
   res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
@@ -117,7 +117,7 @@ function(res, developer = NULL, hti1 = NULL, identifier = NULL, fhir_version = N
     org_data <- get_organization_csv_data(
       db_connection,
       developer = developer,
-      hti1 = hti1_flag,
+      organization_detail = organization_detail_flag,
       identifier = identifier,
       fhir_versions = filtered_fhir_versions
     )

@@ -229,31 +229,40 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	store := qa.store
 	ctx := qa.ctx
 
+	log.Infof("[saveMsgInDB] Processing URL=%s RequestedVersion=%s", fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
+
 	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile(fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
 	if err != nil {
 		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
 	}
 
+	// Try to find existing row
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
+	// CASE 1: Endpoint does NOT exist yet (sql.ErrNoRows)
 	if err == sql.ErrNoRows {
+		log.Info("[saveMsgInDB] NEW endpoint detected: inserting")
 
 		// If the endpoint info entry doesn't exist, add it to the DB
+		// Match to vendor
 		err = chplmapper.MatchEndpointToVendor(ctx, fhirEndpoint, store, softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to vendor failed, %s", err)
 		}
 
+		// Match to product
 		err = chplmapper.MatchEndpointToProduct(ctx, fhirEndpoint, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, match endpoint to product failed, %s", err)
 		}
 
+		// Insert metadata
 		metadataID, err := store.AddFHIREndpointMetadata(ctx, fhirEndpoint.Metadata)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, add endpoint metadata failed, %s", err)
 		}
 
+		// Create validation ID
 		valResID, err := store.AddValidationResult(ctx)
 		if err != nil {
 			return fmt.Errorf("adding new validation result ID failed, %s", err)
@@ -265,16 +274,25 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			return fmt.Errorf("error adding validation rows to table, %s", err)
 		}
 
+		// Insert the final row
 		err = store.AddFHIREndpointInfo(ctx, fhirEndpoint, metadataID)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, add to fhir_endpoints_info failed, %s", err)
 		}
+
+		log.Info("[saveMsgInDB] NEW endpoint inserted successfully")
 	} else if err != nil {
+		// CASE 2: A different DB error occurred
 		return err
 	} else {
+		// CASE 3: Endpoint already exists -> must update / merge
+		log.Info("[saveMsgInDB] EXISTING endpoint found: updating")
+
+		// Carry vendor & product IDs forward
 		fhirEndpoint.VendorID = existingEndpt.VendorID
 		fhirEndpoint.HealthITProductID = existingEndpt.HealthITProductID
 
+		// Sync metadata
 		existingEndpt.Metadata.URL = fhirEndpoint.Metadata.URL
 		existingEndpt.Metadata.HTTPResponse = fhirEndpoint.Metadata.HTTPResponse
 		existingEndpt.Metadata.Errors = fhirEndpoint.Metadata.Errors
@@ -286,9 +304,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// until there's a reason to update it
 		fhirEndpoint.ValidationID = existingEndpt.ValidationID
 
+		log.Info("[saveMsgInDB] Calling MatchEndpointToVendor (EXISTING)")
 		err = chplmapper.MatchEndpointToVendor(ctx, existingEndpt, store, softwareListMap)
 		if err != nil {
-			return fmt.Errorf("does exist, match endpoint to vendor failed, %s", err)
+			log.Warn("Vendor match failed for EXISTING endpoint: ", err)
 		}
 
 		err = chplmapper.MatchEndpointToProduct(ctx, existingEndpt, store, fmt.Sprintf("%v", qa.chplMatchFile), softwareListMap)
@@ -298,6 +317,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
 		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
+			log.Info("[saveMsgInDB] Detected changed fields -> rewriting endpoint row")
+
+			// Update capability fields
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
 			existingEndpt.SMARTResponseBytes = fhirEndpoint.SMARTResponseBytes
@@ -329,7 +351,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			if err != nil {
 				return fmt.Errorf("does exist, add to fhir_endpoints_info failed, %s", err)
 			}
+
+			log.Info("[saveMsgInDB] EXISTING endpoint updated successfully")
 		} else {
+			// Metadata only update
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
 				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
@@ -342,6 +367,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		}
 	}
 
+	log.Info("[saveMsgInDB] --- END ---")
 	return nil
 }
 

@@ -157,12 +157,75 @@ function(input, output, session) { #nolint
     }
   })
 
+  observeEvent(input$show_release_notes, {
+    showModal(modalDialog(
+      title = paste0(version_title, " - Release Notes"),
+       p(HTML('
+                <b>State Medicaid Endpoints:</b> Lantern now displays data for the FHIR endpoints provided in the State Medicaid Agency (SMA) Provider Directory under the source name "State Medicaid" on the Endpoints tab.<br/><br/>
+
+                <b>Organization data:</b> Lantern displays Organization\'s data as the following columns on the Organizations tab:<br/>
+                <ul>
+                  <li>Organization Identifier Type</li>
+                  <li>Organization Identifier</li>
+                  <li>Organization Name</li>
+                  <li>Organization Address</li>
+                </ul>
+
+                Lantern now shows only organizations that are marked as "active" in their respective FHIR bundles.<br/><br/>
+
+                <b>Download (page-level):</b> Added a Download Organizations action that returns data based on the filters applied on the page.<br/>
+                <ul>
+                  <li>No filters → downloads all rows.</li>
+                  <li>With filters → downloads filtered rows.</li>
+                </ul>
+
+                <b>Performance:</b> Performance improvements to render the pages.<br/><br/>
+
+                <b>New Organizations Download API:</b><br/>
+                <a href="https://lantern.healthit.gov/api/organizations/v1" target="_blank">
+                  https://lantern.healthit.gov/api/organizations/v1
+                </a><br/><br/>
+
+                <b>Access:</b> You can download the data by directly accessing the URL or by using tools like Postman.<br/>
+                <b>Filtering:</b> Use URL-encoded query parameters (you can combine them):<br/>
+                <ul>
+                  <li><code>developer</code> — filter by certified API developer name</li>
+                  <li><code>fhir_version</code> — comma-separated FHIR versions (e.g., 4.0.1)</li>
+                  <li><code>identifier</code> — exact organization identifier (e.g., NPI, Other)</li>
+                  <li><code>organization_detail</code> — use <code>organization_detail=present</code> to return only orgs with data</li>
+                </ul>
+
+                <b>Examples:</b><br/>
+                By Developer:<br/>
+                .../api/organizations/v1?developer=Cerner%20Corporation<br/><br/>
+                By NPI:<br/>
+                .../api/organizations/v1?identifier=1922195171<br/><br/>
+                By FHIR Version:<br/>
+                .../api/organizations/v1?fhir_version=4.0.1<br/><br/>
+                Only with Data:<br/>
+                .../api/organizations/v1?organization_detail=present<br/><br/>
+
+                <b>Organization Data visibility & ingestion notes</b><br/>
+                Lantern now ingests all organizations found in FHIR bundles, even when data fields are missing.
+                This can help developers spot gaps in their data and fix them.<br/><br/>
+
+                <b>Bug Fixes:</b>
+                <ul>
+                  <li>1UP was not showing as a developer though they have data. Fixed to display 1UP.</li>
+                  <li>Lantern organizations were grouped by Organization name on the UI, potentially grouping unrelated organizations. This issue is resolved and we no longer group by name.</li>
+                  <li>If an organization information is changed or removed, changes to backend data processing to keep the database clean. This is only a backend change, no impact to the data on the front-end.</li>
+                </ul>
+                <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>')),
+      easyClose = TRUE
+    ))
+  })
+
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
      "endpoints_tab" = "List of Endpoints",
-     "downloads_tab" = "Downloads Page",
+     "downloads_tab" = "Downloads / API Page",
      "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implementation Page",
@@ -289,7 +352,7 @@ function(input, output, session) { #nolint
       validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
       confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
       contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
-      chplDropdown <- selectInput(inputId = "is_chpl", label = "From CHPL:", choices = c("True", "False", "All"), selected = "All", size = 1, selectize = FALSE)
+      chplDropdown <- selectInput(inputId = "is_chpl", label = "Source:", choices = c("CHPL", "State Medicaid", "Payer", "Other", "All"), selected = "All", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 3,

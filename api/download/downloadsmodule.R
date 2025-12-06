@@ -22,15 +22,21 @@ download_data <- function() {
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
-             info_updated = format(info_updated, "%m/%d/%y %H:%M")) %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+             info_updated = format(info_updated, "%m/%d/%y %H:%M"),
+             list_source = ifelse(vendor_name %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed"), 
+                    "State Medicaid Agency (SMA) Provider Directory", 
+                    list_source)) %>%
+      rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
+      rename(http_response_time_second = response_time_seconds) %>%
+      rename(source = is_chpl)
 }
 
 
 # Get organization data and transform to csv
-get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, hti1 = NULL) {
+get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, organization_detail = NULL) {
   query <- "
     WITH base_data AS (
       SELECT
@@ -64,8 +70,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
     params$identifier_exact <- paste0(identifier)
   }
 
-  # HTI-1 filter
-  if (!is.null(hti1) && hti1 == "present") {
+  # Organization Detail filter
+  if (!is.null(organization_detail) && organization_detail == "present") {
     query <- paste0(query, " AND ((identifier_values_csv IS NOT NULL AND identifier_values_csv <> '')",
                            " OR (addresses_csv IS NOT NULL AND addresses_csv <> ''))")
   }
@@ -80,7 +86,7 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
       address,
       url AS fhir_endpoint_url,
       string_agg(DISTINCT fhir_version, E'\\n') AS fhir_version,
-      string_agg(DISTINCT vendor_name, E'\\n') AS vendor_name
+      string_agg(DISTINCT vendor_name, E'\\n') AS api_developer_name
     FROM base_data bd
     CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
     CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name

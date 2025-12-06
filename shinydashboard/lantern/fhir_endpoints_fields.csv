@@ -4,7 +4,7 @@ api_information_source_name, Organization names associated with the endpoint rep
 created_at, Timestamp of the endpoint's record creation in the Lantern database
 updated, Timestamp of the last update of the endpoint's record
 list_source, Name or URL of the list source that included the endpoint
-certified_api_developer_name, Name of the API developer associated with the endpoint
+api_developer_name, Name of the API developer associated with the endpoint
 capability_fhir_version, FHIR version that is pulled from the endpoint's capability statement
 format, A list of the formats supported by the endpoint using their content types
 http_response, HTTP response received from querying the endpoint's metadata url
@@ -13,5 +13,5 @@ smart_http_response, HTTP response received from querying the endpoint's SMART u
 errors, Errors received from querying the endpoint
 kind, The way the endpoint's capability statement is intended to be used
 requested_fhir_version, The FHIR version requested when querying the endpoint
-is_chpl, Whether or not the endpoint's API developer is part of CHPL
+source, The source from which the endpoint's API developer was received
 cap_stat_exists, Whether the endpoint responded with a valid Conformance Resource/Capability Statement
