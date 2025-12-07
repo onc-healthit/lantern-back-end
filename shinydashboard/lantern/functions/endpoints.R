@@ -343,7 +343,7 @@ get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhi
       json_array_elements(included_fields::json) ->> 'Exists' as exist,
       json_array_elements(included_fields::json) ->> 'Extension' as extension
       from fhir_endpoints_info f
-      WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"
+      WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "' AND included_fields::text <> 'null'"
     ))
   ) %>%
     collect() %>%
