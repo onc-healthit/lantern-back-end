@@ -1,0 +1,7 @@
+BEGIN;
+
+-- Drop materialized views in reverse order
+DROP MATERIALIZED VIEW IF EXISTS mv_developer_data_issues CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS mv_data_issues_summary CASCADE;
+
+COMMIT;

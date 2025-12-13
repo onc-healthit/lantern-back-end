@@ -361,6 +361,86 @@ developerfeedbackmodule_UI <- function(id) {
              tags$i(class = "fa fa-exclamation-circle", style = "margin-right: 8px;"),
              "Data Quality Issues by Category"),
           reactable::reactableOutput(ns("issues_detail_table"))
+        ),
+
+        # Data Issues in Lantern
+        div(class = "modern-card", style = "margin-top: 20px;",
+          h3(class = "section-header",
+             tags$i(class = "fa fa-database", style = "margin-right: 8px;"),
+             "Data Issues in Lantern"),
+          div(style = "margin-bottom: 15px;",
+            p(style = "color: #5a6c7d; line-height: 1.6;",
+              "This section tracks developers with data collection issues. ",
+              tags$strong("Note: "), "Counts show the current state of endpoint data (endpoint_names field). ",
+              "Developers may still appear in Lantern filters if organization records exist in the database ",
+              "from previous successful extractions or as 'Unknown' organization placeholders. ",
+              "Check the 'Organizations' column to see if database records exist."
+            )
+          ),
+          fluidRow(
+            column(width = 3,
+              div(class = "metric-card",
+                div(class = "metric-title",
+                  tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
+                  "Developers w/ No Org Data"
+                ),
+                div(class = "metric-value", style = "color: #dc3545;",
+                  textOutput(ns("developers_no_org_data_count"), inline = TRUE)
+                )
+              )
+            ),
+            column(width = 3,
+              div(class = "metric-card",
+                div(class = "metric-title",
+                  tags$i(class = "fa fa-inbox", style = "margin-right: 5px;"),
+                  "Endpoints w/ No Org Data"
+                ),
+                div(class = "metric-value", style = "color: #dc3545;",
+                  textOutput(ns("endpoints_no_org_data_count"), inline = TRUE)
+                ),
+                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
+                  "Endpoints with no organization data"
+                )
+              )
+            ),
+            column(width = 3,
+              div(class = "metric-card",
+                div(class = "metric-title",
+                  tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
+                  "Shared List Sources"
+                ),
+                div(class = "metric-value", style = "color: #ffc107;",
+                  textOutput(ns("shared_list_sources_count"), inline = TRUE)
+                ),
+                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
+                  "URLs shared by multiple endpoints"
+                )
+              )
+            ),
+            column(width = 3,
+              div(class = "metric-card",
+                div(class = "metric-title",
+                  tags$i(class = "fa fa-unlink", style = "margin-right: 5px;"),
+                  "Inaccessible Sources"
+                ),
+                div(class = "metric-value", style = "color: #dc3545;",
+                  textOutput(ns("inaccessible_list_sources_count"), inline = TRUE)
+                ),
+                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
+                  "Unreachable list sources"
+                )
+              )
+            )
+          ),
+          div(style = "margin-top: 20px;",
+            h4(class = "subsection-header",
+               tags$i(class = "fa fa-table", style = "margin-right: 5px;"),
+               "All Developers with Data Issues"),
+            p(style = "color: #5a6c7d; font-size: 0.9em; margin-bottom: 10px;",
+              "Complete list of all developers showing endpoints, organizations extracted, and data completeness."
+            ),
+            reactable::reactableOutput(ns("developer_data_issues_table"))
+          )
         )
       ),
       
@@ -663,23 +743,23 @@ developerfeedbackmodule <- function(
   identifier_type_summary <- reactive({
     id_data <- filtered_identifier_summary()
     summary_data <- filtered_quality_summary()
-    
+
     if (nrow(id_data) == 0 || nrow(summary_data) == 0) {
       return(list(
         npi_count = 0, clia_count = 0, naic_count = 0, other_count = 0, no_identifier_count = 0,
         npi_valid = 0, clia_valid = 0, naic_valid = 0,
         npi_invalid = 0, clia_invalid = 0, naic_invalid = 0, other_invalid = 0,
         total_identifiers = 0, total_conformant = 0,
-        npi_percentage = 0, clia_percentage = 0, naic_percentage = 0, other_percentage = 0, 
+        npi_percentage = 0, clia_percentage = 0, naic_percentage = 0, other_percentage = 0,
         no_identifier_percentage = 0, conformance_rate = 0,
         orgs_with_no_identifiers = 0, orgs_with_invalid_only = 0, orgs_with_valid = 0,
         total_organizations = 0
       ))
     }
-    
+
     id_row <- id_data[1, ]
     summary_row <- summary_data[1, ]
-    
+
     # Convert to list with proper numeric values
     list(
       npi_count = as.numeric(id_row$total_npi),
@@ -700,7 +780,7 @@ developerfeedbackmodule <- function(
       clia_percentage = as.numeric(id_row$clia_percentage),
       naic_percentage = as.numeric(id_row$naic_percentage),
       other_percentage = as.numeric(id_row$other_percentage),
-      no_identifier_percentage = if(as.numeric(summary_row$total_organizations) > 0) 
+      no_identifier_percentage = if(as.numeric(summary_row$total_organizations) > 0)
         round(as.numeric(id_row$total_no_identifiers) / as.numeric(summary_row$total_organizations) * 100, 1) else 0,
       conformance_rate = as.numeric(id_row$conformance_rate),
       orgs_with_no_identifiers = as.numeric(summary_row$organizations_with_no_identifiers),
@@ -708,6 +788,50 @@ developerfeedbackmodule <- function(
       orgs_with_valid = as.numeric(summary_row$organizations_with_valid_identifiers),
       total_organizations = as.numeric(summary_row$total_organizations)
     )
+  })
+
+  # Data issues summary - system-wide statistics
+  data_issues_summary <- reactive({
+    # Query the data issues summary materialized view
+    query_str <- "SELECT * FROM mv_data_issues_summary LIMIT 1"
+
+    result <- tbl(db_connection, sql(query_str)) %>% collect()
+
+    if (nrow(result) == 0) {
+      return(list(
+        developers_with_no_org_data_count = 0,
+        endpoints_with_no_org_data_count = 0,
+        shared_list_sources_count = 0,
+        endpoints_sharing_list_sources_count = 0,
+        inaccessible_list_sources_count = 0,
+        endpoints_with_inaccessible_list_sources_count = 0
+      ))
+    }
+
+    # Extract the first (and only) row
+    row <- result[1, ]
+
+    # Convert to list with proper numeric values
+    list(
+      developers_with_no_org_data_count = as.numeric(row$developers_with_no_org_data_count),
+      endpoints_with_no_org_data_count = as.numeric(row$endpoints_with_no_org_data_count),
+      shared_list_sources_count = as.numeric(row$shared_list_sources_count),
+      endpoints_sharing_list_sources_count = as.numeric(row$endpoints_sharing_list_sources_count),
+      inaccessible_list_sources_count = as.numeric(row$inaccessible_list_sources_count),
+      endpoints_with_inaccessible_list_sources_count = as.numeric(row$endpoints_with_inaccessible_list_sources_count)
+    )
+  })
+
+  # Developer data issues - comprehensive view
+  developer_data_issues <- reactive({
+    # Query the comprehensive developer data issues view
+    query_str <- "SELECT * FROM mv_developer_data_issues ORDER BY
+                  no_org_data_endpoints DESC,
+                  vendor_name"
+
+    result <- tbl(db_connection, sql(query_str)) %>% collect()
+
+    return(result)
   })
   
   # Render summary outputs
@@ -1176,10 +1300,146 @@ developerfeedbackmodule <- function(
     )
   })
   
+  # Data Issues outputs
+  output$developers_no_org_data_count <- renderText({
+    format(data_issues_summary()$developers_with_no_org_data_count, big.mark = ",")
+  })
+
+  output$endpoints_no_org_data_count <- renderText({
+    format(data_issues_summary()$endpoints_with_no_org_data_count, big.mark = ",")
+  })
+
+  output$shared_list_sources_count <- renderText({
+    format(data_issues_summary()$shared_list_sources_count, big.mark = ",")
+  })
+
+  output$inaccessible_list_sources_count <- renderText({
+    format(data_issues_summary()$inaccessible_list_sources_count, big.mark = ",")
+  })
+
+  # Comprehensive developer data issues table
+  output$developer_data_issues_table <- reactable::renderReactable({
+    req(developer_data_issues())
+
+    dev_data <- developer_data_issues()
+
+    if (nrow(dev_data) == 0) {
+      # Return empty state
+      dev_data <- data.frame(
+        vendor_name = "No data issues found",
+        total_endpoints = 0,
+        endpoints_with_org_data = 0,
+        no_org_data_endpoints = 0,
+        accessible_endpoints = 0,
+        inaccessible_endpoints = 0,
+        organization_count = 0,
+        data_completeness_percentage = 100,
+        stringsAsFactors = FALSE
+      )
+    }
+
+    reactable(
+      dev_data,
+      filterable = TRUE,
+      searchable = TRUE,
+      defaultPageSize = 20,
+      columns = list(
+        vendor_name = colDef(
+          name = "Developer Name",
+          minWidth = 200,
+          style = list(fontWeight = 600, color = "#2c3e50")
+        ),
+        total_endpoints = colDef(
+          name = "Total Endpoints",
+          width = 120,
+          format = colFormat(separators = TRUE),
+          align = "center"
+        ),
+        endpoints_with_org_data = colDef(
+          name = "With Org Data",
+          width = 120,
+          format = colFormat(separators = TRUE),
+          align = "center",
+          style = function(value) {
+            if (value > 0) list(color = "#28a745", fontWeight = 600)
+            else list(color = "#dc3545", fontWeight = 600)
+          }
+        ),
+        no_org_data_endpoints = colDef(
+          name = "No Org Data",
+          width = 120,
+          format = colFormat(separators = TRUE),
+          align = "center",
+          style = function(value) {
+            if (value > 0) list(color = "#dc3545", fontWeight = 700)
+            else list(color = "#6c757d")
+          }
+        ),
+        accessible_endpoints = colDef(
+          name = "Accessible",
+          width = 100,
+          format = colFormat(separators = TRUE),
+          align = "center",
+          style = function(value) {
+            if (value > 0) list(color = "#28a745", fontWeight = 600)
+            else list(color = "#6c757d")
+          }
+        ),
+        inaccessible_endpoints = colDef(
+          name = "Inaccessible",
+          width = 110,
+          format = colFormat(separators = TRUE),
+          align = "center",
+          style = function(value) {
+            if (value > 0) list(color = "#dc3545", fontWeight = 600)
+            else list(color = "#6c757d")
+          }
+        ),
+        organization_count = colDef(
+          name = "Organizations",
+          width = 120,
+          format = colFormat(separators = TRUE),
+          align = "center",
+          style = function(value) {
+            if (value == 0) list(color = "#dc3545", fontWeight = 600)
+            else list(color = "#28a745", fontWeight = 600)
+          }
+        ),
+        data_completeness_percentage = colDef(
+          name = "Completeness %",
+          width = 130,
+          format = colFormat(digits = 1, suffix = "%"),
+          align = "center",
+          style = function(value) {
+            if (value == 0) list(color = "#dc3545", fontWeight = 700, backgroundColor = "#fff5f5")
+            else if (value < 50) list(color = "#ffc107", fontWeight = 600, backgroundColor = "#fffbf0")
+            else if (value < 100) list(color = "#17a2b8", fontWeight = 600)
+            else list(color = "#28a745", fontWeight = 600)
+          }
+        )
+      ),
+      striped = TRUE,
+      highlight = TRUE,
+      bordered = TRUE,
+      defaultSorted = list(no_org_data_endpoints = "desc"),
+      theme = reactableTheme(
+        borderColor = "#e0e0e0",
+        stripedColor = "#f8f9fa",
+        highlightColor = "#f0f8ff",
+        headerStyle = list(
+          background = "#1B5A7F",
+          color = "white",
+          fontWeight = 600,
+          fontSize = "13px"
+        )
+      )
+    )
+  })
+
   # Enhanced recommendations
   output$recommendations <- renderUI({
     req(quality_summary(), identifier_type_summary())
-    
+
     summary <- quality_summary()
     id_summary <- identifier_type_summary()
     recommendations <- list()
