@@ -83,6 +83,18 @@ endpoints_with_inaccessible_list_sources AS (
         COUNT(DISTINCT fe.url) as count
     FROM fhir_endpoints fe
     INNER JOIN inaccessible_list_sources ils ON fe.list_source = ils.list_source
+),
+-- Developers with empty FHIR bundles (list_sources with no endpoints)
+developers_with_empty_bundles AS (
+    SELECT
+        lsi.developer_name,
+        lsi.list_source
+    FROM list_source_info lsi
+    LEFT JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
+    WHERE lsi.developer_name IS NOT NULL
+      AND lsi.developer_name != ''
+    GROUP BY lsi.developer_name, lsi.list_source
+    HAVING COUNT(fe.url) = 0
 )
 SELECT
     (SELECT COUNT(*) FROM developers_with_no_org_data) as developers_with_no_org_data_count,
@@ -90,7 +102,8 @@ SELECT
     (SELECT COUNT(*) FROM shared_list_sources) as shared_list_sources_count,
     (SELECT count FROM endpoints_sharing_list_sources) as endpoints_sharing_list_sources_count,
     (SELECT COUNT(*) FROM inaccessible_list_sources) as inaccessible_list_sources_count,
-    (SELECT count FROM endpoints_with_inaccessible_list_sources) as endpoints_with_inaccessible_list_sources_count;
+    (SELECT count FROM endpoints_with_inaccessible_list_sources) as endpoints_with_inaccessible_list_sources_count,
+    (SELECT COUNT(DISTINCT developer_name) FROM developers_with_empty_bundles) as developers_with_empty_bundles_count;
 
 -- Create index for faster refresh
 CREATE INDEX idx_mv_data_issues_summary ON mv_data_issues_summary(developers_with_no_org_data_count);
@@ -190,6 +203,17 @@ vendor_organizations AS (
         AND feo.organization_name != ''
         AND fei.requested_fhir_version = 'None'
     GROUP BY v.name
+),
+-- Developers with empty bundles (list_sources returning no endpoints)
+developers_empty_bundles AS (
+    SELECT DISTINCT
+        lsi.developer_name as vendor_name
+    FROM list_source_info lsi
+    LEFT JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
+    WHERE lsi.developer_name IS NOT NULL
+      AND lsi.developer_name != ''
+    GROUP BY lsi.developer_name, lsi.list_source
+    HAVING COUNT(fe.url) = 0
 )
 SELECT
     av.vendor_name,
@@ -202,7 +226,11 @@ SELECT
     CASE
         WHEN COALESCE(ve.total_endpoints, 0) = 0 THEN 0
         ELSE ROUND((COALESCE(vewd.endpoints_with_data, 0)::numeric / ve.total_endpoints::numeric) * 100, 1)
-    END as data_completeness_percentage
+    END as data_completeness_percentage,
+    CASE
+        WHEN deb.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as has_empty_bundle
 FROM all_vendors av
 LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
 LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
@@ -210,6 +238,7 @@ LEFT JOIN vendor_no_org_data vnod ON av.vendor_name = vnod.vendor_name
 LEFT JOIN vendor_accessible_endpoints vae ON av.vendor_name = vae.vendor_name
 LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
 LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
+LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
 WHERE COALESCE(ve.total_endpoints, 0) > 0
 ORDER BY
     CASE

@@ -432,6 +432,22 @@ developerfeedbackmodule_UI <- function(id) {
               )
             )
           ),
+          fluidRow(style = "margin-top: 15px;",
+            column(width = 3,
+              div(class = "metric-card",
+                div(class = "metric-title",
+                  tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
+                  "Empty FHIR Bundles"
+                ),
+                div(class = "metric-value", style = "color: #dc3545;",
+                  textOutput(ns("developers_empty_bundles_count"), inline = TRUE)
+                ),
+                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
+                  "Developers with no endpoints discovered"
+                )
+              )
+            )
+          ),
           div(style = "margin-top: 20px;",
             h4(class = "subsection-header",
                tags$i(class = "fa fa-table", style = "margin-right: 5px;"),
@@ -804,7 +820,8 @@ developerfeedbackmodule <- function(
         shared_list_sources_count = 0,
         endpoints_sharing_list_sources_count = 0,
         inaccessible_list_sources_count = 0,
-        endpoints_with_inaccessible_list_sources_count = 0
+        endpoints_with_inaccessible_list_sources_count = 0,
+        developers_with_empty_bundles_count = 0
       ))
     }
 
@@ -818,7 +835,8 @@ developerfeedbackmodule <- function(
       shared_list_sources_count = as.numeric(row$shared_list_sources_count),
       endpoints_sharing_list_sources_count = as.numeric(row$endpoints_sharing_list_sources_count),
       inaccessible_list_sources_count = as.numeric(row$inaccessible_list_sources_count),
-      endpoints_with_inaccessible_list_sources_count = as.numeric(row$endpoints_with_inaccessible_list_sources_count)
+      endpoints_with_inaccessible_list_sources_count = as.numeric(row$endpoints_with_inaccessible_list_sources_count),
+      developers_with_empty_bundles_count = as.numeric(row$developers_with_empty_bundles_count)
     )
   })
 
@@ -1317,6 +1335,10 @@ developerfeedbackmodule <- function(
     format(data_issues_summary()$inaccessible_list_sources_count, big.mark = ",")
   })
 
+  output$developers_empty_bundles_count <- renderText({
+    format(data_issues_summary()$developers_with_empty_bundles_count, big.mark = ",")
+  })
+
   # Comprehensive developer data issues table
   output$developer_data_issues_table <- reactable::renderReactable({
     req(developer_data_issues())
@@ -1334,6 +1356,7 @@ developerfeedbackmodule <- function(
         inaccessible_endpoints = 0,
         organization_count = 0,
         data_completeness_percentage = 100,
+        has_empty_bundle = FALSE,
         stringsAsFactors = FALSE
       )
     }
@@ -1415,6 +1438,26 @@ developerfeedbackmodule <- function(
             else if (value < 50) list(color = "#ffc107", fontWeight = 600, backgroundColor = "#fffbf0")
             else if (value < 100) list(color = "#17a2b8", fontWeight = 600)
             else list(color = "#28a745", fontWeight = 600)
+          }
+        ),
+        has_empty_bundle = colDef(
+          name = "Empty Bundle",
+          width = 120,
+          align = "center",
+          cell = function(value) {
+            if (value == TRUE) {
+              tags$span(
+                style = "color: #dc3545; font-weight: 700;",
+                tags$i(class = "fa fa-check-circle", style = "margin-right: 5px;"),
+                "Yes"
+              )
+            } else {
+              tags$span(
+                style = "color: #6c757d;",
+                tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
+                "No"
+              )
+            }
           }
         )
       ),
