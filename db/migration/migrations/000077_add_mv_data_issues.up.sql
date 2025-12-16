@@ -250,7 +250,8 @@ LEFT JOIN vendor_accessible_endpoints vae ON av.vendor_name = vae.vendor_name
 LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
 LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
 LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
-WHERE COALESCE(ve.total_endpoints, 0) > 0
+-- Removed: WHERE COALESCE(ve.total_endpoints, 0) > 0
+-- This was filtering out developers with empty bundles who have 0 endpoints
 ORDER BY
     CASE
         WHEN COALESCE(vnod.no_org_data_endpoints, 0) = COALESCE(ve.total_endpoints, 0)
