@@ -44,24 +44,26 @@ endpoints_with_no_org_data AS (
         (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
         AND sfem.requested_fhir_version = 'None'
 ),
--- Endpoints sharing list_source URLs (multiple endpoints from same source)
+-- Developers sharing the same list_source URL with other developers
 shared_list_sources AS (
     SELECT
-        fe.list_source,
-        COUNT(DISTINCT fe.url) as endpoint_count
-    FROM fhir_endpoints fe
+        lsi.list_source,
+        COUNT(DISTINCT lsi.developer_name) as developer_count
+    FROM list_source_info lsi
     WHERE
-        fe.list_source IS NOT NULL
-        AND fe.list_source != ''
-    GROUP BY fe.list_source
-    HAVING COUNT(DISTINCT fe.url) > 1
+        lsi.list_source IS NOT NULL
+        AND lsi.list_source != ''
+        AND lsi.developer_name IS NOT NULL
+        AND lsi.developer_name != ''
+    GROUP BY lsi.list_source
+    HAVING COUNT(DISTINCT lsi.developer_name) > 1
 ),
--- Count endpoints from shared list_sources
-endpoints_sharing_list_sources AS (
+-- Count developers who share list_sources with other developers
+developers_sharing_list_sources AS (
     SELECT
-        COUNT(DISTINCT fe.url) as count
-    FROM fhir_endpoints fe
-    INNER JOIN shared_list_sources sls ON fe.list_source = sls.list_source
+        COUNT(DISTINCT lsi.developer_name) as count
+    FROM list_source_info lsi
+    INNER JOIN shared_list_sources sls ON lsi.list_source = sls.list_source
 ),
 -- Inaccessible list_source URLs (HTTP errors)
 inaccessible_list_sources AS (
@@ -100,7 +102,7 @@ SELECT
     (SELECT COUNT(*) FROM developers_with_no_org_data) as developers_with_no_org_data_count,
     (SELECT count FROM endpoints_with_no_org_data) as endpoints_with_no_org_data_count,
     (SELECT COUNT(*) FROM shared_list_sources) as shared_list_sources_count,
-    (SELECT count FROM endpoints_sharing_list_sources) as endpoints_sharing_list_sources_count,
+    (SELECT count FROM developers_sharing_list_sources) as developers_sharing_list_sources_count,
     (SELECT COUNT(*) FROM inaccessible_list_sources) as inaccessible_list_sources_count,
     (SELECT count FROM endpoints_with_inaccessible_list_sources) as endpoints_with_inaccessible_list_sources_count,
     (SELECT COUNT(DISTINCT developer_name) FROM developers_with_empty_bundles) as developers_with_empty_bundles_count;

@@ -413,7 +413,7 @@ developerfeedbackmodule_UI <- function(id) {
                   textOutput(ns("shared_list_sources_count"), inline = TRUE)
                 ),
                 div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "URLs shared by multiple endpoints"
+                  "Developers sharing service based URLs with other developers"
                 )
               )
             ),
@@ -818,7 +818,7 @@ developerfeedbackmodule <- function(
         developers_with_no_org_data_count = 0,
         endpoints_with_no_org_data_count = 0,
         shared_list_sources_count = 0,
-        endpoints_sharing_list_sources_count = 0,
+        developers_sharing_list_sources_count = 0,
         inaccessible_list_sources_count = 0,
         endpoints_with_inaccessible_list_sources_count = 0,
         developers_with_empty_bundles_count = 0
@@ -833,7 +833,7 @@ developerfeedbackmodule <- function(
       developers_with_no_org_data_count = as.numeric(row$developers_with_no_org_data_count),
       endpoints_with_no_org_data_count = as.numeric(row$endpoints_with_no_org_data_count),
       shared_list_sources_count = as.numeric(row$shared_list_sources_count),
-      endpoints_sharing_list_sources_count = as.numeric(row$endpoints_sharing_list_sources_count),
+      developers_sharing_list_sources_count = as.numeric(row$developers_sharing_list_sources_count),
       inaccessible_list_sources_count = as.numeric(row$inaccessible_list_sources_count),
       endpoints_with_inaccessible_list_sources_count = as.numeric(row$endpoints_with_inaccessible_list_sources_count),
       developers_with_empty_bundles_count = as.numeric(row$developers_with_empty_bundles_count)
