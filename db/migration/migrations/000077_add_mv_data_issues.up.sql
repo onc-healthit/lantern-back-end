@@ -116,12 +116,23 @@ CREATE INDEX idx_mv_data_issues_summary ON mv_data_issues_summary(developers_wit
 
 CREATE MATERIALIZED VIEW mv_developer_data_issues AS
 WITH
--- Get all unique vendors from fhir_endpoints_info
+-- Get all unique vendors from fhir_endpoints_info AND list_source_info (to include empty bundle developers)
 all_vendors AS (
     SELECT DISTINCT COALESCE(v.name, 'Unknown') as vendor_name
     FROM fhir_endpoints_info fei
     LEFT JOIN vendors v ON fei.vendor_id = v.id
     WHERE fei.requested_fhir_version = 'None'
+
+    UNION
+
+    -- Include developers with empty bundles (list_sources with no endpoints)
+    SELECT DISTINCT lsi.developer_name as vendor_name
+    FROM list_source_info lsi
+    LEFT JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
+    WHERE lsi.developer_name IS NOT NULL
+      AND lsi.developer_name != ''
+    GROUP BY lsi.developer_name, lsi.list_source
+    HAVING COUNT(fe.url) = 0
 ),
 -- Total endpoints per vendor
 vendor_endpoints AS (
