@@ -413,7 +413,7 @@ developerfeedbackmodule_UI <- function(id) {
                   textOutput(ns("shared_list_sources_count"), inline = TRUE)
                 ),
                 div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Developers sharing service based URLs with other developers"
+                  "Vendors with multiple CHPL list sources"
                 )
               )
             ),

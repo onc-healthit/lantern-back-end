@@ -103,6 +103,8 @@ func main() {
 	}
 
 	// UPSERT statement - inserts new list_source or updates existing one
+	// Multiple developers can share the same list_source URL
+	// Uses composite unique constraint (list_source, developer_name)
 	addListSourceStatement := `
 	INSERT INTO list_source_info (
 		list_source,
@@ -110,10 +112,9 @@ func main() {
 		developer_name
 	)
 	VALUES ($1, $2, $3)
-	ON CONFLICT (list_source)
+	ON CONFLICT (list_source, developer_name)
 	DO UPDATE SET
-		is_chpl = EXCLUDED.is_chpl,
-		developer_name = EXCLUDED.developer_name;
+		is_chpl = EXCLUDED.is_chpl;
 	`
 
 	if sourceCategory == "State Medicaid" {

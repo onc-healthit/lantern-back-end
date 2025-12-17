@@ -11,16 +11,29 @@ ADD COLUMN IF NOT EXISTS developer_name VARCHAR(500);
 CREATE INDEX IF NOT EXISTS idx_list_source_info_developer_name
 ON list_source_info(developer_name);
 
--- Add unique constraint on list_source if it doesn't exist
--- This is required for UPSERT (INSERT ... ON CONFLICT) functionality
+-- Add composite unique constraint on (list_source, developer_name)
+-- Multiple developers can share the same list_source URL (e.g., Dev XYZ and Dev ABC both use google.com)
+-- This allows the same list_source to appear multiple times with different developers
+-- while preventing duplicate (list_source, developer_name) combinations
+-- Required for UPSERT (INSERT ... ON CONFLICT) functionality
 DO $$
 BEGIN
-    IF NOT EXISTS (
+    -- Drop old single-column unique constraint if it exists
+    IF EXISTS (
         SELECT 1 FROM pg_constraint
         WHERE conname = 'list_source_info_list_source_key'
     ) THEN
         ALTER TABLE list_source_info
-        ADD CONSTRAINT list_source_info_list_source_key UNIQUE (list_source);
+        DROP CONSTRAINT list_source_info_list_source_key;
+    END IF;
+
+    -- Add new composite unique constraint
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'list_source_info_list_source_developer_key'
+    ) THEN
+        ALTER TABLE list_source_info
+        ADD CONSTRAINT list_source_info_list_source_developer_key UNIQUE (list_source, developer_name);
     END IF;
 END$$;
 
