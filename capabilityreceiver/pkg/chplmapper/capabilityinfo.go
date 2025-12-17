@@ -79,7 +79,7 @@ type ChplCertifiedProduct struct {
 
 type ChplMapResults struct {
 	ChplProductIDs []string
-	ChplDeveloper  string
+	ChplDeveloper  []string
 }
 
 // MatchEndpointToVendor assigns a VendorID to an endpoint based on
@@ -239,7 +239,7 @@ func MatchEndpointToVendor(
 }
 
 // MatchEndpointToProduct creates the database association between the endpoint and the HealthITProduct,
-func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, listSourceMap map[string]ChplMapResults) error {
+func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpointInfo, store *postgresql.Store, matchFile string, productIds []string) error {
 
 	softwareName := ""
 	softwareVersion := ""
@@ -267,20 +267,12 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 		}
 	}
 
-	// If endpoint's list source found in CHPL endpoint list, match to product associated with that list source
-	fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, ep.URL)
-	if err != nil {
-		return errors.Wrap(err, "error getting fhir endpoints from DB")
-	}
-
-	for _, fhirEndpoint := range fhirEndpointList {
-		chplIDList := listSourceMap[fhirEndpoint.ListSource].ChplProductIDs
-		if len(chplIDList) > 0 {
-			chplIDArr = append(chplIDArr, chplIDList...)
-		}
+	if len(productIds) > 0 {
+		chplIDArr = append(chplIDArr, productIds...)
 	}
 
 	var healthITProductsArr []*endpointmanager.HealthITProduct
+	var err error
 	if len(softwareName) != 0 {
 		healthITProductsArr, err = store.GetActiveHealthITProductsUsingName(ctx, softwareName)
 		if err != nil {
@@ -301,6 +293,8 @@ func MatchEndpointToProduct(ctx context.Context, ep *endpointmanager.FHIREndpoin
 			}
 		}
 	}
+
+	log.Info("chplIDArr: ", chplIDArr, "\n")
 
 	for _, chplID := range chplIDArr {
 		healthITProductID, err := store.GetHealthITProductIDByCHPLID(ctx, chplID)
@@ -498,7 +492,7 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 			var listSource = obj.ListSourceURL
 			var softwareProducts = obj.SoftwareProducts
 
-			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: ""}
+			chplMapResult := ChplMapResults{ChplProductIDs: []string{}, ChplDeveloper: []string{}}
 
 			chplID := ""
 
@@ -511,9 +505,8 @@ func OpenCHPLEndpointListInfoFile(filepath string) (map[string]ChplMapResults, e
 			}
 
 			if listSource != "" {
-				if len(softwareProducts) > 0 {
-					// Developer is the same for all products, just grab first one
-					chplMapResult.ChplDeveloper = softwareProducts[0].Developer.Name
+				for _, softwareProduct := range softwareProducts {
+					chplMapResult.ChplDeveloper = append(chplMapResult.ChplDeveloper, softwareProduct.Developer.Name)
 				}
 
 				softwareListMap[listSource] = chplMapResult
