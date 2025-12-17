@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -15,26 +14,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
-
-// Store the logs in text file
-func init() {
-	logDir := "/etc/lantern/logs"
-	os.MkdirAll(logDir, 0755)
-
-	logFile := logDir + "/chplquerier_logs.txt"
-	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err != nil {
-		log.Warn("Could not open CHPL log file, using console only: ", err)
-		return
-	}
-
-	mw := io.MultiWriter(os.Stdout, f)
-	log.SetOutput(mw)
-
-	log.SetFormatter(&log.TextFormatter{
-		FullTimestamp: true,
-	})
-}
 
 var chplDomain string = "https://chpl.healthit.gov"
 var chplAPIPath string = "/rest"
