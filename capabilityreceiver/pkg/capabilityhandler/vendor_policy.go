@@ -28,17 +28,15 @@ var fluffWords = []string{
 }
 
 var MedicaidListSourceToVendor = map[string]string{
-	"1up (Gainwell)":      "1up (Gainwell)",
-	"Acentra":             "Acentra",
-	"CNSI Provider One":   "CNSI Provider One",
-	"Conduent":            "Conduent",
-	"Edifecs":             "Edifecs",
-	"Safhir from Onyx":    "Safhir from Onyx",
-	"Salesforce/MiHIN":    "Salesforce/MiHIN",
-	"State Developed":     "State Developed",
-	"Implemented":         "State Developed",
-	"Not Yet Implemented": "Not Available",
-	"Offline":             "Not Available",
+	"1up (Gainwell)":    "1up (Gainwell)",
+	"Acentra":           "Acentra",
+	"CNSI Provider One": "CNSI Provider One",
+	"Conduent":          "Conduent",
+	"Edifecs":           "Edifecs",
+	"Safhir from Onyx":  "Safhir from Onyx",
+	"Salesforce/MiHIN":  "Salesforce/MiHIN",
+	"State Developed":   "State Developed",
+	"Not Available":     "Not Available",
 }
 
 var MedicaidUnknownListSources = map[string]bool{
