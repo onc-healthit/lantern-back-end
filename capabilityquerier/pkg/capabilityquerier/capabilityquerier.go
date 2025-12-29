@@ -413,19 +413,15 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	httpResponseCode = resp.StatusCode
 	if httpResponseCode == http.StatusOK {
-		respMimeType := resp.Header.Get("Content-Type")
-		// endpoints generally return an xml mime type by default.
-		// checking that it's a json mime type confirms that it processes the JSON type request.
-		// however, it doesn't necessarily match the request type exactly and seems to cache the
-		// first JSON request type it receives and continues to respond with that.
-		if isJSONMIMEType(respMimeType) {
-			defer resp.Body.Close()
-			mimeMatches = true
+		// LANTERN-990: Removed the if statement that checks whether the response header "Content-Type" value
+		// contains the term "json" or not. It was skipping valid JSON responses if those did not have this header value set.
 
-			capStat, err = io.ReadAll(resp.Body)
-			if err != nil {
-				return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
-			}
+		defer resp.Body.Close()
+		mimeMatches = true
+
+		capStat, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
 		}
 	}
 
