@@ -84,7 +84,8 @@ function(input, output, session) { #nolint
         "organizations_page",
         reactive(input$fhir_version),
         reactive(input$vendor),
-        reactive(input$match_confidence))
+        reactive(input$match_confidence),
+        reactive(input$is_chpl))
 
       callModule(
         capabilitystatementsizemodule,
@@ -411,7 +412,8 @@ function(input, output, session) { #nolint
             actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
           ),
           fhirDropdown_noLabel),
-          column(width = 4, developerDropdown)
+          column(width = 4, developerDropdown),
+          column(width = 4, chplDropdown)
         )
       }
     }

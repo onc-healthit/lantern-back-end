@@ -54,7 +54,8 @@ organizationsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_confidence
+  sel_confidence,
+  sel_is_chpl
 ) {
   ns <- session$ns
 
@@ -86,8 +87,9 @@ organizationsmodule <- function(
   org_total_pages <- reactive({
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
+    is_chpl <- sel_is_chpl()
 
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), sel_is_chpl())
 
     count_query_str <- "
       WITH base_data AS (
@@ -99,7 +101,8 @@ organizationsmodule <- function(
           org_urls_html as org_url,
           endpoint_urls_html as url,
           fhir_versions_array,
-          vendor_names_array
+          vendor_names_array,
+          is_chpl_array
         FROM mv_organizations_final
         WHERE TRUE"
     
@@ -117,6 +120,12 @@ organizationsmodule <- function(
       count_params$vendor <- vendor
     }
 
+    # Add is_chpl filter using array overlap
+    if (is_chpl != "All") {
+      count_query_str <- paste0(count_query_str, " AND is_chpl_array && ARRAY[{is_chpl}]")
+      count_params$is_chpl <- is_chpl
+    }
+
     # Add search filter if present
     search_term <- input$org_search_query
     if (!is.null(search_term) && search_term != "") {
@@ -127,7 +136,8 @@ organizationsmodule <- function(
         addresses_html ILIKE {search_pattern} OR
         endpoint_urls_html ILIKE {search_pattern} OR
         fhir_versions_html ILIKE {search_pattern} OR
-        vendor_names_html ILIKE {search_pattern})")
+        vendor_names_html ILIKE {search_pattern} OR
+        is_chpl_html ILIKE {search_pattern})")
       count_params$search_pattern <- paste0("%", search_term, "%")
     }
 
@@ -151,10 +161,16 @@ organizationsmodule <- function(
           string_agg(
             DISTINCT vendor_name,
             '<br/>'
-          ) as vendor_name
+          ) as vendor_name,
+          -- Only show is_chpl values that match the current filter
+          string_agg(
+            DISTINCT chpl_value,
+            '<br/>'
+          ) as is_chpl
         FROM base_data bd
         CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
         CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+        CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
         WHERE 1=1")
 
     # Apply the same filters to the individual FHIR versions and vendors
@@ -166,6 +182,11 @@ organizationsmodule <- function(
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
       count_query_str <- paste0(count_query_str, " AND vendor_name = {vendor_display}")
       count_params$vendor_display <- vendor
+    }
+
+    if (is_chpl != "All") {
+      count_query_str <- paste0(count_query_str, " AND chpl_value = {is_chpl_display}")
+      count_params$is_chpl_display <- is_chpl
     }
 
     # Add GROUP BY to match the data query exactly
@@ -201,7 +222,7 @@ organizationsmodule <- function(
   })
 
   # Reset to first page on any filter/search change 
-  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence(), input$org_search_query), {
+  observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence(), sel_is_chpl(), input$org_search_query), {
     org_page_state(1)
     updateNumericInput(session, "org_page_selector", value = 1)
   })
@@ -260,8 +281,9 @@ organizationsmodule <- function(
   paged_endpoint_list_orgs <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
+    current_is_chpl <- sel_is_chpl()
 
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, current_is_chpl)
 
     # Generate unique request ID
     request_id <- isolate(current_request_id()) + 1
@@ -272,6 +294,7 @@ organizationsmodule <- function(
     is_initial_load <- (
         is_all_fhir_versions_selected() &&
         sel_vendor() == ui_special_values$ALL_DEVELOPERS &&
+        sel_is_chpl() == "All" &&
         (is.null(input$org_search_query) || input$org_search_query == "")
     )
  
@@ -288,7 +311,8 @@ organizationsmodule <- function(
           org_urls_html as org_url,
           endpoint_urls_html as url,
           fhir_versions_array,
-          vendor_names_array
+          vendor_names_array,
+          is_chpl_array
         FROM mv_organizations_final
         WHERE TRUE"
 
@@ -306,6 +330,12 @@ organizationsmodule <- function(
       params$vendor <- current_vendor
     }
 
+    # Add is_chpl filter using array overlap
+    if (current_is_chpl != "All") {
+      query_str <- paste0(query_str, " AND is_chpl_array && ARRAY[{is_chpl}]")
+      params$is_chpl <- current_is_chpl
+    }
+
     # Add search filter if present
     search_term <- input$org_search_query
     if (!is.null(search_term) && search_term != "") {
@@ -316,7 +346,8 @@ organizationsmodule <- function(
         addresses_html ILIKE {search_pattern} OR
         endpoint_urls_html ILIKE {search_pattern} OR
         fhir_versions_html ILIKE {search_pattern} OR
-        vendor_names_html ILIKE {search_pattern})")
+        vendor_names_html ILIKE {search_pattern} OR
+        is_chpl_html ILIKE {search_pattern})")
       params$search_pattern <- paste0("%", search_term, "%")
     }
 
@@ -339,10 +370,16 @@ organizationsmodule <- function(
         string_agg(
           DISTINCT vendor_name,
           '<br/>'
-        ) as vendor_name
+        ) as vendor_name,
+        -- Only show is_chpl values that match the current filter
+        string_agg(
+          DISTINCT chpl_value,
+          '<br/>'
+        ) as is_chpl
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+      CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
       WHERE 1=1")
 
     # Apply the same filters to the individual FHIR versions and vendors
@@ -354,6 +391,11 @@ organizationsmodule <- function(
     if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
       query_str <- paste0(query_str, " AND vendor_name = {vendor_display}")
       params$vendor_display <- current_vendor
+    }
+
+    if (current_is_chpl != "All") {
+      query_str <- paste0(query_str, " AND chpl_value = {is_chpl_display}")
+      params$is_chpl_display <- current_is_chpl
     }
 
     # Add GROUP BY, ordering and pagination
@@ -397,6 +439,10 @@ organizationsmodule <- function(
           address = case_when(
             is.na(address) ~ "",
             TRUE ~ address
+          ),
+          is_chpl = case_when(
+            is.na(is_chpl) ~ "",
+            TRUE ~ is_chpl
           )
         )
       return(result)
@@ -410,8 +456,9 @@ organizationsmodule <- function(
   csv_format <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
+    current_is_chpl <- sel_is_chpl()
 
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, current_is_chpl)
 
     # Build query for CSV export using the same filtering logic
     query_str <- "
@@ -425,13 +472,15 @@ organizationsmodule <- function(
           endpoint_urls_csv as url,
           fhir_versions_array,
           vendor_names_array,
+          is_chpl_array,
           -- Include HTML fields for search functionality
           identifier_types_html,
           identifier_values_html,
           addresses_html,
           endpoint_urls_html,
           fhir_versions_html,
-          vendor_names_html
+          vendor_names_html,
+          is_chpl_html
         FROM mv_organizations_final
         WHERE TRUE"
     
@@ -449,6 +498,12 @@ organizationsmodule <- function(
       params$vendor <- current_vendor
     }
 
+    # Add is_chpl filter using array overlap
+    if (current_is_chpl != "All") {
+      query_str <- paste0(query_str, " AND is_chpl_array && ARRAY[{is_chpl}]")
+      params$is_chpl <- current_is_chpl
+    }
+
     # Add search filter if present (same logic as pagination and count)
     search_term <- input$org_search_query
     if (!is.null(search_term) && search_term != "") {
@@ -459,7 +514,8 @@ organizationsmodule <- function(
         addresses_html ILIKE {search_pattern} OR
         endpoint_urls_html ILIKE {search_pattern} OR
         fhir_versions_html ILIKE {search_pattern} OR
-        vendor_names_html ILIKE {search_pattern})")
+        vendor_names_html ILIKE {search_pattern} OR
+        is_chpl_html ILIKE {search_pattern})")
       params$search_pattern <- paste0("%", search_term, "%")
     }
 
@@ -481,10 +537,16 @@ organizationsmodule <- function(
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as api_developer_name
+        ) as api_developer_name,
+        -- Only show is_chpl values that match the current filter (CSV format)
+        string_agg(
+          DISTINCT chpl_value,
+          E'\\n'
+        ) as is_chpl
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+      CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
       WHERE 1=1")
 
     # Apply the same filters to the individual FHIR versions and vendors
@@ -496,6 +558,11 @@ organizationsmodule <- function(
     if (current_vendor != ui_special_values$ALL_DEVELOPERS) {
       query_str <- paste0(query_str, " AND vendor_name = {vendor_display}")
       params$vendor_display <- current_vendor
+    }
+
+    if (current_is_chpl != "All") {
+      query_str <- paste0(query_str, " AND chpl_value = {is_chpl_display}")
+      params$is_chpl_display <- current_is_chpl
     }
 
     # Add GROUP BY and ordering
@@ -546,7 +613,8 @@ organizationsmodule <- function(
          url = colDef(name = "FHIR Endpoint URL", minWidth = 300, sortable = FALSE, html = TRUE),
          # org_url column is hidden from UI
          fhir_version = colDef(name = "FHIR Version", sortable = FALSE, html = TRUE),
-         vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE)
+         vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = FALSE, html = TRUE),
+         is_chpl = colDef(name = "Source", sortable = FALSE, html = TRUE)
        ),
        striped = TRUE,
        searchable = FALSE,
