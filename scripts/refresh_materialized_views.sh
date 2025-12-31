@@ -77,7 +77,7 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX mv_http_resp
 }
 
 # Refresh mv_resource_interactions
-docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_resource_interactions;" -U lantern -d lantern || {
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW mv_resource_interactions;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_resource_interactions." >> $log_file
 }
 
@@ -431,6 +431,14 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_
 
 docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_capstat_sizes_fhir ON mv_capstat_sizes_tbl(fhir_version);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_capstat_sizes_fhir." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS mv_capstat_sizes_tbl_unique_idx;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop mv_capstat_sizes_tbl_unique_idx." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX mv_capstat_sizes_tbl_unique_idx ON mv_capstat_sizes_tbl (url, vendor_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create mv_capstat_sizes_tbl_unique_idx." >> $log_file
 }
 
 # Refresh and reindex get_capstat_values_mv
