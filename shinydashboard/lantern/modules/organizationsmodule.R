@@ -579,6 +579,9 @@ organizationsmodule <- function(
 
     res <- tbl(db_connection, sql(data_query)) %>% collect()
 
+    # Rename is_chpl column to source for CSV download
+    res <- res %>% rename(source = is_chpl)
+
     return(res)
   })
 
