@@ -61,9 +61,9 @@ func CleanupStaleData(ctx context.Context, store *postgresql.Store, populationSt
 
 func getStaleListSources(ctx context.Context, store *postgresql.Store, since time.Time) ([]string, error) {
 	query := `
-		SELECT list_source 
-		FROM list_source_info 
-		WHERE is_chpl = true 
+		SELECT list_source
+		FROM list_source_info
+		WHERE is_chpl = 'CHPL'
 		AND updated_at < $1
 		ORDER BY list_source
 	`
@@ -92,8 +92,8 @@ func deleteListSourcesBatch(ctx context.Context, tx *sql.Tx, listSources []strin
 	}
 
 	query := `
-		DELETE FROM list_source_info 
-		WHERE list_source = ANY($1) AND is_chpl = true
+		DELETE FROM list_source_info
+		WHERE list_source = ANY($1) AND is_chpl = 'CHPL'
 	`
 
 	result, err := tx.ExecContext(ctx, query, pq.Array(listSources))
