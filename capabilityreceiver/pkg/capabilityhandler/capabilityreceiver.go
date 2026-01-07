@@ -340,7 +340,9 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("error adding validation rows to table, %s", err)
 			}
 
-			store.DeleteFHIREndpointInfo(ctx, existingEndpt)
+			if err := store.DeleteFHIREndpointInfo(ctx, existingEndpt); err != nil {
+				return err
+			}
 
 			fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, existingEndpt.URL)
 			if err != nil {
