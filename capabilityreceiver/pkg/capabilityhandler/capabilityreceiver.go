@@ -294,6 +294,10 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// CASE 3: Endpoint already exists -> must update / merge
 		log.Info("[saveMsgInDB] EXISTING endpoint found: updating")
 
+		// Carry vendor & product IDs forward
+		fhirEndpoint.VendorID = existingEndpt.VendorID
+		fhirEndpoint.HealthITProductID = existingEndpt.HealthITProductID
+
 		// Sync metadata
 		existingEndpt.Metadata.URL = fhirEndpoint.Metadata.URL
 		existingEndpt.Metadata.HTTPResponse = fhirEndpoint.Metadata.HTTPResponse
