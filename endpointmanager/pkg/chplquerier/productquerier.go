@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
@@ -459,8 +458,14 @@ func prodNeedsUpdate(existingDbProd *endpointmanager.HealthITProduct, newDbProd 
 		return true, nil
 	}
 
-	return false, fmt.Errorf("Unknown difference between HealthITProducts; not performing update: %v to %v", existingDbProd, newDbProd)
+	// Differences may exist in non-actionable fields, no update needed
+	log.Debugf(
+		"No actionable update for product %s (%s); differences are non-actionable",
+		existingDbProd.Name,
+		existingDbProd.CHPLID,
+	)
 
+	return false, nil
 }
 
 // linkProductToCriteria checks whether the product and certification have been linked before, and if not
