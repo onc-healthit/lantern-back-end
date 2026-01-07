@@ -411,6 +411,14 @@ func Test_saveMsgInDB(t *testing.T) {
 	queueTmp["httpResponse"] = 200
 
 	// check that error adding to store throws error
+
+	// seed endpoint first so saveMsgInDB is allowed to enrich it
+	overflowEndpoint := &endpointmanager.FHIREndpoint{
+		URL: "https://a-new-url.com",
+	}
+	err = store.AddFHIREndpoint(ctx, overflowEndpoint)
+	th.Assert(t, err == nil, err)
+
 	queueTmp["url"] = "https://a-new-url.com"
 	queueTmp["tlsVersion"] = strings.Repeat("a", 510) // too long. causes db error
 
