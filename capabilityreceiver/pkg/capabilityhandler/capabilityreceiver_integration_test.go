@@ -45,6 +45,26 @@ var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
 		DeveloperCode: "C",
 		CHPLID:        3,
 	},
+	{
+		Name:          "Carefluence",
+		DeveloperCode: "D",
+		CHPLID:        4,
+	},
+	{
+		Name:          "Medical Information Technology, Inc. (MEDITECH)",
+		DeveloperCode: "E",
+		CHPLID:        5,
+	},
+	{
+		Name:          "Allscripts",
+		DeveloperCode: "F",
+		CHPLID:        6,
+	},
+	{
+		Name:          "NextGen Healthcare",
+		DeveloperCode: "G",
+		CHPLID:        7,
+	},
 }
 
 func TestMain(m *testing.M) {
