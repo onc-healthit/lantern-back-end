@@ -9,16 +9,16 @@ set -e
 cd cmd/endpointpopulator
 
 # Populates the database with State Medicaid endpoints
-go run main.go /etc/lantern/resources/MedicaidState_EndpointSources.json Lantern "State Medicaid" false "State Medicaid" >> $log_file 2>&1
+go run main.go /etc/lantern/resources/MedicaidState_EndpointSources.json Lantern "State Medicaid" "State Medicaid" "State Medicaid" >> $log_file 2>&1
 
 jq -c '.[]' /etc/lantern/resources/MedicareStateEndpointResourcesList.json | while read endpoint; do
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')
     FORMAT=$(echo $endpoint | jq -c -r '.FormatType')
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
     LISTURL=$(echo $endpoint | jq -c -r '.URL')
-    
+
     if [ -f "/etc/lantern/resources/$FILENAME" ]; then
-        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" true $LISTURL >> $log_file 2>&1
+        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" "Payer" $LISTURL >> $log_file 2>&1
     fi
 done
 
@@ -28,7 +28,7 @@ jq -c '.[]' /etc/lantern/resources/EndpointResourcesList.json | while read endpo
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
     LISTURL=$(echo $endpoint | jq -c -r '.URL')
 
-    go run main.go /etc/lantern/resources/$FILENAME $FORMAT $NAME false $LISTURL >> $log_file 2>&1
+    go run main.go /etc/lantern/resources/$FILENAME $FORMAT $NAME "Other" $LISTURL >> $log_file 2>&1
 done
 
 # Set start time BEFORE processing CHPL endpoints:
@@ -40,9 +40,9 @@ jq -c '.[]' /etc/lantern/resources/CHPLEndpointResourcesList.json | while read e
     FORMAT=$(echo $endpoint | jq -c -r '.FormatType')
     FILENAME=$(echo $endpoint | jq -c -r '.FileName')
     LISTURL=$(echo $endpoint | jq -c -r '.URL')
-    
+
     if [ -f "/etc/lantern/resources/$FILENAME" ]; then
-        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" true $LISTURL >> $log_file 2>&1
+        go run main.go /etc/lantern/resources/$FILENAME $FORMAT "${NAME}" "CHPL" $LISTURL >> $log_file 2>&1
     fi
 done
 
