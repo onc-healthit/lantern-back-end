@@ -1634,7 +1634,9 @@ SELECT DISTINCT
         ELSE endpoint_export.fhir_version
     END AS fhir_version,
     
-    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name
+    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
+    
+    endpoint_export.is_chpl
 
 FROM
     endpoint_export
@@ -1653,6 +1655,7 @@ WITH DATA;
  CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
  CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
  CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
+ CREATE INDEX idx_mv_endpoint_list_org_is_chpl ON mv_endpoint_list_organizations(is_chpl);
 
 CREATE MATERIALIZED VIEW mv_validation_results_plot AS
 SELECT DISTINCT t.url,
@@ -2629,7 +2632,8 @@ WITH base_filtered_data AS (
         mv.organization_id,
         mv.url,
         mv.fhir_version,
-        mv.vendor_name
+        mv.vendor_name,
+        mv.is_chpl
     FROM mv_endpoint_list_organizations mv
 ),
 processed_data AS (
@@ -2666,7 +2670,8 @@ processed_data AS (
             THEN fhir_version
             ELSE 'Unknown'
         END AS fhir_version,
-        vendor_name
+        vendor_name,
+        is_chpl
     FROM base_filtered_data
     WHERE organization_id IS NOT NULL AND organization_id != '' AND organization_id != 'Unknown'
 ),
@@ -2838,10 +2843,13 @@ endpoint_data_agg AS (
         string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
         string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
         string_agg(DISTINCT vendor_name, E'\n') as vendor_names_csv,
+        string_agg(DISTINCT is_chpl, '<br/>') as is_chpl_html,
+        string_agg(DISTINCT is_chpl, E'\n') as is_chpl_csv,
         -- Arrays for filtering (exactly as original code)
         ARRAY(SELECT DISTINCT unnest(array_agg(fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
         ARRAY(SELECT DISTINCT unnest(array_agg(vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array
+        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
     FROM processed_data
     GROUP BY org_id  -- KEY CHANGE: Group by org_id instead of organization_name
 )
@@ -2857,6 +2865,7 @@ SELECT
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
+    eda.is_chpl_html,
     
     -- For CSV export - split identifier columns
     COALESCE(ia.identifier_types_csv, '') as identifier_types_csv,
@@ -2866,11 +2875,13 @@ SELECT
     COALESCE(ua.org_urls_csv, '') as org_urls_csv,
     eda.fhir_versions_csv,
     eda.vendor_names_csv,
+    eda.is_chpl_csv,
     
     -- Arrays for filtering 
     eda.fhir_versions_array,
     eda.vendor_names_array,
-    eda.urls_array
+    eda.urls_array,
+    eda.is_chpl_array
     
 FROM endpoint_data_agg eda
 LEFT JOIN identifiers_agg ia ON eda.org_id = ia.org_id
@@ -2885,6 +2896,7 @@ CREATE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_na
 CREATE INDEX idx_mv_orgs_agg_fhir_versions ON mv_organizations_aggregated USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_agg_vendor_names ON mv_organizations_aggregated USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_agg_urls ON mv_organizations_aggregated USING GIN(urls_array);
+CREATE INDEX idx_mv_orgs_agg_is_chpl ON mv_organizations_aggregated USING GIN(is_chpl_array);
 
 --LANTERN-973: Group organizations in Org Table if all the fields are same except endpoint url
 CREATE MATERIALIZED VIEW mv_organizations_final AS
@@ -2899,6 +2911,7 @@ SELECT
     string_agg(DISTINCT endpoint_urls_html, '<br/>') as endpoint_urls_html,
     fhir_versions_html,
     vendor_names_html,
+    is_chpl_html,
     
     -- CSV versions
     identifier_types_csv,
@@ -2908,11 +2921,13 @@ SELECT
     string_agg(DISTINCT endpoint_urls_csv, E'\n') as endpoint_urls_csv,
     fhir_versions_csv,
     vendor_names_csv,
+    is_chpl_csv,
     
     -- Arrays for filtering (combine from all matching rows) - FIXED: Use |||| delimiter instead of comma
     ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(fhir_versions_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as fhir_versions_array,
     ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(vendor_names_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as vendor_names_array,
-    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array,
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(is_chpl_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as is_chpl_array
     
 FROM mv_organizations_aggregated
 GROUP BY 
@@ -2923,12 +2938,14 @@ GROUP BY
     org_urls_html,
     fhir_versions_html,
     vendor_names_html,
+    is_chpl_html,
     identifier_types_csv,
     identifier_values_csv,
     addresses_csv,
     org_urls_csv,
     fhir_versions_csv,
-    vendor_names_csv
+    vendor_names_csv,
+    is_chpl_csv
 ORDER BY organization_name;
 
 -- Create indexes for performance
@@ -2937,3 +2954,4 @@ CREATE INDEX idx_mv_orgs_final_name ON mv_organizations_final(organization_name)
 CREATE INDEX idx_mv_orgs_final_fhir_versions ON mv_organizations_final USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_final_vendor_names ON mv_organizations_final USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_final_urls ON mv_organizations_final USING GIN(urls_array);
+CREATE INDEX idx_mv_orgs_final_is_chpl ON mv_organizations_final USING GIN(is_chpl_array);

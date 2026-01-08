@@ -36,7 +36,7 @@ download_data <- function() {
 
 
 # Get organization data and transform to csv
-get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, organization_detail = NULL) {
+get_organization_csv_data <- function(db_connection, developer = NULL, fhir_versions = NULL, identifier = NULL, organization_detail = NULL, source = NULL) {
   query <- "
     WITH base_data AS (
       SELECT
@@ -46,7 +46,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
         addresses_csv as address,
         endpoint_urls_csv as url,
         fhir_versions_array,
-        vendor_names_array
+        vendor_names_array,
+        is_chpl_array
       FROM mv_organizations_final
       WHERE TRUE"
 
@@ -62,6 +63,12 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
   if (!is.null(fhir_versions)) {
     query <- paste0(query, " AND fhir_versions_array && ARRAY[{fhir_versions*}]")
     params$fhir_versions <- fhir_versions
+  }
+
+  # Source (is_chpl) filter
+  if (!is.null(source)) {
+    query <- paste0(query, " AND is_chpl_array && ARRAY[{source}]")
+    params$source <- source
   }
 
   # Identifier filter
@@ -86,10 +93,12 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
       address,
       url AS fhir_endpoint_url,
       string_agg(DISTINCT fhir_version, E'\\n') AS fhir_version,
-      string_agg(DISTINCT vendor_name, E'\\n') AS api_developer_name
+      string_agg(DISTINCT vendor_name, E'\\n') AS api_developer_name,
+      string_agg(DISTINCT source_value, E'\\n') AS source
     FROM base_data bd
     CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
     CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+    CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS source_value
     WHERE 1=1")
 
   # Re-apply developer and fhir_version filters to unnest output
@@ -101,6 +110,12 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
   if (!is.null(fhir_versions)) {
     query <- paste0(query, " AND fhir_version = ANY(ARRAY[{fhir_versions_display*}])")
     params$fhir_versions_display <- fhir_versions
+  }
+
+  # Re-apply source filter to unnest output
+  if (!is.null(source)) {
+    query <- paste0(query, " AND source_value = {source_display}")
+    params$source_display <- source
   }
 
   # Finalize
@@ -122,7 +137,8 @@ get_organization_csv_data <- function(db_connection, developer = NULL, fhir_vers
     mutate(
       identifier_type = ifelse(is.na(identifier_type), "", identifier_type),
       identifier_value = ifelse(is.na(identifier_value), "", identifier_value),
-      address = ifelse(is.na(address), "", address)
+      address = ifelse(is.na(address), "", address),
+      source = ifelse(is.na(source), "", source)
     )
 
   return(df)
