@@ -34,7 +34,10 @@ func CleanupStaleData(ctx context.Context, store *postgresql.Store, populationSt
 	}
 	defer func() {
 		if err != nil {
-			tx.Rollback()
+			rbErr := tx.Rollback()
+			if rbErr != nil {
+				log.Warnf("failed to rollback transaction: %v", rbErr)
+			}
 		}
 	}()
 
