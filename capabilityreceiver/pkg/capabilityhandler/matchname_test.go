@@ -1,4 +1,4 @@
-package chplmapper
+package capabilityhandler
 
 import (
 	"fmt"

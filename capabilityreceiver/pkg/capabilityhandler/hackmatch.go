@@ -1,4 +1,4 @@
-package chplmapper
+package capabilityhandler
 
 // this file is for any methods of matching an endpoint to a vendor that is not through the
 // publisher field on the capability statement. These methods should only be used if an endpoint
