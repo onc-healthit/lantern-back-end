@@ -923,6 +923,11 @@ current_endpoint <- reactive({
       endpoint_requested_fhir_version <- res$requested_fhir_version[1]
     }
   }
+
+  if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+    endpoint_vendor_name <- input$vendor
+  }
+  
   current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version, vendor_name = endpoint_vendor_name)
   current_endpoint_list
 })
