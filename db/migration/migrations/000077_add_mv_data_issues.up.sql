@@ -44,25 +44,16 @@ endpoints_with_no_org_data AS (
         (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
         AND sfem.requested_fhir_version = 'None'
 ),
--- Vendors with multiple list_sources (different CHPL developers mapped to same vendor)
-vendors_with_multiple_sources AS (
-    SELECT
-        COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT fe.list_source) as list_source_count
-    FROM fhir_endpoints fe
-    INNER JOIN fhir_endpoints_info fei ON fe.url = fei.url
-    LEFT JOIN vendors v ON fei.vendor_id = v.id
-    WHERE
-        fe.list_source IS NOT NULL
-        AND fe.list_source != ''
-        AND fei.requested_fhir_version = 'None'
-    GROUP BY v.name
-    HAVING COUNT(DISTINCT fe.list_source) > 1
-),
--- Count of vendors with multiple list_sources
-shared_list_sources_count AS (
-    SELECT COUNT(*) as count
-    FROM vendors_with_multiple_sources
+-- Count of developers sharing list sources with at least one other developer (from shared_list_sources table)
+developers_sharing_list_sources_count AS (
+    SELECT COUNT(DISTINCT developer_name) as count
+    FROM shared_list_sources
+    WHERE list_source IN (
+        SELECT list_source
+        FROM shared_list_sources
+        GROUP BY list_source
+        HAVING COUNT(DISTINCT developer_name) > 1
+    )
 ),
 -- Inaccessible list_source URLs (HTTP errors)
 inaccessible_list_sources AS (
@@ -86,22 +77,22 @@ endpoints_with_inaccessible_list_sources AS (
     INNER JOIN inaccessible_list_sources ils ON fe.list_source = ils.list_source
 ),
 -- Developers with empty FHIR bundles (list_sources with no endpoints)
+-- Uses shared_list_sources table to find developers whose list_source returns no endpoints
+-- NOTE: This is CHPL-only because shared_list_sources only contains CHPL developers from CSV
 developers_with_empty_bundles AS (
     SELECT
-        lsi.developer_name,
-        lsi.list_source
-    FROM list_source_info lsi
-    LEFT JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
-    WHERE lsi.developer_name IS NOT NULL
-      AND lsi.developer_name != ''
-    GROUP BY lsi.developer_name, lsi.list_source
+        sls.developer_name,
+        sls.list_source
+    FROM shared_list_sources sls
+    LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
 )
 SELECT
     (SELECT COUNT(*) FROM developers_with_no_org_data) as developers_with_no_org_data_count,
     (SELECT count FROM endpoints_with_no_org_data) as endpoints_with_no_org_data_count,
-    (SELECT count FROM shared_list_sources_count) as shared_list_sources_count,
-    (SELECT count FROM shared_list_sources_count) as developers_sharing_list_sources_count,
+    (SELECT count FROM developers_sharing_list_sources_count) as shared_list_sources_count,
+    (SELECT count FROM developers_sharing_list_sources_count) as developers_sharing_list_sources_count,
     (SELECT COUNT(*) FROM inaccessible_list_sources) as inaccessible_list_sources_count,
     (SELECT count FROM endpoints_with_inaccessible_list_sources) as endpoints_with_inaccessible_list_sources_count,
     (SELECT COUNT(DISTINCT developer_name) FROM developers_with_empty_bundles) as developers_with_empty_bundles_count;
@@ -117,7 +108,7 @@ CREATE INDEX idx_mv_data_issues_summary ON mv_data_issues_summary(developers_wit
 
 CREATE MATERIALIZED VIEW mv_developer_data_issues AS
 WITH
--- Get all unique vendors from fhir_endpoints_info AND list_source_info (to include empty bundle developers)
+-- Get all unique vendors from fhir_endpoints_info AND shared_list_sources (to include empty bundle developers)
 all_vendors AS (
     SELECT DISTINCT COALESCE(v.name, 'Unknown') as vendor_name
     FROM fhir_endpoints_info fei
@@ -126,13 +117,12 @@ all_vendors AS (
 
     UNION
 
-    -- Include developers with empty bundles (list_sources with no endpoints)
-    SELECT DISTINCT lsi.developer_name as vendor_name
-    FROM list_source_info lsi
-    LEFT JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
-    WHERE lsi.developer_name IS NOT NULL
-      AND lsi.developer_name != ''
-    GROUP BY lsi.developer_name, lsi.list_source
+    -- Include developers with empty bundles (from shared_list_sources table)
+    -- NOTE: This only includes CHPL developers from the CHPL CSV
+    SELECT DISTINCT sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
 ),
 -- Total endpoints per vendor
@@ -217,15 +207,27 @@ vendor_organizations AS (
     GROUP BY v.name
 ),
 -- Developers with empty bundles (list_sources returning no endpoints)
+-- Uses shared_list_sources table
+-- NOTE: This is CHPL-only because shared_list_sources only contains CHPL developers from CSV
 developers_empty_bundles AS (
     SELECT DISTINCT
-        lsi.developer_name as vendor_name
-    FROM list_source_info lsi
-    LEFT JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
-    WHERE lsi.developer_name IS NOT NULL
-      AND lsi.developer_name != ''
-    GROUP BY lsi.developer_name, lsi.list_source
+        sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
+),
+-- Developers/vendors sharing list sources (from shared_list_sources table)
+vendors_sharing_list_sources AS (
+    SELECT DISTINCT
+        sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    WHERE sls.list_source IN (
+        SELECT list_source
+        FROM shared_list_sources
+        GROUP BY list_source
+        HAVING COUNT(DISTINCT developer_name) > 1
+    )
 )
 SELECT
     av.vendor_name,
@@ -242,7 +244,11 @@ SELECT
     CASE
         WHEN deb.vendor_name IS NOT NULL THEN TRUE
         ELSE FALSE
-    END as has_empty_bundle
+    END as has_empty_bundle,
+    CASE
+        WHEN vsls.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as shares_list_source
 FROM all_vendors av
 LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
 LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
@@ -251,6 +257,7 @@ LEFT JOIN vendor_accessible_endpoints vae ON av.vendor_name = vae.vendor_name
 LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
 LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
 LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
+LEFT JOIN vendors_sharing_list_sources vsls ON av.vendor_name = vsls.vendor_name
 -- Removed: WHERE COALESCE(ve.total_endpoints, 0) > 0
 -- This was filtering out developers with empty bundles who have 0 endpoints
 ORDER BY

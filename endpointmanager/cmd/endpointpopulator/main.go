@@ -102,24 +102,20 @@ func main() {
 		helpers.FailOnError("Deleting old endpoints in fhir_endpoints database error: ", dbErr)
 	}
 
-	// UPSERT statement - inserts new list_source or updates existing one
-	// Multiple developers can share the same list_source URL
-	// Uses composite unique constraint (list_source, developer_name)
 	addListSourceStatement := `
 	INSERT INTO list_source_info (
 		list_source,
-		is_chpl,
-		developer_name
+		is_chpl
 	)
-	VALUES ($1, $2, $3)
-	ON CONFLICT (list_source, developer_name)
-	DO UPDATE SET
-		is_chpl = EXCLUDED.is_chpl;
+	SELECT $1, $2
+	WHERE
+    NOT EXISTS (
+        SELECT list_source FROM list_source_info WHERE list_source = $3
+    );
 	`
 
 	if sourceCategory == "State Medicaid" {
-		// State Medicaid: Each endpoint has ListSource = developer name from CSV
-		// Collect all unique ListSource values (developer names) from endpoints
+		// State Medicaid: Collect all unique ListSource values (vendors) from endpoints
 		uniqueListSources := make(map[string]bool)
 		for _, endpoint := range listOfEndpoints.Entries {
 			if endpoint.ListSource != "" {
@@ -127,8 +123,7 @@ func main() {
 			}
 		}
 
-		// Insert each unique ListSource (developer name) into list_source_info
-		// For State Medicaid: list_source = developer_name = ListSource (same value)
+		// Insert each unique ListSource into list_source_info table
 		for listSourceValue := range uniqueListSources {
 			_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSourceValue, sourceCategory, listSourceValue)
 			if sourceErr != nil {
@@ -136,7 +131,7 @@ func main() {
 			}
 		}
 	} else {
-		// CHPL/Payer/Other: Insert single list source with developer name
+		// CHPL/Payer/Other: Use original logic - insert single list source
 		var listSource string
 		if listURL != "" {
 			listSource = listURL
@@ -144,8 +139,7 @@ func main() {
 			listSource = source
 		}
 
-		// source = developer name from ${NAME} in populatedb.sh
-		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, sourceCategory, source)
+		_, sourceErr := store.DB.ExecContext(ctx, addListSourceStatement, listSource, sourceCategory, listSource)
 		if sourceErr != nil {
 			log.Warnf("Error adding list source '%s' to list_source_info: %v", listSource, sourceErr)
 		}

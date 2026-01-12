@@ -407,13 +407,13 @@ developerfeedbackmodule_UI <- function(id) {
               div(class = "metric-card",
                 div(class = "metric-title",
                   tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
-                  "Shared List Sources"
+                  "Shared Service Base URLs"
                 ),
                 div(class = "metric-value", style = "color: #ffc107;",
-                  textOutput(ns("shared_list_sources_count"), inline = TRUE)
+                  textOutput(ns("developers_sharing_list_sources_count"), inline = TRUE)
                 ),
                 div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Vendors with multiple CHPL list sources"
+                  "Developers Sharing the Same Service Base URL"
                 )
               )
             ),
@@ -443,7 +443,7 @@ developerfeedbackmodule_UI <- function(id) {
                   textOutput(ns("developers_empty_bundles_count"), inline = TRUE)
                 ),
                 div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Developers with no endpoints discovered"
+                  "CHPL developers with no endpoints discovered"
                 )
               )
             )
@@ -1327,8 +1327,8 @@ developerfeedbackmodule <- function(
     format(data_issues_summary()$endpoints_with_no_org_data_count, big.mark = ",")
   })
 
-  output$shared_list_sources_count <- renderText({
-    format(data_issues_summary()$shared_list_sources_count, big.mark = ",")
+  output$developers_sharing_list_sources_count <- renderText({
+    format(data_issues_summary()$developers_sharing_list_sources_count, big.mark = ",")
   })
 
   output$inaccessible_list_sources_count <- renderText({
