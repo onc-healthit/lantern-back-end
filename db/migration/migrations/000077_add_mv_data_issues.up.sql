@@ -56,18 +56,21 @@ developers_sharing_list_sources_count AS (
     )
 ),
 -- Inaccessible list_source URLs (HTTP errors)
+-- Only counts list_sources where ALL endpoints are inaccessible (HTTP >= 400)
 inaccessible_list_sources AS (
-    SELECT DISTINCT
-        fe.list_source,
-        fem.http_response
+    SELECT
+        fe.list_source
     FROM fhir_endpoints fe
     INNER JOIN fhir_endpoints_metadata fem ON fe.url = fem.url
     WHERE
         fe.list_source IS NOT NULL
         AND fe.list_source != ''
         AND fem.http_response IS NOT NULL
-        AND fem.http_response >= 400
         AND fem.requested_fhir_version = 'None'
+    GROUP BY fe.list_source
+    -- Only include list_sources where ALL endpoints have HTTP response >= 400
+    HAVING COUNT(*) = COUNT(CASE WHEN fem.http_response >= 400 THEN 1 END)
+        AND COUNT(CASE WHEN fem.http_response >= 400 THEN 1 END) > 0
 ),
 -- Endpoints from inaccessible list_sources
 endpoints_with_inaccessible_list_sources AS (

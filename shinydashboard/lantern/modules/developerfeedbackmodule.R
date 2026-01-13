@@ -1459,6 +1459,26 @@ developerfeedbackmodule <- function(
               )
             }
           }
+        ),
+        shares_list_source = colDef(
+          name = "Shares List Source",
+          width = 140,
+          align = "center",
+          cell = function(value) {
+            if (value == TRUE) {
+              tags$span(
+                style = "color: #ffc107; font-weight: 700;",
+                tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
+                "Yes"
+              )
+            } else {
+              tags$span(
+                style = "color: #6c757d;",
+                tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
+                "No"
+              )
+            }
+          }
         )
       ),
       striped = TRUE,
