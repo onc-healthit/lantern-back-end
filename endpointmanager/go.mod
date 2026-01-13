@@ -12,5 +12,6 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
+	github.com/xuri/excelize/v2 v2.4.1
 	gonum.org/v1/gonum v0.12.0
 )

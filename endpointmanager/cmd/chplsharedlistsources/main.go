@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
@@ -13,6 +14,7 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/xuri/excelize/v2"
 )
 
 func main() {
@@ -68,6 +70,124 @@ type SharedListSourceEntry struct {
 }
 
 func parseCSV(csvFilePath string) ([]SharedListSourceEntry, error) {
+	// Check file extension to determine if it's Excel or CSV
+	ext := strings.ToLower(filepath.Ext(csvFilePath))
+	log.Infof("File path: %s", csvFilePath)
+	log.Infof("File extension: %s", ext)
+
+	// Get file info for debugging
+	fileInfo, err := os.Stat(csvFilePath)
+	if err != nil {
+		log.Errorf("Error getting file info: %v", err)
+	} else {
+		log.Infof("File size: %d bytes", fileInfo.Size())
+	}
+
+	// Try to detect if it's actually an Excel file by checking magic bytes
+	isExcel, err := isExcelFile(csvFilePath)
+	if err != nil {
+		log.Errorf("Error checking file type: %v", err)
+		return nil, fmt.Errorf("failed to check file type: %w", err)
+	}
+	log.Infof("isExcel detection result: %v", isExcel)
+
+	// Log the actual magic bytes for debugging
+	file, err := os.Open(csvFilePath)
+	if err != nil {
+		log.Errorf("Error opening file to read magic bytes: %v", err)
+	} else {
+		magic := make([]byte, 4)
+		n, err := file.Read(magic)
+		file.Close()
+		if err != nil {
+			log.Errorf("Error reading magic bytes: %v", err)
+		} else {
+			log.Infof("Read %d magic bytes: [0x%02x 0x%02x 0x%02x 0x%02x]", n, magic[0], magic[1], magic[2], magic[3])
+		}
+	}
+
+	if isExcel || ext == ".xlsx" || ext == ".xls" {
+		log.Info("Detected Excel file, using Excel parser")
+		return parseExcel(csvFilePath)
+	}
+
+	log.Info("Using CSV parser")
+	return parseCSVFile(csvFilePath)
+}
+
+func isExcelFile(filePath string) (bool, error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		return false, err
+	}
+	defer file.Close()
+
+	// Read first 4 bytes to check for ZIP signature (Excel files are ZIP archives)
+	magic := make([]byte, 4)
+	_, err = file.Read(magic)
+	if err != nil {
+		return false, err
+	}
+
+	// Check for ZIP magic bytes: PK\x03\x04
+	return magic[0] == 0x50 && magic[1] == 0x4B && magic[2] == 0x03 && magic[3] == 0x04, nil
+}
+
+func parseExcel(filePath string) ([]SharedListSourceEntry, error) {
+	f, err := excelize.OpenFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Excel file: %w", err)
+	}
+
+	// Get the first sheet name
+	sheets := f.GetSheetList()
+	if len(sheets) == 0 {
+		return nil, fmt.Errorf("no sheets found in Excel file")
+	}
+
+	sheetName := sheets[0]
+	log.Infof("Reading from sheet: %s", sheetName)
+
+	rows, err := f.GetRows(sheetName)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get rows from sheet: %w", err)
+	}
+
+	if len(rows) == 0 {
+		return nil, fmt.Errorf("no rows found in Excel file")
+	}
+
+	var entries []SharedListSourceEntry
+
+	// Skip header row (first row)
+	for i, row := range rows {
+		if i == 0 {
+			continue // Skip header
+		}
+
+		// Excel columns: 0=Developer, 1=(skip), 2=Service Base URL List
+		if len(row) < 3 {
+			continue
+		}
+
+		developerName := strings.TrimSpace(row[0])
+		listSource := strings.TrimSpace(row[2])
+
+		// Skip empty entries
+		if developerName == "" || listSource == "" {
+			continue
+		}
+
+		entries = append(entries, SharedListSourceEntry{
+			DeveloperName: developerName,
+			ListSource:    listSource,
+		})
+	}
+
+	return entries, nil
+}
+
+func parseCSVFile(csvFilePath string) ([]SharedListSourceEntry, error) {
 	file, err := os.Open(csvFilePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open CSV file: %w", err)
