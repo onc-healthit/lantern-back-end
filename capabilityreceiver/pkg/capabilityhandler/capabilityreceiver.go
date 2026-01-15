@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
 	"github.com/spf13/viper"
 
@@ -476,6 +477,15 @@ func insertEndpointRows(
 
 			err = store.AddFHIREndpointInfo(ctx, &epRow, metadataID)
 			if err != nil {
+				if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+					log.Warnf(
+						"Duplicate fhir_endpoints_info row skipped (developer=%s vendorID=%d source=%s)",
+						developerName,
+						vm.VendorID,
+						vm.Source,
+					)
+					continue
+				}
 				return fmt.Errorf("add to fhir_endpoints_info failed, %s", err)
 			}
 
