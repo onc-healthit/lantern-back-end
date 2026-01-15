@@ -271,6 +271,10 @@ function(input, output, session) { #nolint
     input$side_menu %in% c("endpoints_tab")
   )
 
+  show_source_filter <- reactive(
+    input$side_menu %in% c("organizations_tab")
+  )
+
   show_validations_filter <- reactive(
     input$side_menu %in% c("validations_tab")
   )
@@ -403,7 +407,7 @@ function(input, output, session) { #nolint
           column(width = 4, developerDropdown),
           column(width = 4, contactDropdown)
         )
-      } else {
+      } else if (show_source_filter()) {
         fluidRow(
           column(width = 4,
           tags$div(
@@ -414,6 +418,17 @@ function(input, output, session) { #nolint
           fhirDropdown_noLabel),
           column(width = 4, developerDropdown),
           column(width = 4, chplDropdown)
+        )
+      } else {
+        fluidRow(
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
+          column(width = 4, developerDropdown)
         )
       }
     }
