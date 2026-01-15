@@ -405,6 +405,11 @@ developerfeedbackmodule_UI <- function(id) {
             ),
             column(width = 3,
               div(class = "metric-card",
+                  id = ns("shared_sources_card"),
+                  style = "cursor: pointer; transition: transform 0.2s;",
+                  onmouseover = "this.style.transform = 'scale(1.02)';",
+                  onmouseout = "this.style.transform = 'scale(1)';",
+                  onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_sources_card_click")),
                 div(class = "metric-title",
                   tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
                   "Shared Service Base URLs"
@@ -413,7 +418,11 @@ developerfeedbackmodule_UI <- function(id) {
                   textOutput(ns("developers_sharing_list_sources_count"), inline = TRUE)
                 ),
                 div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Developers Sharing the Same Service Base URL"
+                  "Developers Sharing the Same Service Base URL",
+                  tags$br(),
+                  tags$span(style = "color: #95a5a6; font-size: 0.9em; font-style: italic;",
+                    "Click to view"
+                  )
                 )
               )
             ),
@@ -435,6 +444,11 @@ developerfeedbackmodule_UI <- function(id) {
           fluidRow(style = "margin-top: 15px;",
             column(width = 3,
               div(class = "metric-card",
+                  id = ns("empty_bundles_card"),
+                  style = "cursor: pointer; transition: transform 0.2s;",
+                  onmouseover = "this.style.transform = 'scale(1.02)';",
+                  onmouseout = "this.style.transform = 'scale(1)';",
+                  onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("empty_bundles_card_click")),
                 div(class = "metric-title",
                   tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
                   "Empty FHIR Bundles"
@@ -443,7 +457,11 @@ developerfeedbackmodule_UI <- function(id) {
                   textOutput(ns("developers_empty_bundles_count"), inline = TRUE)
                 ),
                 div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "CHPL developers with no endpoints discovered"
+                  "CHPL developers with no endpoints discovered",
+                  tags$br(),
+                  tags$span(style = "color: #95a5a6; font-size: 0.9em; font-style: italic;",
+                    "Click to view"
+                  )
                 )
               )
             )
@@ -577,11 +595,26 @@ developerfeedbackmodule <- function(
   session
 ) {
   ns <- session$ns
-  
+
+  # Reactive value to track table sort state (default: sort by no_org_data_endpoints descending)
+  table_sort <- reactiveVal(list(no_org_data_endpoints = "desc"))
+
   # Initialize vendor choices
   observe({
     vendor_choices <- c("All Developers", app$vendor_list())
     updateSelectInput(session, "vendor_filter", choices = vendor_choices, selected = "All Developers")
+  })
+
+  # Handle click on Shared Service Base URLs card
+  observeEvent(input$shared_sources_card_click, {
+    # Sort by shares_list_source descending to show "Yes" first
+    table_sort(list(shares_list_source = "desc"))
+  })
+
+  # Handle click on Empty FHIR Bundles card
+  observeEvent(input$empty_bundles_card_click, {
+    # Sort by has_empty_bundle descending to show "Yes" (TRUE) first
+    table_sort(list(has_empty_bundle = "desc"))
   })
   
   # Get filtered organization data from materialized views
@@ -1344,6 +1377,7 @@ developerfeedbackmodule <- function(
     req(developer_data_issues())
 
     dev_data <- developer_data_issues()
+    current_sort <- table_sort()
 
     if (nrow(dev_data) == 0) {
       # Return empty state
@@ -1357,6 +1391,7 @@ developerfeedbackmodule <- function(
         organization_count = 0,
         data_completeness_percentage = 100,
         has_empty_bundle = FALSE,
+        shares_list_source = FALSE,
         stringsAsFactors = FALSE
       )
     }
@@ -1366,6 +1401,7 @@ developerfeedbackmodule <- function(
       filterable = TRUE,
       searchable = TRUE,
       defaultPageSize = 20,
+      defaultSorted = current_sort,
       columns = list(
         vendor_name = colDef(
           name = "Developer Name",
@@ -1484,7 +1520,6 @@ developerfeedbackmodule <- function(
       striped = TRUE,
       highlight = TRUE,
       bordered = TRUE,
-      defaultSorted = list(no_org_data_endpoints = "desc"),
       theme = reactableTheme(
         borderColor = "#e0e0e0",
         stripedColor = "#f8f9fa",
