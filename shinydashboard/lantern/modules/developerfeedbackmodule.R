@@ -89,6 +89,7 @@ developerfeedbackmodule_UI <- function(id) {
         }
         
         .progress-bar {
+          height: 100%;
           border-radius: 4px;
           transition: width 0.6s ease;
         }
@@ -501,44 +502,26 @@ developerfeedbackmodule_UI <- function(id) {
           div(style = "margin-top: 15px;",
             div(class = "metric-card",
               div(class = "metric-title", "Identifier Type Validation"),
-              div(class = "progress-group",
-                div(style = "display: flex; justify-content: space-between; margin-bottom: 8px;",
-                  span(class = "progress-text", "Valid Identifiers"),
-                  span(style = "font-weight: 600; color: #28a745;", 
-                       textOutput(ns("identifier_percentage"), inline = TRUE))
-                ),
-                div(class = "progress",
-                  div(class = "progress-bar bg-success", 
-                      style = paste0("width: ", textOutput(ns("identifier_progress_width"), inline = TRUE)))
-                )
+              div(style = "display: flex; justify-content: space-between; align-items: center;",
+                span(class = "progress-text", "Valid Identifiers"),
+                span(style = "font-weight: 700; font-size: 1.4em; color: #28a745;",
+                     textOutput(ns("identifier_percentage"), inline = TRUE))
               )
             ),
             div(class = "metric-card",
               div(class = "metric-title", "Organization Names"),
-              div(class = "progress-group",
-                div(style = "display: flex; justify-content: space-between; margin-bottom: 8px;",
-                  span(class = "progress-text", "Quality Names"),
-                  span(style = "font-weight: 600; color: #007bff;", 
-                       textOutput(ns("name_percentage"), inline = TRUE))
-                ),
-                div(class = "progress",
-                  div(class = "progress-bar bg-primary", 
-                      style = paste0("width: ", textOutput(ns("name_progress_width"), inline = TRUE)))
-                )
+              div(style = "display: flex; justify-content: space-between; align-items: center;",
+                span(class = "progress-text", "Quality Names"),
+                span(style = "font-weight: 700; font-size: 1.4em; color: #007bff;",
+                     textOutput(ns("name_percentage"), inline = TRUE))
               )
             ),
             div(class = "metric-card",
               div(class = "metric-title", "Addresses"),
-              div(class = "progress-group",
-                div(style = "display: flex; justify-content: space-between; margin-bottom: 8px;",
-                  span(class = "progress-text", "Complete Addresses"),
-                  span(style = "font-weight: 600; color: #fd7e14;", 
-                       textOutput(ns("address_percentage"), inline = TRUE))
-                ),
-                div(class = "progress",
-                  div(class = "progress-bar bg-warning", 
-                      style = paste0("width: ", textOutput(ns("address_progress_width"), inline = TRUE)))
-                )
+              div(style = "display: flex; justify-content: space-between; align-items: center;",
+                span(class = "progress-text", "Complete Addresses"),
+                span(style = "font-weight: 700; font-size: 1.4em; color: #fd7e14;",
+                     textOutput(ns("address_percentage"), inline = TRUE))
               )
             )
           )
@@ -907,18 +890,6 @@ developerfeedbackmodule <- function(
   })
   
   output$address_percentage <- renderText({
-    paste0(quality_summary()$address_percentage, "%")
-  })
-  
-  output$identifier_progress_width <- renderText({
-    paste0(quality_summary()$identifier_percentage, "%")
-  })
-  
-  output$name_progress_width <- renderText({
-    paste0(quality_summary()$name_percentage, "%")
-  })
-  
-  output$address_progress_width <- renderText({
     paste0(quality_summary()$address_percentage, "%")
   })
   
@@ -1541,40 +1512,40 @@ developerfeedbackmodule <- function(
     summary <- quality_summary()
     id_summary <- identifier_type_summary()
     recommendations <- list()
-    
+
     # No identifier data alert
     if (id_summary$no_identifier_count > 0) {
       no_id_percentage <- round(id_summary$no_identifier_count / summary$total_orgs * 100, 1)
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-danger",
-          tags$strong(tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"), 
+          tags$strong(tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
                      "Missing Identifier Data: "),
-          paste0(format(id_summary$no_identifier_count, big.mark = ","), 
+          paste0(format(id_summary$no_identifier_count, big.mark = ","),
                  " organizations (", no_id_percentage, "%) have no identifier data."),
           tags$br(),
           tags$small("Organizations must include at least one identifier (NPI, CLIA, or NAIC) to meet US-Core requirements.")
         )
-      )
+      ))
     }
-    
+
     # Invalid only identifiers alert
     if (id_summary$orgs_with_invalid_only > 0) {
       invalid_only_percentage <- round(id_summary$orgs_with_invalid_only / summary$total_orgs * 100, 1)
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-danger",
           tags$strong(tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
                      "Organizations with Only Invalid Identifiers: "),
-          paste0(format(id_summary$orgs_with_invalid_only, big.mark = ","), 
+          paste0(format(id_summary$orgs_with_invalid_only, big.mark = ","),
                  " organizations (", invalid_only_percentage, "%) have identifiers but none are US-Core compliant."),
           tags$br(),
           tags$small("Review identifier formats and ensure compliance with US-Core validation rules.")
         )
-      )
+      ))
     }
-    
+
     # Identifier conformance recommendations
     if (summary$identifier_percentage < 80) {
-      recommendations <- append(recommendations, 
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-clipboard-check", style = "margin-right: 5px;"),
                      "US-Core Identifier Conformance Issues: "),
@@ -1582,25 +1553,25 @@ developerfeedbackmodule <- function(
           tags$br(),
           tags$small("Ensure NPI identifiers are 10 digits with valid check digits, CLIA identifiers follow 2D7 format, and NAIC identifiers are 5 digits.")
         )
-      )
+      ))
     }
-    
+
     if (id_summary$other_count > 0) {
-      recommendations <- append(recommendations, 
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-question-circle", style = "margin-right: 5px;"),
                      "Non-Standard Identifiers: "),
-          paste0("Found ", format(id_summary$other_count, big.mark = ","), 
+          paste0("Found ", format(id_summary$other_count, big.mark = ","),
                  " non-standard identifier types."),
           tags$br(),
           tags$small("Use US-Core compliant types: NPI (healthcare providers), CLIA (laboratories), NAIC (insurance).")
         )
-      )
+      ))
     }
-    
+
     # Specific validation error recommendations
     if (id_summary$npi_invalid > 0) {
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-id-badge", style = "margin-right: 5px;"),
                      "Invalid NPI Identifiers: "),
@@ -1608,11 +1579,11 @@ developerfeedbackmodule <- function(
           tags$br(),
           tags$small("Verify NPIs are exactly 10 digits and have valid Luhn check digits.")
         )
-      )
+      ))
     }
-    
+
     if (id_summary$clia_invalid > 0) {
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-flask", style = "margin-right: 5px;"),
                      "Invalid CLIA Identifiers: "),
@@ -1620,11 +1591,11 @@ developerfeedbackmodule <- function(
           tags$br(),
           tags$small("CLIA format must be: 2 digits + 'D' + 7 digits (e.g., '12D3456789').")
         )
-      )
+      ))
     }
-    
+
     if (id_summary$naic_invalid > 0) {
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-shield-alt", style = "margin-right: 5px;"),
                      "Invalid NAIC Identifiers: "),
@@ -1632,29 +1603,29 @@ developerfeedbackmodule <- function(
           tags$br(),
           tags$small("NAIC identifiers must be exactly 5 digits.")
         )
-      )
+      ))
     }
-    
+
     if (summary$name_percentage < 80) {
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-info",
           tags$strong(tags$i(class = "fa fa-building", style = "margin-right: 5px;"),
                      "Name Quality: "),
           "Use complete, meaningful organization names instead of placeholders."
         )
-      )
+      ))
     }
-    
+
     if (summary$address_percentage < 80) {
-      recommendations <- append(recommendations,
+      recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-secondary",
           tags$strong(tags$i(class = "fa fa-map-marker-alt", style = "margin-right: 5px;"),
                      "Address Issues: "),
           "Include complete addresses with street, city, state, and ZIP code."
         )
-      )
+      ))
     }
-    
+
     if (length(recommendations) == 0) {
       recommendations <- list(
         tags$div(class = "alert alert-success",
@@ -1664,7 +1635,7 @@ developerfeedbackmodule <- function(
         )
       )
     }
-    
+
     do.call(tagList, recommendations)
   })
   
