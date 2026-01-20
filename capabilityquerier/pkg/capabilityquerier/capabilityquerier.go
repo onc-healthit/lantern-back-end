@@ -384,10 +384,6 @@ func getTLSVersion(resp *http.Response) string {
 	return tlsNone
 }
 
-func isJSONMIMEType(mimeType string) bool {
-	return strings.Contains(mimeType, "json")
-}
-
 func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	respMimeTypes := strings.Split(respMimeType, "; ")
 	for _, rmt := range respMimeTypes {
