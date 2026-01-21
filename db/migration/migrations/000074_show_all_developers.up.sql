@@ -335,7 +335,7 @@ SELECT
             array_to_string(ARRAY(SELECT unnest(string_to_array(e.endpoint_names, ';')) LIMIT 5), '; '),
             '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing the endpoint''s entire list of API information source names." 
                 onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-                onclick="Shiny.setInputValue(''show_details'',''', e.url, ''',{priority: ''event''});"> Click For More... </a>'
+                onclick="Shiny.setInputValue(''show_details'',''', e.url, '&&', e.vendor_name, ''',{priority: ''event''});"> Click For More... </a>'
         )
         ELSE e.endpoint_names
     END AS condensed_endpoint_names
@@ -685,7 +685,7 @@ SELECT
                     '; '
                 ),
                 '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''show_details'',''', 
-                se.url, 
+                se.url, '&&', se.vendor_name, 
                 ''',{priority: ''event''});"> Click For More... </a>'
             )
         ELSE 
@@ -826,7 +826,7 @@ WITH original AS (
             CASE
                 WHEN cardinality(string_to_array(mv_well_known_endpoints.organization_names, ';'::text)) > 5 THEN (((array_to_string(( SELECT array_agg(t.elem) AS array_agg
                    FROM unnest(string_to_array(mv_well_known_endpoints.organization_names, ';'::text)) WITH ORDINALITY t(elem, ord)
-                  WHERE t.ord <= 5), ';'::text) || '; '::text) || '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click();}})(event)" onclick="Shiny.setInputValue(''show_details'','''::text) || mv_well_known_endpoints.url::text) || ''',{priority: ''event''});"> Click For More... </a>'::text
+                  WHERE t.ord <= 5), ';'::text) || '; '::text) || '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click();}})(event)" onclick="Shiny.setInputValue(''show_details'','''::text) || mv_well_known_endpoints.url::text) || '&&'::text || mv_well_known_endpoints.vendor_name::text || ''',{priority: ''event''});"> Click For More... </a>'::text
                 ELSE mv_well_known_endpoints.organization_names
             END
         END AS condensed_organization_names,

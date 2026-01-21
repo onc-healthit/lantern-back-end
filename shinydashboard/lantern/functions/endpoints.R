@@ -29,8 +29,12 @@ get_endpoint_export_tbl <- function(db_tables) {
 }
 
 get_endpoint_organization_list <- function(endpoint) {
+  splitString <- strsplit(endpoint, "&&")[[1]]
+    endpoint_name <- splitString[1]
+    vendor_name <- splitString[2]
+  
   res <- tbl(db_connection,
-  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
+  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint_name, "' AND vendor_name = '", vendor_name, "' ORDER BY endpoint_names_list"))) %>%
   collect() %>%
   group_by(url) %>%
   summarise(endpoint_names_list = list(endpoint_names_list)) %>%
