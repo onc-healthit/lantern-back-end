@@ -425,11 +425,27 @@ func insertEndpointRows(
 		developerNames := softwareListMap[listSource].ChplDeveloper
 		productIds := softwareListMap[listSource].ChplProductIDs
 
+		log.Infof(
+			"[insertEndpointRows] listSource=%s CHPL developers=%v products=%v",
+			listSource,
+			softwareListMap[listSource].ChplDeveloper,
+			softwareListMap[listSource].ChplProductIDs,
+		)
+
 		// If no developers, insert one row with vendor resolved via listSource/capability fallback
 		if len(developerNames) == 0 {
 			epRow := *baseEndpoint // copy
 
 			vm, err := ResolveVendor(ctx, store, listSource, "", epRow.CapabilityStatement)
+
+			log.Infof(
+				"[insertEndpointRows] vendor resolution (no developers): vendorID=%d source=%s listSource=%s url=%s",
+				vm.VendorID,
+				vm.Source,
+				listSource,
+				epRow.URL,
+			)
+
 			if err != nil {
 				return fmt.Errorf("resolve vendor failed, %s", err)
 			}
@@ -455,6 +471,14 @@ func insertEndpointRows(
 			epRow := *baseEndpoint // copy per developer row
 
 			vm, err := ResolveVendor(ctx, store, listSource, developerName, epRow.CapabilityStatement)
+
+			log.Infof(
+				"[insertEndpointRows] vendor resolution: developer=%q vendorID=%d source=%s listSource=%s",
+				developerName,
+				vm.Source,
+				listSource,
+			)
+
 			if err != nil {
 				return fmt.Errorf("resolve vendor failed, %s", err)
 			}

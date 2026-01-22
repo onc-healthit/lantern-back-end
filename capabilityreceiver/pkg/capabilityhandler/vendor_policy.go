@@ -80,12 +80,25 @@ func ResolveVendor(
 	capStat capabilityparser.CapabilityStatement,
 ) (VendorMatchResult, error) {
 
+	log.Infof(
+		"[ResolveVendor] start listSource=%q developerName=%q hasCapStat=%v",
+		listSource,
+		developerName,
+		capStat != nil,
+	)
+
 	// --------------------------------------------------
 	// 1. CHPL developer (highest priority)
 	// --------------------------------------------------
 	if developerName != "" {
 		v, err := store.GetVendorUsingName(ctx, developerName)
 		if err == nil {
+			log.Infof(
+				"[ResolveVendor] matched via CHPL developer name=%q vendorID=%d",
+				developerName,
+				v.ID,
+			)
+
 			return VendorMatchResult{
 				VendorID: v.ID,
 				Source:   VendorMatchCHPL,
@@ -106,6 +119,12 @@ func ResolveVendor(
 		if err != nil {
 			return VendorMatchResult{}, err
 		}
+
+		log.Infof(
+			"[ResolveVendor] matched via 1up list source vendorID=%d",
+			vendorID,
+		)
+
 		return VendorMatchResult{
 			VendorID: vendorID,
 			Source:   VendorMatch1Up,
@@ -117,6 +136,11 @@ func ResolveVendor(
 	// 3a. Medicaid unknown list sources
 	// --------------------------------------------------
 	if MedicaidUnknownListSources[listSource] {
+		log.Warnf(
+			"[ResolveVendor] Medicaid UNKNOWN list source=%q → vendorID=0",
+			listSource,
+		)
+
 		return VendorMatchResult{
 			VendorID: 0,
 			Source:   VendorMatchMedicaidUnknown,
@@ -132,6 +156,13 @@ func ResolveVendor(
 		if err != nil {
 			return VendorMatchResult{}, err
 		}
+
+		log.Infof(
+			"[ResolveVendor] Medicaid KNOWN vendor=%q vendorID=%d",
+			vendorName,
+			vendorID,
+		)
+
 		return VendorMatchResult{
 			VendorID: vendorID,
 			Source:   VendorMatchMedicaidKnown,
@@ -143,6 +174,11 @@ func ResolveVendor(
 	// 4. CapabilityStatement fallback
 	// --------------------------------------------------
 	if capStat == nil {
+		log.Warnf(
+			"[ResolveVendor] no capability statement → vendorID=0 listSource=%q",
+			listSource,
+		)
+
 		return VendorMatchResult{
 			VendorID: 0,
 			Source:   VendorMatchNone,
