@@ -100,8 +100,8 @@ SELECT
     (SELECT count FROM endpoints_with_inaccessible_list_sources) as endpoints_with_inaccessible_list_sources_count,
     (SELECT COUNT(DISTINCT developer_name) FROM developers_with_empty_bundles) as developers_with_empty_bundles_count;
 
--- Create index for faster refresh
-CREATE INDEX idx_mv_data_issues_summary ON mv_data_issues_summary(developers_with_no_org_data_count);
+-- Create unique index for concurrent refresh
+CREATE UNIQUE INDEX idx_mv_data_issues_summary_unique ON mv_data_issues_summary(developers_with_no_org_data_count, endpoints_with_no_org_data_count, shared_list_sources_count);
 
 -- ========================================
 -- MATERIALIZED VIEW: mv_developer_data_issues
