@@ -310,6 +310,20 @@ CREATE TABLE info_history_pruning_metadata (
     query_int_end_date                  timestamp with time zone NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS shared_list_sources (
+    list_source VARCHAR(500) NOT NULL,
+    developer_name VARCHAR(500) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (list_source, developer_name)
+);
+
+-- Create index for faster lookups
+CREATE INDEX IF NOT EXISTS idx_shared_list_sources_list_source
+ON shared_list_sources(list_source);
+
+CREATE INDEX IF NOT EXISTS idx_shared_list_sources_updated_at
+ON shared_list_sources(updated_at);
+
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints
 FOR EACH ROW
@@ -378,7 +392,7 @@ BEFORE INSERT OR UPDATE on fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
-CREATE or REPLACE VIEW joined_export_tables AS
+CREATE OR REPLACE VIEW joined_export_tables AS
 SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
     endpt_orgnames.organization_ids AS endpoint_ids,
     vendors.name as vendor_name,
@@ -395,9 +409,10 @@ SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endp
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
     endpts_info.requested_fhir_version, endpts_metadata.availability
 FROM fhir_endpoints AS endpts
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+LEFT JOIN shared_list_sources AS sls ON endpts.list_source = sls.list_source
+LEFT JOIN vendors ON vendors.name = sls.developer_name
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url AND endpts_info.vendor_id = vendors.id
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
