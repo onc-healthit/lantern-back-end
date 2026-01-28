@@ -35,17 +35,33 @@ validation_group_names <- names(validation_group_list)
 valid_fhir_versions <- c("No Cap Stat", "0.4.0", "0.5.0", "1.0.0", "1.0.1", "1.0.2", "1.1.0", "1.2.0", "1.4.0", "1.6.0", "1.8.0", "3.0.0", "3.0.1", "3.0.2", "3.2.0", "3.3.0", "3.5.0", "3.5a.0", "4.0.0", "4.0.1", "4.1.0", "4.3.0", "4.2.0", "4.4.0", "4.5.0", "4.6.0", "5.0.0")
 
 # Normalize FHIR version strings to 3-part format (e.g., "4.4" -> "4.4.0", "4" -> "4.0.0")
+# Vectorized to work inside dplyr::mutate
 normalize_fhir_version <- function(version) {
-  if (is.na(version) || version == "" || version == "No Cap Stat" || version == "Unknown") {
-    return(version)
+  dplyr::case_when(
+    is.na(version) | version == "" | version == "No Cap Stat" | version == "Unknown" ~ version,
+    !grepl("\\.", version) ~ paste0(version, ".0.0"),
+    !grepl("\\..+\\.", version) ~ paste0(version, ".0"),
+    TRUE ~ version
+  )
+}
+
+# Expand normalized 3-part FHIR versions back to include short forms for DB filtering
+# e.g., c("4.4.0") -> c("4.4.0", "4.4"), c("4.0.0") -> c("4.0.0", "4.0", "4")
+expand_fhir_versions_for_db <- function(versions) {
+  expanded <- versions
+  for (v in versions) {
+    if (is.na(v) || v %in% c("", "No Cap Stat", "Unknown")) next
+    parts <- strsplit(v, "\\.")[[1]]
+    if (length(parts) == 3) {
+      if (parts[3] == "0") {
+        expanded <- c(expanded, paste(parts[1], parts[2], sep = "."))
+      }
+      if (parts[2] == "0" && parts[3] == "0") {
+        expanded <- c(expanded, parts[1])
+      }
+    }
   }
-  parts <- strsplit(version, "\\.")[[1]]
-  if (length(parts) == 1) {
-    return(paste0(version, ".0.0"))
-  } else if (length(parts) == 2) {
-    return(paste0(version, ".0"))
-  }
-  return(version)
+  unique(expanded)
 }
 
 dstu2 <- c("0.4.0", "0.4", "0.5.0", "0.5", "1.0.0", "1.0", "1", "1.0.1", "1.0.2")

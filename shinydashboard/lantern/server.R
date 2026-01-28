@@ -65,12 +65,18 @@ function(input, output, session) { #nolint
         "dashboard_page",
         reactive(input$httpvendor))
 
+  # Expand normalized FHIR versions (e.g., "4.4.0") to include short DB forms (e.g., "4.4", "4")
+  expanded_fhir_version <- reactive({
+    req(input$fhir_version)
+    expand_fhir_versions_for_db(input$fhir_version)
+  })
+
   observeEvent(database_fetch, {
     if (database_fetch() == 0) {
       callModule(
         endpointsmodule,
         "endpoints_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$availability),
         reactive(input$is_chpl))
@@ -82,7 +88,7 @@ function(input, output, session) { #nolint
       callModule(
         organizationsmodule,
         "organizations_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$match_confidence),
         reactive(input$is_chpl))
@@ -90,26 +96,26 @@ function(input, output, session) { #nolint
       callModule(
         capabilitystatementsizemodule,
         "capabilitystatementsize_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         securitymodule,
         "security_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$auth_type_code))
 
       callModule(
         smartresponsemodule,
         "smartresponse_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         resourcemodule,
         "resource_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$resources),
         reactive(input$operations))
@@ -117,19 +123,19 @@ function(input, output, session) { #nolint
       callModule(
         implementationmodule,
         "implementation_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         fieldsmodule,
         "fields_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         profilemodule,
         "profile_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$profile_resource),
         reactive(input$profiles))
@@ -137,14 +143,14 @@ function(input, output, session) { #nolint
       callModule(
         valuesmodule,
         "values_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$field))
 
       callModule(
         contactsmodule,
         "contacts_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$has_contact)
       )
@@ -152,7 +158,7 @@ function(input, output, session) { #nolint
       callModule(
         validationsmodule,
         "validations_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$validation_group))
     }
@@ -533,7 +539,7 @@ function(input, output, session) { #nolint
 
   profile_options <- reactive({
     query <- tbl(db_connection, "endpoint_supported_profiles_mv") %>%
-      filter(fhir_version %in% !!input$fhir_version)
+      filter(fhir_version %in% !!expanded_fhir_version())
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       query <- query %>% filter(vendor_name == !!input$vendor)
@@ -562,7 +568,7 @@ function(input, output, session) { #nolint
     req(input$fhir_version, input$vendor)
 
     res <- res %>%
-    filter(fhir_version %in% input$fhir_version) %>%
+    filter(fhir_version %in% expanded_fhir_version()) %>%
     filter(resource != "")
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
@@ -587,8 +593,8 @@ function(input, output, session) { #nolint
     
     res <- tbl(db_connection, "mv_endpoint_resource_types")
     
-    res <- res %>% 
-      filter(fhir_version %in% !!input$fhir_version)
+    res <- res %>%
+      filter(fhir_version %in% !!expanded_fhir_version())
     
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == !!input$vendor)

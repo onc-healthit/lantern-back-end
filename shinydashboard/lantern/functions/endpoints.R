@@ -130,7 +130,7 @@ get_fhir_version_factors <- function(endpoint_tbl) {
 get_distinct_fhir_version_list_no_capstat <- function(endpoint_export_tbl) {
   res <- endpoint_export_tbl %>%
   distinct(fhir_version) %>%
-  mutate(fhir_version = sapply(fhir_version, normalize_fhir_version)) %>%
+  mutate(fhir_version = normalize_fhir_version(fhir_version)) %>%
   distinct(fhir_version) %>%
   split(.$fhir_version) %>%
   purrr::map(~ .$fhir_version)
@@ -140,7 +140,7 @@ get_distinct_fhir_version_list <- function(endpoint_export_tbl) {
   res <- endpoint_export_tbl %>%
   filter(fhir_version != "No Cap Stat") %>%
   distinct(fhir_version) %>%
-  mutate(fhir_version = sapply(fhir_version, normalize_fhir_version)) %>%
+  mutate(fhir_version = normalize_fhir_version(fhir_version)) %>%
   distinct(fhir_version) %>%
   split(.$fhir_version) %>%
   purrr::map(~ .$fhir_version)
@@ -152,7 +152,7 @@ get_fhir_version_list <- function(endpoint_export_tbl, no_cap_stat) {
 
   res <- endpoint_export_tbl %>%
   distinct(fhir_version) %>%
-  mutate(fhir_version = sapply(fhir_version, normalize_fhir_version)) %>%
+  mutate(fhir_version = normalize_fhir_version(fhir_version)) %>%
   distinct(fhir_version)
 
   res <- res %>% mutate(fhir_version_name = case_when(
