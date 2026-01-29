@@ -2446,7 +2446,6 @@ WHERE f.requested_fhir_version = 'None'
 ORDER BY type;
 
 -- Create indexes for better performance
-CREATE UNIQUE INDEX idx_mv_endpoint_resource_types_unique ON mv_endpoint_resource_types(endpoint_id, vendor_id, fhir_version, type);
 CREATE INDEX idx_mv_endpoint_resource_types_vendor ON mv_endpoint_resource_types(vendor_name);
 CREATE INDEX idx_mv_endpoint_resource_types_fhir ON mv_endpoint_resource_types(fhir_version);
 CREATE INDEX idx_mv_endpoint_resource_types_type ON mv_endpoint_resource_types(type);
