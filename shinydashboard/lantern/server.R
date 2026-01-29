@@ -926,12 +926,13 @@ current_endpoint <- reactive({
     splitString <- strsplit(input$endpoint_popup, "&&")[[1]]
     endpointURL <- splitString[1]
     endpoint_requested_fhir_version <- splitString[2]
-    endpoint_vendor_name <- splitString[3]
+    # splitString may have 2 or 3 parts depending on the source
+    endpoint_vendor_name <- if (length(splitString) >= 3) splitString[3] else NA
   } else {
     # Only URL is provided (from Organizations tab)
     endpointURL <- input$endpoint_popup
 
-    # Query DB for the most recent requested_fhir_version
+    # Query DB for the most recent requested_fhir_version and vendor_name
     res <- tbl(db_connection, "selected_fhir_endpoints_mv") %>%
       filter(url == !!endpointURL) %>%
       arrange(desc(info_updated)) %>%
@@ -939,16 +940,31 @@ current_endpoint <- reactive({
 
     if (nrow(res) == 0) {
       warning(paste("No matching rows found for URL:", endpointURL))
-      endpoint_requested_fhir_version <- NA 
+      endpoint_requested_fhir_version <- NA
+      endpoint_vendor_name <- NA
     } else {
       endpoint_requested_fhir_version <- res$requested_fhir_version[1]
+      endpoint_vendor_name <- res$vendor_name[1]
     }
   }
 
   if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
     endpoint_vendor_name <- input$vendor
   }
-  
+
+  # If vendor_name is still NA (e.g., splitString had only 2 parts and vendor filter is "All Developers"),
+  # look it up from the DB using the URL and requested_fhir_version
+  if (is.na(endpoint_vendor_name)) {
+    vendor_res <- tbl(db_connection, "selected_fhir_endpoints_mv") %>%
+      filter(url == !!endpointURL) %>%
+      filter(requested_fhir_version == !!endpoint_requested_fhir_version) %>%
+      arrange(desc(info_updated)) %>%
+      collect()
+    if (nrow(vendor_res) > 0) {
+      endpoint_vendor_name <- vendor_res$vendor_name[1]
+    }
+  }
+
   current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version, vendor_name = endpoint_vendor_name)
   current_endpoint_list
 })
