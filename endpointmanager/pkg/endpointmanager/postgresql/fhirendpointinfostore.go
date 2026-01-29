@@ -13,6 +13,30 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// returns valid JSON bytes or NULL
+func safeJSONOrNull(b []byte) []byte {
+	if len(b) == 0 {
+		return []byte("null")
+	}
+
+	var js json.RawMessage
+	if err := json.Unmarshal(b, &js); err != nil {
+		prefixLen := 50
+		if len(b) < prefixLen {
+			prefixLen = len(b)
+		}
+
+		log.Warnf(
+			"[INVALID JSON DROPPED] prefix=%q",
+			string(b[:prefixLen]),
+		)
+
+		return []byte("null")
+	}
+
+	return b
+}
+
 // prepared statements are left open to be used throughout the execution of the application
 var addFHIREndpointInfoStatement *sql.Stmt
 var updateFHIREndpointInfoStatement *sql.Stmt
@@ -362,7 +386,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	log.Infof("Adding FHIREndpointInfo with URL: %s", e.URL)
 
 	if e.CapabilityStatementBytes != nil {
-		capabilityStatementJSON = e.CapabilityStatementBytes
+		capabilityStatementJSON = safeJSONOrNull(e.CapabilityStatementBytes)
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
@@ -384,7 +408,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 
 	var smartResponseJSON []byte
 	if e.SMARTResponseBytes != nil {
-		smartResponseJSON = e.SMARTResponseBytes
+		smartResponseJSON = safeJSONOrNull(e.SMARTResponseBytes)
 	} else {
 		smartResponseJSON = []byte("null")
 	}
@@ -418,12 +442,13 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	var capabilityStatementJSON []byte
 
 	if e.CapabilityStatementBytes != nil {
-		capabilityStatementJSON = e.CapabilityStatementBytes
+		capabilityStatementJSON = safeJSONOrNull(e.CapabilityStatementBytes)
 	} else if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
 			return err
 		}
+		capabilityStatementJSON = safeJSONOrNull(capabilityStatementJSON)
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
@@ -445,12 +470,13 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 	var smartResponseJSON []byte
 	if e.SMARTResponseBytes != nil {
-		smartResponseJSON = e.SMARTResponseBytes
+		smartResponseJSON = safeJSONOrNull(e.SMARTResponseBytes)
 	} else if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
 		if err != nil {
 			return err
 		}
+		smartResponseJSON = safeJSONOrNull(smartResponseJSON)
 	} else {
 		smartResponseJSON = []byte("null")
 	}

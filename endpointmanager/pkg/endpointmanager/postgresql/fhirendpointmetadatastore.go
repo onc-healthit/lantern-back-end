@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 )
 
@@ -52,6 +54,18 @@ func (s *Store) GetFHIREndpointMetadata(ctx context.Context, metadataID int) (*e
 func (s *Store) AddFHIREndpointMetadata(ctx context.Context, e *endpointmanager.FHIREndpointMetadata) (int, error) {
 	var err error
 	var metadataID int
+
+	const maxErrorLen = 500
+
+	// Truncate errors to fit DB constraint
+	if len(e.Errors) > maxErrorLen {
+		log.Warnf(
+			"[METADATA ERROR TRUNCATED] url=%s original_len=%d",
+			e.URL,
+			len(e.Errors),
+		)
+		e.Errors = e.Errors[:maxErrorLen]
+	}
 
 	row := addFHIREndpointMetadataStatement.QueryRowContext(ctx,
 		e.URL,
