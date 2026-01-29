@@ -501,7 +501,7 @@ endpoint_data_agg AS (
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
         string_agg(
-            DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&quot,{priority: ''event''});"> ' || url || '</a>',
+            DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || '&&None' || ',&&,' || vendor_name || ',{priority: ''event''});">' || url || '</a>',
             '<br/>'
         ) as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
@@ -716,7 +716,8 @@ SELECT
     CONCAT(
         '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''', 
         se.url, 
-        '&&None'',{priority: ''event''});">', 
+        '&&None','&&', 
+        se.vendor_name,',{priority: ''event''});">', 
         se.url, 
         '</a>'
     ) AS url_modal
@@ -1176,7 +1177,7 @@ SELECT
     -- Generate URL modal link
     CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint." 
             onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>') 
+            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, '&&', e.vendor_name, ''',{priority: ''event''});">', e.url, '</a>') 
     AS "urlModal",
 
     -- Generate Condensed Endpoint Names
