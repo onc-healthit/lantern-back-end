@@ -331,7 +331,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
 			if err != nil {
-				return fmt.Errorf("does exist, add endpoint metadata failed, %s", err)
+				return fmt.Errorf("exists, add endpoint metadata failed, %s", err)
 			}
 
 			valResID, err := store.AddValidationResult(ctx)
@@ -475,6 +475,7 @@ func insertEndpointRows(
 			log.Infof(
 				"[insertEndpointRows] vendor resolution: developer=%q vendorID=%d source=%s listSource=%s",
 				developerName,
+				vm.VendorID,
 				vm.Source,
 				listSource,
 			)
@@ -559,10 +560,6 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 	url, ok := msgJSON["url"].(string)
 	if !ok {
 		return fmt.Errorf("unable to cast message URL to string")
-	}
-
-	if err != nil {
-		return err
 	}
 
 	store := qa.store
