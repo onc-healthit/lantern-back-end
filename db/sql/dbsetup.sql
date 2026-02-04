@@ -1667,7 +1667,8 @@ t.expected,
 t.actual,
 t.comment,
 t.reference
-FROM ( SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
+FROM (SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id)
+        COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
         f.url,
             CASE
                 WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
@@ -1686,7 +1687,7 @@ FROM ( SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_
         FROM fhir_endpoints_info f
             JOIN validations v ON f.validation_result_id = v.validation_result_id
             LEFT JOIN vendors ON f.vendor_id = vendors.id
-        ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) t;
+        ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id) t;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
 ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual);
