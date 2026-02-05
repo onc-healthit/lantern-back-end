@@ -22,7 +22,28 @@ function(res) {
 #* @param identifier Filter by exact identifier value (optional)
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
 #* @description Download a CSV file containing daily organization data
-function(res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
+function(req, res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
+  
+  # Block unknown query parameters
+  allowed_params <- c("developer", "organization_detail", "identifier", "fhir_version")
+
+  query_names <- names(req$argsQuery)
+  query_names <- unique(query_names)
+  unknown_params <- setdiff(query_names, allowed_params)
+
+  if (length(unknown_params) > 0) {
+    res$status <- 400
+    return(list(
+      error = paste0(
+        "Invalid query parameter(s): ",
+        paste(sort(unknown_params), collapse = ", "),
+        ". Supported parameters are: ",
+        paste(allowed_params, collapse = ", "),
+        "."
+      )
+    ))
+  }
+  
   # Normalize and parse fhir_versions
   fhir_versions_vec <- if (!is.null(fhir_version)) {
     strsplit(fhir_version, ",")[[1]] %>% trimws()
