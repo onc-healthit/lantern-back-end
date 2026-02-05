@@ -165,7 +165,7 @@ contactsmodule <- function(
         
         # ESSENTIAL CHANGE: Get unique URLs first, then paginate
         query_str <- "
-        SELECT *
+        SELECT DISTINCT ON (url, vendor_name) *
         FROM mv_contacts_info 
         WHERE fhir_version IN ({vals*})"
         
@@ -195,7 +195,7 @@ contactsmodule <- function(
 
         # Add ordering and pagination
         query_str <- paste0(query_str, " 
-        ORDER BY url, contact_preference
+        ORDER BY url, vendor_name, contact_preference DESC
         LIMIT {limit} OFFSET {offset}")
         
         params$limit <- contacts_page_size
@@ -230,7 +230,7 @@ contactsmodule <- function(
         
         # Same query as main but without LIMIT OFFSET
         query_str <- "
-        SELECT *
+        SELECT DISTINCT ON (url, vendor_name) *
         FROM mv_contacts_info 
         WHERE fhir_version IN ({vals*})"
         
@@ -259,7 +259,7 @@ contactsmodule <- function(
         }
 
         # Add ordering but no pagination
-        query_str <- paste0(query_str, " ORDER BY url, contact_preference")
+        query_str <- paste0(query_str, " ORDER BY url, vendor_name, contact_preference DESC")
 
         query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
         res <- tbl(db_connection, sql(query)) %>% collect()
