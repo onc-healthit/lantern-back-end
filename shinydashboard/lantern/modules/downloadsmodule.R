@@ -47,6 +47,12 @@ downloadsmodule_UI <- function(id) {
           [GET] <b>https://lantern.healthit.gov/api/organizations/v1</b> - Downloads daily organization data associated with endpoints.
           <br><br>
 
+          <u>Supported query parameters for the Endpoints API:</u><br>
+          <code>developer</code> – Filter by certified API developer name.<br>
+          <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
+          <code>source</code> – Filter by data source. (e.g., CHPL, State Medicaid, Payer, Other).<br>
+          <br><br>
+
           <u>Supported query parameters for the Organizations API:</u><br>
           <code>developer</code> – Filter by certified API developer name.<br>
           <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
@@ -61,8 +67,12 @@ downloadsmodule_UI <- function(id) {
           <code>?developer=Epic%20Systems%20Corporation&fhir_version=No%20Cap%20Stat,4.0.1</code>
           <br><br>
 
-          <u>Example 2:</u> Return organizations with identifier <i>1750581864</i> that have data:<br>
+          <u>Example 2:</u> (Organizations API) Return organizations with identifier <i>1750581864</i> that have data:<br>
           <code>?identifier=1750581864&organization_detail=present</code>
+          <br><br>
+
+          <u>Example 3:</u> (Endpoint API) Download endpoint data from CHPL sources only:<br>
+          <code>?source=CHPL</code>
           <br><br>
 
           Developer names and other parameter values must match exactly as stored in the system.<br>
