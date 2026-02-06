@@ -8,7 +8,13 @@ source("downloadsmodule.R")
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
 #* @param source Filter by source: 'CHPL', 'State Medicaid', 'Payer', 'Other' (optional)
 #* @description Download a csv containing daily endpoint data
-function(res, developer = NULL, fhir_version = NULL, source = NULL) {
+function(req, res, developer = NULL, fhir_version = NULL, source = NULL) {
+    err <- block_unknown_query_params(
+      req, res,
+      allowed_params = c("developer", "fhir_version", "source")
+    )
+    if (!is.null(err)) return(err)
+
     # Normalize and parse fhir_versions
     fhir_versions_vec <- parse_csv_param(fhir_version)
     
@@ -62,7 +68,13 @@ function(res, developer = NULL, fhir_version = NULL, source = NULL) {
 #* @param identifier Filter by exact identifier value (optional)
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
 #* @description Download a CSV file containing daily organization data
-function(res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
+function(req, res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
+  err <- block_unknown_query_params(
+    req, res,
+    allowed_params = c("developer", "organization_detail", "identifier", "fhir_version")
+  )
+  if (!is.null(err)) return(err)
+  
   # Normalize and parse fhir_versions
   fhir_versions_vec <- parse_csv_param(fhir_version)
 
@@ -237,4 +249,26 @@ write_and_stream_csv <- function(res, filename, data) {
     write.csv(data, file = filename, row.names = FALSE)
   }
   include_file(filename, res, content_type = "text/csv")
+}
+
+block_unknown_query_params <- function(req, res, allowed_params) {
+  query_names <- names(req$argsQuery)
+  query_names <- unique(query_names)
+
+  unknown_params <- setdiff(query_names, allowed_params)
+
+  if (length(unknown_params) > 0) {
+    res$status <- 400
+    return(list(
+      error = paste0(
+        "Invalid query parameter(s): ",
+        paste(sort(unknown_params), collapse = ", "),
+        ". Supported parameters are: ",
+        paste(allowed_params, collapse = ", "),
+        "."
+      )
+    ))
+  }
+
+  NULL
 }
