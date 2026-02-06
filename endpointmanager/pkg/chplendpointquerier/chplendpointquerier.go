@@ -161,7 +161,7 @@ var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
 var inpracsysURL = "https://inpracsys.com/fhir/"
 
 // State Payer list
-var atenaURL = "https://developerportal.aetna.com/fhirapis"
+var aetnaURL = "https://developerportal.aetna.com/fhirapis"
 var centeneURL = "https://partners.centene.com/apiDetail/2718669d-6e2e-42b5-8c90-0a82f13a30ba"
 var cignaURL = "https://developer.cigna.com/docs/service-apis/patient-access/implementation-guide#Implementation-Guide-Base-URL"
 var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
@@ -524,8 +524,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		QualifactsWebscraper(qualifactsURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenAPIURL) {
 		NextgenAPIWebscraper(nextgenAPIURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, atenaURL) {
-		AetnaURLWebscraper("https://developerportal.aetna.com/fhir/apis/swagger/_v2_patientaccess_Binary_%7Bid%7D.yaml", fileToWriteTo)
+	} else if URLsEqual(chplURL, aetnaURL) {
+		AetnaURLWebscraper("https://developerportal.aetna.com/fhir/apis/swagger/_v2_patientaccess_Endpoint_id.yaml", fileToWriteTo)
 	} else if URLsEqual(chplURL, centeneURL) {
 		CenteneURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cignaURL) {
