@@ -167,8 +167,8 @@ var cignaURL = "https://developer.cigna.com/docs/service-apis/patient-access/imp
 var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
 
 var hcscURL = "https://interoperability.hcsc.com/s/provider-directory-api"
-var guidewellPatAccURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/306/api/285#/CMSInteroperabilityPatientAccessMetadata_100/operation/%2FR4%2Fmetadata/get"
-var guidewellP2PURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/309/api/288#/CMSInteroperabilityPayer2PayerOutboundMetadata_100/operation/%2FP2P%2FR4%2Fmetadata/get"
+var guidewellPatAccURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/396/api/375#/CMSInteroperabilityPatientAccessMetadata_100/operation/%2FR4%2Fmetadata/get"
+var guidewellP2PURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/399/api/378#/CMSInteroperabilityPayer2PayerOutboundMetadata_100/operation/%2FP2P%2FR4%2Fmetadata/get"
 var humanaURL = "https://developers.humana.com/apis/patient-api/doc"
 var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
 
