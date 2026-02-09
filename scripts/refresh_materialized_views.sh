@@ -1165,16 +1165,8 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_endpo
 }
 
 # Refresh mv_endpoint_resource_types
-docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_endpoint_resource_types;" -U lantern -d lantern || {
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW mv_endpoint_resource_types;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_endpoint_resource_types." >> $log_file
-}
-
-docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_resource_types_unique;" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_endpoint_resource_types_unique." >> $log_file
-}
-
-docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_endpoint_resource_types_unique ON mv_endpoint_resource_types(endpoint_id, vendor_id, fhir_version, type);" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_endpoint_resource_types_unique." >> $log_file
 }
 
 docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_endpoint_resource_types_vendor;" -U lantern -d lantern || {
