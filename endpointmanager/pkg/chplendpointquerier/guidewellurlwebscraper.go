@@ -2,6 +2,7 @@ package chplendpointquerier
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
@@ -29,6 +30,8 @@ func GuidewellURLWebscraper(CHPLURL string, fileToWriteTo string) error {
 		var lanternEntry LanternEntry
 
 		fhirURL := urlElements.Text()
+		fhirURL = strings.TrimSuffix(fhirURL, "/")
+		fhirURL = strings.TrimSuffix(fhirURL, "/metadata")
 		lanternEntry.URL = fhirURL
 		if !entryExists(lanternEntryList, lanternEntry) {
 			lanternEntryList = append(lanternEntryList, lanternEntry)
