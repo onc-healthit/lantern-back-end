@@ -74,12 +74,18 @@ type QuerierArgs struct {
 	FhirURL        string
 	RequestVersion string
 	DefaultVersion string
-	Client         *http.Client
-	MessageQueue   *lanternmq.MessageQueue
-	ChannelID      *lanternmq.ChannelID
-	QueueName      string
-	UserAgent      string
-	Store          *postgresql.Store
+	//Client         *http.Client
+	MessageQueue *lanternmq.MessageQueue
+	ChannelID    *lanternmq.ChannelID
+	QueueName    string
+	UserAgent    string
+	Store        *postgresql.Store
+}
+
+func createHTTPClient() *http.Client {
+	return &http.Client{
+		Timeout: time.Second * 35,
+	}
 }
 
 // GetAndSendVersionsResponse gets a $versions response from a FHIR API endpoint and then puts the versions
@@ -91,6 +97,9 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	if !ok {
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
 	}
+
+	// create HTTP client for this goroutine
+	client := createHTTPClient()
 
 	message := VersionsMessage{
 		URL: qa.FhirURL,
@@ -114,7 +123,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 			trace := &httptrace.ClientTrace{}
 			req = req.WithContext(httptrace.WithClientTrace(ctx, trace))
 
-			httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", qa.Client)
+			httpResponseCode, _, _, versionsResponse, _, err := requestWithMimeType(req, "application/json", client)
 			// If an error occurs with the version request we still want to proceed with the capability request
 			if err != nil {
 				log.Infof("Error requesting versions response: %s", err.Error())
@@ -156,6 +165,9 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 		return fmt.Errorf("unable to cast querierArgs to type QuerierArgs from arguments")
 	}
 
+	// create HTTP client for this goroutine
+	client := createHTTPClient()
+
 	var err error
 
 	endpt, err := qa.Store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, qa.FhirURL, qa.RequestVersion)
@@ -189,7 +201,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 	}
 	metadataURL := endpointmanager.NormalizeEndpointURL(castURL.String())
 	// Query fhir endpoint
-	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, qa.Client, userAgent, &message)
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, metadata, client, userAgent, &message)
 	if err != nil {
 		select {
 		case <-ctx.Done():
@@ -203,7 +215,7 @@ func GetAndSendCapabilityStatement(ctx context.Context, args *map[string]interfa
 
 	wellKnownURL := endpointmanager.NormalizeWellKnownURL(castURL.String())
 	// Query well known endpoint
-	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, qa.Client, userAgent, &message)
+	err = requestCapabilityStatementAndSmartOnFhir(ctx, wellKnownURL, wellknown, client, userAgent, &message)
 	if err != nil {
 		log.Warnf("Got error:\n%s\n\nfrom wellknown URL: %s", err.Error(), wellKnownURL)
 	}
@@ -372,10 +384,6 @@ func getTLSVersion(resp *http.Response) string {
 	return tlsNone
 }
 
-func isJSONMIMEType(mimeType string) bool {
-	return strings.Contains(mimeType, "json")
-}
-
 func mimeTypesMatch(reqMimeType string, respMimeType string) bool {
 	respMimeTypes := strings.Split(respMimeType, "; ")
 	for _, rmt := range respMimeTypes {
@@ -413,19 +421,15 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 
 	httpResponseCode = resp.StatusCode
 	if httpResponseCode == http.StatusOK {
-		respMimeType := resp.Header.Get("Content-Type")
-		// endpoints generally return an xml mime type by default.
-		// checking that it's a json mime type confirms that it processes the JSON type request.
-		// however, it doesn't necessarily match the request type exactly and seems to cache the
-		// first JSON request type it receives and continues to respond with that.
-		if isJSONMIMEType(respMimeType) {
-			defer resp.Body.Close()
-			mimeMatches = true
+		// LANTERN-990: Removed the if statement that checks whether the response header "Content-Type" value
+		// contains the term "json" or not. It was skipping valid JSON responses if those did not have this header value set.
 
-			capStat, err = io.ReadAll(resp.Body)
-			if err != nil {
-				return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
-			}
+		defer resp.Body.Close()
+		mimeMatches = true
+
+		capStat, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
 		}
 	}
 

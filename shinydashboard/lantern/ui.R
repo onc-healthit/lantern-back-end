@@ -5,20 +5,43 @@ ui <- dashboardPage(
     titleWidth = 200,
     tags$li(
       class = "dropdown",
-        column(
-          width = 12,
-          align = "right",
-          span(textOutput("version"),
-               style = "color: white; font-size: 16px; line-height: 45px")
+      column(
+        width = 12,
+        align = "right",
+        div(
+          style = "display: flex; align-items: center; justify-content: flex-end;",
+          span(
+            textOutput("version"),
+            style = "color: white; font-size: 16px; line-height: 45px; margin-right: 8px;"
+          ),
+          actionButton(
+            "show_release_notes", "",
+            icon = tags$i(
+              class = "fa fa-question-circle",
+              "aria-hidden" = "true",
+              role = "presentation",
+              "aria-label" = "question-circle icon"
+            ),
+            style = "background-color: transparent; border: none; color: white;"
+          )
         )
+      )
     ),
-    tags$li(a(href = "https://github.com/onc-healthit/lantern-back-end",
+    tags$li(
+      a(
+        href = "https://github.com/onc-healthit/lantern-back-end",
         tags$picture(
           tags$source(srcset = "images/GitHub-Mark-Light-32px.webp", type = "image/webp"),
-          tags$img(src = "images/GitHub-Mark-Light-32px.png", width = "19", height = "19", alt = "Github logo")
+          tags$img(
+            src = "images/GitHub-Mark-Light-32px.png",
+            width = "19", height = "19",
+            alt = "Github logo"
+          )
         ),
-        title = "Github Link"),
-      class = "dropdown")
+        title = "Github Link"
+      ),
+      class = "dropdown"
+    )
   ),
   # Sidebar with menu items for each module
   dashboardSidebar(
@@ -37,7 +60,7 @@ ui <- dashboardPage(
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
       menuItem("SMART Response", icon = tags$i(class = "fa fa-list", "aria-hidden" = "true", role = "presentation", "aria-label" = "list icon"), tabName = "smartresponse_tab"),
       menuItem("Contact Information", tabName = "contacts_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
-      menuItem("Downloads", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
+      menuItem("Downloads / API", tabName = "downloads_tab", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
       menuItem("About Lantern", tabName = "about_tab", icon = tags$i(class = "fa fa-info-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "info-circle icon")),
       style = "white-space: normal"
     )
@@ -217,11 +240,11 @@ ui <- dashboardPage(
                 includeHTML("about-lantern.html"),
                 p("For information about the data sources, algorithms, and query intervals used by Lantern, please see the",
                 a("documentation available here.", href = "Lantern_Data_Sources_And_Algorithms.pdf", target = "_blank", class = "lantern-url")),
-                h3("Source Code"),
+                h2("Source Code"),
                 p("The code behind Lantern can be found on GitHub ",
                 a("here.", href = "https://github.com/onc-healthit/lantern-back-end", class = "lantern-url"))
               )
-        )
+      )
     ),
     uiOutput("htmlFooter"),
     

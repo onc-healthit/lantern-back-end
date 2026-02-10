@@ -19,8 +19,6 @@ var deleteFHIREndpointOrganizationStatement *sql.Stmt
 var addFHIREndpointOrganizationMapStatement *sql.Stmt
 var getFHIREndpointOrganizationsByEndpointID *sql.Stmt
 var getFHIREndpointOrganizationByInfoStatement *sql.Stmt
-var deleteFHIREndpointOrganizationMapStatement *sql.Stmt
-var deleteFHIREndpointOrganizationMapStatementConditional *sql.Stmt
 var updateFHIREndpointOrganizationsUpdateTime *sql.Stmt
 var updateProcessCompletionStatusStatement *sql.Stmt
 var addFHIREndpointOrganizationIdentifierStatement *sql.Stmt
@@ -29,6 +27,9 @@ var deleteFHIREndpointOrganizationIdentifierStatement *sql.Stmt
 var deleteFHIREndpointOrganizationAddressStatement *sql.Stmt
 var addFHIREndpointOrganizationActiveStatement *sql.Stmt
 var deleteFHIREndpointOrganizationActiveStatement *sql.Stmt
+var addFHIREndpointOrganizationURLStatement *sql.Stmt
+var deleteFHIREndpointOrganizationURLStatement *sql.Stmt
+var deleteFHIREndpointOrganizationMapByPairStatement *sql.Stmt
 
 // GetAllFHIREndpoints returns a list of all of the fhir endpoints
 func (s *Store) GetAllFHIREndpoints(ctx context.Context) ([]*endpointmanager.FHIREndpoint, error) {
@@ -147,7 +148,7 @@ func (s *Store) GetFHIREndpointOrganizationByURLandListSource(ctx context.Contex
 	o.organization_npi_id, o.updated_at
 	FROM fhir_endpoints e, fhir_endpoint_organizations_map m, fhir_endpoint_organizations o
 	WHERE e.id = m.id AND m.org_database_id = o.id 
-	AND e.list_source=$1 AND e.url=$2 ORDER BY updated_at;`
+	AND e.list_source=$1 AND e.url=$2 ORDER BY updated_at DESC;`
 
 	orgRow := s.DB.QueryRowContext(ctx, sqlStatement, listSource, url)
 
@@ -519,6 +520,11 @@ func (s *Store) UpdateFHIREndpointOrganizations(ctx context.Context, e *endpoint
 			if err != nil {
 				return err
 			}
+
+			err = s.AddFHIREndpointOrganizationURL(ctx, organization.ID, org.OrganizationURL)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -569,6 +575,11 @@ func (s *Store) AddFHIREndpointOrganization(ctx context.Context, org *endpointma
 	}
 
 	err = s.AddFHIREndpointOrganizationAddresses(ctx, org.ID, org.OrganizationAddresses)
+	if err != nil {
+		return err
+	}
+
+	err = s.AddFHIREndpointOrganizationURL(ctx, org.ID, org.OrganizationURL)
 	if err != nil {
 		return err
 	}
@@ -676,6 +687,36 @@ func (s *Store) AddFHIREndpointOrganizationActive(ctx context.Context, orgID int
 	return nil
 }
 
+func (s *Store) AddFHIREndpointOrganizationURL(ctx context.Context, orgID int, orgURL string) error {
+	var err error
+	var count int
+
+	row := s.DB.QueryRow("SELECT COUNT(*) FROM fhir_endpoint_organization_url WHERE org_id=$1;", orgID)
+
+	err = row.Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	// If there are entries in the fhir_endpoint_organization_url table that has this orgID, delete those first
+	if count > 0 {
+		_, err = deleteFHIREndpointOrganizationURLStatement.ExecContext(ctx, orgID)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Only insert organization URL data if it was provided in the FHIR bundle
+	if orgURL != "" {
+		_, err = addFHIREndpointOrganizationURLStatement.ExecContext(ctx, orgID, orgURL)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // UpdateFHIREndpoint updates the FHIREndpoint in the database using the FHIREndpoint's database id as the key.
 func (s *Store) UpdateFHIREndpoint(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 	var err error
@@ -716,58 +757,48 @@ func (s *Store) DeleteFHIREndpoint(ctx context.Context, e *endpointmanager.FHIRE
 		return err
 	}
 
-	err = s.DeleteFHIREndpointOrganizationMap(ctx, e)
 	return err
 }
 
-// DeleteFHIREndpointOrganization deletes the FHIREndpoint Organization from the database using the Organization's database id  as the key.
-func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointmanager.FHIREndpointOrganization, org_map_id int) error {
-	_, err := deleteFHIREndpointOrganizationStatement.ExecContext(ctx, o.ID)
-	if err != nil {
+// DeleteFHIREndpointOrganization deletes one organization and all related rows for a given endpoint.
+func (s *Store) DeleteFHIREndpointOrganization(ctx context.Context, o *endpointmanager.FHIREndpointOrganization, endpointID int) error {
+	// 1) Delete Children First
+	if _, err := deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, o.ID); err != nil {
+		return err
+	}
+	if _, err := deleteFHIREndpointOrganizationAddressStatement.ExecContext(ctx, o.ID); err != nil {
+		return err
+	}
+	if _, err := deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, o.ID); err != nil {
+		return err
+	}
+	if _, err := deleteFHIREndpointOrganizationURLStatement.ExecContext(ctx, o.ID); err != nil {
 		return err
 	}
 
-	_, err = deleteFHIREndpointOrganizationMapStatementConditional.ExecContext(ctx, org_map_id)
+	// 2) Delete Mapping Row for (endpointID, orgID)
+	if _, err := deleteFHIREndpointOrganizationMapByPairStatement.ExecContext(ctx, endpointID, o.ID); err != nil {
+		return err
+	}
 
-	return err
+	// 3) Delete Parent Org
+	if _, err := deleteFHIREndpointOrganizationStatement.ExecContext(ctx, o.ID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// DeleteFHIREndpointOrganization deletes the FHIREndpoint Organization from the database using the Organization's database id  as the key.
+// DeleteFHIREndpointOrganizationMap removes the given endpoint's organizations in e.OrganizationList.
 func (s *Store) DeleteFHIREndpointOrganizationMap(ctx context.Context, e *endpointmanager.FHIREndpoint) error {
 
-	organizationsList, err := s.GetFHIREndpointOrganizations(ctx, e.ID)
-	if err != nil {
-		return err
-	}
-
-	for _, org := range organizationsList {
-		err := s.DeleteFHIREndpointOrganization(ctx, org, e.ID)
-		if err != nil {
-			return errors.Wrap(err, "removing fhir endpoint organizations from store failed")
-		}
-
-		_, err = deleteFHIREndpointOrganizationIdentifierStatement.ExecContext(ctx, org.ID)
-		if err != nil {
-			return err
-		}
-
-		_, err = deleteFHIREndpointOrganizationAddressStatement.ExecContext(ctx, org.ID)
-		if err != nil {
-			return err
-		}
-
-		_, err = deleteFHIREndpointOrganizationActiveStatement.ExecContext(ctx, org.ID)
-		if err != nil {
-			return err
+	for _, org := range e.OrganizationList {
+		if err := s.DeleteFHIREndpointOrganization(ctx, org, e.ID); err != nil {
+			return errors.Wrap(err, "removing fhir endpoint organization failed")
 		}
 	}
 
-	_, err = deleteFHIREndpointOrganizationMapStatement.ExecContext(ctx, e.ID)
-	if err != nil {
-		return err
-	}
-
-	return err
+	return nil
 }
 
 func organizationInformationValid(organizationName sql.NullString, organizationZipCode sql.NullString, organizationNPIID sql.NullString) (string, string, string) {
@@ -850,18 +881,6 @@ func prepareFHIREndpointStatements(s *Store) error {
 	if err != nil {
 		return err
 	}
-	deleteFHIREndpointOrganizationMapStatement, err = s.DB.Prepare(`
-	DELETE FROM fhir_endpoint_organizations_map
-	WHERE id = $1`)
-	if err != nil {
-		return err
-	}
-	deleteFHIREndpointOrganizationMapStatementConditional, err = s.DB.Prepare(`
-	DELETE FROM fhir_endpoint_organizations_map
-	WHERE id = $1 AND org_database_id IS NULL`)
-	if err != nil {
-		return err
-	}
 	addFHIREndpointOrganizationMapStatement, err = s.DB.Prepare(`
 	INSERT INTO fhir_endpoint_organizations_map (id, org_database_id)
 	VALUES ($1, $2)
@@ -910,6 +929,13 @@ func prepareFHIREndpointStatements(s *Store) error {
 	if err != nil {
 		return err
 	}
+	addFHIREndpointOrganizationURLStatement, err = s.DB.Prepare(`
+	INSERT INTO fhir_endpoint_organization_url (org_id, org_url)
+	VALUES ($1, $2)
+	RETURNING org_id;`)
+	if err != nil {
+		return err
+	}
 	deleteFHIREndpointOrganizationIdentifierStatement, err = s.DB.Prepare(`
 	DELETE FROM fhir_endpoint_organization_identifiers
 	WHERE org_id = $1`)
@@ -925,6 +951,18 @@ func prepareFHIREndpointStatements(s *Store) error {
 	deleteFHIREndpointOrganizationActiveStatement, err = s.DB.Prepare(`
 	DELETE FROM fhir_endpoint_organization_active
 	WHERE org_id = $1`)
+	if err != nil {
+		return err
+	}
+	deleteFHIREndpointOrganizationURLStatement, err = s.DB.Prepare(`
+	DELETE FROM fhir_endpoint_organization_url
+	WHERE org_id = $1`)
+	if err != nil {
+		return err
+	}
+	deleteFHIREndpointOrganizationMapByPairStatement, err = s.DB.Prepare(`
+    DELETE FROM fhir_endpoint_organizations_map
+    WHERE id = $1 AND org_database_id = $2`)
 	if err != nil {
 		return err
 	}

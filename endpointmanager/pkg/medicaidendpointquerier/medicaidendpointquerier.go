@@ -18,6 +18,7 @@ type LanternEntry struct {
 	OrganizationName    string `json:"OrganizationName"`
 	NPIID               string `json:"NPIID"`
 	OrganizationZipCode string `json:"OrganizationZipCode"`
+	DeveloperName       string `json:"DeveloperName"`
 }
 
 func QueryMedicaidEndpointList(fileToWriteTo string) {
@@ -42,9 +43,14 @@ func QueryMedicaidEndpointList(fileToWriteTo string) {
 
 		organizationName := strings.TrimSpace(rec[0])
 		URL := strings.TrimSpace(rec[1])
+		developerName := ""
+		if len(rec) > 2 {
+			developerName = strings.TrimSpace(rec[2])
+		}
 
 		entry.OrganizationName = organizationName
 		entry.URL = URL
+		entry.DeveloperName = developerName
 
 		lanternEntryList = append(lanternEntryList, entry)
 	}

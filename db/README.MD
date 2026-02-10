@@ -16,7 +16,7 @@ To migrate how the validations are stored in the db, you must run the validation
 
  * Follow the usual migration steps
  * Once the database has been migrated, start up Lantern with `make run`
- * Kill the endpoint manager: `docker stop lantern-back-end_endpoint_manager_1`
+ * Kill the endpoint manager: `docker stop lantern-back-end-endpoint_manager-1`
  * To migrate the validation information into the validation table: run `make migrate_validations direction=up`
     * You can run `make migrate_validations direction=down` to do a down migration (putting the validation information into the validation field)
 
@@ -44,8 +44,8 @@ The fhir_endpoint_organizations table contains all the organizations that each F
 | organization_npi_id | VARCHAR(500)  | NPI ID of the organization |
 | updated_at | TIMESTAMPTZ      |    Timestamp of last update |
 
-## fhir_endpoint_organizations table
-The fhir_endpoint_organizations table contains all the organizations that each FHIR endpoint services.
+## fhir_endpoint_organizations_map table
+The fhir_endpoint_organizations_map table contains the mapping of all the organizations to the FHIR endpoints which service those organizations.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
 | id     | INTEGER | fhir endpoint organization mapping database ID that is used to connect a single endpoint to one or many organizations |
@@ -57,6 +57,7 @@ The list_source_info table stores information about whether each list source cam
 | ------------- |:-------------:| -----:|
 | list_source     | VARCHAR(500)  | Name/URL of list sources that Lantern collects  |
 | is_chpl     | BOOLEAN     |  Whether the list source comes from chpl (true) or not (false). |
+| updated_at  | TIMESTAMPTZ | Timestamp when this list source was last seen in CHPL response during population run. Used to identify stale sources. |
 
 
 ## fhir_endpoints_info table
@@ -216,7 +217,7 @@ The product criteria table maps the Health IT product Database ID to entries in 
 | created_at | TIMESTAMPTZ | Timestamp of creation |
 | updated_at | TIMESTAMPTZ | Timestamp of last update |
 
-# fhir_endpoints_availability table
+## fhir_endpoints_availability table
 The FHIR endpoints availability table keeps track of how many HTTP 200 responses have been received from a URL and how many total responses have been received to cache the availability to reduce the burden of having to calculate the availability of a given endpoint.
 | Field        | Type           | Description  |
 | ------------- |:-------------:| -----:|
@@ -226,3 +227,53 @@ The FHIR endpoints availability table keeps track of how many HTTP 200 responses
 | requested_fhir_version  | VARCHAR(500)  | The FHIR version requested when querying the endpoint. Defaults to 'None' for endpoint entries where no specific FHIR version was requested. |
 | created_at | TIMESTAMPTZ | Timestamp of creation |
 | updated_at | TIMESTAMPTZ | Timestamp of last update |
+
+## daily_querying_status
+This table contains the status of the daily querying job which is referenced by the backup job before it starts
+ Column |          Type          | Description |
+--------+------------------------+-----------+----------+---------
+ status | VARCHAR(500) | status of the daily querying job ("true" or "false") |
+
+## fhir_endpoint_organization_active
+ Column |          Type          | Description |
+--------+------------------------+-----------+----------+---------
+ org_id | integer                | database id of the organization from fhir_endpoint_organizations |
+ active | VARCHAR(500) | whether the organization is still active or not ("true" or "false") |
+
+## fhir_endpoint_organization_addresses
+ Column  |          Type          | Description |
+---------+------------------------+-----------+----------+---------
+ org_id  | integer                | database id of the organization from fhir_endpoint_organizations |
+ address | VARCHAR(500) | address of the healthcare organization |
+
+## fhir_endpoint_organization_identifiers
+   Column   |          Type          | Description |
+------------+------------------------+-----------+----------+---------
+ org_id     | integer                | database id of the organization from fhir_endpoint_organizations |
+ identifier | VARCHAR(500) | facility identifier of the healthcare organization (for example, NPI, CLIA and Other identifier values) |
+
+## fhir_endpoint_organization_url
+ Column  |          Type          | Description |
+---------+------------------------+-----------+----------+---------
+ org_id  | integer                | database id of the organization from fhir_endpoint_organizations |
+ org_url | VARCHAR(500) | Brand website URL of the healthcare organization |
+
+## info_history_pruning_metadata
+This table contains information about each run of the history pruning algorithm that runs daily
+        Column        |           Type           | Description |
+----------------------+--------------------------+-----------+
+ id                   | integer                  | database id |
+ started_on           | timestamp with time zone | timestamp of when the history pruning run started |
+ ended_on             | timestamp with time zone | timestamp of when the history pruning run ended |
+ successful           | boolean                  | whether the history pruning finished successfully or not |
+ num_rows_processed   | integer                  | number of rows from the fhir_endpoints_info_history that were encountered by the history pruning job |
+ num_rows_pruned      | integer                  | number of rows from the fhir_endpoints_info_history that were deleted by the history pruning job |
+ query_int_start_date | timestamp with time zone | the starting date from which the rows in the fhir_endpoints_info_history were processed |
+ query_int_end_date   | timestamp with time zone | the ending date from which the rows in the fhir_endpoints_info_history were processed |
+
+## schema_migrations
+This table contains the number and state of the latest migration run on the database
+ Column  |  Type   | Description |
+---------+---------+-----------+
+ version | bigint  | The number of the latest migration deployed on the database |
+ dirty   | boolean | Whether the migration was deployed successfully or not |

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -25,9 +24,9 @@ import (
 // (see endpointmanager/pkg/workers) as well as the arguments for the capabilityquerier.QuerierArgs
 // struct that is used when calling capabilityquerier.GetAndSendCapabilityStatement
 type queryArgs struct {
-	workers     *workers.Workers
-	ctx         context.Context
-	client      *http.Client
+	workers *workers.Workers
+	ctx     context.Context
+	//client      *http.Client
 	jobDuration time.Duration
 	mq          *lanternmq.MessageQueue
 	ch          *lanternmq.ChannelID
@@ -51,7 +50,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	var msgJSON map[string]string
 	err := json.Unmarshal(message, &msgJSON)
 	if err != nil {
-		return fmt.Errorf("Error parsing queryEndpointsCapabilityStatement message JSON: %s", err.Error())
+		return fmt.Errorf("error parsing queryEndpointsCapabilityStatement message JSON: %s", err.Error())
 	}
 
 	urlString := msgJSON["url"]
@@ -68,12 +67,12 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 		FhirURL:        urlString,
 		RequestVersion: requestVersion,
 		DefaultVersion: defaultVersion,
-		Client:         qa.client,
-		MessageQueue:   qa.mq,
-		ChannelID:      qa.ch,
-		QueueName:      qa.qName,
-		UserAgent:      qa.userAgent,
-		Store:          qa.store,
+		//Client:         qa.client,
+		MessageQueue: qa.mq,
+		ChannelID:    qa.ch,
+		QueueName:    qa.qName,
+		UserAgent:    qa.userAgent,
+		Store:        qa.store,
 	}
 
 	job := workers.Job{
@@ -108,8 +107,8 @@ func queryEndpointsVersionsOperation(message []byte, args *map[string]interface{
 	jobArgs := make(map[string]interface{})
 
 	jobArgs["querierArgs"] = capabilityquerier.QuerierArgs{
-		FhirURL:      urlString,
-		Client:       qa.client,
+		FhirURL: urlString,
+		//Client:       qa.client,
 		MessageQueue: qa.mq,
 		ChannelID:    qa.ch,
 		QueueName:    qa.qName,
@@ -132,7 +131,7 @@ func queryEndpointsVersionsOperation(message []byte, args *map[string]interface{
 	return nil
 }
 
-func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, ctx context.Context, qName string, endptQName string, processFunc lanternmq.MessageHandler) {
+func setupQueue(store *postgresql.Store, userAgent string, ctx context.Context, qName string, endptQName string, processFunc lanternmq.MessageHandler) {
 	// Set up the queue for sending messages
 	qUser := viper.GetString("quser")
 	qPassword := viper.GetString("qpassword")
@@ -157,9 +156,9 @@ func setupQueue(store *postgresql.Store, userAgent string, client *http.Client, 
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
-		workers:     workers,
-		ctx:         ctx,
-		client:      client,
+		workers: workers,
+		ctx:     ctx,
+		//client:      client,
 		jobDuration: 30 * time.Second,
 		mq:          &mq,
 		ch:          &ch,
@@ -194,17 +193,17 @@ func main() {
 	userAgent := "LANTERN/" + versionNum[1]
 	userAgent = strings.TrimSuffix(userAgent, "\n")
 
-	client := &http.Client{
-		Timeout: time.Second * 35,
-	}
+	// client := &http.Client{
+	// 	Timeout: time.Second * 35,
+	// }
 
 	ctx := context.Background()
 
 	versionResponseQName := viper.GetString("versionsquery_response_qname")
 	versionEndptQName := viper.GetString("versionsquery_qname")
-	go setupQueue(store, userAgent, client, ctx, versionResponseQName, versionEndptQName, queryEndpointsVersionsOperation)
+	go setupQueue(store, userAgent, ctx, versionResponseQName, versionEndptQName, queryEndpointsVersionsOperation)
 	capQName := viper.GetString("capquery_qname")
 	capQueryEndptQName := viper.GetString("endptinfo_capquery_qname")
-	setupQueue(store, userAgent, client, ctx, capQName, capQueryEndptQName, queryEndpointsCapabilityStatement)
+	setupQueue(store, userAgent, ctx, capQName, capQueryEndptQName, queryEndpointsCapabilityStatement)
 
 }

@@ -22,7 +22,7 @@ The default users, their password hashes, and each user's permissions can be fou
 A new user can be added by clicking *Add a user* in the *Admin* tab.
   
 **To update users from the command line:** <br>
-Run `docker exec -it lantern-back-end_lantern-mq_1 rabbitmqctl change_password <username> <new password>`
+Run `docker exec -it lantern-back-end-lantern-mq-1 rabbitmqctl change_password <username> <new password>`
 
 A new user can be added by replacing `change_password` in the above line to `add_user`.
 

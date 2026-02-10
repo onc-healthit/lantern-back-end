@@ -15,6 +15,7 @@ type EndpointList struct {
 type LanternEntry struct {
 	URL                     string   `json:"URL"`
 	OrganizationName        string   `json:"OrganizationName"`
+	OrganizationURL         string   `json:"OrganizationURL"`
 	NPIID                   string   `json:"NPIID"`
 	OrganizationZipCode     string   `json:"OrganizationZipCode"`
 	OrganizationIdentifiers []string `json:"OrganizationIdentifiers"`
@@ -146,7 +147,8 @@ var officePracticumURL = "https://fhir-documentation.patientmedrecords.com/endpo
 var modernizingMedicineURL = "https://mm-fhir-endpoint-display.prod.fhir.ema-api.com/"
 var welligentURL = "https://fhir.qa.welligent.com/"
 var willowURL = "https://www.willowgladetechnologies.com/requirements"
-var aidboxURL = "https://aidbox.cx360.net/service-base-urls"
+
+// var aidboxURL = "https://aidbox.cx360.net/service-base-urls"
 var medicaURL = "https://code.medicasoft.us/fhir_r4_endpoints.html"
 var dss2URL = "https://dssjess-dev-web.dssinc.com/fhir/r4/endpoints"
 var cozevaURL = "https://fhir.cozeva.com/endpoints"
@@ -476,8 +478,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		OfficePracticumURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, willowURL) {
 		WillowQuerierParser("https://ccdoc.phn.care/service-base-urls", fileToWriteTo)
-	} else if URLsEqual(chplURL, aidboxURL) {
-		AidboxQuerierParser(aidboxURL, fileToWriteTo)
+		// } else if URLsEqual(chplURL, aidboxURL) {
+		// 	AidboxQuerierParser(aidboxURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, dss2URL) {
 		BundleQuerierParser(dss2URL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cozevaURL) {
@@ -583,7 +585,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, capellaEHRURL) {
 		CapellaEHRBundleParser(chplURL, fileToWriteTo)
 	} else {
-		log.Infof("Parsing via bundle parser for URL %s", chplURL)
+		log.Warnf(
+			"CHPL ENDPOINT QUERIER PARSER FALLBACK: No explicit handler matched. Using BundleQuerierParser. url=%s",
+			chplURL,
+		)
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	}
 

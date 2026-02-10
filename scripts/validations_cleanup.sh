@@ -22,7 +22,7 @@ while IFS=',' read -r col1 col2 col3 col4; do
         
         # Check whether there are entries in the fhir_endpoints_info table having the same validation_result_id
         QUERY=$(echo "SELECT COUNT(*) FROM fhir_endpoints_info WHERE validation_result_id='$col4';")
-        COUNT=$(docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error counting entries from the history table"
+        COUNT=$(docker exec -t lantern-back-end-postgres-1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error counting entries from the history table"
         
         # Delete corresponding entries from the validations and validation_results tables ONLY IF the count is zero.
         NUMBER=$(echo ${COUNT} | tr -cd '[[:digit:]]')
@@ -31,12 +31,12 @@ while IFS=',' read -r col1 col2 col3 col4; do
             
             # Delete corresponding entry from the validations table
             QUERY=$(echo "DELETE FROM validations WHERE validation_result_id = '$col4';")
-            (docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error deleting entry from the validations table"
+            (docker exec -t lantern-back-end-postgres-1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error deleting entry from the validations table"
 
             echo "($(date)) Deleting entries from the validation_results table for id: $col4"
         
             QUERY=$(echo "DELETE FROM validation_results WHERE id = '$col4';")
-            (docker exec -t lantern-back-end_postgres_1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error deleting entry from the validation_results table"    
+            (docker exec -t lantern-back-end-postgres-1 psql -t -U${DB_USER} -d ${DB_NAME} -c "${QUERY}") || echo "Error deleting entry from the validation_results table"    
         fi
     fi
 done < "$csv_file"

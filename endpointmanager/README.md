@@ -13,13 +13,13 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   You can obtain a CHPL API key [here](https://chpl.healthit.gov/#/resources/api).
 
-* **LANTERN_1UP_CLIENT_SECRET**: The client secret necessary for accessing the 1Up API
+* **LANTERN_1UP_CLIENT_SECRET (Deprecated)**: The client secret necessary for accessing the 1Up API
   
   Default value: none. 
   
   You can obtain a 1UP client secret by following the registration instructions [here](https://1up.health/docs/start/quick-start-guide/register).
 
-* **LANTERN_1UP_CLIENT_ID**: The client id necessary for accessing the 1Up API
+* **LANTERN_1UP_CLIENT_ID (Deprecated)**: The client id necessary for accessing the 1Up API
   
   Default value: none. 
   
@@ -87,7 +87,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: 10
 
-* **LANTERN_CAPQUERY_QRYINTVL**: The length of time between performing batch queries of endpoints for their capability statements. This is in minutes.
+* **LANTERN_CAPQUERY_QRYINTVL (Deprecated)**: The length of time between performing batch queries of endpoints for their capability statements. This is in minutes.
 
   Default value: 1380 (23 hours)
 
@@ -99,7 +99,7 @@ The FHIR Endpoint Manager reads the following environment variables:
 
   Default value: 240
 
-* **LANTERN_PRUNING_THRESHOLD**: The length of time (in minutes) determining how old a fhir_endpoints_info_history entry has to be in order to be considered for pruning. Only entries equal to or older than this threshold will undergo pruning.
+* **LANTERN_PRUNING_THRESHOLD (Deprecated)**: The length of time (in minutes) determining how old a fhir_endpoints_info_history entry has to be in order to be considered for pruning. Only entries equal to or older than this threshold will undergo pruning.
 
   Default value: 43800 (~ 30 days)
   
@@ -430,6 +430,6 @@ To manually add a link between an endpoint and npi organization after the linker
 
 ## Endpoint Info History Pruning
 
-The history pruning algorithm is run every 23 hours using a cron job (more details on how to set up in main README). The pruning algorithm will iterate over all of the fhir_endpoint_info_history entries for each distinct FHIR endpoint URL that have entered_at dates that are older than the time determined by subtracting the LANTERN_PRUNING_THRESHOLD from the current time, and also have entered_at dates that are newer than the current time minus the LANTERN_PRUNING_THRESHOLD times 2. Having a lower limit of the LANTERN_PRUNING_THRESHOLD times 2 ensures that the algorithm does not repeat all of the pruning checks on the same entries after every 23 hours, but that it also does not miss any entries that have not yet been pruned. The LANTERN_PRUNING_THRESHOLD, which set to one month by default, ensures that there is always data newer than the LANTERN_PRUNING_THRESHOLD that is not pruned, since an entry has to be older than the threshold in order to be considered for pruning.
+The history pruning algorithm is run every 24 hours (more details on how to set up in main README). The pruning algorithm will iterate over all of the fhir_endpoint_info_history entries for each distinct FHIR endpoint URL that have entered_at dates that are older than the time determined by subtracting the LANTERN_PRUNING_THRESHOLD from the current time, and also have entered_at dates that are newer than the current time minus the (LANTERN_PRUNING_THRESHOLD + 5 days). Having a lower limit of the (LANTERN_PRUNING_THRESHOLD + 5 days) ensures that the algorithm does not repeat all of the pruning checks on the same entries after every 24 hours, but that it also does not miss any entries that have not yet been pruned. The LANTERN_PRUNING_THRESHOLD, which set to one month by default, ensures that there is always data newer than the LANTERN_PRUNING_THRESHOLD that is not pruned, since an entry has to be older than the threshold in order to be considered for pruning.
 
-The pruning algorithm will remove any consecutive duplicate entries in the fhir_endpoint_info_history table. A fhir_endpoint_info_history entry is considered a duplicate if there is an older consecutive entry that that has the same stored information for the endpoint's TLS version, MIME types, and SMART response, and if the newer entry's stored capability statement only differs by fields included in a list of ignored fields, such as the CapabilityStatement.date field. If a fhir_endpoint_info_history entry is found to be a duplicate of an older consecutive entry, it is deleted from the table, and this continues until only the oldest of the consecutive duplicated entries remains. This pruning strategy is advantageous in that there will always be a duration of at least LANTERN_PRUNING_THRESHOLD minutes worth of queries in the history table for each endpoint, therefore Lantern can inspect LANTERN_PRUNING_THRESHOLD minutes worth of data to see how every endpoint responded within each query interval while still saving storage space by removing duplicate data or data which only differs in the values reported for fields in the ignored fields set. Keeping all entries containing any unique data allows Lantern to keep track of how each endpoint has changed over long periods of time.
+The pruning algorithm will remove any consecutive duplicate entries in the fhir_endpoint_info_history table. A fhir_endpoint_info_history entry is considered a duplicate if there is an older consecutive entry that has the same stored information for the endpoint's TLS version, MIME types, and SMART response, and if the newer entry's stored capability statement only differs by fields included in a list of ignored fields, such as the CapabilityStatement.date field. If a fhir_endpoint_info_history entry is found to be a duplicate of an older consecutive entry, it is deleted from the table, and this continues until only the oldest of the consecutive duplicated entries remains. This pruning strategy is advantageous in that there will always be a duration of at least LANTERN_PRUNING_THRESHOLD minutes worth of queries in the history table for each endpoint, therefore Lantern can inspect LANTERN_PRUNING_THRESHOLD minutes worth of data to see how every endpoint responded within each query interval while still saving storage space by removing duplicate data or data which only differs in the values reported for fields in the ignored fields set. Keeping all entries containing any unique data allows Lantern to keep track of how each endpoint has changed over long periods of time.

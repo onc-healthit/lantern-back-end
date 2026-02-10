@@ -129,7 +129,7 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 
 // QueryEndpointList queries the given endpoint list using http client and returns the response body of the GET request
 func QueryEndpointList(endpointListURL string) ([]byte, error) {
-	client := &http.Client{}
+	client := &http.Client{Timeout: time.Minute}
 	req, err := http.NewRequest("GET", endpointListURL, nil)
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
 

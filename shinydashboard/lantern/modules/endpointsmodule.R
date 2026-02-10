@@ -11,6 +11,9 @@ endpointsmodule_UI <- function(id) {
     fluidRow(
       column(width = 12, style = "padding-bottom:20px",
              h2(style = "margin-top:0", textOutput(ns("endpoint_count"))),
+             # Add note for the endpoint table count and Matching Unique Endpoints count discrepancy
+             tags$p(tags$strong(style = "font-style: italic; color: #666;",
+                    "Note: The table below may show multiple rows per endpoint depending on the number of FHIR versions supported by the endpoint.")),
              downloadButton(ns("download_data"), "Download Endpoint Data (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
              downloadButton(ns("download_descriptions"), "Download Field Descriptions (CSV)", icon = tags$i(class = "fa fa-download", "aria-hidden" = "true", role = "presentation", "aria-label" = "download icon")),
              htmlOutput(ns("anchorlink"))
@@ -59,71 +62,89 @@ endpointsmodule <- function(
   page_state <- reactiveVal(1)
   page_size <- 10
 
+  # Add request tracking to prevent race conditions
+  current_request_id <- reactiveVal(0)
+
   # Calculate total pages based on ACTUAL TABLE ROWS (after distinct operation)
   total_pages <- reactive({
     # Count the actual distinct rows that will be displayed in the table
     table_data <- selected_fhir_endpoints_without_limit() %>% 
-      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% 
-      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability)
+      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
+      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl)
     
     total_records <- nrow(table_data)
     max(1, ceiling(total_records / page_size))
   })
 
-  # Update page selector max when total pages change
+  # Break the feedback loop with isolate()
   observe({
-    updateNumericInput(session, "page_selector", 
-                      max = total_pages(),
-                      value = page_state())
+    new_page <- page_state()
+    current_selector <- input$page_selector
+    
+    # Only update if different (prevents infinite loop)
+    # Add safety check for current_selector to prevent crashes
+    if (is.null(current_selector) || 
+        is.na(current_selector) || 
+        !is.numeric(current_selector) ||
+        current_selector != new_page) {
+      
+      isolate({  # This is the key fix to break feedback loops
+        updateNumericInput(session, "page_selector", 
+                          max = total_pages(),
+                          value = new_page)
+      })
+    }
   })
 
   # Handle page selector input
   observeEvent(input$page_selector, {
-    if (!is.null(input$page_selector) && !is.na(input$page_selector)) {
-      new_page <- max(1, min(input$page_selector, total_pages()))
-      page_state(new_page)
+    # Get current input value
+    current_input <- input$page_selector
+    
+    # Check if input is valid (not NULL, not NA, and is a number)
+    if (!is.null(current_input) && 
+        !is.na(current_input) && 
+        is.numeric(current_input) &&
+        current_input > 0) {
       
-      # Update the input if user entered invalid value
-      if (new_page != input$page_selector) {
+      new_page <- max(1, min(current_input, total_pages()))
+      
+      # Only update page state if it's actually different
+      if (new_page != page_state()) {
+        page_state(new_page)
+      }
+
+      # Correct the input field if the user entered an invalid page number
+      if (new_page != current_input) {
         updateNumericInput(session, "page_selector", value = new_page)
       }
+    } else {
+      # If input is invalid (empty, NA, or <= 0), reset to current page
+      # Use a small delay to prevent immediate feedback loop
+      invalidateLater(100)
+      updateNumericInput(session, "page_selector", value = page_state())
     }
-  })
+  }, ignoreInit = TRUE)  # Prevent firing on initialization
 
-  # Handle next page button
+  # Handle next page button 
   observeEvent(input$next_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_next_time) && 
-        (current_time - session$userData$last_next_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_next_time <- current_time
     if (page_state() < total_pages()) {
       new_page <- page_state() + 1
       page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
     }
   })
 
-  # Handle previous page button
+  # Handle previous page button 
   observeEvent(input$prev_page, {
-    current_time <- as.numeric(Sys.time()) * 1000
-    if (!is.null(session$userData$last_prev_time) && 
-        (current_time - session$userData$last_prev_time) < 300) {
-      return()  # Ignore only rapid consecutive clicks
-    }
-    session$userData$last_prev_time <- current_time
     if (page_state() > 1) {
       new_page <- page_state() - 1
       page_state(new_page)
-      updateNumericInput(session, "page_selector", value = new_page)
     }
   })
 
   # Reset to first page on any filter/search change 
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl(), input$search_query), {
     page_state(1)
-    updateNumericInput(session, "page_selector", value = 1)
   })
 
   output$prev_button_ui <- renderUI({
@@ -156,9 +177,13 @@ endpointsmodule <- function(
     paste("Matching Endpoints:", unique_endpoints)
   })
 
-  # Main data query with LIMIT OFFSET pagination
+  # Main data query with LIMIT OFFSET pagination - WITH RACE CONDITION PROTECTION
   selected_fhir_endpoints <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
+    
+    # Generate unique request ID
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
     
     offset <- (page_state() - 1) * page_size
 
@@ -172,7 +197,7 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- toupper(sel_is_chpl())
+      params$chpl <- sel_is_chpl()
     }
 
     if (sel_availability() != "0-100") {
@@ -187,12 +212,12 @@ endpointsmodule <- function(
       }
     }
 
-    # Apply external search filter
+    # Apply external search filter (including is_chpl)
     if (trimws(input$search_query) != "") {
       keyword <- tolower(trimws(input$search_query))
       query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
       query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
-      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search})")
+      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search} OR LOWER(is_chpl) LIKE {search})")
       params$search <- paste0("%", keyword, "%")
     }
 
@@ -202,8 +227,17 @@ endpointsmodule <- function(
     params$offset <- offset
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
-    res <- tbl(db_connection, sql(query)) %>% collect()
-    res
+    result <- tbl(db_connection, sql(query)) %>% collect()
+    
+    # Only return results if this is still the latest request
+    # Use isolate() to check without creating reactive dependency
+    if (request_id == isolate(current_request_id())) {
+      # This is the latest request, process normally
+      return(result)
+    } else {
+      # This request was superseded, return empty to avoid flicker
+      return(data.frame())
+    }
   })
 
   # Query without limit for total count and download
@@ -220,7 +254,7 @@ endpointsmodule <- function(
 
     if (sel_is_chpl() != "All") {
       query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- toupper(sel_is_chpl())
+      params$chpl <- sel_is_chpl()
     }
 
     if (sel_availability() != "0-100") {
@@ -235,14 +269,17 @@ endpointsmodule <- function(
       }
     }
 
-    # Apply external search filter
+    # Apply external search filter (including is_chpl)
     if (trimws(input$search_query) != "") {
       keyword <- tolower(trimws(input$search_query))
       query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
       query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
-      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search})")
+      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search} OR LOWER(is_chpl) LIKE {search})")
       params$search <- paste0("%", keyword, "%")
     }
+
+    # Add ordering by vendor name
+    query_str <- paste0(query_str, " ORDER BY vendor_name, list_source, url, requested_fhir_version")
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     res <- tbl(db_connection, sql(query)) %>% collect()
@@ -271,7 +308,11 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_at(vars(-group_cols()), as.character),
+              selected_fhir_endpoints() %>% 
+                select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
+                distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
+                group_by(urlModal) %>% 
+                mutate_at(vars(-group_cols()), as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -289,12 +330,13 @@ endpointsmodule <- function(
                             html = TRUE),
                   endpoint_names = colDef(show = FALSE, sortable = TRUE),
                   condensed_endpoint_names = colDef(name = "API Information Source Name", minWidth = 200, sortable = TRUE, html = TRUE),
-                  vendor_name = colDef(name = "Certified API Developer Name", minWidth = 110, sortable = TRUE),
+                  vendor_name = colDef(name = "API Developer Name", minWidth = 110, sortable = TRUE),
                   capability_fhir_version = colDef(name = "FHIR Version", sortable = TRUE),
                   format = colDef(name = "Supported Formats", sortable = TRUE),
                   cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = TRUE),
                   status = colDef(name = "HTTP Response", sortable = TRUE),
-                  availability = colDef(name = "Availability", sortable = TRUE)
+                  availability = colDef(name = "Availability", sortable = TRUE),
+                  is_chpl = colDef(name = "Source", sortable = TRUE, minWidth = 120)
               ),
               searchable = FALSE,
               showSortIcon = TRUE,
@@ -308,11 +350,19 @@ endpointsmodule <- function(
     res <- selected_fhir_endpoints_without_limit() %>%
       select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
       rowwise() %>%
-      mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names)) %>%
+      mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
+             info_created = format(info_created, "%m/%d/%y %H:%M"),
+             info_updated = format(info_updated, "%m/%d/%y %H:%M"),
+             list_source = ifelse(list_source %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+                    "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
+                    "Salesforce/MiHIN", "State Developed"), 
+                    "State Medicaid Agency (SMA) Provider Directory", 
+                    list_source)) %>%
       ungroup() %>%
-      rename(api_information_source_name = endpoint_names, certified_api_developer_name = vendor_name) %>%
+      rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
-      rename(http_response_time_second = response_time_seconds)
+      rename(http_response_time_second = response_time_seconds) %>%
+      rename(source = is_chpl)
   })
 
   output$note_text <- renderUI({
