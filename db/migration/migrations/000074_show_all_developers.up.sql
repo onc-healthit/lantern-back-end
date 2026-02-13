@@ -386,7 +386,7 @@ WITH
 total_endpoints AS (
   SELECT 
     'Total Indexed Endpoints' AS status,
-    all_endpoints::integer AS endpoints,
+    indexed_endpoints::integer AS endpoints,
     1 AS sort_order
   FROM mv_endpoint_totals
   ORDER BY aggregation_date DESC
@@ -539,48 +539,39 @@ CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url, vendo
 DROP MATERIALIZED VIEW IF EXISTS mv_validation_results_plot CASCADE;
 
 CREATE MATERIALIZED VIEW mv_validation_results_plot AS
-SELECT ROW_NUMBER() OVER () as row_id,
-z.url,
-z.fhir_version,
-z.vendor_name,
-z.rule_name,
-z.valid,
-z.expected,
-z.actual,
-z.comment,
-z.reference
-FROM ( SELECT DISTINCT t.url,
-        t.fhir_version,
-        t.vendor_name,
-        t.rule_name,
-        t.valid,
-        t.expected,
-        t.actual,
-        t.comment,
-        t.reference
-        FROM ( SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
-                f.url,
-                    CASE
-                        WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
-                        WHEN "position"(f.capability_fhir_version::text, '-'::text) > 0 THEN "substring"(f.capability_fhir_version::text, 1, "position"(f.capability_fhir_version::text, '-'::text) - 1)::character varying
-                        WHEN f.capability_fhir_version::text <> ALL (ARRAY['0.4.0'::character varying, '0.4'::character varying, '0.5.0'::character varying, '0.5'::character varying, '1.0.0'::character varying, '1.0'::character varying, '1'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, '1.1.0'::character varying, '1.1'::character varying, '1.2.0'::character varying, '1.2'::character varying, '1.4.0'::character varying, '1.4'::character varying, '1.6.0'::character varying, '1.6'::character varying, '1.8.0'::character varying, '1.8'::character varying, '3.0.0'::character varying, '3.0'::character varying, '3'::character varying, '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.2'::character varying, '3.3.0'::character varying, '3.3'::character varying, '3.5.0'::character varying, '3.5'::character varying, '3.5a.0'::character varying, '4.0.0'::character varying, '4.0'::character varying, '4'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.1'::character varying, '4.3.0'::character varying, '4.3'::character varying, '4.2.0'::character varying, '4.2'::character varying, '4.4.0'::character varying, '4.4'::character varying, '4.5.0'::character varying, '4.5'::character varying, '4.6.0'::character varying, '4.6'::character varying, '5.0.0'::character varying, '5.0'::character varying, '5'::character varying]::text[]) THEN 'Unknown'::character varying
-                        ELSE f.capability_fhir_version
-                    END AS fhir_version,
-                v.rule_name,
-                v.valid,
-                v.expected,
-                v.actual,
-                v.comment,
-                v.reference,
-                v.validation_result_id AS id,
-                f.requested_fhir_version
-                FROM fhir_endpoints_info f
-                    JOIN validations v ON f.validation_result_id = v.validation_result_id
-                    LEFT JOIN vendors ON f.vendor_id = vendors.id
-                ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name) t) z;
+SELECT DISTINCT t.url,
+t.fhir_version,
+t.vendor_name,
+t.rule_name,
+t.valid,
+t.expected,
+t.actual,
+t.comment,
+t.reference
+FROM (SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id)
+        COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
+        f.url,
+            CASE
+                WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
+                WHEN "position"(f.capability_fhir_version::text, '-'::text) > 0 THEN "substring"(f.capability_fhir_version::text, 1, "position"(f.capability_fhir_version::text, '-'::text) - 1)::character varying
+                WHEN f.capability_fhir_version::text <> ALL (ARRAY['0.4.0'::character varying, '0.4'::character varying, '0.5.0'::character varying, '0.5'::character varying, '1.0.0'::character varying, '1.0'::character varying, '1'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, '1.1.0'::character varying, '1.1'::character varying, '1.2.0'::character varying, '1.2'::character varying, '1.4.0'::character varying, '1.4'::character varying, '1.6.0'::character varying, '1.6'::character varying, '1.8.0'::character varying, '1.8'::character varying, '3.0.0'::character varying, '3.0'::character varying, '3'::character varying, '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.2'::character varying, '3.3.0'::character varying, '3.3'::character varying, '3.5.0'::character varying, '3.5'::character varying, '3.5a.0'::character varying, '4.0.0'::character varying, '4.0'::character varying, '4'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.1'::character varying, '4.3.0'::character varying, '4.3'::character varying, '4.2.0'::character varying, '4.2'::character varying, '4.4.0'::character varying, '4.4'::character varying, '4.5.0'::character varying, '4.5'::character varying, '4.6.0'::character varying, '4.6'::character varying, '5.0.0'::character varying, '5.0'::character varying, '5'::character varying]::text[]) THEN 'Unknown'::character varying
+                ELSE f.capability_fhir_version
+            END AS fhir_version,
+        v.rule_name,
+        v.valid,
+        v.expected,
+        v.actual,
+        v.comment,
+        v.reference,
+        v.validation_result_id AS id,
+        f.requested_fhir_version
+        FROM fhir_endpoints_info f
+            JOIN validations v ON f.validation_result_id = v.validation_result_id
+            LEFT JOIN vendors ON f.vendor_id = vendors.id
+        ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id) t;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
-ON mv_validation_results_plot(row_id, url, fhir_version, vendor_name, rule_name, valid, expected, actual);
+ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual);
 
 CREATE INDEX mv_validation_results_plot_vendor_idx ON mv_validation_results_plot(vendor_name);
 CREATE INDEX mv_validation_results_plot_fhir_idx ON mv_validation_results_plot(fhir_version);
@@ -588,12 +579,14 @@ CREATE INDEX mv_validation_results_plot_rule_idx ON mv_validation_results_plot(r
 CREATE INDEX mv_validation_results_plot_valid_idx ON mv_validation_results_plot(valid);
 CREATE INDEX mv_validation_results_plot_reference_idx ON mv_validation_results_plot(reference);
 
+DROP MATERIALIZED VIEW IF EXISTS mv_validation_failures CASCADE;
+
 CREATE MATERIALIZED VIEW mv_validation_failures AS
-SELECT row_id, fhir_version, url, expected, actual, vendor_name, rule_name, reference
+SELECT fhir_version, url, expected, actual, vendor_name, rule_name, reference
 FROM mv_validation_results_plot
 WHERE valid = 'false';
 
-CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(row_id, url, fhir_version, vendor_name, rule_name);
+CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(url, fhir_version, vendor_name, rule_name);
 CREATE INDEX mv_validation_failures_url_idx ON mv_validation_failures(url);
 CREATE INDEX mv_validation_failures_fhir_version_idx ON mv_validation_failures(fhir_version);
 CREATE INDEX mv_validation_failures_vendor_name_idx ON mv_validation_failures(vendor_name);
@@ -1037,7 +1030,10 @@ endpoint_data_agg AS (
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
-        string_agg(DISTINCT url, '<br/>') as endpoint_urls_html,
+        string_agg(
+            DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&&None' || ',&&,' || vendor_name || '&quot,{priority: ''event''});"> ' || url || '</a>',
+            '<br/>'
+        ) as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
             WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
@@ -1075,17 +1071,7 @@ SELECT
     COALESCE(ia.identifier_types_html, '') as identifier_types_html,
     COALESCE(ia.identifier_values_html, '') as identifier_values_html,
     COALESCE(aa.addresses_html, '') as addresses_html,
-    -- Convert plain URLs to HTML format with onclick handler
-    array_to_string(
-        ARRAY(
-            SELECT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." 
-                    onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-                    onclick="Shiny.setInputValue(''endpoint_popup'',''' || url_elem || '&&None&&' || COALESCE(eda.vendor_names_array[1], '') || ''',{priority: ''event''});"> ' || url_elem || '</a>'
-            FROM unnest(string_to_array(eda.endpoint_urls_html, '<br/>')) AS url_elem
-            WHERE url_elem != ''
-        ),
-        '<br/>'
-    ) as endpoint_urls_html,
+    eda.endpoint_urls_html,
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
