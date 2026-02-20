@@ -2113,6 +2113,7 @@ WITH base AS (
           WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) = 'object'::text
         )
  SELECT 
+    DISTINCT ON (base.url)
    	row_number() OVER () AS mv_id,
 	base.url,
     regexp_replace(regexp_replace(regexp_replace(base.organization_names, '[{}]'::text, ''::text, 'g'::text), '","'::text, '; '::text, 'g'::text), '"'::text, ''::text, 'g'::text) AS organization_names,
@@ -2168,6 +2169,7 @@ WITH base AS (
 	  WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) <> 'object'::text
 	)
 SELECT 
+    DISTINCT ON (base.url)
 	row_number() OVER () AS mv_id,
 	base.id,
 	base.url,
