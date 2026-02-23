@@ -2986,6 +2986,7 @@ CREATE TABLE payer_endpoints (
     address JSONB,     -- Address of the Organization
     is_persisted BOOLEAN DEFAULT FALSE, -- Whether the FHIR endpoint has been added to fhir_endpoints or not
     user_facing_url VARCHAR(500), -- Branding website of the endpoint
+    endpoint_type VARCHAR(500), -- Type of FHIR Endpoint: payer_to_payer, provider_access, patient_access, prior_authorization
     validation_result BOOLEAN, -- Whether the payer registration data validations were successful or not
     validation_comments VARCHAR(500), -- Description of the validation results
     created_at TIMESTAMP DEFAULT NOW(),

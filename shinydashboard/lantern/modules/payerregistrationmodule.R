@@ -357,9 +357,9 @@ payerregistrationmodule <- function(input, output, session) {
       
       endpoint_query <- "
         INSERT INTO payer_endpoints (
-          payer_id, url, name, edi_id, address, user_facing_url
+          payer_id, url, name, edi_id, address, user_facing_url, endpoint_type
         )
-        VALUES ($1, $2, $3, $4, $5, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id
       "
       
@@ -379,7 +379,8 @@ payerregistrationmodule <- function(input, output, session) {
           form_data$org_name %||% "",
           edi_id_value,
           toJSON(main_org_address, auto_unbox = TRUE),
-          form_data$user_website %||% ""
+          form_data$user_website %||% "",
+          form_data$fhir_type %||% ""
         )
       )
       
@@ -413,7 +414,8 @@ payerregistrationmodule <- function(input, output, session) {
                 org$name,
                 add_edi_id_value,
                 toJSON(add_org_address, auto_unbox = TRUE),
-                form_data$user_website %||% ""
+                form_data$user_website %||% "",
+                form_data$fhir_type %||% ""
               )
             )
           }
@@ -677,8 +679,12 @@ payerregistrationmodule <- function(input, output, session) {
     }
     
     # Collect form data
+    # Sanitize fhir_endpoint: trim whitespace and remove invisible Unicode characters
+    # (e.g. zero-width space \u200b) that can be introduced by copy-pasting URLs
+    sanitized_fhir_endpoint <- trimws(gsub("[\u200b\u200c\u200d\ufeff]", "", input$fhir_endpoint))
+
     form_data <- list(
-      fhir_endpoint = input$fhir_endpoint,
+      fhir_endpoint = sanitized_fhir_endpoint,
       user_website = input$user_website,
       fhir_type = input$fhir_type,
       org_name = input$org_name,

@@ -23,6 +23,7 @@ CREATE TABLE payer_endpoints (
     user_facing_url VARCHAR(500), -- Branding website of the endpoint
     validation_result BOOLEAN, -- Whether the payer registration data validations were successful or not
     validation_comments VARCHAR(500), -- Description of the validation results
+    endpoint_type VARCHAR(500), -- Type of FHIR Endpoint: payer_to_payer, provider_access, patient_access, prior_authorization
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );

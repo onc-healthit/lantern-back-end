@@ -3,7 +3,9 @@ package payervalidator
 import (
 	"context"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"strings"
@@ -100,7 +102,7 @@ func (v *Validator) ValidateAndProcessRegistrations(ctx context.Context) error {
 		log.Infof("Processing registration ID %d for URL: %s", registration.ID, registration.URL)
 
 		// Validate the FHIR endpoint
-		validationResult := v.validateHTTPConnectivity(ctx, registration.URL)
+		validationResult := v.validateEndpoint(ctx, registration.URL)
 
 		// Update the database with validation results
 		err = v.updateValidationResult(ctx, registration.ID, validationResult)
@@ -160,7 +162,7 @@ func (v *Validator) ValidateRegistrationsDryRun(ctx context.Context) error {
 		log.Infof("[DRY RUN] Processing registration ID %d for URL: %s", registration.ID, registration.URL)
 
 		// Validate the endpoint
-		validationResult := v.validateHTTPConnectivity(ctx, registration.URL)
+		validationResult := v.validateEndpoint(ctx, registration.URL)
 
 		if validationResult.IsValid {
 			log.Infof("[DRY RUN] ✓ Validation PASSED for registration ID %d", registration.ID)
@@ -185,8 +187,8 @@ func (v *Validator) ValidateRegistrationsDryRun(ctx context.Context) error {
 	return nil
 }
 
-// validateHTTPConnectivity checks if the endpoint responds with HTTP 200 to /metadata
-func (v *Validator) validateHTTPConnectivity(ctx context.Context, endpointURL string) ValidationResult {
+// validateEndpoint checks if the endpoint responds with HTTP 200 and returns a valid capability statement
+func (v *Validator) validateEndpoint(ctx context.Context, endpointURL string) ValidationResult {
 	result := ValidationResult{
 		IsValid:      false,
 		HTTPStatus:   0,
@@ -203,9 +205,9 @@ func (v *Validator) validateHTTPConnectivity(ctx context.Context, endpointURL st
 		return result
 	}
 
-	// Set headers
+	// Set headers - request JSON but also accept XML as fallback
 	req.Header.Set("User-Agent", v.userAgent)
-	req.Header.Set("Accept", "application/fhir+json, application/json")
+	req.Header.Set("Accept", "application/fhir+json, application/json, application/fhir+xml, application/xml")
 
 	// Make HTTP request
 	resp, err := v.httpClient.Do(req)
@@ -223,11 +225,73 @@ func (v *Validator) validateHTTPConnectivity(ctx context.Context, endpointURL st
 		return result
 	}
 
-	// If we get here, HTTP connectivity check passed
+	// Read response body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		result.ErrorMessage = fmt.Sprintf("Failed to read response body: %v", err)
+		return result
+	}
+
+	// Determine content type from response header
+	contentType := resp.Header.Get("Content-Type")
+
+	// Check if response is XML based on content type or body content
+	isXML := strings.Contains(contentType, "xml") || strings.HasPrefix(strings.TrimSpace(string(body)), "<")
+
+	if isXML {
+		// Validate XML capability statement
+		resourceType, err := extractXMLResourceType(body)
+		if err != nil {
+			result.ErrorMessage = fmt.Sprintf("Failed to parse XML response: %v", err)
+			return result
+		}
+
+		if resourceType != "CapabilityStatement" && resourceType != "Conformance" {
+			result.ErrorMessage = fmt.Sprintf("Invalid XML root element: expected 'CapabilityStatement' or 'Conformance', got '%s'", resourceType)
+			return result
+		}
+	} else {
+		// Validate JSON capability statement
+		var capabilityStatement map[string]interface{}
+		err = json.Unmarshal(body, &capabilityStatement)
+		if err != nil {
+			result.ErrorMessage = fmt.Sprintf("Response is not valid JSON: %v", err)
+			return result
+		}
+
+		// Check for basic capability statement structure (resourceType should be CapabilityStatement or Conformance)
+		resourceType, ok := capabilityStatement["resourceType"].(string)
+		if !ok {
+			result.ErrorMessage = "Response JSON missing 'resourceType' field"
+			return result
+		}
+
+		if resourceType != "CapabilityStatement" && resourceType != "Conformance" {
+			result.ErrorMessage = fmt.Sprintf("Invalid resourceType: expected 'CapabilityStatement' or 'Conformance', got '%s'", resourceType)
+			return result
+		}
+	}
+
+	// If we get here, validation passed
 	result.IsValid = true
-	result.ErrorMessage = "HTTP connectivity check passed"
+	result.ErrorMessage = "Validation passed: HTTP 200 with valid capability statement"
 
 	return result
+}
+
+// extractXMLResourceType extracts the root element name from XML to determine the resource type
+func extractXMLResourceType(body []byte) (string, error) {
+	decoder := xml.NewDecoder(strings.NewReader(string(body)))
+	for {
+		token, err := decoder.Token()
+		if err != nil {
+			return "", fmt.Errorf("failed to parse XML: %w", err)
+		}
+		// Find the first start element (root element)
+		if startElement, ok := token.(xml.StartElement); ok {
+			return startElement.Name.Local, nil
+		}
+	}
 }
 
 // getUnvalidatedRegistrations fetches all payer registrations that haven't been validated yet
@@ -235,11 +299,12 @@ func (v *Validator) getUnvalidatedRegistrations(ctx context.Context) ([]PayerReg
 	var registrations []PayerRegistration
 
 	query := `
-		SELECT 
-			pe.id, pe.payer_id, pe.url, pe.name, pe.edi_id, pe.address, 
-			pe.is_persisted, pe.user_facing_url, pe.validation_result, 
+		SELECT
+			pe.id, pe.payer_id, pe.url, pe.name, pe.edi_id, pe.address,
+			pe.is_persisted, pe.user_facing_url, pe.validation_result,
 			pe.validation_comments, pe.created_at, pe.updated_at,
-			p.contact_name, p.contact_email
+			p.contact_name, p.contact_email,
+			COALESCE(pe.endpoint_type, '') as endpoint_type
 		FROM payer_endpoints pe
 		JOIN payers p ON pe.payer_id = p.id
 		WHERE pe.validation_result IS NULL
@@ -260,7 +325,7 @@ func (v *Validator) getUnvalidatedRegistrations(ctx context.Context) ([]PayerReg
 			&reg.ID, &reg.PayerID, &reg.URL, &reg.Name, &reg.EDIID, &addressJSON,
 			&reg.IsPersisted, &reg.UserFacingURL, &reg.ValidationResult,
 			&reg.ValidationComments, &reg.CreatedAt, &reg.UpdatedAt,
-			&reg.ContactName, &reg.ContactEmail,
+			&reg.ContactName, &reg.ContactEmail, &reg.EndpointType,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan registration row: %w", err)
@@ -297,7 +362,13 @@ func (v *Validator) updateValidationResult(ctx context.Context, registrationID i
 	return nil
 }
 
-// persistToPayerInfo persists validated registration data to payer_info table only
+// PayerListSource is the list_source value used for payer-submitted endpoints
+const PayerListSource = "Payer Self-Registration"
+
+// PayerSourceCategory is the is_chpl value used for payer-submitted endpoints
+const PayerSourceCategory = "Payer"
+
+// persistToLanternTables persists validated registration data to Lantern tables and payer_info
 func (v *Validator) persistToPayerInfo(ctx context.Context, registration PayerRegistration) error {
 	// Convert address to JSON
 	addressJSON, err := json.Marshal(registration.Address)
@@ -312,20 +383,47 @@ func (v *Validator) persistToPayerInfo(ctx context.Context, registration PayerRe
 	}
 	defer tx.Rollback()
 
-	// Insert into payer_info table
-	payerInfoQuery := `
-		INSERT INTO payer_info (url, edi_id, address, user_facing_url)
-		VALUES ($1, $2, $3, $4)
+	// 1. Insert into fhir_endpoints table (main Lantern endpoint registry)
+	// Use ON CONFLICT to handle re-submissions of the same URL
+	fhirEndpointsQuery := `
+		INSERT INTO fhir_endpoints (url, list_source)
+		VALUES ($1, $2)
+		ON CONFLICT (url, list_source) DO NOTHING
 	`
+	_, err = tx.ExecContext(ctx, fhirEndpointsQuery, registration.URL, PayerListSource)
+	if err != nil {
+		return fmt.Errorf("failed to insert into fhir_endpoints: %w", err)
+	}
+	log.Infof("Inserted endpoint into fhir_endpoints: %s", registration.URL)
 
-	_, err = tx.ExecContext(ctx, payerInfoQuery, registration.URL, registration.EDIID, addressJSON, registration.UserFacingURL)
+	// 2. Insert/update list_source_info table (for source filtering)
+	listSourceInfoQuery := `
+		INSERT INTO list_source_info (list_source, is_chpl, updated_at)
+		VALUES ($1, $2, NOW())
+		ON CONFLICT (list_source) DO UPDATE SET
+			updated_at = NOW(),
+			is_chpl = $2
+	`
+	_, err = tx.ExecContext(ctx, listSourceInfoQuery, PayerListSource, PayerSourceCategory)
+	if err != nil {
+		return fmt.Errorf("failed to insert into list_source_info: %w", err)
+	}
+	log.Infof("Updated list_source_info with source category: %s", PayerSourceCategory)
+
+	// 3. Insert into payer_info table (payer-specific metadata)
+	payerInfoQuery := `
+		INSERT INTO payer_info (url, edi_id, endpoint_type, address, user_facing_url)
+		VALUES ($1, $2, $3, $4, $5)
+		ON CONFLICT DO NOTHING
+	`
+	_, err = tx.ExecContext(ctx, payerInfoQuery, registration.URL, registration.EDIID, registration.EndpointType, addressJSON, registration.UserFacingURL)
 	if err != nil {
 		return fmt.Errorf("failed to insert into payer_info: %w", err)
 	}
 
-	// Mark as persisted in payer_endpoints
+	// 4. Mark as persisted in payer_endpoints
 	markPersistedQuery := `
-		UPDATE payer_endpoints 
+		UPDATE payer_endpoints
 		SET is_persisted = true, updated_at = NOW()
 		WHERE id = $1
 	`
@@ -340,5 +438,6 @@ func (v *Validator) persistToPayerInfo(ctx context.Context, registration PayerRe
 		return fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
+	log.Infof("Successfully persisted payer endpoint to Lantern tables: %s", registration.URL)
 	return nil
 }
