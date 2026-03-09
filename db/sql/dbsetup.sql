@@ -945,15 +945,16 @@ CREATE INDEX mv_resource_interactions_operations_idx
 -- endpoint_export_mv
 CREATE MATERIALIZED VIEW endpoint_export_mv AS
 WITH endpoint_organizations AS (
-    SELECT DISTINCT url, UNNEST(endpoint_names) AS endpoint_name
+    SELECT DISTINCT url, vendor_name, UNNEST(endpoint_names) AS endpoint_name
     FROM endpoint_export
 ),
 grouped_organizations AS (
-    SELECT url, 
-           STRING_AGG(endpoint_name, '; ') AS endpoint_names 
+    SELECT url,
+           vendor_name,
+           STRING_AGG(endpoint_name, '; ') AS endpoint_names
     FROM endpoint_organizations
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
-    GROUP BY url
+    GROUP BY url, vendor_name
 ),
 processed_versions AS (
     SELECT 
@@ -1009,8 +1010,8 @@ SELECT
 FROM processed_versions p
 LEFT JOIN list_source_info lsi 
     ON p.list_source = lsi.list_source
-LEFT JOIN grouped_organizations g 
-    ON p.url = g.url;
+LEFT JOIN grouped_organizations g
+    ON p.url = g.url AND COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') = COALESCE(NULLIF(g.vendor_name, ''), 'Unknown');
 
 -- Unique Index for refeshing the MV concurrently 
 CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);

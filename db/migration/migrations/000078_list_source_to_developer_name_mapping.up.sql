@@ -1083,19 +1083,24 @@ CREATE INDEX idx_mv_well_known_no_doc_vendor ON mv_well_known_no_doc(vendor_name
 CREATE INDEX idx_mv_well_known_no_doc_fhir ON mv_well_known_no_doc(fhir_version);
 CREATE INDEX idx_mv_well_known_no_doc_vendor_fhir ON mv_well_known_no_doc(vendor_name, fhir_version);
 
+-- Fix endpoint_export_mv to include vendor_name in grouped_organizations
+-- Previously, endpoint_names were grouped only by url, but different vendor_names
+-- can have different endpoint_names for the same url
+
 DROP MATERIALIZED VIEW IF EXISTS endpoint_export_mv CASCADE;
 
 CREATE MATERIALIZED VIEW endpoint_export_mv AS
 WITH endpoint_organizations AS (
-    SELECT DISTINCT url, UNNEST(endpoint_names) AS endpoint_name
+    SELECT DISTINCT url, vendor_name, UNNEST(endpoint_names) AS endpoint_name
     FROM endpoint_export
 ),
 grouped_organizations AS (
-    SELECT url, 
-           STRING_AGG(endpoint_name, '; ') AS endpoint_names 
+    SELECT url,
+           vendor_name,
+           STRING_AGG(endpoint_name, '; ') AS endpoint_names
     FROM endpoint_organizations
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
-    GROUP BY url
+    GROUP BY url, vendor_name
 ),
 processed_versions AS (
     SELECT 
@@ -1151,8 +1156,8 @@ SELECT
 FROM processed_versions p
 LEFT JOIN list_source_info lsi 
     ON p.list_source = lsi.list_source
-LEFT JOIN grouped_organizations g 
-    ON p.url = g.url;
+LEFT JOIN grouped_organizations g
+    ON p.url = g.url AND COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') = COALESCE(NULLIF(g.vendor_name, ''), 'Unknown');
 
 -- Unique Index for refeshing the MV concurrently 
 CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
