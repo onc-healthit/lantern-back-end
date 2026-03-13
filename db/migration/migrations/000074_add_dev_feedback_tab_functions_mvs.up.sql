@@ -170,8 +170,9 @@ BEGIN
         RETURN QUERY SELECT TRUE, NULL::TEXT;
         
     ELSE
-        -- Non-standard identifier type
-        RETURN QUERY SELECT FALSE, 'Non-standard identifier type (should use NPI, CLIA, or NAIC)';
+        -- Per 89 FR 1288: other health system IDs (e.g. CCN, parent org IDs) are acceptable.
+        -- Any identifier present (regardless of type) is considered valid.
+        RETURN QUERY SELECT TRUE, NULL::TEXT;
     END IF;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
@@ -544,65 +545,170 @@ GROUP BY vendor_name;
 CREATE UNIQUE INDEX idx_mv_org_quality_summary_complete_vendor ON mv_organization_quality_summary(vendor_name);
 
 -- 3. Update identifier summary view
-CREATE MATERIALIZED VIEW mv_organization_identifier_summary AS  
-SELECT 
-    vendor_name,
-    SUM(npi_count) as total_npi,
-    SUM(clia_count) as total_clia,
-    SUM(naic_count) as total_naic,
-    SUM(other_count) as total_other,
-    SUM(CASE WHEN total_identifier_count = 0 THEN 1 ELSE 0 END) as total_no_identifiers,
-    SUM(npi_valid) as total_npi_valid,
-    SUM(clia_valid) as total_clia_valid,
-    SUM(naic_valid) as total_naic_valid,
-    SUM(npi_invalid) as total_npi_invalid,
-    SUM(clia_invalid) as total_clia_invalid,
-    SUM(naic_invalid) as total_naic_invalid,
-    SUM(other_invalid) as total_other_invalid,
-    SUM(total_identifier_count) as total_all_identifiers,
-    SUM(conformant_identifier_count) as total_all_conformant,
-    
-    -- Percentages
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(npi_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
+-- Uses COUNT(DISTINCT ivalue) so each unique identifier value is counted once
+-- regardless of how many organizations list it (globally distinct per vendor).
+CREATE MATERIALIZED VIEW mv_organization_identifier_summary AS
+WITH vendor_identifier_rows AS (
+    -- Expand each org to one row per vendor it belongs to
+    SELECT
+        UNNEST(vendor_names_array) as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Also include under "All Developers"
+    SELECT
+        'All Developers' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+),
+-- Org-level aggregates (count of orgs, not identifier values)
+vendor_org_summary AS (
+    SELECT
+        vendor_name,
+        SUM(CASE WHEN total_identifier_count = 0 THEN 1 ELSE 0 END) as total_no_identifiers,
+        SUM(total_identifier_count) as total_all_identifiers,
+        SUM(conformant_identifier_count) as total_all_conformant
+    FROM vendor_identifier_rows
+    GROUP BY vendor_name
+),
+-- Re-parse HTML into arrays (same logic as mv_organization_quality's identifier_parsing CTE)
+vendor_identifier_parsed AS (
+    SELECT
+        vendor_name,
+        CASE
+            WHEN identifier_types_html IS NULL OR identifier_types_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(regexp_replace(identifier_types_html, '<br/?>', '|', 'gi'), '\s+', ' ', 'g'), '|'
+            )
+        END as parsed_types,
+        CASE
+            WHEN identifier_values_html IS NULL OR identifier_values_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(regexp_replace(identifier_values_html, '<br/?>', '|', 'gi'), '\s+', ' ', 'g'), '|'
+            )
+        END as parsed_values
+    FROM vendor_identifier_rows
+),
+-- Flatten to one row per (vendor, identifier type, identifier value)
+vendor_identifier_flat AS (
+    SELECT
+        vip.vendor_name,
+        upper(trim(t.itype)) as itype,
+        trim(t.ivalue) as ivalue
+    FROM vendor_identifier_parsed vip,
+         LATERAL unnest(vip.parsed_types, vip.parsed_values) AS t(itype, ivalue)
+    WHERE t.itype IS NOT NULL AND trim(t.itype) != ''
+),
+-- Distinct valid values per vendor (validate each unique value once)
+vendor_valid_flat AS (
+    SELECT DISTINCT
+        vendor_name,
+        itype,
+        ivalue
+    FROM vendor_identifier_flat
+    WHERE (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+)
+SELECT
+    vos.vendor_name,
+    -- Distinct total counts by type
+    COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) as total_npi,
+    COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) as total_clia,
+    COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) as total_naic,
+    COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI', 'CLIA', 'NAIC') THEN vif.ivalue END) as total_other,
+    -- Org-level counts (unchanged)
+    vos.total_no_identifiers,
+    -- Distinct valid counts by type
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'NPI'  THEN vvf.ivalue END) as total_npi_valid,
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'CLIA' THEN vvf.ivalue END) as total_clia_valid,
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'NAIC' THEN vvf.ivalue END) as total_naic_valid,
+    -- Invalid = distinct total - distinct valid
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'NPI'  THEN vvf.ivalue END)
+    ) as total_npi_invalid,
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'CLIA' THEN vvf.ivalue END)
+    ) as total_clia_invalid,
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'NAIC' THEN vvf.ivalue END)
+    ) as total_naic_invalid,
+    -- Other: all distinct other-type values counted as invalid (no validation rule)
+    COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI', 'CLIA', 'NAIC') THEN vif.ivalue END) as total_other_invalid,
+    -- Org-level totals
+    vos.total_all_identifiers,
+    vos.total_all_conformant,
+    -- Percentages based on distinct counts
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'NPI' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
         ELSE 0
     END as npi_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(clia_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1) 
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
         ELSE 0
     END as clia_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(naic_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
-        ELSE 0  
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
+        ELSE 0
     END as naic_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(other_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
         ELSE 0
     END as other_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(conformant_identifier_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
+    CASE
+        WHEN vos.total_all_identifiers > 0
+        THEN ROUND(vos.total_all_conformant::DECIMAL / vos.total_all_identifiers::DECIMAL * 100, 1)
         ELSE 0
     END as conformance_rate
-    
-FROM (
-    SELECT 
-        UNNEST(vendor_names_array) as vendor_name,
-        npi_count, clia_count, naic_count, other_count,
-        npi_valid, clia_valid, naic_valid, npi_invalid, clia_invalid, naic_invalid, other_invalid,
-        total_identifier_count, conformant_identifier_count
-    FROM mv_organization_quality
-    
-    UNION ALL
-    
-    -- Add "All Developers" summary  
-    SELECT 
-        'All Developers' as vendor_name,
-        npi_count, clia_count, naic_count, other_count,
-        npi_valid, clia_valid, naic_valid, npi_invalid, clia_invalid, naic_invalid, other_invalid,
-        total_identifier_count, conformant_identifier_count
-    FROM mv_organization_quality
-) vendor_expanded
-GROUP BY vendor_name;
+FROM vendor_org_summary vos
+LEFT JOIN vendor_identifier_flat vif ON vos.vendor_name = vif.vendor_name
+LEFT JOIN vendor_valid_flat vvf ON vos.vendor_name = vvf.vendor_name AND vif.itype = vvf.itype AND vif.ivalue = vvf.ivalue
+GROUP BY vos.vendor_name, vos.total_no_identifiers, vos.total_all_identifiers, vos.total_all_conformant;
 
 -- Create index
 CREATE UNIQUE INDEX idx_mv_org_identifier_summary_complete_vendor ON mv_organization_identifier_summary(vendor_name);

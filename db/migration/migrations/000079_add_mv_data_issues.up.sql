@@ -1,7 +1,7 @@
 BEGIN;
 
 -- ========================================
--- Migration 000077: Add Data Issues Materialized Views
+-- Migration 000079: Add Data Issues Materialized Views
 -- ========================================
 -- Purpose: Create materialized views to track data quality issues for developers
 -- Tracks:
@@ -10,9 +10,30 @@ BEGIN;
 --   3. List_source URL accessibility issues
 -- ========================================
 
--- Drop existing views if they exist
+-- Drop existing views if they exist (order matters due to dependencies)
 DROP MATERIALIZED VIEW IF EXISTS mv_developer_data_issues CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_data_issues_summary CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS mv_latest_endpoint_metadata CASCADE;
+
+-- ========================================
+-- MATERIALIZED VIEW: mv_latest_endpoint_metadata
+-- ========================================
+-- Purpose: Pre-compute the most recent metadata check result per endpoint.
+-- This is built as a standalone MV (not an inline CTE) so that
+-- mv_data_issues_summary and mv_developer_data_issues can reference it
+-- without re-scanning fhir_endpoints_metadata twice, reducing build time.
+-- ========================================
+
+CREATE MATERIALIZED VIEW mv_latest_endpoint_metadata AS
+SELECT DISTINCT ON (url, requested_fhir_version)
+    url,
+    requested_fhir_version,
+    http_response
+FROM fhir_endpoints_metadata
+ORDER BY url, requested_fhir_version, updated_at DESC;
+
+CREATE UNIQUE INDEX idx_mv_latest_endpoint_metadata_url_version
+    ON mv_latest_endpoint_metadata(url, requested_fhir_version);
 
 -- ========================================
 -- MATERIALIZED VIEW: mv_data_issues_summary
@@ -55,22 +76,23 @@ developers_sharing_list_sources_count AS (
         HAVING COUNT(DISTINCT developer_name) > 1
     )
 ),
--- Inaccessible list_source URLs (HTTP errors)
--- Only counts list_sources where ALL endpoints are inaccessible (HTTP >= 400)
+-- Inaccessible list_source URLs (HTTP errors or connection failures)
+-- Only counts list_sources where ALL endpoints are inaccessible (HTTP >= 400 or HTTP = 0)
+-- Uses mv_latest_endpoint_metadata to avoid double-counting endpoints checked multiple times
 inaccessible_list_sources AS (
     SELECT
         fe.list_source
     FROM fhir_endpoints fe
-    INNER JOIN fhir_endpoints_metadata fem ON fe.url = fem.url
+    INNER JOIN mv_latest_endpoint_metadata fem ON fe.url = fem.url
     WHERE
         fe.list_source IS NOT NULL
         AND fe.list_source != ''
         AND fem.http_response IS NOT NULL
         AND fem.requested_fhir_version = 'None'
     GROUP BY fe.list_source
-    -- Only include list_sources where ALL endpoints have HTTP response >= 400
-    HAVING COUNT(*) = COUNT(CASE WHEN fem.http_response >= 400 THEN 1 END)
-        AND COUNT(CASE WHEN fem.http_response >= 400 THEN 1 END) > 0
+    -- Only include list_sources where ALL endpoints have HTTP response >= 400 or = 0 (connection failure)
+    HAVING COUNT(*) = COUNT(CASE WHEN fem.http_response >= 400 OR fem.http_response = 0 THEN 1 END)
+        AND COUNT(CASE WHEN fem.http_response >= 400 OR fem.http_response = 0 THEN 1 END) > 0
 ),
 -- Endpoints from inaccessible list_sources
 endpoints_with_inaccessible_list_sources AS (
@@ -111,7 +133,9 @@ CREATE UNIQUE INDEX idx_mv_data_issues_summary_unique ON mv_data_issues_summary(
 
 CREATE MATERIALIZED VIEW mv_developer_data_issues AS
 WITH
--- Get all unique vendors from fhir_endpoints_info AND shared_list_sources (to include empty bundle developers)
+-- Get all unique vendors from fhir_endpoints_info AND shared_list_sources
+-- Includes: (1) all FHIR endpoint vendors, (2) CHPL developers with empty bundles,
+-- (3) ALL developers sharing a list_source (catches vendors not in fhir_endpoints_info)
 all_vendors AS (
     SELECT DISTINCT COALESCE(v.name, 'Unknown') as vendor_name
     FROM fhir_endpoints_info fei
@@ -127,6 +151,20 @@ all_vendors AS (
     LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
     GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
+
+    UNION
+
+    -- Include ALL developers sharing a list_source with at least one other developer
+    -- This catches developers (e.g. CareCloud Inc., Meridian) who appear in shared_list_sources
+    -- but have no endpoints in fhir_endpoints_info
+    SELECT DISTINCT sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    WHERE sls.list_source IN (
+        SELECT list_source
+        FROM shared_list_sources
+        GROUP BY list_source
+        HAVING COUNT(DISTINCT developer_name) > 1
+    )
 ),
 -- Total endpoints per vendor
 vendor_endpoints AS (
@@ -167,30 +205,33 @@ vendor_no_org_data AS (
     GROUP BY v.name
 ),
 -- Accessible endpoints per vendor
+-- Uses mv_latest_endpoint_metadata to get current state per endpoint (avoids double-counting)
 vendor_accessible_endpoints AS (
     SELECT
         COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT fem.url) as accessible_endpoints
-    FROM fhir_endpoints_metadata fem
-    INNER JOIN fhir_endpoints_info fei ON fem.url = fei.url AND fem.requested_fhir_version = fei.requested_fhir_version
+        COUNT(DISTINCT lm.url) as accessible_endpoints
+    FROM mv_latest_endpoint_metadata lm
+    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
     LEFT JOIN vendors v ON fei.vendor_id = v.id
     WHERE
-        fem.http_response = 200
-        AND fem.requested_fhir_version = 'None'
+        lm.http_response = 200
+        AND lm.requested_fhir_version = 'None'
     GROUP BY v.name
 ),
 -- Inaccessible endpoints per vendor
+-- Uses mv_latest_endpoint_metadata; counts http_response >= 400 AND http_response = 0
+-- http_response = 0 means connection failed (no HTTP response received from server)
 vendor_inaccessible_endpoints AS (
     SELECT
         COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT fem.url) as inaccessible_endpoints
-    FROM fhir_endpoints_metadata fem
-    INNER JOIN fhir_endpoints_info fei ON fem.url = fei.url AND fem.requested_fhir_version = fei.requested_fhir_version
+        COUNT(DISTINCT lm.url) as inaccessible_endpoints
+    FROM mv_latest_endpoint_metadata lm
+    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
     LEFT JOIN vendors v ON fei.vendor_id = v.id
     WHERE
-        fem.http_response IS NOT NULL
-        AND fem.http_response >= 400
-        AND fem.requested_fhir_version = 'None'
+        lm.http_response IS NOT NULL
+        AND (lm.http_response >= 400 OR lm.http_response = 0)
+        AND lm.requested_fhir_version = 'None'
     GROUP BY v.name
 ),
 -- Organization count per vendor from fhir_endpoint_organizations
@@ -231,6 +272,11 @@ vendors_sharing_list_sources AS (
         GROUP BY list_source
         HAVING COUNT(DISTINCT developer_name) > 1
     )
+),
+-- CHPL developers: any developer with at least one entry in shared_list_sources
+chpl_developers AS (
+    SELECT DISTINCT developer_name as vendor_name
+    FROM shared_list_sources
 )
 SELECT
     av.vendor_name,
@@ -251,7 +297,11 @@ SELECT
     CASE
         WHEN vsls.vendor_name IS NOT NULL THEN TRUE
         ELSE FALSE
-    END as shares_list_source
+    END as shares_list_source,
+    CASE
+        WHEN cd.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as is_chpl_developer
 FROM all_vendors av
 LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
 LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
@@ -261,6 +311,7 @@ LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
 LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
 LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
 LEFT JOIN vendors_sharing_list_sources vsls ON av.vendor_name = vsls.vendor_name
+LEFT JOIN chpl_developers cd ON av.vendor_name = cd.vendor_name
 -- Removed: WHERE COALESCE(ve.total_endpoints, 0) > 0
 -- This was filtering out developers with empty bundles who have 0 endpoints
 ORDER BY

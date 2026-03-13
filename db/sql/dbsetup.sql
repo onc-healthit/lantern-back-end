@@ -3026,13 +3026,14 @@ BEGIN
         RETURN QUERY SELECT TRUE, NULL::TEXT;
         
     ELSE
-        -- Non-standard identifier type
-        RETURN QUERY SELECT FALSE, 'Non-standard identifier type (should use NPI, CLIA, or NAIC)';
+        -- Per 89 FR 1288: other health system IDs (e.g. CCN, parent org IDs) are acceptable.
+        -- Any identifier present (regardless of type) is considered valid.
+        RETURN QUERY SELECT TRUE, NULL::TEXT;
     END IF;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 
--- Function for comprehensive name validation 
+-- Function for comprehensive name validation
 CREATE OR REPLACE FUNCTION is_valid_organization_name(org_name TEXT)
 RETURNS BOOLEAN AS $$
 DECLARE
@@ -3400,68 +3401,190 @@ GROUP BY vendor_name;
 CREATE UNIQUE INDEX idx_mv_org_quality_summary_complete_vendor ON mv_organization_quality_summary(vendor_name);
 
 -- 3. Update identifier summary view
-CREATE MATERIALIZED VIEW mv_organization_identifier_summary AS  
-SELECT 
-    vendor_name,
-    SUM(npi_count) as total_npi,
-    SUM(clia_count) as total_clia,
-    SUM(naic_count) as total_naic,
-    SUM(other_count) as total_other,
-    SUM(CASE WHEN total_identifier_count = 0 THEN 1 ELSE 0 END) as total_no_identifiers,
-    SUM(npi_valid) as total_npi_valid,
-    SUM(clia_valid) as total_clia_valid,
-    SUM(naic_valid) as total_naic_valid,
-    SUM(npi_invalid) as total_npi_invalid,
-    SUM(clia_invalid) as total_clia_invalid,
-    SUM(naic_invalid) as total_naic_invalid,
-    SUM(other_invalid) as total_other_invalid,
-    SUM(total_identifier_count) as total_all_identifiers,
-    SUM(conformant_identifier_count) as total_all_conformant,
-    
-    -- Percentages
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(npi_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
+-- Uses COUNT(DISTINCT ivalue) so each unique identifier value is counted once
+-- regardless of how many organizations list it (globally distinct per vendor).
+CREATE MATERIALIZED VIEW mv_organization_identifier_summary AS
+WITH vendor_identifier_rows AS (
+    -- Expand each org to one row per vendor it belongs to
+    SELECT
+        UNNEST(vendor_names_array) as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Also include under "All Developers"
+    SELECT
+        'All Developers' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+),
+-- Org-level aggregates (count of orgs, not identifier values)
+vendor_org_summary AS (
+    SELECT
+        vendor_name,
+        SUM(CASE WHEN total_identifier_count = 0 THEN 1 ELSE 0 END) as total_no_identifiers,
+        SUM(total_identifier_count) as total_all_identifiers,
+        SUM(conformant_identifier_count) as total_all_conformant
+    FROM vendor_identifier_rows
+    GROUP BY vendor_name
+),
+-- Re-parse HTML into arrays (same logic as mv_organization_quality's identifier_parsing CTE)
+vendor_identifier_parsed AS (
+    SELECT
+        vendor_name,
+        CASE
+            WHEN identifier_types_html IS NULL OR identifier_types_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(regexp_replace(identifier_types_html, '<br/?>', '|', 'gi'), '\s+', ' ', 'g'), '|'
+            )
+        END as parsed_types,
+        CASE
+            WHEN identifier_values_html IS NULL OR identifier_values_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(regexp_replace(identifier_values_html, '<br/?>', '|', 'gi'), '\s+', ' ', 'g'), '|'
+            )
+        END as parsed_values
+    FROM vendor_identifier_rows
+),
+-- Flatten to one row per (vendor, identifier type, identifier value)
+vendor_identifier_flat AS (
+    SELECT
+        vip.vendor_name,
+        upper(trim(t.itype)) as itype,
+        trim(t.ivalue) as ivalue
+    FROM vendor_identifier_parsed vip,
+         LATERAL unnest(vip.parsed_types, vip.parsed_values) AS t(itype, ivalue)
+    WHERE t.itype IS NOT NULL AND trim(t.itype) != ''
+),
+-- Distinct valid values per vendor (validate each unique value once)
+vendor_valid_flat AS (
+    SELECT DISTINCT
+        vendor_name,
+        itype,
+        ivalue
+    FROM vendor_identifier_flat
+    WHERE (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+)
+SELECT
+    vos.vendor_name,
+    -- Distinct total counts by type
+    COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) as total_npi,
+    COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) as total_clia,
+    COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) as total_naic,
+    COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI', 'CLIA', 'NAIC') THEN vif.ivalue END) as total_other,
+    -- Org-level counts (unchanged)
+    vos.total_no_identifiers,
+    -- Distinct valid counts by type
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'NPI'  THEN vvf.ivalue END) as total_npi_valid,
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'CLIA' THEN vvf.ivalue END) as total_clia_valid,
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'NAIC' THEN vvf.ivalue END) as total_naic_valid,
+    -- Invalid = distinct total - distinct valid
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'NPI'  THEN vvf.ivalue END)
+    ) as total_npi_invalid,
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'CLIA' THEN vvf.ivalue END)
+    ) as total_clia_invalid,
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'NAIC' THEN vvf.ivalue END)
+    ) as total_naic_invalid,
+    -- Other: all distinct other-type values counted as invalid (no validation rule)
+    COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI', 'CLIA', 'NAIC') THEN vif.ivalue END) as total_other_invalid,
+    -- Org-level totals
+    vos.total_all_identifiers,
+    vos.total_all_conformant,
+    -- Percentages based on distinct counts
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'NPI' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
         ELSE 0
     END as npi_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(clia_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1) 
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
         ELSE 0
     END as clia_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(naic_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
-        ELSE 0  
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
+        ELSE 0
     END as naic_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(other_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
         ELSE 0
     END as other_percentage,
-    CASE 
-        WHEN SUM(total_identifier_count) > 0 THEN ROUND(SUM(conformant_identifier_count)::DECIMAL / SUM(total_identifier_count)::DECIMAL * 100, 1)
+    CASE
+        WHEN vos.total_all_identifiers > 0
+        THEN ROUND(vos.total_all_conformant::DECIMAL / vos.total_all_identifiers::DECIMAL * 100, 1)
         ELSE 0
     END as conformance_rate
-    
-FROM (
-    SELECT 
-        UNNEST(vendor_names_array) as vendor_name,
-        npi_count, clia_count, naic_count, other_count,
-        npi_valid, clia_valid, naic_valid, npi_invalid, clia_invalid, naic_invalid, other_invalid,
-        total_identifier_count, conformant_identifier_count
-    FROM mv_organization_quality
-    
-    UNION ALL
-    
-    -- Add "All Developers" summary  
-    SELECT 
-        'All Developers' as vendor_name,
-        npi_count, clia_count, naic_count, other_count,
-        npi_valid, clia_valid, naic_valid, npi_invalid, clia_invalid, naic_invalid, other_invalid,
-        total_identifier_count, conformant_identifier_count
-    FROM mv_organization_quality
-) vendor_expanded
-GROUP BY vendor_name;
+FROM vendor_org_summary vos
+LEFT JOIN vendor_identifier_flat vif ON vos.vendor_name = vif.vendor_name
+LEFT JOIN vendor_valid_flat vvf ON vos.vendor_name = vvf.vendor_name AND vif.itype = vvf.itype AND vif.ivalue = vvf.ivalue
+GROUP BY vos.vendor_name, vos.total_no_identifiers, vos.total_all_identifiers, vos.total_all_conformant;
 
 -- Create index
 CREATE UNIQUE INDEX idx_mv_org_identifier_summary_complete_vendor ON mv_organization_identifier_summary(vendor_name);
+
+
+-- MATERIALIZED VIEW: mv_latest_endpoint_metadata
+-- Purpose: Pre-compute the most recent metadata check result per endpoint.
+-- Built as a standalone MV so mv_data_issues_summary and mv_developer_data_issues
+-- can reference it without re-scanning fhir_endpoints_metadata twice.
+
+CREATE MATERIALIZED VIEW mv_latest_endpoint_metadata AS
+SELECT DISTINCT ON (url, requested_fhir_version)
+    url,
+    requested_fhir_version,
+    http_response
+FROM fhir_endpoints_metadata
+ORDER BY url, requested_fhir_version, updated_at DESC;
+
+CREATE UNIQUE INDEX idx_mv_latest_endpoint_metadata_url_version
+    ON mv_latest_endpoint_metadata(url, requested_fhir_version);
 
 
 -- MATERIALIZED VIEW: mv_data_issues_summary
@@ -3502,22 +3625,23 @@ developers_sharing_list_sources_count AS (
         HAVING COUNT(DISTINCT developer_name) > 1
     )
 ),
--- Inaccessible list_source URLs (HTTP errors)
--- Only counts list_sources where ALL endpoints are inaccessible (HTTP >= 400)
+-- Inaccessible list_source URLs (HTTP errors or connection failures)
+-- Only counts list_sources where ALL endpoints are inaccessible (HTTP >= 400 or HTTP = 0)
+-- Uses mv_latest_endpoint_metadata to avoid double-counting endpoints checked multiple times
 inaccessible_list_sources AS (
     SELECT
         fe.list_source
     FROM fhir_endpoints fe
-    INNER JOIN fhir_endpoints_metadata fem ON fe.url = fem.url
+    INNER JOIN mv_latest_endpoint_metadata fem ON fe.url = fem.url
     WHERE
         fe.list_source IS NOT NULL
         AND fe.list_source != ''
         AND fem.http_response IS NOT NULL
         AND fem.requested_fhir_version = 'None'
     GROUP BY fe.list_source
-    -- Only include list_sources where ALL endpoints have HTTP response >= 400
-    HAVING COUNT(*) = COUNT(CASE WHEN fem.http_response >= 400 THEN 1 END)
-        AND COUNT(CASE WHEN fem.http_response >= 400 THEN 1 END) > 0
+    -- Only include list_sources where ALL endpoints have HTTP response >= 400 or = 0 (connection failure)
+    HAVING COUNT(*) = COUNT(CASE WHEN fem.http_response >= 400 OR fem.http_response = 0 THEN 1 END)
+        AND COUNT(CASE WHEN fem.http_response >= 400 OR fem.http_response = 0 THEN 1 END) > 0
 ),
 -- Endpoints from inaccessible list_sources
 endpoints_with_inaccessible_list_sources AS (
@@ -3556,7 +3680,9 @@ CREATE UNIQUE INDEX idx_mv_data_issues_summary_unique ON mv_data_issues_summary(
 
 CREATE MATERIALIZED VIEW mv_developer_data_issues AS
 WITH
--- Get all unique vendors from fhir_endpoints_info AND shared_list_sources (to include empty bundle developers)
+-- Get all unique vendors from fhir_endpoints_info AND shared_list_sources
+-- Includes: (1) all FHIR endpoint vendors, (2) CHPL developers with empty bundles,
+-- (3) ALL developers sharing a list_source (catches vendors not in fhir_endpoints_info)
 all_vendors AS (
     SELECT DISTINCT COALESCE(v.name, 'Unknown') as vendor_name
     FROM fhir_endpoints_info fei
@@ -3572,6 +3698,20 @@ all_vendors AS (
     LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
     GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
+
+    UNION
+
+    -- Include ALL developers sharing a list_source with at least one other developer
+    -- This catches developers (e.g. CareCloud Inc., Meridian) who appear in shared_list_sources
+    -- but have no endpoints in fhir_endpoints_info
+    SELECT DISTINCT sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    WHERE sls.list_source IN (
+        SELECT list_source
+        FROM shared_list_sources
+        GROUP BY list_source
+        HAVING COUNT(DISTINCT developer_name) > 1
+    )
 ),
 -- Total endpoints per vendor
 vendor_endpoints AS (
@@ -3612,30 +3752,33 @@ vendor_no_org_data AS (
     GROUP BY v.name
 ),
 -- Accessible endpoints per vendor
+-- Uses mv_latest_endpoint_metadata to get current state per endpoint (avoids double-counting)
 vendor_accessible_endpoints AS (
     SELECT
         COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT fem.url) as accessible_endpoints
-    FROM fhir_endpoints_metadata fem
-    INNER JOIN fhir_endpoints_info fei ON fem.url = fei.url AND fem.requested_fhir_version = fei.requested_fhir_version
+        COUNT(DISTINCT lm.url) as accessible_endpoints
+    FROM mv_latest_endpoint_metadata lm
+    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
     LEFT JOIN vendors v ON fei.vendor_id = v.id
     WHERE
-        fem.http_response = 200
-        AND fem.requested_fhir_version = 'None'
+        lm.http_response = 200
+        AND lm.requested_fhir_version = 'None'
     GROUP BY v.name
 ),
 -- Inaccessible endpoints per vendor
+-- Uses mv_latest_endpoint_metadata; counts http_response >= 400 AND http_response = 0
+-- http_response = 0 means connection failed (no HTTP response received from server)
 vendor_inaccessible_endpoints AS (
     SELECT
         COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT fem.url) as inaccessible_endpoints
-    FROM fhir_endpoints_metadata fem
-    INNER JOIN fhir_endpoints_info fei ON fem.url = fei.url AND fem.requested_fhir_version = fei.requested_fhir_version
+        COUNT(DISTINCT lm.url) as inaccessible_endpoints
+    FROM mv_latest_endpoint_metadata lm
+    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
     LEFT JOIN vendors v ON fei.vendor_id = v.id
     WHERE
-        fem.http_response IS NOT NULL
-        AND fem.http_response >= 400
-        AND fem.requested_fhir_version = 'None'
+        lm.http_response IS NOT NULL
+        AND (lm.http_response >= 400 OR lm.http_response = 0)
+        AND lm.requested_fhir_version = 'None'
     GROUP BY v.name
 ),
 -- Organization count per vendor from fhir_endpoint_organizations
@@ -3676,6 +3819,11 @@ vendors_sharing_list_sources AS (
         GROUP BY list_source
         HAVING COUNT(DISTINCT developer_name) > 1
     )
+),
+-- CHPL developers: any developer with at least one entry in shared_list_sources
+chpl_developers AS (
+    SELECT DISTINCT developer_name as vendor_name
+    FROM shared_list_sources
 )
 SELECT
     av.vendor_name,
@@ -3696,7 +3844,11 @@ SELECT
     CASE
         WHEN vsls.vendor_name IS NOT NULL THEN TRUE
         ELSE FALSE
-    END as shares_list_source
+    END as shares_list_source,
+    CASE
+        WHEN cd.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as is_chpl_developer
 FROM all_vendors av
 LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
 LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
@@ -3706,6 +3858,7 @@ LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
 LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
 LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
 LEFT JOIN vendors_sharing_list_sources vsls ON av.vendor_name = vsls.vendor_name
+LEFT JOIN chpl_developers cd ON av.vendor_name = cd.vendor_name
 ORDER BY
     CASE
         WHEN COALESCE(vnod.no_org_data_endpoints, 0) = COALESCE(ve.total_endpoints, 0)

@@ -14,7 +14,22 @@ developerfeedbackmodule_UI <- function(id) {
   tagList(
     # Custom CSS for modern styling
     tags$head(
-      tags$style(HTML("
+    # JS handler to toggle active CSS class on clickable cards
+    tags$script(HTML("
+      Shiny.addCustomMessageHandler('toggleCardActive', function(message) {
+        var cardId = message.cardId;
+        var active = message.active;
+        var el = document.getElementById(cardId);
+        if (el) {
+          if (active) {
+            el.classList.add('card-active');
+          } else {
+            el.classList.remove('card-active');
+          }
+        }
+      });
+    ")),
+    tags$style(HTML("
         /* Modern card styling */
         .modern-card {
           background: white;
@@ -229,19 +244,45 @@ developerfeedbackmodule_UI <- function(id) {
           padding: 15px;
           box-shadow: 0 2px 6px rgba(0,0,0,0.06);
           margin-bottom: 15px;
+          border: 2px solid transparent;
         }
-        
+
         .metric-title {
           font-size: 0.9em;
           color: #7f8c8d;
           font-weight: 500;
           margin-bottom: 8px;
         }
-        
+
         .metric-value {
           font-size: 1.5em;
           font-weight: 600;
           color: #2c3e50;
+        }
+
+        /* Clickable card styling */
+        .card-clickable {
+          border: 2px solid #d0d0d0 !important;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s, background-color 0.2s !important;
+        }
+
+        .card-clickable:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 6px 16px rgba(0,0,0,0.15) !important;
+          border-color: #1B5A7F !important;
+        }
+
+        /* Active (toggled ON) card state */
+        .card-active {
+          border-color: #1B5A7F !important;
+          background-color: #f0f7ff !important;
+          box-shadow: 0 4px 12px rgba(27, 90, 127, 0.3) !important;
+        }
+
+        .card-active .metric-title {
+          color: #1B5A7F;
+          font-weight: 600;
         }
         
         /* Maintain existing Lantern styles for accessibility */
@@ -256,316 +297,331 @@ developerfeedbackmodule_UI <- function(id) {
     
     fluidRow(
       column(width = 12,
-        h2(class = "page-header", "Organization Data Quality Dashboard")
+        h2(class = "page-header", "Service Base URL Data Quality")
       )
     ),
-    fluidRow(
-      column(width = 12,
-        div(style = "background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); 
-                     padding: 15px; border-radius: 8px; margin-bottom: 20px; 
-                     border-left: 4px solid #1B5A7F;",
-          p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
-            tags$strong("About this dashboard:"), 
-            " This dashboard provides comprehensive data quality metrics for organization data extracted from FHIR bundles. ",
-            "Use this information to improve the quality of organization data in your endpoint implementations."
-          )
-        )
-      )
-    ),
-    
-    # Enhanced summary cards row
-    fluidRow(
-      column(width = 4,
-        div(class = "info-box bg-blue",
-          div(class = "info-box-icon",
-            tags$i(class = "fa fa-building", style = "font-size: 40px;")
-          ),
-          div(class = "info-box-content",
-            span(class = "info-box-text", style = "font-weight: 500;", "Total Organizations"),
-            span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;", 
-                 textOutput(ns("total_orgs"), inline = TRUE))
-          )
-        )
-      ),
-      column(width = 4,
-        div(class = "info-box bg-green",
-          div(class = "info-box-icon",
-            tags$i(class = "fa fa-check-circle", style = "font-size: 40px;")
-          ),
-          div(class = "info-box-content",
-            span(class = "info-box-text", style = "font-weight: 500;", "Conforming Organizations"),
-            span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;", 
-                 textOutput(ns("high_quality_count"), inline = TRUE))
-          )
-        )
-      ),
-      column(width = 4,
-        div(class = "info-box bg-red",
-          div(class = "info-box-icon",
-            tags$i(class = "fa fa-exclamation-triangle", style = "font-size: 40px;")
-          ),
-          div(class = "info-box-content",
-            span(class = "info-box-text", style = "font-weight: 500;", "Non-conforming Organizations"),
-            span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;", 
-                 textOutput(ns("low_quality_count"), inline = TRUE))
-          )
-        )
-      )
-    ),
-    
-    # Main content row
-    fluidRow(
-      # Left column - Charts and Tables
-      column(width = 8,
-        # Data Quality Overview
-        div(class = "modern-card",
-          h3(class = "section-header", 
-             tags$i(class = "fa fa-chart-bar", style = "margin-right: 8px;"), 
-             "Data Quality Overview"),
-          div(class = "chart-container",
-            plotOutput(ns("quality_overview_chart"), height = "400px")
-          )
-        ),
-        
-        # Identifier Type Analysis
-        div(class = "modern-card",
-          h3(class = "section-header",
-             tags$i(class = "fa fa-id-card", style = "margin-right: 8px;"),
-             "Identifier Analysis"),
-          fluidRow(
-            column(width = 6,
-              div(class = "chart-container",
-                h4(class = "subsection-header", "Type Distribution"),
-                plotOutput(ns("identifier_type_distribution_chart"), height = "350px")
-              )
-            ),
-            column(width = 6,
-              div(class = "chart-container",
-                h4(class = "subsection-header", "Conformance by Type"),
-                plotOutput(ns("conformance_by_type_chart"), height = "350px")
+
+    tabsetPanel(
+      id = "main_tabs",
+      type = "tabs",
+
+      # ── TAB 1: Service Base URL Quality (CHPL / Developer level) ─────────
+      tabPanel(
+        title = "Developer Data Quality",
+        value = "tier1",
+
+        fluidRow(style = "margin-top: 20px;",
+          column(width = 12,
+            div(style = "background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                         padding: 15px; border-radius: 8px; margin-bottom: 20px;
+                         border-left: 4px solid #1B5A7F;",
+              p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
+                tags$strong("About this tab:"),
+                " This tab shows CHPL Certified API Developer-level data quality — whether developers are",
+                " publicly posting service base URLs in FHIR bundle format and whether those bundles",
+                " return endpoint data."
               )
             )
-          ),
-          div(class = "chart-container",
-            h4(class = "subsection-header", "Organization Status Breakdown"),
-            plotOutput(ns("organization_identifier_status_chart"), height = "300px")
-          ),
-          div(style = "margin-top: 20px;",
-            h4(class = "subsection-header", "Detailed Identifier Metrics"),
-            reactable::reactableOutput(ns("identifier_type_table"))
           )
-        ),
-        
-        # Detailed Issues
-        div(class = "modern-card", style = "margin-top: 20px;",
-          h3(class = "section-header",
-             tags$i(class = "fa fa-exclamation-circle", style = "margin-right: 8px;"),
-             "Data Quality Issues by Category"),
-          reactable::reactableOutput(ns("issues_detail_table"))
         ),
 
-        # Data Issues in Lantern
-        div(class = "modern-card", style = "margin-top: 20px;",
-          h3(class = "section-header",
-             tags$i(class = "fa fa-database", style = "margin-right: 8px;"),
-             "Data Issues in Lantern"),
-          div(style = "margin-bottom: 15px;",
-            p(style = "color: #5a6c7d; line-height: 1.6;",
-              "This section tracks developers with data collection issues. ",
-              tags$strong("Note: "), "Counts show the current state of endpoint data (endpoint_names field). ",
-              "Developers may still appear in Lantern filters if organization records exist in the database ",
-              "from previous successful extractions or as 'Unknown' organization placeholders. ",
-              "Check the 'Organizations' column to see if database records exist."
-            )
-          ),
-          fluidRow(
-            column(width = 3,
-              div(class = "metric-card",
-                div(class = "metric-title",
-                  tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
-                  "Developers w/ No Org Data"
-                ),
-                div(class = "metric-value", style = "color: #dc3545;",
-                  textOutput(ns("developers_no_org_data_count"), inline = TRUE)
+        # Data Issues in Lantern section
+        fluidRow(
+          column(width = 12,
+            div(class = "modern-card",
+              h3(class = "section-header",
+                 tags$i(class = "fa fa-database", style = "margin-right: 8px;"),
+                 "Data Issues in Lantern"),
+              div(style = "margin-bottom: 15px;",
+                p(style = "color: #5a6c7d; line-height: 1.6;",
+                  "This section tracks developers with data collection issues. ",
+                  tags$strong("Note: "), "Counts show the current state of endpoint data (endpoint_names field). ",
+                  "Developers may still appear in Lantern filters if organization records exist in the database ",
+                  "from previous successful extractions or as 'Unknown' organization placeholders. ",
+                  "Check the 'Organizations' column to see if database records exist."
                 )
-              )
-            ),
-            column(width = 3,
-              div(class = "metric-card",
-                div(class = "metric-title",
-                  tags$i(class = "fa fa-inbox", style = "margin-right: 5px;"),
-                  "Endpoints w/ No Org Data"
+              ),
+              fluidRow(
+                column(width = 2,
+                  div(class = "metric-card card-clickable",
+                      id = ns("empty_bundles_card"),
+                      onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("empty_bundles_card_click")),
+                    div(class = "metric-title",
+                      tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
+                      "Empty/Invalid FHIR Bundles"
+                    ),
+                    div(class = "metric-value", style = "color: #dc3545;",
+                      textOutput(ns("developers_empty_bundles_count"), inline = TRUE)
+                    ),
+                    div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
+                      "CHPL developers with empty, unreachable, or invalid FHIR bundles",
+                      tags$br(),
+                      tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
+                        tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
+                        "Click to filter table below. Click again to reset."
+                      )
+                    )
+                  )
                 ),
-                div(class = "metric-value", style = "color: #dc3545;",
-                  textOutput(ns("endpoints_no_org_data_count"), inline = TRUE)
+                column(width = 2,
+                  div(class = "metric-card card-clickable",
+                      id = ns("shared_sources_card"),
+                      onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_sources_card_click")),
+                    div(class = "metric-title",
+                      tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
+                      "Shared FHIR Bundle Hyperlinks"
+                    ),
+                    div(class = "metric-value", style = "color: #ffc107;",
+                      textOutput(ns("developers_sharing_list_sources_count"), inline = TRUE)
+                    ),
+                    div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
+                      "Developers sharing the same FHIR bundle URL",
+                      tags$br(),
+                      tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
+                        tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
+                        "Click to filter table below. Click again to reset."
+                      )
+                    )
+                  )
                 ),
-                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Endpoints with no organization data"
-                )
-              )
-            ),
-            column(width = 3,
-              div(class = "metric-card",
-                  id = ns("shared_sources_card"),
-                  style = "cursor: pointer; transition: transform 0.2s;",
-                  onmouseover = "this.style.transform = 'scale(1.02)';",
-                  onmouseout = "this.style.transform = 'scale(1)';",
-                  onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_sources_card_click")),
-                div(class = "metric-title",
-                  tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
-                  "Shared Service Base URLs"
+                column(width = 2,
+                  div(class = "metric-card",
+                    div(class = "metric-title",
+                      tags$i(class = "fa fa-unlink", style = "margin-right: 5px;"),
+                      "Inaccessible FHIR endpoint domain"
+                    ),
+                    div(class = "metric-value", style = "color: #dc3545;",
+                      textOutput(ns("inaccessible_list_sources_count"), inline = TRUE)
+                    ),
+                    div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
+                      "Developers where all FHIR endpoints return HTTP errors or connection failures"
+                    )
+                  )
                 ),
-                div(class = "metric-value", style = "color: #ffc107;",
-                  textOutput(ns("developers_sharing_list_sources_count"), inline = TRUE)
+                column(width = 2,
+                  div(class = "metric-card",
+                    div(class = "metric-title",
+                      tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
+                      "Developers w/ No Org Data"
+                    ),
+                    div(class = "metric-value", style = "color: #dc3545;",
+                      textOutput(ns("developers_no_org_data_count"), inline = TRUE)
+                    ),
+                    div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
+                      "Developers missing org data for any endpoint"
+                    )
+                  )
                 ),
-                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Developers Sharing the Same Service Base URL",
-                  tags$br(),
-                  tags$span(style = "color: #95a5a6; font-size: 0.9em; font-style: italic;",
-                    "Click to view"
+                column(width = 2,
+                  div(class = "metric-card",
+                    div(class = "metric-title",
+                      tags$i(class = "fa fa-inbox", style = "margin-right: 5px;"),
+                      "Endpoints w/ No Org Data"
+                    ),
+                    div(class = "metric-value", style = "color: #dc3545;",
+                      textOutput(ns("endpoints_no_org_data_count"), inline = TRUE)
+                    ),
+                    div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
+                      "Endpoints with no organization data"
+                    )
                   )
                 )
-              )
-            ),
-            column(width = 3,
-              div(class = "metric-card",
-                div(class = "metric-title",
-                  tags$i(class = "fa fa-unlink", style = "margin-right: 5px;"),
-                  "Inaccessible Sources"
+              ),
+              div(style = "margin-top: 20px;",
+                h4(class = "subsection-header",
+                   tags$i(class = "fa fa-table", style = "margin-right: 5px;"),
+                   "All Developers with Data Issues"),
+                p(style = "color: #5a6c7d; font-size: 0.9em; margin-bottom: 10px;",
+                  "Complete list of all developers showing endpoints, organizations extracted, and data completeness."
                 ),
-                div(class = "metric-value", style = "color: #dc3545;",
-                  textOutput(ns("inaccessible_list_sources_count"), inline = TRUE)
-                ),
-                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "Unreachable list sources"
-                )
-              )
-            )
-          ),
-          fluidRow(style = "margin-top: 15px;",
-            column(width = 3,
-              div(class = "metric-card",
-                  id = ns("empty_bundles_card"),
-                  style = "cursor: pointer; transition: transform 0.2s;",
-                  onmouseover = "this.style.transform = 'scale(1.02)';",
-                  onmouseout = "this.style.transform = 'scale(1)';",
-                  onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("empty_bundles_card_click")),
-                div(class = "metric-title",
-                  tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
-                  "Empty FHIR Bundles"
-                ),
-                div(class = "metric-value", style = "color: #dc3545;",
-                  textOutput(ns("developers_empty_bundles_count"), inline = TRUE)
-                ),
-                div(style = "margin-top: 8px; font-size: 0.85em; color: #7f8c8d;",
-                  "CHPL developers with no endpoints discovered",
-                  tags$br(),
-                  tags$span(style = "color: #95a5a6; font-size: 0.9em; font-style: italic;",
-                    "Click to view"
+                fluidRow(
+                  column(width = 3,
+                    selectInput(
+                      inputId = ns("source_filter"),
+                      label = "Source:",
+                      choices = c("All", "CHPL Developers", "Others"),
+                      selected = "CHPL Developers"
+                    )
+                  ),
+                  column(width = 2, style = "padding-top: 25px;",
+                    actionButton(
+                      inputId = ns("reset_filter_btn"),
+                      label = "Show All",
+                      icon = icon("times-circle"),
+                      class = "btn btn-default btn-sm"
+                    )
+                  ),
+                  column(width = 3, style = "padding-top: 25px;",
+                    downloadButton(
+                      outputId = ns("download_highlighted_report"),
+                      label = "Download Developers with Issues (CSV)",
+                      class = "btn btn-warning btn-sm",
+                      icon = icon("download")
+                    )
+                  ),
+                  column(width = 3, style = "padding-top: 25px;",
+                    downloadButton(
+                      outputId = ns("download_tier1_report"),
+                      label = "Download All (CSV)",
+                      class = "btn btn-info btn-sm",
+                      icon = icon("download")
+                    )
                   )
-                )
+                ),
+                reactable::reactableOutput(ns("developer_data_issues_table"))
               )
             )
-          ),
-          div(style = "margin-top: 20px;",
-            h4(class = "subsection-header",
-               tags$i(class = "fa fa-table", style = "margin-right: 5px;"),
-               "All Developers with Data Issues"),
-            p(style = "color: #5a6c7d; font-size: 0.9em; margin-bottom: 10px;",
-              "Complete list of all developers showing endpoints, organizations extracted, and data completeness."
-            ),
-            reactable::reactableOutput(ns("developer_data_issues_table"))
           )
         )
       ),
-      
-      # Right column - Filters and Summary
-      column(width = 4,
-        # Filters
-        div(class = "modern-card filter-section",
-          h4(style = "color: #1B5A7F; margin-top: 0;",
-             tags$i(class = "fa fa-filter", style = "margin-right: 8px;"),
-             "Filters"),
-          selectInput(
-            inputId = ns("vendor_filter"),
-            label = "Certified API Developer:",
-            choices = NULL,
-            selected = "All Developers"
-          )
-        ),
-        
-        # Quality Metrics
-        div(class = "modern-card",
-          h4(style = "color: #1B5A7F; margin-top: 0;",
-             tags$i(class = "fa fa-tachometer-alt", style = "margin-right: 8px;"),
-             "Quality Metrics"),
-          div(style = "margin-top: 15px;",
-            div(class = "metric-card",
-              div(class = "metric-title", "Identifier Type Validation"),
-              div(style = "display: flex; justify-content: space-between; align-items: center;",
-                span(class = "progress-text", "Valid Identifiers"),
-                span(style = "font-weight: 700; font-size: 1.4em; color: #28a745;",
-                     textOutput(ns("identifier_percentage"), inline = TRUE))
-              )
-            ),
-            div(class = "metric-card",
-              div(class = "metric-title", "Organization Names"),
-              div(style = "display: flex; justify-content: space-between; align-items: center;",
-                span(class = "progress-text", "Quality Names"),
-                span(style = "font-weight: 700; font-size: 1.4em; color: #007bff;",
-                     textOutput(ns("name_percentage"), inline = TRUE))
-              )
-            ),
-            div(class = "metric-card",
-              div(class = "metric-title", "Addresses"),
-              div(style = "display: flex; justify-content: space-between; align-items: center;",
-                span(class = "progress-text", "Complete Addresses"),
-                span(style = "font-weight: 700; font-size: 1.4em; color: #fd7e14;",
-                     textOutput(ns("address_percentage"), inline = TRUE))
+
+      # ── TAB 2: Organization Data Quality ─────────────────────────────────
+      tabPanel(
+        title = "Organization Data Quality",
+        value = "tier2",
+
+        fluidRow(style = "margin-top: 20px;",
+          column(width = 12,
+            div(style = "background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                         padding: 15px; border-radius: 8px; margin-bottom: 20px;
+                         border-left: 4px solid #1B5A7F;",
+              p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
+                tags$strong("About this tab:"),
+                " This tab provides comprehensive data quality metrics for organization data extracted",
+                " from FHIR bundles. Use this information to improve the quality of organization data",
+                " in your endpoint implementations."
               )
             )
           )
         ),
-        
-        # Identifier Breakdown
-        div(class = "modern-card",
-          h4(style = "color: #1B5A7F; margin-top: 0;",
-             tags$i(class = "fa fa-list-alt", style = "margin-right: 8px;"),
-             "Identifier Breakdown"),
-          div(id = "identifier-breakdown", style = "margin-top: 15px;",
-            div(class = "info-line",
-              span("Valid identifiers:"),
-              span(textOutput(ns("valid_identifier_count_display"), inline = TRUE))
-            ),
-            div(class = "info-line",
-              span("No identifier data:"),
-              span(textOutput(ns("no_identifier_count_display"), inline = TRUE))
-            ),
-            div(class = "info-line",
-              span("Only invalid identifiers:"),
-              span(textOutput(ns("invalid_only_count_display"), inline = TRUE))
+
+        # Enhanced summary cards row
+        fluidRow(
+          column(width = 4,
+            div(class = "info-box bg-blue",
+              div(class = "info-box-icon",
+                tags$i(class = "fa fa-building", style = "font-size: 40px;")
+              ),
+              div(class = "info-box-content",
+                span(class = "info-box-text", style = "font-weight: 500;", "Total Organizations"),
+                span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
+                     textOutput(ns("total_orgs"), inline = TRUE))
+              )
+            )
+          ),
+          column(width = 4,
+            div(class = "info-box bg-green",
+              div(class = "info-box-icon",
+                tags$i(class = "fa fa-check-circle", style = "font-size: 40px;")
+              ),
+              div(class = "info-box-content",
+                span(class = "info-box-text", style = "font-weight: 500;", "Conforming Organizations"),
+                span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
+                     textOutput(ns("high_quality_count"), inline = TRUE))
+              )
+            )
+          ),
+          column(width = 4,
+            div(class = "info-box bg-red",
+              div(class = "info-box-icon",
+                tags$i(class = "fa fa-exclamation-triangle", style = "font-size: 40px;")
+              ),
+              div(class = "info-box-content",
+                span(class = "info-box-text", style = "font-weight: 500;", "Non-conforming Organizations"),
+                span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
+                     textOutput(ns("low_quality_count"), inline = TRUE))
+              )
             )
           )
         ),
-        
-        # Recommendations
-        div(class = "modern-card",
-          h4(style = "color: #1B5A7F; margin-top: 0;",
-             tags$i(class = "fa fa-lightbulb", style = "margin-right: 8px;"),
-             "Recommendations"),
-          uiOutput(ns("recommendations"))
-        )
-      )
-    ),
-    
-    # Download section
-    fluidRow(
-      column(width = 12, style = "padding-top: 20px; text-align: center;",
-        downloadButton(
-          outputId = ns("download_feedback_report"),
-          label = "Download Quality Report (CSV)",
-          class = "btn-download",
-          icon = icon("download")
+
+        # Main content row
+        fluidRow(
+          # Left column - Charts and Tables
+          column(width = 8,
+            # Data Quality Overview
+            div(class = "modern-card",
+              h3(class = "section-header",
+                 tags$i(class = "fa fa-chart-bar", style = "margin-right: 8px;"),
+                 "Data Quality Overview"),
+              div(class = "chart-container",
+                plotOutput(ns("quality_overview_chart"), height = "400px")
+              )
+            ),
+
+            # Detailed Issues
+            div(class = "modern-card", style = "margin-top: 20px;",
+              h3(class = "section-header",
+                 tags$i(class = "fa fa-exclamation-circle", style = "margin-right: 8px;"),
+                 "Data Quality Issues by Category"),
+              reactable::reactableOutput(ns("issues_detail_table"))
+            ),
+
+            # Identifier Type Analysis
+            div(class = "modern-card",
+              h3(class = "section-header",
+                 tags$i(class = "fa fa-id-card", style = "margin-right: 8px;"),
+                 "Organization Identifier Analysis"),
+              fluidRow(
+                column(width = 6,
+                  div(class = "chart-container",
+                    h4(class = "subsection-header", "Type Distribution"),
+                    plotOutput(ns("identifier_type_distribution_chart"), height = "350px")
+                  )
+                ),
+                column(width = 6,
+                  div(class = "chart-container",
+                    h4(class = "subsection-header", "Conformance by Type"),
+                    plotOutput(ns("conformance_by_type_chart"), height = "350px")
+                  )
+                )
+              ),
+              div(class = "chart-container",
+                h4(class = "subsection-header", "Organization Status Breakdown"),
+                plotOutput(ns("organization_identifier_status_chart"), height = "300px")
+              ),
+              div(style = "margin-top: 20px;",
+                h4(class = "subsection-header", "Detailed Identifier Metrics"),
+                reactable::reactableOutput(ns("identifier_type_table"))
+              )
+            )
+          ),
+
+          # Right column - Filters and Summary
+          column(width = 4,
+            # Filters
+            div(class = "modern-card filter-section",
+              h4(style = "color: #1B5A7F; margin-top: 0;",
+                 tags$i(class = "fa fa-filter", style = "margin-right: 8px;"),
+                 "Filters"),
+              selectInput(
+                inputId = ns("vendor_filter"),
+                label = "Certified API Developer:",
+                choices = NULL,
+                selected = "All Developers"
+              )
+            ),
+
+            # Recommendations
+            div(class = "modern-card",
+              h4(style = "color: #1B5A7F; margin-top: 0;",
+                 tags$i(class = "fa fa-lightbulb", style = "margin-right: 8px;"),
+                 "Recommendations"),
+              uiOutput(ns("recommendations"))
+            )
+          )
+        ),
+
+        # Tier 2 download
+        fluidRow(
+          column(width = 12, style = "padding-top: 20px; text-align: center;",
+            downloadButton(
+              outputId = ns("download_feedback_report"),
+              label = "Download Organization Quality Report (CSV)",
+              class = "btn-download",
+              icon = icon("download")
+            )
+          )
         )
       )
     )
@@ -579,31 +635,58 @@ developerfeedbackmodule <- function(
 ) {
   ns <- session$ns
 
-  # Reactive value to track table sort state (default: sort by no_org_data_endpoints descending)
-  table_sort <- reactiveVal(list(no_org_data_endpoints = "desc"))
+  # Reactive value to track active card filter: NULL = no filter, "shares_list_source" or "has_empty_bundle"
+  table_filter <- reactiveVal(NULL)
 
-  # Initialize vendor choices
+  # Initialize vendor choices as soon as the vendor list is available.
+  # Do NOT gate on input$main_tabs == "tier2": with choices = NULL, Shiny sets
+  # input$vendor_filter = "" (not NULL), so the query runs with vendor_name = ''
+  # and returns 0 rows before the tab is ever visited.
   observe({
-    vendor_choices <- c("All Developers", app$vendor_list())
+    req(app$vendor_list())
+    # app$vendor_list() already contains "All Developers" as its first entry
+    vendor_choices <- app$vendor_list()
     updateSelectInput(session, "vendor_filter", choices = vendor_choices, selected = "All Developers")
   })
 
-  # Handle click on Shared Service Base URLs card
+  # Handle click on Shared FHIR Bundle Hyperlinks card — toggle filter
   observeEvent(input$shared_sources_card_click, {
-    # Sort by shares_list_source descending to show "Yes" first
-    table_sort(list(shares_list_source = "desc"))
+    if (identical(table_filter(), "shares_list_source")) {
+      table_filter(NULL)  # toggle off
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
+    } else {
+      table_filter("shares_list_source")
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = TRUE))
+      # Deactivate the other clickable card
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
+    }
   })
 
-  # Handle click on Empty FHIR Bundles card
+  # Handle click on Empty FHIR Bundles card — toggle filter
   observeEvent(input$empty_bundles_card_click, {
-    # Sort by has_empty_bundle descending to show "Yes" (TRUE) first
-    table_sort(list(has_empty_bundle = "desc"))
+    if (identical(table_filter(), "has_empty_bundle")) {
+      table_filter(NULL)  # toggle off
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
+    } else {
+      table_filter("has_empty_bundle")
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = TRUE))
+      # Deactivate the other clickable card
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
+    }
+  })
+
+  # Reset filter button — clears both card filter and resets source filter to "All"
+  observeEvent(input$reset_filter_btn, {
+    table_filter(NULL)
+    updateSelectInput(session, "source_filter", selected = "All")
+    session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
+    session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
   })
   
   # Get filtered organization data from materialized views
   filtered_quality_summary <- reactive({
     current_vendor <- input$vendor_filter
-    if (is.null(current_vendor)) current_vendor <- "All Developers"
+    if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
     
     # Query the summary materialized view
     query_str <- "SELECT * FROM mv_organization_quality_summary WHERE vendor_name = {vendor}"
@@ -663,7 +746,7 @@ developerfeedbackmodule <- function(
   # Get identifier breakdown summary
   filtered_identifier_summary <- reactive({
     current_vendor <- input$vendor_filter
-    if (is.null(current_vendor)) current_vendor <- "All Developers"
+    if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
     
     query_str <- "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name = {vendor}"
     
@@ -714,7 +797,7 @@ developerfeedbackmodule <- function(
   # Get individual organization data for detailed views and downloads
   filtered_org_data <- reactive({
     current_vendor <- input$vendor_filter
-    if (is.null(current_vendor)) current_vendor <- "All Developers"
+    if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
     
     # Query the detailed organization quality data
     if (current_vendor == "All Developers") {
@@ -866,6 +949,33 @@ developerfeedbackmodule <- function(
     result <- tbl(db_connection, sql(query_str)) %>% collect()
 
     return(result)
+  })
+
+  # Filtered card counts — derived from developer data filtered by source selection
+  # This ensures cards reflect the same subset shown in the table
+  filtered_data_issues_counts <- reactive({
+    dev_data <- developer_data_issues()
+    source_filter_val <- input$source_filter
+
+    # Apply same source filter logic as the table
+    if (!is.null(source_filter_val) && source_filter_val == "CHPL Developers") {
+      dev_data <- dev_data[dev_data$is_chpl_developer == TRUE, ]
+    } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
+      dev_data <- dev_data[dev_data$is_chpl_developer == FALSE, ]
+    }
+
+    list(
+      developers_with_no_org_data_count = sum(dev_data$no_org_data_endpoints > 0, na.rm = TRUE),
+      endpoints_with_no_org_data_count  = sum(dev_data$no_org_data_endpoints, na.rm = TRUE),
+      developers_sharing_list_sources_count = sum(dev_data$shares_list_source == TRUE, na.rm = TRUE),
+      # Inaccessible Sources: developers where all endpoints are inaccessible
+      inaccessible_list_sources_count = sum(
+        dev_data$inaccessible_endpoints == dev_data$total_endpoints &
+        dev_data$total_endpoints > 0,
+        na.rm = TRUE
+      ),
+      developers_with_empty_bundles_count = sum(dev_data$has_empty_bundle == TRUE, na.rm = TRUE)
+    )
   })
   
   # Render summary outputs
@@ -1130,48 +1240,43 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     
     type_data <- data.frame(
-      Identifier_Type = c("NPI", "CLIA", "NAIC", "Other", "No Identifier Data"),
+      Identifier_Type = c("NPI", "CLIA", "NAIC", "Other"),
       Total_Count = c(
-        as.numeric(id_summary$npi_count), 
-        as.numeric(id_summary$clia_count), 
-        as.numeric(id_summary$naic_count), 
-        as.numeric(id_summary$other_count),
-        as.numeric(id_summary$no_identifier_count)
+        as.numeric(id_summary$npi_count),
+        as.numeric(id_summary$clia_count),
+        as.numeric(id_summary$naic_count),
+        as.numeric(id_summary$other_count)
       ),
       Valid_Count = c(
-        as.numeric(id_summary$npi_valid), 
+        as.numeric(id_summary$npi_valid),
         as.numeric(id_summary$clia_valid),
-        as.numeric(id_summary$naic_valid), 
-        0, 0
+        as.numeric(id_summary$naic_valid),
+        as.numeric(id_summary$other_count)  # all "other" types are now valid per 89 FR 1288
       ),
       Invalid_Count = c(
-        as.numeric(id_summary$npi_invalid), 
+        as.numeric(id_summary$npi_invalid),
         as.numeric(id_summary$clia_invalid),
-        as.numeric(id_summary$naic_invalid), 
-        as.numeric(id_summary$other_invalid), 
-        0
+        as.numeric(id_summary$naic_invalid),
+        0  # "other" types no longer counted as invalid
       ),
       Conformance_Rate = c(
         if(id_summary$npi_count > 0) paste0(round(id_summary$npi_valid / id_summary$npi_count * 100, 1), "%") else "N/A",
         if(id_summary$clia_count > 0) paste0(round(id_summary$clia_valid / id_summary$clia_count * 100, 1), "%") else "N/A",
         if(id_summary$naic_count > 0) paste0(round(id_summary$naic_valid / id_summary$naic_count * 100, 1), "%") else "N/A",
-        "0%",
-        "N/A"
+        if(id_summary$other_count > 0) "100%" else "N/A"
       ),
       Percentage_of_Orgs = c(
         paste0(id_summary$npi_percentage, "%"),
         paste0(id_summary$clia_percentage, "%"),
         paste0(id_summary$naic_percentage, "%"),
-        paste0(id_summary$other_percentage, "%"),
-        paste0(id_summary$no_identifier_percentage, "%")
+        paste0(id_summary$other_percentage, "%")
       ),
-      US_Core_Rules = c("us-core-16, us-core-17", "us-core-18", "us-core-19", "Non-Compliant", "Missing Data"),
+      US_Core_Rules = c("us-core-16, us-core-17", "us-core-18", "us-core-19", "89 FR 1288 (Other)"),
       Validation_Requirements = c(
         "10 digits + Luhn check digit",
-        "2 digits + 'D' + 7 digits", 
+        "2 digits + 'D' + 7 digits",
         "5 digits",
-        "Non-standard format",
-        "No identifier provided"
+        "Any non-empty value accepted (other health system IDs)"
       ),
       stringsAsFactors = FALSE
     )
@@ -1244,28 +1349,12 @@ developerfeedbackmodule <- function(
     
     issues_data <- data.frame(
       Issue_Category = c("Identifier Type Validation", "Organization Names", "Address Completeness"),
-      Total_Count = rep(as.numeric(summary$total_orgs), 3),
-      Valid_Count = c(
-        as.numeric(summary$valid_identifier_count), 
-        as.numeric(summary$valid_name_count), 
-        as.numeric(summary$valid_address_count)
-      ),
-      Invalid_Count = c(
-        as.numeric(summary$total_orgs) - as.numeric(summary$valid_identifier_count),
-        as.numeric(summary$total_orgs) - as.numeric(summary$valid_name_count),
-        as.numeric(summary$total_orgs) - as.numeric(summary$valid_address_count)
-      ),
-      Success_Rate = c(
-        paste0(summary$identifier_percentage, "%"),
-        paste0(summary$name_percentage, "%"),
-        paste0(summary$address_percentage, "%")
-      ),
       Common_Issues = c(
-        paste0("HTI-1 Final Rule violations: No identifier data (", format(id_summary$no_identifier_count, big.mark = ","), "), ",
+        paste0("Missing identifier data (", format(id_summary$no_identifier_count, big.mark = ","), "), ",
                "invalid NPI check digits (", format(id_summary$npi_invalid, big.mark = ","), "), ",
                "incorrect CLIA format (", format(id_summary$clia_invalid, big.mark = ","), "), ",
-               "wrong NAIC length (", format(id_summary$naic_invalid, big.mark = ","), "), ",
-               "non-standard types (", format(id_summary$other_count, big.mark = ","), ")"),
+               "wrong NAIC length (", format(id_summary$naic_invalid, big.mark = ","), "). ",
+               "Note: other health system IDs (", format(id_summary$other_count, big.mark = ","), ") are accepted per 89 FR 1288."),
         "Placeholder names (-, ., N/A), names too short (<3 chars), excessive special characters",
         "Missing street/city/state/ZIP, placeholder addresses (123 Main St), incomplete components"
       ),
@@ -1282,17 +1371,6 @@ developerfeedbackmodule <- function(
       columns = list(
         Issue_Category = colDef(name = "Issue Category", width = 180,
                                style = list(fontWeight = 600, color = "#2c3e50")),
-        Total_Count = colDef(name = "Total", format = colFormat(separators = TRUE), width = 90),
-        Valid_Count = colDef(name = "Valid", format = colFormat(separators = TRUE), width = 90,
-                            style = function(value) {
-                              list(color = "#28a745", fontWeight = 600)
-                            }),
-        Invalid_Count = colDef(name = "Invalid", format = colFormat(separators = TRUE), width = 90,
-                              style = function(value) {
-                                list(color = "#dc3545", fontWeight = 600)
-                              }),
-        Success_Rate = colDef(name = "Success Rate", width = 110,
-                             style = list(fontWeight = 600, fontSize = "14px")),
         Common_Issues = colDef(name = "Common Issues", minWidth = 350,
                               style = list(fontSize = "13px", color = "#5a6c7d", lineHeight = "1.5")),
         US_Core_Reference = colDef(
@@ -1322,33 +1400,52 @@ developerfeedbackmodule <- function(
     )
   })
   
-  # Data Issues outputs
+  # Data Issues outputs — sourced from filtered_data_issues_counts() so cards
+  # reflect the currently selected Source filter
   output$developers_no_org_data_count <- renderText({
-    format(data_issues_summary()$developers_with_no_org_data_count, big.mark = ",")
+    format(filtered_data_issues_counts()$developers_with_no_org_data_count, big.mark = ",")
   })
 
   output$endpoints_no_org_data_count <- renderText({
-    format(data_issues_summary()$endpoints_with_no_org_data_count, big.mark = ",")
+    format(filtered_data_issues_counts()$endpoints_with_no_org_data_count, big.mark = ",")
   })
 
   output$developers_sharing_list_sources_count <- renderText({
-    format(data_issues_summary()$developers_sharing_list_sources_count, big.mark = ",")
+    format(filtered_data_issues_counts()$developers_sharing_list_sources_count, big.mark = ",")
   })
 
   output$inaccessible_list_sources_count <- renderText({
-    format(data_issues_summary()$inaccessible_list_sources_count, big.mark = ",")
+    format(filtered_data_issues_counts()$inaccessible_list_sources_count, big.mark = ",")
   })
 
   output$developers_empty_bundles_count <- renderText({
-    format(data_issues_summary()$developers_with_empty_bundles_count, big.mark = ",")
+    format(filtered_data_issues_counts()$developers_with_empty_bundles_count, big.mark = ",")
   })
+
+
 
   # Comprehensive developer data issues table
   output$developer_data_issues_table <- reactable::renderReactable({
     req(developer_data_issues())
 
     dev_data <- developer_data_issues()
-    current_sort <- table_sort()
+    active_filter <- table_filter()
+    source_filter_val <- input$source_filter
+
+    # Apply card filter (show only rows matching the clicked card)
+    if (!is.null(active_filter)) {
+      dev_data <- dev_data[dev_data[[active_filter]] == TRUE, ]
+    }
+
+    # Apply source filter
+    if (!is.null(source_filter_val) && source_filter_val == "CHPL Developers") {
+      dev_data <- dev_data[dev_data$is_chpl_developer == TRUE, ]
+    } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
+      dev_data <- dev_data[dev_data$is_chpl_developer == FALSE, ]
+    }
+
+    # Drop columns not relevant to data quality
+    dev_data <- dev_data[, !names(dev_data) %in% c("accessible_endpoints", "inaccessible_endpoints")]
 
     if (nrow(dev_data) == 0) {
       # Return empty state
@@ -1357,12 +1454,11 @@ developerfeedbackmodule <- function(
         total_endpoints = 0,
         endpoints_with_org_data = 0,
         no_org_data_endpoints = 0,
-        accessible_endpoints = 0,
-        inaccessible_endpoints = 0,
         organization_count = 0,
         data_completeness_percentage = 100,
         has_empty_bundle = FALSE,
         shares_list_source = FALSE,
+        is_chpl_developer = FALSE,
         stringsAsFactors = FALSE
       )
     }
@@ -1372,7 +1468,7 @@ developerfeedbackmodule <- function(
       filterable = TRUE,
       searchable = TRUE,
       defaultPageSize = 20,
-      defaultSorted = current_sort,
+      defaultSorted = list(no_org_data_endpoints = "desc"),
       columns = list(
         vendor_name = colDef(
           name = "Developer Name",
@@ -1402,26 +1498,6 @@ developerfeedbackmodule <- function(
           align = "center",
           style = function(value) {
             if (value > 0) list(color = "#dc3545", fontWeight = 700)
-            else list(color = "#6c757d")
-          }
-        ),
-        accessible_endpoints = colDef(
-          name = "Accessible",
-          width = 100,
-          format = colFormat(separators = TRUE),
-          align = "center",
-          style = function(value) {
-            if (value > 0) list(color = "#28a745", fontWeight = 600)
-            else list(color = "#6c757d")
-          }
-        ),
-        inaccessible_endpoints = colDef(
-          name = "Inaccessible",
-          width = 110,
-          format = colFormat(separators = TRUE),
-          align = "center",
-          style = function(value) {
-            if (value > 0) list(color = "#dc3545", fontWeight = 600)
             else list(color = "#6c757d")
           }
         ),
@@ -1468,8 +1544,8 @@ developerfeedbackmodule <- function(
           }
         ),
         shares_list_source = colDef(
-          name = "Shares List Source",
-          width = 140,
+          name = "Shares FHIR Bundle URL",
+          width = 160,
           align = "center",
           cell = function(value) {
             if (value == TRUE) {
@@ -1486,7 +1562,8 @@ developerfeedbackmodule <- function(
               )
             }
           }
-        )
+        ),
+        is_chpl_developer = colDef(show = FALSE)
       ),
       striped = TRUE,
       highlight = TRUE,
@@ -1523,12 +1600,13 @@ developerfeedbackmodule <- function(
           paste0(format(id_summary$no_identifier_count, big.mark = ","),
                  " organizations (", no_id_percentage, "%) have no identifier data."),
           tags$br(),
-          tags$small("Organizations must include at least one identifier (NPI, CLIA, or NAIC) to meet US-Core requirements.")
+          tags$small("Organizations must include at least one identifier to meet US-Core requirements.",
+                     " Per 89 FR 1288, NPI, CLIA, CCN, or other health system IDs are all acceptable.")
         )
       ))
     }
 
-    # Invalid only identifiers alert
+    # Invalid only identifiers alert (only NPI/CLIA/NAIC format failures; other types are now valid)
     if (id_summary$orgs_with_invalid_only > 0) {
       invalid_only_percentage <- round(id_summary$orgs_with_invalid_only / summary$total_orgs * 100, 1)
       recommendations <- c(recommendations, list(
@@ -1536,9 +1614,9 @@ developerfeedbackmodule <- function(
           tags$strong(tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
                      "Organizations with Only Invalid Identifiers: "),
           paste0(format(id_summary$orgs_with_invalid_only, big.mark = ","),
-                 " organizations (", invalid_only_percentage, "%) have identifiers but none are US-Core compliant."),
+                 " organizations (", invalid_only_percentage, "%) have NPI/CLIA/NAIC identifiers that fail format validation."),
           tags$br(),
-          tags$small("Review identifier formats and ensure compliance with US-Core validation rules.")
+          tags$small("Review NPI (10-digit + Luhn), CLIA (2D7 format), and NAIC (5-digit) identifier formats.")
         )
       ))
     }
@@ -1552,19 +1630,6 @@ developerfeedbackmodule <- function(
           paste0("Only ", summary$identifier_percentage, "% of organizations have conformant identifiers."),
           tags$br(),
           tags$small("Ensure NPI identifiers are 10 digits with valid check digits, CLIA identifiers follow 2D7 format, and NAIC identifiers are 5 digits.")
-        )
-      ))
-    }
-
-    if (id_summary$other_count > 0) {
-      recommendations <- c(recommendations, list(
-        tags$div(class = "alert alert-warning",
-          tags$strong(tags$i(class = "fa fa-question-circle", style = "margin-right: 5px;"),
-                     "Non-Standard Identifiers: "),
-          paste0("Found ", format(id_summary$other_count, big.mark = ","),
-                 " non-standard identifier types."),
-          tags$br(),
-          tags$small("Use US-Core compliant types: NPI (healthcare providers), CLIA (laboratories), NAIC (insurance).")
         )
       ))
     }
@@ -1639,17 +1704,87 @@ developerfeedbackmodule <- function(
     do.call(tagList, recommendations)
   })
   
-  # Download handler
+  # Helper: apply source filter to developer data
+  apply_source_filter <- function(data) {
+    source_filter_val <- input$source_filter
+    if (!is.null(source_filter_val) && source_filter_val == "CHPL Developers") {
+      data <- data[data$is_chpl_developer == TRUE, ]
+    } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
+      data <- data[data$is_chpl_developer == FALSE, ]
+    }
+    data
+  }
+
+  # Helper: select and rename columns for CSV export
+  format_for_csv <- function(data) {
+    data %>%
+      select(
+        vendor_name,
+        total_endpoints,
+        endpoints_with_org_data,
+        no_org_data_endpoints,
+        organization_count,
+        data_completeness_percentage,
+        has_empty_bundle,
+        shares_list_source
+      )
+  }
+
+  # Tier 1 download handler: highlighted developers (empty bundles OR sharing FHIR bundle URL)
+  output$download_highlighted_report <- downloadHandler(
+    filename = function() {
+      paste0("highlighted_developers_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      data <- apply_source_filter(developer_data_issues())
+      data <- data[data$has_empty_bundle == TRUE | data$shares_list_source == TRUE, ]
+      if (nrow(data) > 0) {
+        write.csv(format_for_csv(data), file, row.names = FALSE)
+      } else {
+        write.csv(data.frame(message = "No highlighted developers found"), file, row.names = FALSE)
+      }
+    }
+  )
+
+  # Tier 1 download handler: all developers
+  output$download_tier1_report <- downloadHandler(
+    filename = function() {
+      paste0("chpl_developer_service_base_url_report_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      data <- apply_source_filter(developer_data_issues())
+      if (nrow(data) > 0) {
+        write.csv(format_for_csv(data), file, row.names = FALSE)
+      } else {
+        write.csv(data.frame(
+          vendor_name = character(0),
+          total_endpoints = integer(0),
+          endpoints_with_org_data = integer(0),
+          no_org_data_endpoints = integer(0),
+          organization_count = integer(0),
+          data_completeness_percentage = numeric(0),
+          has_empty_bundle = logical(0),
+          shares_list_source = logical(0)
+        ), file, row.names = FALSE)
+      }
+    }
+  )
+
+  # Tier 2 (Organization) download handler
   output$download_feedback_report <- downloadHandler(
     filename = function() {
-      paste0("organization_data_quality_report_", Sys.Date(), ".csv")
+      paste0("service_base_url_data_quality_report_", Sys.Date(), ".csv")
     },
     content = function(file) {
       data <- filtered_org_data()
-      
+
       if (nrow(data) > 0) {
         report_data <- data %>%
           mutate(
+            developer_names = sapply(vendor_names_array, function(x) {
+              if (is.null(x) || length(x) == 0) return("Unknown")
+              paste(x, collapse = "; ")
+            }),
             identifier_issues = ifelse(!has_valid_identifiers, "Missing or incomplete identifier data", "Valid"),
             name_issues = ifelse(!has_valid_name, "Placeholder name or too short", "Valid"),
             address_issues = ifelse(!has_valid_address, "Incomplete address information", "Valid"),
@@ -1657,7 +1792,7 @@ developerfeedbackmodule <- function(
             conformance_summary = paste0(conformant_identifier_count, "/", total_identifier_count, " (", identifier_conformance_rate, "%)"),
             us_core_compliant = case_when(
               identifier_conformance_rate == 100 ~ "Fully Compliant",
-              identifier_conformance_rate > 0 ~ "Partially Compliant", 
+              identifier_conformance_rate > 0 ~ "Partially Compliant",
               TRUE ~ "Non-Compliant"
             ),
             clean_identifier_types = str_replace_all(identifier_types_html, "<br/>", "; "),
@@ -1672,12 +1807,13 @@ developerfeedbackmodule <- function(
           ) %>%
           select(
             organization_name,
-            has_valid_identifiers, 
-            has_valid_name, 
-            has_valid_address, 
+            developer_names,
+            has_valid_identifiers,
+            has_valid_name,
+            has_valid_address,
             overall_quality_score,
-            conformant_identifier_count, 
-            total_identifier_count, 
+            conformant_identifier_count,
+            total_identifier_count,
             identifier_conformance_rate,
             identifier_conformance_category,
             identifier_status,
