@@ -581,7 +581,10 @@ developerfeedbackmodule_UI <- function(id) {
                 plotOutput(ns("organization_identifier_status_chart"), height = "300px")
               ),
               div(style = "margin-top: 20px;",
-                h4(class = "subsection-header", "Detailed Identifier Metrics"),
+                h4(class = "subsection-header", "Unique Identifier Values by Type"),
+                p(style = "font-size: 13px; color: #5a6c7d; margin-bottom: 8px;",
+                  "Counts reflect globally distinct identifier values across all organizations. ",
+                  "The same NPI or CLIA appearing in multiple organizations is counted once."),
                 reactable::reactableOutput(ns("identifier_type_table"))
               )
             )
@@ -1163,14 +1166,16 @@ developerfeedbackmodule <- function(
     
     ggplot(chart_data, aes(x = reorder(Type, Count), y = Count, fill = Type)) +
       geom_col(width = 0.6) +
-      geom_text(aes(label = format(Count, big.mark = ",")), 
+      geom_text(aes(label = format(Count, big.mark = ",")),
                 hjust = -0.1, fontface = "bold", size = 3.5) +
       scale_fill_manual(values = type_colors) +
       coord_flip() +
-      labs(x = NULL, y = "Count") +
+      labs(x = NULL, y = "Number of Distinct Identifier Values",
+           title = "Distinct Identifier Values by Type") +
       theme_minimal() +
       theme(
         legend.position = "none",
+        plot.title = element_text(size = 12, face = "bold", margin = margin(b = 8)),
         axis.text.y = element_text(size = 10, face = "bold"),
         axis.text.x = element_text(size = 10),
         axis.title.x = element_text(size = 11, face = "bold", margin = margin(t = 10)),
@@ -1219,9 +1224,11 @@ developerfeedbackmodule <- function(
       geom_text(aes(label = Count), position = position_stack(vjust = 0.5), 
                 fontface = "bold", color = "white", size = 4) +
       scale_fill_manual(values = c("Valid" = "#28a745", "Invalid" = "#dc3545")) +
-      labs(x = "Identifier Type", y = "Count") +
+      labs(x = "Identifier Type", y = "Number of Distinct Identifier Values",
+           title = "Valid vs. Invalid Identifier Values (NPI, CLIA, NAIC)") +
       theme_minimal() +
       theme(
+        plot.title = element_text(size = 12, face = "bold", margin = margin(b = 8)),
         axis.text.x = element_text(size = 11, face = "bold"),
         axis.text.y = element_text(size = 10),
         axis.title = element_text(size = 11, face = "bold"),
@@ -1284,14 +1291,14 @@ developerfeedbackmodule <- function(
     reactable(
       type_data,
       columns = list(
-        Identifier_Type = colDef(name = "Type", width = 120, 
+        Identifier_Type = colDef(name = "Identifier Type", width = 140,
                                  style = list(fontWeight = 600)),
-        Total_Count = colDef(name = "Total", format = colFormat(separators = TRUE), width = 80),
-        Valid_Count = colDef(name = "Valid", format = colFormat(separators = TRUE), width = 80,
+        Total_Count = colDef(name = "Unique Values", format = colFormat(separators = TRUE), width = 110),
+        Valid_Count = colDef(name = "Valid Values", format = colFormat(separators = TRUE), width = 100,
                             style = function(value) {
                               if (value > 0) list(color = "#28a745", fontWeight = 600)
                             }),
-        Invalid_Count = colDef(name = "Invalid", format = colFormat(separators = TRUE), width = 80,
+        Invalid_Count = colDef(name = "Invalid Values", format = colFormat(separators = TRUE), width = 110,
                               style = function(value) {
                                 if (value > 0) list(color = "#dc3545", fontWeight = 600)
                               }),
@@ -1317,7 +1324,7 @@ developerfeedbackmodule <- function(
             }
           }
         ),
-        Percentage_of_Orgs = colDef(name = "% of Orgs", width = 100),
+        Percentage_of_Orgs = colDef(name = "% of All Identifiers", width = 140),
         US_Core_Rules = colDef(name = "US-Core Rules", width = 150,
                               style = list(fontSize = "13px", color = "#5a6c7d")),
         Validation_Requirements = colDef(name = "Format Requirements", minWidth = 200,
