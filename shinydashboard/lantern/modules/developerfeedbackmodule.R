@@ -385,6 +385,27 @@ developerfeedbackmodule_UI <- function(id) {
                   )
                 ),
                 column(width = 2,
+                  div(class = "metric-card card-clickable",
+                      id = ns("shared_endpoints_card"),
+                      onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_endpoints_card_click")),
+                    div(class = "metric-title",
+                      tags$i(class = "fa fa-code-fork", style = "margin-right: 5px;"),
+                      "Developers Sharing FHIR Endpoints"
+                    ),
+                    div(class = "metric-value", style = "color: #ffc107;",
+                      textOutput(ns("developers_sharing_fhir_endpoints_count"), inline = TRUE)
+                    ),
+                    div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
+                      "Developers whose FHIR endpoint sets are identical to another developer's",
+                      tags$br(),
+                      tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
+                        tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
+                        "Click to filter table below. Click again to reset."
+                      )
+                    )
+                  )
+                ),
+                column(width = 2,
                   div(class = "metric-card",
                     div(class = "metric-title",
                       tags$i(class = "fa fa-unlink", style = "margin-right: 5px;"),
@@ -660,8 +681,9 @@ developerfeedbackmodule <- function(
     } else {
       table_filter("shares_list_source")
       session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = TRUE))
-      # Deactivate the other clickable card
+      # Deactivate the other clickable cards
       session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_endpoints_card"), active = FALSE))
     }
   })
 
@@ -673,17 +695,33 @@ developerfeedbackmodule <- function(
     } else {
       table_filter("has_empty_bundle")
       session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = TRUE))
-      # Deactivate the other clickable card
+      # Deactivate the other clickable cards
       session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_endpoints_card"), active = FALSE))
     }
   })
 
-  # Reset filter button — clears both card filter and resets source filter to "All"
+  # Handle click on Developers Sharing FHIR Endpoints card — toggle filter
+  observeEvent(input$shared_endpoints_card_click, {
+    if (identical(table_filter(), "shares_fhir_endpoints")) {
+      table_filter(NULL)  # toggle off
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_endpoints_card"), active = FALSE))
+    } else {
+      table_filter("shares_fhir_endpoints")
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_endpoints_card"), active = TRUE))
+      # Deactivate the other clickable cards
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
+      session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
+    }
+  })
+
+  # Reset filter button — clears all card filters and resets source filter to "All"
   observeEvent(input$reset_filter_btn, {
     table_filter(NULL)
     updateSelectInput(session, "source_filter", selected = "All")
     session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
     session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
+    session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_endpoints_card"), active = FALSE))
   })
   
   # Get filtered organization data from materialized views
@@ -977,7 +1015,8 @@ developerfeedbackmodule <- function(
         dev_data$total_endpoints > 0,
         na.rm = TRUE
       ),
-      developers_with_empty_bundles_count = sum(dev_data$has_empty_bundle == TRUE, na.rm = TRUE)
+      developers_with_empty_bundles_count = sum(dev_data$has_empty_bundle == TRUE, na.rm = TRUE),
+      developers_sharing_fhir_endpoints_count = sum(dev_data$shares_fhir_endpoints == TRUE, na.rm = TRUE)
     )
   })
   
@@ -1033,7 +1072,7 @@ developerfeedbackmodule <- function(
     summary <- quality_summary()
     
     chart_data <- data.frame(
-      Category = c("Identifier Type Validation", "Organization Name", "Address Completeness"),
+      Category = c("Identifier", "Organization Name", "Address"),
       Valid = c(
         as.numeric(summary$valid_identifier_count),
         as.numeric(summary$valid_name_count),
@@ -1161,8 +1200,8 @@ developerfeedbackmodule <- function(
       )
     }
     
-    type_colors <- c("NPI" = "#28a745", "CLIA" = "#007bff", "NAIC" = "#fd7e14", 
-                    "Other" = "#dc3545", "No Data" = "#6c757d")
+    type_colors <- c("NPI" = "#28a745", "CLIA" = "#007bff", "NAIC" = "#fd7e14",
+                    "Other" = "#9b59b6", "No Data" = "#6c757d")
     
     ggplot(chart_data, aes(x = reorder(Type, Count), y = Count, fill = Type)) +
       geom_col(width = 0.6) +
@@ -1355,7 +1394,7 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     
     issues_data <- data.frame(
-      Issue_Category = c("Identifier Type Validation", "Organization Names", "Address Completeness"),
+      Issue_Category = c("Identifier", "Organization Names", "Address"),
       Common_Issues = c(
         paste0("Missing identifier data (", format(id_summary$no_identifier_count, big.mark = ","), "), ",
                "invalid NPI check digits (", format(id_summary$npi_invalid, big.mark = ","), "), ",
@@ -1429,6 +1468,10 @@ developerfeedbackmodule <- function(
     format(filtered_data_issues_counts()$developers_with_empty_bundles_count, big.mark = ",")
   })
 
+  output$developers_sharing_fhir_endpoints_count <- renderText({
+    format(filtered_data_issues_counts()$developers_sharing_fhir_endpoints_count, big.mark = ",")
+  })
+
 
 
   # Comprehensive developer data issues table
@@ -1465,6 +1508,7 @@ developerfeedbackmodule <- function(
         data_completeness_percentage = 100,
         has_empty_bundle = FALSE,
         shares_list_source = FALSE,
+        shares_fhir_endpoints = FALSE,
         is_chpl_developer = FALSE,
         stringsAsFactors = FALSE
       )
@@ -1559,6 +1603,26 @@ developerfeedbackmodule <- function(
               tags$span(
                 style = "color: #ffc107; font-weight: 700;",
                 tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
+                "Yes"
+              )
+            } else {
+              tags$span(
+                style = "color: #6c757d;",
+                tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
+                "No"
+              )
+            }
+          }
+        ),
+        shares_fhir_endpoints = colDef(
+          name = "Shares FHIR Endpoints",
+          width = 170,
+          align = "center",
+          cell = function(value) {
+            if (isTRUE(value)) {
+              tags$span(
+                style = "color: #ffc107; font-weight: 700;",
+                tags$i(class = "fa fa-code-fork", style = "margin-right: 5px;"),
                 "Yes"
               )
             } else {
@@ -1733,7 +1797,8 @@ developerfeedbackmodule <- function(
         organization_count,
         data_completeness_percentage,
         has_empty_bundle,
-        shares_list_source
+        shares_list_source,
+        shares_fhir_endpoints
       )
   }
 

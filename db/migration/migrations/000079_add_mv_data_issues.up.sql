@@ -165,6 +165,13 @@ all_vendors AS (
         GROUP BY list_source
         HAVING COUNT(DISTINCT developer_name) > 1
     )
+
+    UNION
+
+    -- Include ALL CHPL developers by developer_name (catches name-mismatch developers
+    -- who have endpoints in fhir_endpoints_info but their vendor name differs from CHPL name)
+    SELECT DISTINCT developer_name as vendor_name
+    FROM shared_list_sources
 ),
 -- Total endpoints per vendor
 vendor_endpoints AS (
@@ -277,6 +284,23 @@ vendors_sharing_list_sources AS (
 chpl_developers AS (
     SELECT DISTINCT developer_name as vendor_name
     FROM shared_list_sources
+),
+-- Developers whose set of FHIR endpoint URLs exactly matches another developer's set
+-- Logic: two developers share FHIR endpoints if their endpoint URL sets are identical
+developers_sharing_fhir_endpoints AS (
+    WITH dev_endpoint_sets AS (
+        SELECT
+            sls.developer_name,
+            ARRAY_AGG(DISTINCT fe.url ORDER BY fe.url) AS endpoint_set
+        FROM shared_list_sources sls
+        INNER JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+        GROUP BY sls.developer_name
+    )
+    SELECT DISTINCT d1.developer_name AS vendor_name
+    FROM dev_endpoint_sets d1
+    JOIN dev_endpoint_sets d2
+        ON d1.developer_name != d2.developer_name
+        AND d1.endpoint_set = d2.endpoint_set
 )
 SELECT
     av.vendor_name,
@@ -301,7 +325,11 @@ SELECT
     CASE
         WHEN cd.vendor_name IS NOT NULL THEN TRUE
         ELSE FALSE
-    END as is_chpl_developer
+    END as is_chpl_developer,
+    CASE
+        WHEN dsfe.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as shares_fhir_endpoints
 FROM all_vendors av
 LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
 LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
@@ -312,6 +340,7 @@ LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
 LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
 LEFT JOIN vendors_sharing_list_sources vsls ON av.vendor_name = vsls.vendor_name
 LEFT JOIN chpl_developers cd ON av.vendor_name = cd.vendor_name
+LEFT JOIN developers_sharing_fhir_endpoints dsfe ON av.vendor_name = dsfe.vendor_name
 -- Removed: WHERE COALESCE(ve.total_endpoints, 0) > 0
 -- This was filtering out developers with empty bundles who have 0 endpoints
 ORDER BY
