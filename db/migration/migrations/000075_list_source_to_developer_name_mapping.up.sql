@@ -34,9 +34,11 @@ SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endp
     endpts_info.requested_fhir_version, endpts_metadata.availability
 FROM fhir_endpoints AS endpts
 LEFT JOIN shared_list_sources AS sls ON endpts.list_source = sls.list_source
-LEFT JOIN vendors ON vendors.name = sls.developer_name
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url AND endpts_info.vendor_id = vendors.id
+LEFT JOIN vendors AS sls_vendors ON sls_vendors.name = sls.developer_name
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+    AND (sls.list_source IS NULL OR endpts_info.vendor_id = sls_vendors.id)
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
+LEFT JOIN vendors ON vendors.id = endpts_info.vendor_id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
@@ -197,14 +199,17 @@ WITH contact_info_extracted AS (
   WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'
 ),
 endpoint_details AS (
-  SELECT DISTINCT -- Added DISTINCT to eliminate potential duplication
+  -- DISTINCT ON (url): contact info is URL-scoped. When a list_source maps to multiple
+  -- vendors, endpoint_export fans out to one row per vendor; picking one vendor per URL
+  -- prevents contact rows from being duplicated once per shared vendor.
+  SELECT DISTINCT ON (url)
     url,
     -- Fix for handling Unknown vendor - make sure empty or NULL is replaced with 'Unknown'
-    CASE 
-      WHEN vendor_name IS NULL OR vendor_name = '' THEN 'Unknown' 
-      ELSE vendor_name 
+    CASE
+      WHEN vendor_name IS NULL OR vendor_name = '' THEN 'Unknown'
+      ELSE vendor_name
     END AS vendor_name,
-    CASE 
+    CASE
       WHEN fhir_version = '' OR fhir_version IS NULL THEN 'No Cap Stat'
       WHEN position('-' in fhir_version) > 0 THEN substring(fhir_version from 1 for position('-' in fhir_version) - 1)
       WHEN fhir_version NOT IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'Unknown'
@@ -213,6 +218,7 @@ endpoint_details AS (
     requested_fhir_version
   FROM endpoint_export
   WHERE requested_fhir_version = 'None'
+  ORDER BY url, vendor_name
 ),
 endpoint_names_grouped AS (
   SELECT 
@@ -313,7 +319,7 @@ CREATE INDEX idx_mv_contacts_info_has_contact ON mv_contacts_info(has_contact);
 
 CREATE INDEX idx_mv_contacts_info_contact_preference ON mv_contacts_info(contact_preference);
 
-DROP MATERIALIZED VIEW mv_endpoint_list_organizations CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_list_organizations CASCADE;
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
 AS
@@ -543,45 +549,60 @@ urls_agg AS (
     FROM urls_raw
     GROUP BY org_id
 ),
--- Step 6: Group by organization ID 
-endpoint_data_agg AS (
-    SELECT 
+-- Step 6a: Pick one canonical vendor per (org_id, url) for HTML link generation.
+-- When multiple vendors share the same list_source they produce duplicate rows with the
+-- same URL but different vendor_name. Embedding vendor_name in the onclick string
+-- prevents string_agg(DISTINCT ...) from collapsing them, causing the URL to repeat
+-- once per vendor on the organizations tab.
+url_deduped AS (
+    SELECT DISTINCT ON (org_id, url)
         org_id,
+        url,
+        vendor_name
+    FROM processed_data
+    ORDER BY org_id, url, vendor_name
+),
+-- Step 6: Group by organization ID
+endpoint_data_agg AS (
+    SELECT
+        pd.org_id,
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
-        MAX(organization_name) as organization_name,
-        -- HTML formatted endpoint URLs
-        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || '&&None&&' || vendor_name || ''',{priority: ''event''});"> ' || url || '</a>'), '<br/>') as endpoint_urls_html,
+        MAX(pd.organization_name) as organization_name,
+        -- HTML formatted endpoint URLs - use url_deduped so the onclick vendor_name is the
+        -- same for all vendor rows sharing a URL, letting DISTINCT collapse them to one link.
+        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || ud.url || '&&None&&' || ud.vendor_name || ''',{priority: ''event''});"> ' || ud.url || '</a>'), '<br/>') as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
-        CASE 
-            WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
-            THEN string_agg(DISTINCT url, E'\n')
-            ELSE 
+        CASE
+            WHEN LENGTH(string_agg(DISTINCT pd.url, E'\n')) <= 32765
+            THEN string_agg(DISTINCT pd.url, E'\n')
+            ELSE
                 -- Find the last complete line within 32765 chars
                 LEFT(
-                    string_agg(DISTINCT url, E'\n'), 
+                    string_agg(DISTINCT pd.url, E'\n'),
                     GREATEST(
                         1,
-                        CASE 
-                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT url, E'\n'), 32765))) > 0
-                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT url, E'\n'), 32765))) + 1
+                        CASE
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT pd.url, E'\n'), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT pd.url, E'\n'), 32765))) + 1
                             ELSE 32765
                         END
                     )
                 )
         END as endpoint_urls_csv,
-        string_agg(DISTINCT fhir_version, '<br/>') as fhir_versions_html,
-        string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
-        string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
-        string_agg(DISTINCT vendor_name, E'\n') as vendor_names_csv,
-        string_agg(DISTINCT is_chpl, '<br/>') as is_chpl_html,
-        string_agg(DISTINCT is_chpl, E'\n') as is_chpl_csv,
+        string_agg(DISTINCT pd.fhir_version, '<br/>') as fhir_versions_html,
+        string_agg(DISTINCT pd.fhir_version, E'\n') as fhir_versions_csv,
+        string_agg(DISTINCT pd.vendor_name, '<br/>') as vendor_names_html,
+        string_agg(DISTINCT pd.vendor_name, E'\n') as vendor_names_csv,
+        string_agg(DISTINCT pd.is_chpl, '<br/>') as is_chpl_html,
+        string_agg(DISTINCT pd.is_chpl, E'\n') as is_chpl_csv,
         -- Arrays for filtering (exactly as original code)
-        ARRAY(SELECT DISTINCT unnest(array_agg(fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
-    FROM processed_data
-    GROUP BY org_id  -- KEY CHANGE: Group by org_id instead of organization_name
+        ARRAY(SELECT DISTINCT unnest(array_agg(pd.fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(pd.vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(pd.url))::text ORDER BY unnest)::text[] as urls_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(pd.is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
+    FROM processed_data pd
+    JOIN url_deduped ud ON pd.org_id = ud.org_id AND pd.url = ud.url
+    GROUP BY pd.org_id  -- KEY CHANGE: Group by org_id instead of organization_name
 )
 -- Step 7: Final select with JOINs to get all related data per organization ID
 SELECT 
@@ -725,7 +746,12 @@ SELECT
         ELSE 'Unknown'
     END AS fhir_version_final
 FROM endpoint_export e
+-- Resolve the vendor from endpoint_export so we can qualify the fhir_endpoints_info join.
+-- Without this, the URL-only join produces an M×N Cartesian product when endpoint_export
+-- has M vendor rows per URL (shared list_source) and fhir_endpoints_info has N vendor rows.
+LEFT JOIN vendors evendor ON evendor.name = e.vendor_name
 JOIN fhir_endpoints_info f ON e.url = f.url
+    AND (evendor.id IS NULL OR f.vendor_id = evendor.id)
 JOIN LATERAL (
     SELECT json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code
 ) codes ON true
@@ -929,7 +955,12 @@ WITH grouped AS (
     CAST(e.http_response AS text) AS code,
     COUNT(*) AS cnt
   FROM fhir_endpoints_info f
+  -- Resolve vendor from fhir_endpoints_info so we can qualify the mv_endpoint_export_tbl join.
+  -- Without this, the URL-only join cross-joins N fhir_endpoints_info rows × M export rows,
+  -- making SUM(cnt) OVER (PARTITION BY id) equal M instead of 1, corrupting all percentages.
+  LEFT JOIN vendors fvendor ON fvendor.id = f.vendor_id
   LEFT JOIN mv_endpoint_export_tbl e ON f.url = e.url
+      AND (fvendor.id IS NULL OR COALESCE(e.vendor_name, 'Unknown') = COALESCE(fvendor.name, 'Unknown'))
   WHERE f.requested_fhir_version = 'None'
   GROUP BY f.id, f.url, e.http_response, e.vendor_name, e.fhir_version
 )
@@ -964,7 +995,11 @@ WITH base AS (
                     ELSE e.fhir_version
                 END AS capability_fhir_version
            FROM endpoint_export e
+             -- Vendor qualification prevents M×N Cartesian product when endpoint_export
+             -- has multiple vendor rows per URL (shared list_source fan-out).
+             LEFT JOIN vendors evendor ON evendor.name = e.vendor_name
              LEFT JOIN fhir_endpoints_info f ON e.url::text = f.url::text
+                 AND (evendor.id IS NULL OR f.vendor_id = evendor.id)
              LEFT JOIN fhir_endpoints_metadata m ON f.metadata_id = m.id
              LEFT JOIN vendors v ON f.vendor_id = v.id
           WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) = 'object'::text
@@ -1039,7 +1074,11 @@ WITH base AS (
 		m.smart_http_response,
 		f.smart_response
 	   FROM endpoint_export e
+		 -- Vendor qualification prevents M×N Cartesian product when endpoint_export
+		 -- has multiple vendor rows per URL (shared list_source fan-out).
+		 LEFT JOIN vendors evendor ON evendor.name = e.vendor_name
 		 LEFT JOIN fhir_endpoints_info f ON e.url::text = f.url::text
+		     AND (evendor.id IS NULL OR f.vendor_id = evendor.id)
 		 LEFT JOIN fhir_endpoints_metadata m ON f.metadata_id = m.id
 		 LEFT JOIN vendors v ON f.vendor_id = v.id
 	  WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) <> 'object'::text

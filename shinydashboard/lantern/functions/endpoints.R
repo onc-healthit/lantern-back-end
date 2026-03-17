@@ -546,7 +546,7 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
     query <- query %>% filter(fhir_version %in% !!fhir_version)
   }
 
-  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+  if (!is.null(vendor) && !is.na(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
     query <- query %>% filter(vendor_name == !!vendor)
   }
 

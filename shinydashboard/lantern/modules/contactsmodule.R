@@ -172,7 +172,7 @@ contactsmodule <- function(
         params <- list(vals = sel_fhir_version())
 
         if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-            query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+            query_str <- paste0(query_str, " AND url IN (SELECT url FROM endpoint_export WHERE vendor_name = {vendor} AND requested_fhir_version = 'None')")
             params$vendor <- sel_vendor()
         }
 
@@ -237,7 +237,7 @@ contactsmodule <- function(
         params <- list(vals = sel_fhir_version())
 
         if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-            query_str <- paste0(query_str, " AND vendor_name = {vendor}")
+            query_str <- paste0(query_str, " AND url IN (SELECT url FROM endpoint_export WHERE vendor_name = {vendor} AND requested_fhir_version = 'None')")
             params$vendor <- sel_vendor()
         }
 

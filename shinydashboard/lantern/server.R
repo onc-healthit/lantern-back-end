@@ -1155,14 +1155,20 @@ endpoint_capabilities_page <- function() {
  get_endpoint_list_orgs <- reactive({
     endpoint <- current_endpoint()
 
-    # Get the actual cap_fhir_version using the url only
-    cap_fhir_ver <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL) %>%
+    # Use vendor_name for filtering; fall back to NULL (no filter) if unknown
+    vendor_filter <- if (!is.null(endpoint$vendor_name) && !is.na(endpoint$vendor_name))
+                       endpoint$vendor_name
+                     else
+                       NULL
+
+    # Get the actual cap_fhir_version using the url (and vendor filter)
+    cap_fhir_ver <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter) %>%
       filter(url == endpoint$url) %>%
-      pull(fhir_version) %>% 
+      pull(fhir_version) %>%
       unique()
-    
+
     # Now use cap_fhir_ver to filter
-    res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL)
+    res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter)
     res <- res %>%
       filter(url == endpoint$url) %>%
       filter(fhir_version == cap_fhir_ver) %>%

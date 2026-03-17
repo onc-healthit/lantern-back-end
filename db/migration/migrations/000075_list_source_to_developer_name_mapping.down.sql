@@ -300,7 +300,7 @@ CREATE INDEX idx_mv_contacts_info_has_contact ON mv_contacts_info(has_contact);
 
 CREATE INDEX idx_mv_contacts_info_contact_preference ON mv_contacts_info(contact_preference);
 
-DROP MATERIALIZED VIEW mv_endpoint_list_organizations CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_list_organizations CASCADE;
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
 AS
