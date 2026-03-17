@@ -480,14 +480,6 @@ developerfeedbackmodule_UI <- function(id) {
                       selected = "CHPL Developers"
                     )
                   ),
-                  column(width = 2, style = "padding-top: 25px;",
-                    actionButton(
-                      inputId = ns("reset_filter_btn"),
-                      label = "Show All",
-                      icon = icon("times-circle"),
-                      class = "btn btn-default btn-sm"
-                    )
-                  ),
                   column(width = 3, style = "padding-top: 25px;",
                     downloadButton(
                       outputId = ns("download_highlighted_report"),
@@ -753,15 +745,6 @@ developerfeedbackmodule <- function(
   })
 
   # Reset filter button — clears all card filters and resets source filter to "CHPL Developers"
-  observeEvent(input$reset_filter_btn, {
-    table_filter(NULL)
-    updateSelectInput(session, "source_filter", selected = "CHPL Developers")
-    session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_sources_card"), active = FALSE))
-    session$sendCustomMessage("toggleCardActive", list(cardId = ns("empty_bundles_card"), active = FALSE))
-    session$sendCustomMessage("toggleCardActive", list(cardId = ns("shared_endpoints_card"), active = FALSE))
-    session$sendCustomMessage("toggleCardActive", list(cardId = ns("no_org_data_card"), active = FALSE))
-  })
-
   # When "Others" is selected, disable the 3 CHPL-only cards (FHIR bundle data is CHPL-only).
   # When "CHPL Developers" is selected, re-enable them.
   observeEvent(input$source_filter, {
@@ -1981,7 +1964,7 @@ developerfeedbackmodule <- function(
     },
     content = function(file) {
       data <- add_compliant_col(apply_source_filter(all_data_issues()))
-      data <- data[data$has_empty_bundle == TRUE | data$shares_list_source == TRUE, ]
+      data <- data[data$has_empty_bundle == TRUE | data$shares_list_source == TRUE | data$shares_fhir_endpoints == TRUE, ]
       if (nrow(data) > 0) {
         write.csv(format_for_csv(data), file, row.names = FALSE)
       } else {
