@@ -500,7 +500,10 @@ endpoint_data_agg AS (
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
-        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || '&&None&&' || vendor_name || ''',{priority: ''event''});"> ' || url || '</a>'), '<br/>') as endpoint_urls_html,
+        string_agg(
+            DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&quot,{priority: ''event''});"> ' || url || '</a>',
+            '<br/>'
+        ) as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
             WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
@@ -701,8 +704,8 @@ SELECT
                     ), 
                     '; '
                 ),
-                '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''show_details'',''',
-                se.url,
+                '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''show_details'',''', 
+                se.url, 
                 ''',{priority: ''event''});"> Click For More... </a>'
             )
         ELSE 
@@ -712,12 +715,9 @@ SELECT
     -- Create the URL with modal functionality
     CONCAT(
         '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''', 
-        se.url,
-        '&&None',
-        '&&',
-        se.vendor_name,
-        ''',{priority: ''event''});">',
-        se.url,
+        se.url, 
+        '&&None'',{priority: ''event''});">', 
+        se.url, 
         '</a>'
     ) AS url_modal
 FROM 
@@ -1017,16 +1017,15 @@ DROP MATERIALIZED VIEW IF EXISTS endpoint_export_mv CASCADE;
 
 CREATE MATERIALIZED VIEW endpoint_export_mv AS
 WITH endpoint_organizations AS (
-    SELECT DISTINCT url, vendor_name, UNNEST(endpoint_names) AS endpoint_name
+    SELECT DISTINCT url, UNNEST(endpoint_names) AS endpoint_name
     FROM endpoint_export
 ),
 grouped_organizations AS (
     SELECT url, 
-           vendor_name,
            STRING_AGG(endpoint_name, '; ') AS endpoint_names 
     FROM endpoint_organizations
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
-    GROUP BY url, vendor_name
+    GROUP BY url
 ),
 processed_versions AS (
     SELECT 
@@ -1083,7 +1082,7 @@ FROM processed_versions p
 LEFT JOIN list_source_info lsi 
     ON p.list_source = lsi.list_source
 LEFT JOIN grouped_organizations g 
-    ON p.url = g.url AND COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') = COALESCE(NULLIF(g.vendor_name, ''), 'Unknown');
+    ON p.url = g.url;
 
 -- Unique Index for refeshing the MV concurrently 
 CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
@@ -1175,9 +1174,9 @@ SELECT
     e.cap_stat_exists,
     
     -- Generate URL modal link
-    CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint."
-            onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)"
-            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>')
+    CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint." 
+            onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
+            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>') 
     AS "urlModal",
 
     -- Generate Condensed Endpoint Names
