@@ -237,7 +237,7 @@ endpoint_data_agg AS (
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
-        string_agg(DISTINCT url, '<br/>') as endpoint_urls_html,
+        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || '&&None&&' || vendor_name || ''',{priority: ''event''});"> ' || url || '</a>'), '<br/>') as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
             WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
@@ -278,17 +278,7 @@ SELECT
     COALESCE(ia.identifier_types_html, '') as identifier_types_html,
     COALESCE(ia.identifier_values_html, '') as identifier_values_html,
     COALESCE(aa.addresses_html, '') as addresses_html,
-    -- Convert plain URLs to HTML format with onclick handler
-    array_to_string(
-        ARRAY(
-            SELECT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." 
-                    onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-                    onclick="Shiny.setInputValue(''endpoint_popup'',''' || url_elem || '&&None&&' || COALESCE(eda.vendor_names_array[1], '') || ''',{priority: ''event''});"> ' || url_elem || '</a>'
-            FROM unnest(string_to_array(eda.endpoint_urls_html, '<br/>')) AS url_elem
-            WHERE url_elem != ''
-        ),
-        '<br/>'
-    ) as endpoint_urls_html,
+    eda.endpoint_urls_html,
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
