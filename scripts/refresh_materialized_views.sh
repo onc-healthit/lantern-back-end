@@ -1610,4 +1610,17 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_devel
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_developer_bundle_issues_list_source." >> $log_file
 }
 
+# Refresh and reindex mv_chpl_coverage_summary
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_chpl_coverage_summary;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_chpl_coverage_summary." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_chpl_coverage_summary_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_chpl_coverage_summary_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique ON mv_chpl_coverage_summary((1));" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_chpl_coverage_summary_unique." >> $log_file
+}
+
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file

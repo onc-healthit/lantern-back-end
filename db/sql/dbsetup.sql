@@ -3917,3 +3917,28 @@ CREATE INDEX idx_mv_developer_bundle_issues_developer
     ON mv_developer_bundle_issues(developer_name);
 CREATE INDEX idx_mv_developer_bundle_issues_list_source
     ON mv_developer_bundle_issues(list_source);
+
+-- ========================================
+-- MATERIALIZED VIEW: mv_chpl_coverage_summary
+-- ========================================
+-- Purpose: Pre-compute CHPL coverage counts and last-fetch timestamp for the
+--          Developer Feedback tab Coverage Overview card and "CHPL data last fetched" label.
+-- Single-row MV — refreshed on the same schedule as other developer MVs.
+-- ========================================
+DROP MATERIALIZED VIEW IF EXISTS mv_chpl_coverage_summary CASCADE;
+CREATE MATERIALIZED VIEW mv_chpl_coverage_summary AS
+SELECT
+    MAX(sls.updated_at)                                                                   AS last_updated,
+    COUNT(DISTINCT sls.developer_name)                                                    AS chpl_dev_count,
+    COUNT(DISTINCT sls.list_source)                                                       AS chpl_bundle_count,
+    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' THEN lsi.list_source END)              AS lantern_chpl_bundle_count,
+    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND v.name IS NOT NULL THEN v.name END) AS lantern_chpl_dev_count
+FROM shared_list_sources sls
+LEFT JOIN list_source_info lsi    ON sls.list_source = lsi.list_source
+LEFT JOIN fhir_endpoints fe       ON lsi.list_source = fe.list_source
+LEFT JOIN fhir_endpoints_info fei ON fe.url = fei.url AND fei.requested_fhir_version = 'None'
+LEFT JOIN vendors v               ON fei.vendor_id = v.id;
+
+-- Unique index on constant expression enables REFRESH CONCURRENTLY for this single-row MV
+CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique
+    ON mv_chpl_coverage_summary((1));

@@ -184,16 +184,10 @@ developerfeedbackmodule_UI <- function(id) {
           padding: 12px 15px;
         }
         
-        .alert-danger {
-          background-color: #fff5f5;
-          border-left-color: #dc3545;
-          color: #721c24;
-        }
-        
         .alert-warning {
-          background-color: #fffbf0;
-          border-left-color: #ffc107;
-          color: #856404;
+          background-color: #fff8f0;
+          border-left-color: #e67e22;
+          color: #7a4f1e;
         }
         
         .alert-info {
@@ -380,7 +374,7 @@ developerfeedbackmodule_UI <- function(id) {
                       tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
                       "Developers with an Empty/Invalid FHIR Bundle URL"
                     ),
-                    div(class = "metric-value", style = "color: #dc3545;",
+                    div(class = "metric-value", style = "color: #e67e22;",
                       textOutput(ns("developers_empty_bundles_count"), inline = TRUE),
                       uiOutput(ns("empty_bundles_denom"), inline = TRUE)
                     ),
@@ -449,7 +443,7 @@ developerfeedbackmodule_UI <- function(id) {
                       tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
                       "Developers w/ No Org Data"
                     ),
-                    div(class = "metric-value", style = "color: #dc3545;",
+                    div(class = "metric-value", style = "color: #e67e22;",
                       textOutput(ns("developers_no_org_data_count"), inline = TRUE),
                       uiOutput(ns("no_org_data_denom"), inline = TRUE)
                     ),
@@ -544,19 +538,19 @@ developerfeedbackmodule_UI <- function(id) {
                 tags$i(class = "fa fa-check-circle", style = "font-size: 40px;")
               ),
               div(class = "info-box-content",
-                span(class = "info-box-text", style = "font-weight: 500;", "Conforming Organizations"),
+                span(class = "info-box-text", style = "font-weight: 500;", "Organizations Meeting Standards"),
                 span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
                      textOutput(ns("high_quality_count"), inline = TRUE))
               )
             )
           ),
           column(width = 4,
-            div(class = "info-box bg-red",
+            div(class = "info-box bg-orange",
               div(class = "info-box-icon",
                 tags$i(class = "fa fa-exclamation-triangle", style = "font-size: 40px;")
               ),
               div(class = "info-box-content",
-                span(class = "info-box-text", style = "font-weight: 500;", "Non-conforming Organizations"),
+                span(class = "info-box-text", style = "font-weight: 500;", "Organizations with Data Gaps"),
                 span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
                      textOutput(ns("low_quality_count"), inline = TRUE))
               )
@@ -634,11 +628,11 @@ developerfeedbackmodule_UI <- function(id) {
               )
             ),
 
-            # Recommendations
+            # Insights
             div(class = "modern-card",
               h4(style = "color: #1B5A7F; margin-top: 0;",
                  tags$i(class = "fa fa-lightbulb", style = "margin-right: 8px;"),
-                 "Recommendations"),
+                 "Insights"),
               uiOutput(ns("recommendations"))
             )
           )
@@ -991,7 +985,7 @@ developerfeedbackmodule <- function(
   # Timestamp of when CHPL data was last fetched (MAX updated_at from shared_list_sources)
   chpl_last_updated <- reactive({
     result <- tbl(db_connection, sql(
-      "SELECT MAX(updated_at) AS last_updated FROM shared_list_sources"
+      "SELECT last_updated FROM mv_chpl_coverage_summary"
     )) %>% collect()
     if (nrow(result) == 0 || is.na(result$last_updated[1])) return("Unknown")
     format(as.POSIXct(result$last_updated[1]), "%B %d, %Y at %I:%M %p %Z")
@@ -1001,19 +995,7 @@ developerfeedbackmodule <- function(
 
   # CHPL vs Lantern coverage counts for the static card
   chpl_lantern_counts <- reactive({
-    tbl(db_connection, sql(
-      "SELECT
-        (SELECT COUNT(DISTINCT developer_name) FROM shared_list_sources) AS chpl_dev_count,
-        (SELECT COUNT(DISTINCT v.name)
-           FROM list_source_info lsi
-           JOIN fhir_endpoints fe ON lsi.list_source = fe.list_source
-           JOIN fhir_endpoints_info fei ON fe.url = fei.url AND fei.requested_fhir_version = 'None'
-           JOIN vendors v ON fei.vendor_id = v.id
-           WHERE lsi.is_chpl = 'CHPL' AND v.name IS NOT NULL) AS lantern_chpl_dev_count,
-        (SELECT COUNT(DISTINCT list_source) FROM shared_list_sources) AS chpl_bundle_count,
-        (SELECT COUNT(DISTINCT list_source) FROM list_source_info
-           WHERE is_chpl = 'CHPL') AS lantern_chpl_bundle_count"
-    )) %>% collect()
+    tbl(db_connection, sql("SELECT * FROM mv_chpl_coverage_summary")) %>% collect()
   })
 
   output$counts_static_card <- renderUI({
@@ -1622,9 +1604,6 @@ developerfeedbackmodule <- function(
       dev_data <- dev_data[dev_data$is_chpl_developer == FALSE, ]
     }
 
-    # Compute compliant column: non-compliant if has_empty_bundle, shares_list_source, or shares_fhir_endpoints
-    dev_data$compliant <- !(dev_data$has_empty_bundle | dev_data$shares_list_source | dev_data$shares_fhir_endpoints)
-
     if (nrow(dev_data) == 0) {
       dev_data <- data.frame(
         developer_name = "No data found",
@@ -1633,7 +1612,6 @@ developerfeedbackmodule <- function(
         endpoints_with_org_data = 0,
         no_org_data_endpoints = 0,
         organization_count = 0,
-        compliant = TRUE,
         has_empty_bundle = FALSE,
         shares_list_source = FALSE,
         shares_fhir_endpoints = FALSE,
@@ -1700,26 +1678,6 @@ developerfeedbackmodule <- function(
           style = function(value) {
             if (value == 0) list(color = "#dc3545", fontWeight = 600)
             else list(color = "#28a745", fontWeight = 600)
-          }
-        ),
-        compliant = colDef(
-          name = "Compliant",
-          width = 110,
-          align = "center",
-          cell = function(value) {
-            if (isTRUE(value)) {
-              tags$span(
-                style = "color: #28a745; font-weight: 700;",
-                tags$i(class = "fa fa-check-circle", style = "margin-right: 5px;"),
-                "Yes"
-              )
-            } else {
-              tags$span(
-                style = "color: #dc3545; font-weight: 700;",
-                tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
-                "No"
-              )
-            }
           }
         ),
         has_empty_bundle = colDef(
@@ -1813,7 +1771,7 @@ developerfeedbackmodule <- function(
     if (id_summary$no_identifier_count > 0) {
       no_id_percentage <- round(id_summary$no_identifier_count / summary$total_orgs * 100, 1)
       recommendations <- c(recommendations, list(
-        tags$div(class = "alert alert-danger",
+        tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
                      "Missing Identifier Data: "),
           paste0(format(id_summary$no_identifier_count, big.mark = ","),
@@ -1829,7 +1787,7 @@ developerfeedbackmodule <- function(
     if (id_summary$orgs_with_invalid_only > 0) {
       invalid_only_percentage <- round(id_summary$orgs_with_invalid_only / summary$total_orgs * 100, 1)
       recommendations <- c(recommendations, list(
-        tags$div(class = "alert alert-danger",
+        tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
                      "Organizations with Only Invalid Identifiers: "),
           paste0(format(id_summary$orgs_with_invalid_only, big.mark = ","),
@@ -1944,17 +1902,10 @@ developerfeedbackmodule <- function(
         endpoints_with_org_data,
         no_org_data_endpoints,
         organization_count,
-        compliant,
         has_empty_bundle,
         shares_list_source,
         shares_fhir_endpoints
       )
-  }
-
-  # Helper: add compliant column to raw developer data before CSV export
-  add_compliant_col <- function(data) {
-    data$compliant <- !(data$has_empty_bundle | data$shares_list_source | data$shares_fhir_endpoints)
-    data
   }
 
   # Tier 1 download handler: highlighted developers (empty bundles OR sharing FHIR bundle URL)
@@ -1963,7 +1914,7 @@ developerfeedbackmodule <- function(
       paste0("highlighted_developers_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      data <- add_compliant_col(apply_source_filter(all_data_issues()))
+      data <- apply_source_filter(all_data_issues())
       data <- data[data$has_empty_bundle == TRUE | data$shares_list_source == TRUE | data$shares_fhir_endpoints == TRUE, ]
       if (nrow(data) > 0) {
         write.csv(format_for_csv(data), file, row.names = FALSE)
@@ -1979,7 +1930,7 @@ developerfeedbackmodule <- function(
       paste0("chpl_developer_service_base_url_report_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      data <- add_compliant_col(apply_source_filter(all_data_issues()))
+      data <- apply_source_filter(all_data_issues())
       if (nrow(data) > 0) {
         write.csv(format_for_csv(data), file, row.names = FALSE)
       } else {
@@ -1990,7 +1941,6 @@ developerfeedbackmodule <- function(
           endpoints_with_org_data = integer(0),
           no_org_data_endpoints = integer(0),
           organization_count = integer(0),
-          compliant = logical(0),
           has_empty_bundle = logical(0),
           shares_list_source = logical(0),
           shares_fhir_endpoints = logical(0)
