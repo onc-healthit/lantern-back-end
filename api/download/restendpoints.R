@@ -21,9 +21,29 @@ function(res) {
 #* @param organization_detail Filter by data presence: 'present' or 'absent' (optional)
 #* @param identifier Filter by exact identifier value (optional)
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
-#* @param source Filter by source: 'CHPL', 'State Medicaid', 'Payer', 'Other' (optional)
 #* @description Download a CSV file containing daily organization data
-function(res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL, source = NULL) {
+function(req, res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
+
+  # Block unknown query parameters
+  allowed_params <- c("developer", "organization_detail", "identifier", "fhir_version")
+
+  query_names <- names(req$argsQuery)
+  query_names <- unique(query_names)
+  unknown_params <- setdiff(query_names, allowed_params)
+
+  if (length(unknown_params) > 0) {
+    res$status <- 400
+    return(list(
+      error = paste0(
+        "Invalid query parameter(s): ",
+        paste(sort(unknown_params), collapse = ", "),
+        ". Supported parameters are: ",
+        paste(allowed_params, collapse = ", "),
+        "."
+      )
+    ))
+  }
+
   # Normalize and parse fhir_versions
   fhir_versions_vec <- if (!is.null(fhir_version)) {
     strsplit(fhir_version, ",")[[1]] %>% trimws()
@@ -65,26 +85,11 @@ function(res, developer = NULL, organization_detail = NULL, identifier = NULL, f
     }
   }
 
-  # Validate source parameter
-  valid_sources <- c("CHPL", "State Medicaid", "Payer", "Other")
-  source_filter <- NULL
-  if (!is.null(source)) {
-    if (!(source %in% valid_sources)) {
-      res$status <- 400
-      return(list(
-        error = paste0("Invalid value for 'source'. Accepted values are: ", 
-                      paste(valid_sources, collapse = ", "))
-      ))
-    }
-    source_filter <- source
-  }
-
   # Log filters for debugging
   message("Organization API Filters - Developer: ", developer, 
         ", Organization Detail: ", organization_detail_flag, 
         ", Identifier: ", identifier, 
-        ", FHIR Versions: ", paste(fhir_versions_vec, collapse = ", "),
-        ", Source: ", source_filter)
+        ", FHIR Versions: ", paste(fhir_versions_vec, collapse = ", "))
 
   # Only check developer if it's provided
   if (!is.null(developer)) {
@@ -124,11 +129,7 @@ function(res, developer = NULL, organization_detail = NULL, identifier = NULL, f
     paste0("fhir_", gsub("[^A-Za-z0-9]", "", paste(filtered_fhir_versions, collapse = "_")))
   } else NULL
 
-  safe_source <- if (!is.null(source_filter)) {
-    paste0("source_", gsub("[^A-Za-z0-9]", "", source_filter))
-  } else NULL
-
-  filename_parts <- c("fhir_endpoint_organizations", safe_developer, safe_identifier, safe_organization_detail, safe_fhir, safe_source, st)
+  filename_parts <- c("fhir_endpoint_organizations", safe_developer, safe_identifier, safe_organization_detail, safe_fhir, st)
   filename <- paste0(paste(na.omit(filename_parts), collapse = "_"), ".csv")  
 
   res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
@@ -139,8 +140,7 @@ function(res, developer = NULL, organization_detail = NULL, identifier = NULL, f
       developer = developer,
       organization_detail = organization_detail_flag,
       identifier = identifier,
-      fhir_versions = filtered_fhir_versions,
-      source = source_filter
+      fhir_versions = filtered_fhir_versions
     )
     write.csv(org_data, file = filename, row.names = FALSE)
   }
