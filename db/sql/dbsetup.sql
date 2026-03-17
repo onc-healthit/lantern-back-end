@@ -3572,7 +3572,7 @@ CREATE UNIQUE INDEX idx_mv_org_identifier_summary_complete_vendor ON mv_organiza
 
 -- MATERIALIZED VIEW: mv_latest_endpoint_metadata
 -- Purpose: Pre-compute the most recent metadata check result per endpoint.
--- Built as a standalone MV so mv_data_issues_summary and mv_developer_data_issues
+-- Built as a standalone MV so mv_developer_data_issues
 -- can reference it without re-scanning fhir_endpoints_metadata twice.
 
 CREATE MATERIALIZED VIEW mv_latest_endpoint_metadata AS
@@ -3585,94 +3585,6 @@ ORDER BY url, requested_fhir_version, updated_at DESC;
 
 CREATE UNIQUE INDEX idx_mv_latest_endpoint_metadata_url_version
     ON mv_latest_endpoint_metadata(url, requested_fhir_version);
-
-
--- MATERIALIZED VIEW: mv_data_issues_summary
--- Purpose: System-wide summary statistics for data issues
-
-CREATE MATERIALIZED VIEW mv_data_issues_summary AS
-WITH
--- Developers with endpoints that have no organization data
-developers_with_no_org_data AS (
-    SELECT
-        COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT sfem.url) as no_org_data_endpoint_count
-    FROM selected_fhir_endpoints_mv sfem
-    LEFT JOIN fhir_endpoints_info fei ON sfem.url = fei.url AND fei.requested_fhir_version = 'None'
-    LEFT JOIN vendors v ON fei.vendor_id = v.id
-    WHERE
-        (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
-        AND sfem.requested_fhir_version = 'None'
-    GROUP BY v.name
-    HAVING COUNT(DISTINCT sfem.url) > 0
-),
--- Count of endpoints with no organization data
-endpoints_with_no_org_data AS (
-    SELECT COUNT(DISTINCT sfem.url) as count
-    FROM selected_fhir_endpoints_mv sfem
-    WHERE
-        (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
-        AND sfem.requested_fhir_version = 'None'
-),
--- Count of developers sharing list sources with at least one other developer (from shared_list_sources table)
-developers_sharing_list_sources_count AS (
-    SELECT COUNT(DISTINCT developer_name) as count
-    FROM shared_list_sources
-    WHERE list_source IN (
-        SELECT list_source
-        FROM shared_list_sources
-        GROUP BY list_source
-        HAVING COUNT(DISTINCT developer_name) > 1
-    )
-),
--- Inaccessible list_source URLs (HTTP errors or connection failures)
--- Only counts list_sources where ALL endpoints are inaccessible (HTTP >= 400 or HTTP = 0)
--- Uses mv_latest_endpoint_metadata to avoid double-counting endpoints checked multiple times
-inaccessible_list_sources AS (
-    SELECT
-        fe.list_source
-    FROM fhir_endpoints fe
-    INNER JOIN mv_latest_endpoint_metadata fem ON fe.url = fem.url
-    WHERE
-        fe.list_source IS NOT NULL
-        AND fe.list_source != ''
-        AND fem.http_response IS NOT NULL
-        AND fem.requested_fhir_version = 'None'
-    GROUP BY fe.list_source
-    -- Only include list_sources where ALL endpoints have HTTP response >= 400 or = 0 (connection failure)
-    HAVING COUNT(*) = COUNT(CASE WHEN fem.http_response >= 400 OR fem.http_response = 0 THEN 1 END)
-        AND COUNT(CASE WHEN fem.http_response >= 400 OR fem.http_response = 0 THEN 1 END) > 0
-),
--- Endpoints from inaccessible list_sources
-endpoints_with_inaccessible_list_sources AS (
-    SELECT
-        COUNT(DISTINCT fe.url) as count
-    FROM fhir_endpoints fe
-    INNER JOIN inaccessible_list_sources ils ON fe.list_source = ils.list_source
-),
--- Developers with empty FHIR bundles (list_sources with no endpoints)
--- Uses shared_list_sources table to find developers whose list_source returns no endpoints
--- NOTE: This is CHPL-only because shared_list_sources only contains CHPL developers from CSV
-developers_with_empty_bundles AS (
-    SELECT
-        sls.developer_name,
-        sls.list_source
-    FROM shared_list_sources sls
-    LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
-    GROUP BY sls.developer_name, sls.list_source
-    HAVING COUNT(fe.url) = 0
-)
-SELECT
-    (SELECT COUNT(*) FROM developers_with_no_org_data) as developers_with_no_org_data_count,
-    (SELECT count FROM endpoints_with_no_org_data) as endpoints_with_no_org_data_count,
-    (SELECT count FROM developers_sharing_list_sources_count) as shared_list_sources_count,
-    (SELECT count FROM developers_sharing_list_sources_count) as developers_sharing_list_sources_count,
-    (SELECT COUNT(*) FROM inaccessible_list_sources) as inaccessible_list_sources_count,
-    (SELECT count FROM endpoints_with_inaccessible_list_sources) as endpoints_with_inaccessible_list_sources_count,
-    (SELECT COUNT(DISTINCT developer_name) FROM developers_with_empty_bundles) as developers_with_empty_bundles_count;
-
--- Create unique index for concurrent refresh
-CREATE UNIQUE INDEX idx_mv_data_issues_summary_unique ON mv_data_issues_summary(developers_with_no_org_data_count, endpoints_with_no_org_data_count, shared_list_sources_count);
 
 
 -- MATERIALIZED VIEW: mv_developer_data_issues
@@ -3695,7 +3607,7 @@ all_vendors AS (
     -- NOTE: This only includes CHPL developers from the CHPL CSV
     SELECT DISTINCT sls.developer_name as vendor_name
     FROM shared_list_sources sls
-    LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    LEFT JOIN fhir_endpoints fe ON REPLACE(REPLACE(sls.list_source, 'u0026', '&'), '%26', '&') = REPLACE(REPLACE(fe.list_source, 'u0026', '&'), '%26', '&')
     GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
 
@@ -3811,7 +3723,7 @@ developers_empty_bundles AS (
     SELECT DISTINCT
         sls.developer_name as vendor_name
     FROM shared_list_sources sls
-    LEFT JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    LEFT JOIN fhir_endpoints fe ON REPLACE(REPLACE(sls.list_source, 'u0026', '&'), '%26', '&') = REPLACE(REPLACE(fe.list_source, 'u0026', '&'), '%26', '&')
     GROUP BY sls.developer_name, sls.list_source
     HAVING COUNT(fe.url) = 0
 ),
@@ -3900,3 +3812,108 @@ ORDER BY
 -- Create indexes for faster queries
 CREATE UNIQUE INDEX idx_mv_developer_data_issues_vendor ON mv_developer_data_issues(vendor_name);
 CREATE INDEX idx_mv_developer_data_issues_no_org_data ON mv_developer_data_issues(no_org_data_endpoints);
+
+-- ========================================
+-- MATERIALIZED VIEW: mv_developer_bundle_issues
+-- ========================================
+-- Purpose: One row per (developer_name, list_source) pair from shared_list_sources.
+-- All endpoint/org counts are computed per bundle URL, so a developer with multiple
+-- list_sources appears as multiple rows with accurate per-URL counts.
+-- This replaces the ambiguous per-developer has_empty_bundle boolean in
+-- mv_developer_data_issues, which fired TRUE if ANY one URL had 0 endpoints.
+-- shares_fhir_endpoints is inherently developer-level and is joined from
+-- mv_developer_data_issues — it correctly repeats across all bundle rows for
+-- the same developer.
+-- ========================================
+
+DROP MATERIALIZED VIEW IF EXISTS mv_developer_bundle_issues;
+
+CREATE MATERIALIZED VIEW mv_developer_bundle_issues AS
+WITH
+-- Total endpoints per bundle URL
+bundle_total_endpoints AS (
+    SELECT
+        fe.list_source,
+        COUNT(DISTINCT fe.url) AS total_endpoints
+    FROM fhir_endpoints fe
+    GROUP BY fe.list_source
+),
+-- Endpoints with org data per bundle URL (endpoint_names populated)
+bundle_endpoints_with_data AS (
+    SELECT
+        sfem.list_source,
+        COUNT(DISTINCT sfem.url) AS endpoints_with_org_data
+    FROM selected_fhir_endpoints_mv sfem
+    WHERE
+        sfem.endpoint_names IS NOT NULL
+        AND sfem.endpoint_names != ''
+        AND TRIM(sfem.endpoint_names) != ''
+        AND sfem.requested_fhir_version = 'None'
+    GROUP BY sfem.list_source
+),
+-- Endpoints with NO org data per bundle URL
+bundle_no_org_data AS (
+    SELECT
+        sfem.list_source,
+        COUNT(DISTINCT sfem.url) AS no_org_data_endpoints
+    FROM selected_fhir_endpoints_mv sfem
+    WHERE
+        (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
+        AND sfem.requested_fhir_version = 'None'
+    GROUP BY sfem.list_source
+),
+-- Organization count per bundle URL
+bundle_organizations AS (
+    SELECT
+        fe.list_source,
+        COUNT(DISTINCT feo.organization_name) AS organization_count
+    FROM fhir_endpoint_organizations feo
+    INNER JOIN fhir_endpoint_organizations_map feom ON feo.id = feom.org_database_id
+    INNER JOIN fhir_endpoints fe ON feom.id = fe.id
+    INNER JOIN fhir_endpoints_info fei ON fe.url = fei.url
+    WHERE
+        feo.organization_name IS NOT NULL
+        AND feo.organization_name != ''
+        AND fei.requested_fhir_version = 'None'
+    GROUP BY fe.list_source
+),
+-- Bundle URLs shared by more than one developer
+shared_urls AS (
+    SELECT list_source
+    FROM shared_list_sources
+    GROUP BY list_source
+    HAVING COUNT(DISTINCT developer_name) > 1
+),
+-- Developer-level shares_fhir_endpoints flag (inherently developer-level)
+dev_shares_fhir AS (
+    SELECT vendor_name, shares_fhir_endpoints
+    FROM mv_developer_data_issues
+)
+SELECT
+    sls.developer_name,
+    sls.list_source,
+    COALESCE(bte.total_endpoints, 0)           AS total_endpoints,
+    COALESCE(bewd.endpoints_with_org_data, 0)  AS endpoints_with_org_data,
+    COALESCE(bnod.no_org_data_endpoints, 0)    AS no_org_data_endpoints,
+    COALESCE(bo.organization_count, 0)          AS organization_count,
+    CASE WHEN COALESCE(bte.total_endpoints, 0) = 0
+         THEN TRUE ELSE FALSE END               AS has_empty_bundle,
+    CASE WHEN su.list_source IS NOT NULL
+         THEN TRUE ELSE FALSE END               AS shares_list_source,
+    COALESCE(dsf.shares_fhir_endpoints, FALSE)  AS shares_fhir_endpoints,
+    TRUE                                        AS is_chpl_developer
+FROM shared_list_sources sls
+LEFT JOIN bundle_total_endpoints    bte  ON sls.list_source = bte.list_source
+LEFT JOIN bundle_endpoints_with_data bewd ON sls.list_source = bewd.list_source
+LEFT JOIN bundle_no_org_data         bnod ON sls.list_source = bnod.list_source
+LEFT JOIN bundle_organizations       bo   ON sls.list_source = bo.list_source
+LEFT JOIN shared_urls                su   ON sls.list_source = su.list_source
+LEFT JOIN dev_shares_fhir            dsf  ON sls.developer_name = dsf.vendor_name
+ORDER BY sls.developer_name, sls.list_source;
+
+CREATE UNIQUE INDEX idx_mv_developer_bundle_issues_unique
+    ON mv_developer_bundle_issues(developer_name, list_source);
+CREATE INDEX idx_mv_developer_bundle_issues_developer
+    ON mv_developer_bundle_issues(developer_name);
+CREATE INDEX idx_mv_developer_bundle_issues_list_source
+    ON mv_developer_bundle_issues(list_source);

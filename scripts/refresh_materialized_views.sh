@@ -1533,7 +1533,7 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_m
 }
 
 # Refresh and reindex mv_latest_endpoint_metadata
-# Must run before mv_data_issues_summary and mv_developer_data_issues which depend on it
+# Must run before mv_developer_data_issues which depends on it
 docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_latest_endpoint_metadata;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_latest_endpoint_metadata." >> $log_file
 }
@@ -1578,6 +1578,36 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_
 
 docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_developer_data_issues_no_org_data ON mv_developer_data_issues(no_org_data_endpoints);" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_developer_data_issues_no_org_data." >> $log_file
+}
+
+# Refresh and reindex mv_developer_bundle_issues
+# Must run after mv_developer_data_issues (depends on it for shares_fhir_endpoints)
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_developer_bundle_issues;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_developer_bundle_issues." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_developer_bundle_issues_unique;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_developer_bundle_issues_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_developer_bundle_issues_unique ON mv_developer_bundle_issues(developer_name, list_source);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_developer_bundle_issues_unique." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_developer_bundle_issues_developer;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_developer_bundle_issues_developer." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_developer_bundle_issues_developer ON mv_developer_bundle_issues(developer_name);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_developer_bundle_issues_developer." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_developer_bundle_issues_list_source;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_developer_bundle_issues_list_source." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_developer_bundle_issues_list_source ON mv_developer_bundle_issues(list_source);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_developer_bundle_issues_list_source." >> $log_file
 }
 
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file
