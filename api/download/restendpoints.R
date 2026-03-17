@@ -67,11 +67,12 @@ function(req, res, developer = NULL, fhir_version = NULL, source = NULL) {
 #* @param organization_detail Filter by data presence: 'present' or 'absent' (optional)
 #* @param identifier Filter by exact identifier value (optional)
 #* @param fhir_version Comma-separated list of FHIR versions to filter (optional)
+#* @param source Filter by source: 'CHPL', 'State Medicaid', 'Payer', 'Other' (optional)
 #* @description Download a CSV file containing daily organization data
-function(req, res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL) {
+function(req, res, developer = NULL, organization_detail = NULL, identifier = NULL, fhir_version = NULL, source = NULL) {
   err <- block_unknown_query_params(
     req, res,
-    allowed_params = c("developer", "organization_detail", "identifier", "fhir_version")
+    allowed_params = c("developer", "organization_detail", "identifier", "fhir_version", "source")
   )
   if (!is.null(err)) return(err)
 
@@ -87,6 +88,10 @@ function(req, res, developer = NULL, organization_detail = NULL, identifier = NU
   if (!isTRUE(od$ok)) return(list(error = od$error))
   organization_detail_flag <- od$value
 
+  src <- validate_one_of(res, source, c("CHPL", "State Medicaid", "Payer", "Other"), "source")
+  if (!isTRUE(src$ok)) return(list(error = src$error))
+  source_filter <- src$value
+
   dv <- validate_developer(res, db_connection, developer)
   if (!isTRUE(dv$ok)) return(list(error = dv$error))
 
@@ -94,7 +99,8 @@ function(req, res, developer = NULL, organization_detail = NULL, identifier = NU
   message("Organization API Filters - Developer: ", developer,
         ", Organization Detail: ", organization_detail_flag,
         ", Identifier: ", identifier,
-        ", FHIR Versions: ", paste(fhir_versions_vec, collapse = ", "))
+        ", FHIR Versions: ", paste(fhir_versions_vec, collapse = ", "),
+        ", Source: ", source_filter)
 
   safe_developer <- sanitize_token(developer)
   safe_identifier <- if (!is.null(identifier)) paste0("id_", sanitize_compact(identifier)) else NULL
@@ -102,11 +108,14 @@ function(req, res, developer = NULL, organization_detail = NULL, identifier = NU
   safe_fhir <- if (!is.null(filtered_fhir_versions)) {
     paste0("fhir_", sanitize_compact(paste(filtered_fhir_versions, collapse = "_")))
   } else NULL
+  safe_source <- if (!is.null(source_filter)) {
+    paste0("source_", sanitize_compact(source_filter))
+  } else NULL
 
   st <- format(Sys.time(), "%Y-%m-%d")
   filename <- build_csv_filename(
     prefix = "fhir_endpoint_organizations",
-    parts = c(safe_developer, safe_identifier, safe_org_detail, safe_fhir),
+    parts = c(safe_developer, safe_identifier, safe_org_detail, safe_fhir, safe_source),
     date_str = st
   )
 
@@ -117,7 +126,8 @@ function(req, res, developer = NULL, organization_detail = NULL, identifier = NU
     developer = developer,
     organization_detail = organization_detail_flag,
     identifier = identifier,
-    fhir_versions = filtered_fhir_versions
+    fhir_versions = filtered_fhir_versions,
+    source = source_filter
   )
   write_and_stream_csv(res, filename, org_data)
 }

@@ -56,6 +56,7 @@ downloadsmodule_UI <- function(id) {
           <u>Supported query parameters for the Organizations API:</u><br>
           <code>developer</code> – Filter by certified API developer name.<br>
           <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
+          <code>source</code> – Filter by data source. (e.g., CHPL, State Medicaid, Payer, Other).<br>
           <code>identifier</code> – Exact match on organization identifier (e.g., NPI).<br>
           <code>organization_detail</code> – Use <code>organization_detail=present</code> to return only organizations with data.
           <br><br>
@@ -113,16 +114,17 @@ downloadsmodule <- function(
   # Create the format for the csv
   csv_format <- reactive({
     res <- get_fhir_endpoints_tbl() %>%
-      select(-status, -availability, -fhir_version) %>%
+      select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
              info_updated = format(info_updated, "%m/%d/%y %H:%M"),
-             list_source = ifelse(vendor_name %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+             list_source = ifelse(list_source %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
                     "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
                     "Salesforce/MiHIN", "State Developed"), 
                     "State Medicaid Agency (SMA) Provider Directory", 
                     list_source)) %>%
+      ungroup() %>%
       rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds) %>%
