@@ -47,14 +47,19 @@ downloadsmodule_UI <- function(id) {
           [GET] <b>https://lantern.healthit.gov/api/organizations/v1</b> - Downloads daily organization data associated with endpoints.
           <br><br>
 
+          <u>Supported query parameters for the Endpoints API:</u><br>
+          <code>developer</code> – Filter by certified API developer name.<br>
+          <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
+          <code>source</code> – Filter by data source. (e.g., CHPL, State Medicaid, Payer, Other).<br>
+          <br><br>
+
           <u>Supported query parameters for the Organizations API:</u><br>
           <code>developer</code> – Filter by certified API developer name.<br>
           <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br>
           <code>identifier</code> – Exact match on organization identifier (e.g., NPI).<br>
-          <code>source</code> – Filter by data source. (e.g., CHPL, State Medicaid, Payer, Other).<br>
           <code>organization_detail</code> – Use <code>organization_detail=present</code> to return only organizations with data.
           <br><br>
-
+          
           All filters can be used independently or in combination.
           <br><br>
 
@@ -62,11 +67,11 @@ downloadsmodule_UI <- function(id) {
           <code>?developer=Epic%20Systems%20Corporation&fhir_version=No%20Cap%20Stat,4.0.1</code>
           <br><br>
 
-          <u>Example 2:</u> Return organizations with identifier <i>1750581864</i> that have data:<br>
+          <u>Example 2:</u> (Organizations API) Return organizations with identifier <i>1750581864</i> that have data:<br>
           <code>?identifier=1750581864&organization_detail=present</code>
           <br><br>
 
-          <u>Example 3:</u> Download data from CHPL sources only:<br>
+          <u>Example 3:</u> (Endpoint API) Download endpoint data from CHPL sources only:<br>
           <code>?source=CHPL</code>
           <br><br>
 
@@ -139,7 +144,7 @@ downloadsmodule <- function(
     # Use the same materialized view query as the organization tab but without filters
     query_str <- "
       WITH base_data AS (
-        SELECT
+        SELECT 
           organization_name,
           identifier_types_csv as identifier_type,
           identifier_values_csv as identifier_value,
@@ -147,11 +152,10 @@ downloadsmodule <- function(
           org_urls_csv as org_url,
           endpoint_urls_csv as url,
           fhir_versions_array,
-          vendor_names_array,
-          is_chpl_array
-        FROM mv_organizations_final
+          vendor_names_array
+        FROM mv_organizations_final 
       )
-      SELECT
+      SELECT 
         organization_name,
         identifier_type,
         identifier_value,
@@ -159,23 +163,17 @@ downloadsmodule <- function(
         url AS fhir_endpoint_url,
         -- Show ALL FHIR versions (CSV format)
         string_agg(
-          DISTINCT fhir_version,
+          DISTINCT fhir_version, 
           E'\\n'
         ) as fhir_version,
         -- Show ALL vendor names (CSV format)
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as api_developer_name,
-        -- Show ALL source values (CSV format)
-        string_agg(
-          DISTINCT chpl_value,
-          E'\\n'
-        ) as source
+        ) as api_developer_name
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
-      CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
       GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
       ORDER BY organization_name"
 
