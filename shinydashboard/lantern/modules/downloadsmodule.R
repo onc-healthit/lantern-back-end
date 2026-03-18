@@ -111,18 +111,21 @@ downloadsmodule <- function(
     }
   )
 
-  # Create the format for the csv
+  # Create the format for the csv - uses same MV as the Endpoints tab (selected_fhir_endpoints_mv)
   csv_format <- reactive({
-    res <- get_fhir_endpoints_tbl() %>%
+    res <- tbl(db_connection,
+      sql("SELECT * FROM selected_fhir_endpoints_mv
+           ORDER BY vendor_name, list_source, url, requested_fhir_version")) %>%
+      collect() %>%
       select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
       rowwise() %>%
       mutate(endpoint_names = ifelse(length(strsplit(endpoint_names, ";")[[1]]) > 100, paste0("Subset of Organizations, see Lantern Website for full list:", paste0(head(strsplit(endpoint_names, ";")[[1]], 100), collapse = ";")), endpoint_names),
              info_created = format(info_created, "%m/%d/%y %H:%M"),
              info_updated = format(info_updated, "%m/%d/%y %H:%M"),
-             list_source = ifelse(list_source %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One", 
+             list_source = ifelse(list_source %in% c("1up (Gainwell)", "Acentra", "CNSI Provider One",
                     "Conduent", "Edifecs", "Not Available", "Safhir from Onyx",
-                    "Salesforce/MiHIN", "State Developed"), 
-                    "State Medicaid Agency (SMA) Provider Directory", 
+                    "Salesforce/MiHIN", "State Developed"),
+                    "State Medicaid Agency (SMA) Provider Directory",
                     list_source)) %>%
       ungroup() %>%
       rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
@@ -141,12 +144,11 @@ downloadsmodule <- function(
     }
   )
 
-  # Create the format for the organization data csv using the new split identifier columns
+  # Create the format for the organization data csv - uses same MV and query as the Organizations tab
   organization_csv_format <- reactive({
-    # Use the same materialized view query as the organization tab but without filters
     query_str <- "
       WITH base_data AS (
-        SELECT 
+        SELECT
           organization_name,
           identifier_types_csv as identifier_type,
           identifier_values_csv as identifier_value,
@@ -154,32 +156,35 @@ downloadsmodule <- function(
           org_urls_csv as org_url,
           endpoint_urls_csv as url,
           fhir_versions_array,
-          vendor_names_array
-        FROM mv_organizations_final 
+          vendor_names_array,
+          is_chpl_array
+        FROM mv_organizations_final
       )
-      SELECT 
+      SELECT
         organization_name,
         identifier_type,
         identifier_value,
         address,
         url AS fhir_endpoint_url,
-        -- Show ALL FHIR versions (CSV format)
         string_agg(
-          DISTINCT fhir_version, 
+          DISTINCT fhir_version,
           E'\\n'
         ) as fhir_version,
-        -- Show ALL vendor names (CSV format)
         string_agg(
           DISTINCT vendor_name,
           E'\\n'
-        ) as api_developer_name
+        ) as api_developer_name,
+        string_agg(
+          DISTINCT chpl_value,
+          E'\\n'
+        ) as source
       FROM base_data bd
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
+      CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
       GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
       ORDER BY organization_name"
 
-    # Execute the query
     data_query <- glue_sql(query_str, .con = db_connection)
     res <- tbl(db_connection, sql(data_query)) %>% collect()
 
