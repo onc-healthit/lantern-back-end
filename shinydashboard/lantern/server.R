@@ -242,7 +242,7 @@ function(input, output, session) { #nolint
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
      "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
      "validations_tab" = "Validations Page",
-     "developerfeedback_tab" = "Developer Feedback / Data Quality"
+     "developerfeedback_tab" = "Service Base URL Publication — Data Quality"
   )
 
   output$resource_tab_popup <- renderUI({

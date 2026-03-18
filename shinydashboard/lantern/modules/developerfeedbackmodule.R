@@ -313,19 +313,13 @@ developerfeedbackmodule_UI <- function(id) {
       "))
     ),
     
-    fluidRow(
-      column(width = 12,
-        h2(class = "page-header", "Service Base URL Data Quality")
-      )
-    ),
-
     tabsetPanel(
       id = "main_tabs",
       type = "tabs",
 
       # ── TAB 1: Service Base URL Quality (CHPL / Developer level) ─────────
       tabPanel(
-        title = "Developer Data Quality",
+        title = "Certified API Developer",
         value = "tier1",
 
         fluidRow(style = "margin-top: 20px;",
@@ -335,9 +329,7 @@ developerfeedbackmodule_UI <- function(id) {
                          border-left: 4px solid #1B5A7F;",
               p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
                 tags$strong("About this tab:"),
-                " This tab shows CHPL Certified API Developer-level data quality — whether developers are",
-                " publicly posting service base URLs in FHIR bundle format and whether those bundles",
-                " return endpoint data."
+                " This tab summarizes how FHIR Bundle URLs registered by Certified API Developers in CHPL are processed by Lantern — including whether bundles are accessible and return endpoint and organization data."
               )
             )
           )
@@ -349,7 +341,7 @@ developerfeedbackmodule_UI <- function(id) {
             div(class = "modern-card",
               h3(class = "section-header",
                  tags$i(class = "fa fa-database", style = "margin-right: 8px;"),
-                 "Developer Data Discrepancies"),
+                 "Certified API Developer — Processing Summary"),
 
               # Timestamp status bar
               div(style = "background: #e8f4f8; border-left: 4px solid #17a2b8; padding: 8px 14px;
@@ -372,14 +364,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("empty_bundles_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
-                      "Developers with an Empty/Invalid FHIR Bundle URL"
+                      "FHIR Bundles — Empty or Unreachable"
                     ),
-                    div(class = "metric-value", style = "color: #e67e22;",
+                    div(class = "metric-value", style = "color: #B8860B;",
                       textOutput(ns("developers_empty_bundles_count"), inline = TRUE),
                       uiOutput(ns("empty_bundles_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "CHPL developers with empty, unreachable, or invalid FHIR bundles",
+                      "Bundles that returned no endpoint data when queried by Lantern",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -395,14 +387,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_sources_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
-                      "Shared FHIR Bundle Hyperlinks"
+                      "Shared FHIR Bundle URLs"
                     ),
-                    div(class = "metric-value", style = "color: #ffc107;",
+                    div(class = "metric-value", style = "color: #2E7D9C;",
                       textOutput(ns("developers_sharing_list_sources_count"), inline = TRUE),
                       uiOutput(ns("shared_sources_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "Developers sharing the same FHIR bundle URL",
+                      "Developers whose registered FHIR Bundle URL matches another developer's",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -418,14 +410,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_endpoints_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-code-fork", style = "margin-right: 5px;"),
-                      "Developers Sharing FHIR Endpoints"
+                      "Overlapping Endpoint Sets"
                     ),
-                    div(class = "metric-value", style = "color: #ffc107;",
+                    div(class = "metric-value", style = "color: #2E7D9C;",
                       textOutput(ns("developers_sharing_fhir_endpoints_count"), inline = TRUE),
                       uiOutput(ns("shared_endpoints_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "Developers whose FHIR endpoint sets are identical to another developer's",
+                      "Developers whose resolved service base URLs match another developer's endpoint set",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -441,14 +433,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("no_org_data_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
-                      "Developers w/ No Org Data"
+                      "Organization Details Not Available"
                     ),
-                    div(class = "metric-value", style = "color: #e67e22;",
+                    div(class = "metric-value", style = "color: #B8860B;",
                       textOutput(ns("developers_no_org_data_count"), inline = TRUE),
                       uiOutput(ns("no_org_data_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "Developers missing org data for any endpoint",
+                      "Endpoints that did not return organization name, address, or identifier information",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -470,14 +462,14 @@ developerfeedbackmodule_UI <- function(id) {
                     selectInput(
                       inputId = ns("source_filter"),
                       label = "Source:",
-                      choices = c("CHPL Developers", "Others"),
-                      selected = "CHPL Developers"
+                      choices = c("CHPL Certified API Developers", "Others"),
+                      selected = "CHPL Certified API Developers"
                     )
                   ),
                   column(width = 3, style = "padding-top: 25px;",
                     downloadButton(
                       outputId = ns("download_highlighted_report"),
-                      label = "Download Developers with Issues (CSV)",
+                      label = "Download Developers Needing Review (CSV)",
                       class = "btn btn-warning btn-sm",
                       icon = icon("download")
                     )
@@ -485,7 +477,7 @@ developerfeedbackmodule_UI <- function(id) {
                   column(width = 3, style = "padding-top: 25px;",
                     downloadButton(
                       outputId = ns("download_tier1_report"),
-                      label = "Download All (CSV)",
+                      label = "Download All Developers (CSV)",
                       class = "btn btn-info btn-sm",
                       icon = icon("download")
                     )
@@ -500,7 +492,7 @@ developerfeedbackmodule_UI <- function(id) {
 
       # ── TAB 2: Organization Data Quality ─────────────────────────────────
       tabPanel(
-        title = "Organization Data Quality",
+        title = "Organization Details",
         value = "tier2",
 
         fluidRow(style = "margin-top: 20px;",
@@ -510,9 +502,7 @@ developerfeedbackmodule_UI <- function(id) {
                          border-left: 4px solid #1B5A7F;",
               p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
                 tags$strong("About this tab:"),
-                " This tab provides comprehensive data quality metrics for organization data extracted",
-                " from FHIR bundles. Use this information to improve the quality of organization data",
-                " in your endpoint implementations."
+                " This tab summarizes the organization details extracted from FHIR bundles published by Certified API Developers — including organization name, address, and facility-level identifiers as described in § 170.404(b)(2)."
               )
             )
           )
@@ -538,7 +528,7 @@ developerfeedbackmodule_UI <- function(id) {
                 tags$i(class = "fa fa-check-circle", style = "font-size: 40px;")
               ),
               div(class = "info-box-content",
-                span(class = "info-box-text", style = "font-weight: 500;", "Organizations Meeting Standards"),
+                span(class = "info-box-text", style = "font-weight: 500;", "Organizations with Complete Details"),
                 span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
                      textOutput(ns("high_quality_count"), inline = TRUE))
               )
@@ -550,7 +540,7 @@ developerfeedbackmodule_UI <- function(id) {
                 tags$i(class = "fa fa-exclamation-triangle", style = "font-size: 40px;")
               ),
               div(class = "info-box-content",
-                span(class = "info-box-text", style = "font-weight: 500;", "Organizations with Data Gaps"),
+                span(class = "info-box-text", style = "font-weight: 500;", "Organizations with Incomplete Details"),
                 span(class = "info-box-number", style = "font-size: 32px; font-weight: 600;",
                      textOutput(ns("low_quality_count"), inline = TRUE))
               )
@@ -566,7 +556,7 @@ developerfeedbackmodule_UI <- function(id) {
             div(class = "modern-card",
               h3(class = "section-header",
                  tags$i(class = "fa fa-chart-bar", style = "margin-right: 8px;"),
-                 "Data Quality Overview"),
+                 "Organization Field Completeness"),
               div(class = "chart-container",
                 plotOutput(ns("quality_overview_chart"), height = "400px")
               )
@@ -576,7 +566,7 @@ developerfeedbackmodule_UI <- function(id) {
             div(class = "modern-card", style = "margin-top: 20px;",
               h3(class = "section-header",
                  tags$i(class = "fa fa-exclamation-circle", style = "margin-right: 8px;"),
-                 "Data Quality Issues by Category"),
+                 "Validation Rules by Field"),
               reactable::reactableOutput(ns("issues_detail_table"))
             ),
 
@@ -584,7 +574,7 @@ developerfeedbackmodule_UI <- function(id) {
             div(class = "modern-card",
               h3(class = "section-header",
                  tags$i(class = "fa fa-id-card", style = "margin-right: 8px;"),
-                 "Organization Identifier Analysis"),
+                 "Identifier Distribution & Format Checks"),
               fluidRow(
                 column(width = 6,
                   div(class = "chart-container",
@@ -594,13 +584,13 @@ developerfeedbackmodule_UI <- function(id) {
                 ),
                 column(width = 6,
                   div(class = "chart-container",
-                    h4(class = "subsection-header", "Conformance by Type"),
+                    h4(class = "subsection-header", "Format Validation by Type"),
                     plotOutput(ns("conformance_by_type_chart"), height = "350px")
                   )
                 )
               ),
               div(class = "chart-container",
-                h4(class = "subsection-header", "Organization Status Breakdown"),
+                h4(class = "subsection-header", "Organization Identifier Coverage"),
                 plotOutput(ns("organization_identifier_status_chart"), height = "300px")
               ),
               div(style = "margin-top: 20px;",
@@ -643,7 +633,7 @@ developerfeedbackmodule_UI <- function(id) {
           column(width = 12, style = "padding-top: 20px; text-align: center;",
             downloadButton(
               outputId = ns("download_feedback_report"),
-              label = "Download Organization Quality Report (CSV)",
+              label = "Download Organization Details Report (CSV)",
               class = "btn-download",
               icon = icon("download")
             )
@@ -1009,22 +999,22 @@ developerfeedbackmodule <- function(
       ),
       tags$table(style = "width: 100%; font-size: 0.88em; margin-top: 8px; border-collapse: collapse;",
         tags$tr(
-          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "CHPL Dev Count:"),
+          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "Certified API Developers in CHPL:"),
           tags$td(style = "font-weight: 700; color: #1B5A7F; text-align: right; padding: 4px 0;",
             format(as.integer(counts$chpl_dev_count[1]), big.mark = ","))
         ),
         tags$tr(
-          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "Lantern Dev Count from CHPL:"),
+          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "Developers Processed by Lantern:"),
           tags$td(style = "font-weight: 700; color: #2c3e50; text-align: right; padding: 4px 0;",
             format(as.integer(counts$lantern_chpl_dev_count[1]), big.mark = ","))
         ),
         tags$tr(
-          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "CHPL FHIR Bundle Hyperlinks:"),
+          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "FHIR Bundle URLs in CHPL:"),
           tags$td(style = "font-weight: 700; color: #1B5A7F; text-align: right; padding: 4px 0;",
             format(as.integer(counts$chpl_bundle_count[1]), big.mark = ","))
         ),
         tags$tr(
-          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "Lantern FHIR Bundle Hyperlinks from CHPL:"),
+          tags$td(style = "color: #5a6c7d; padding: 4px 6px 4px 0;", "FHIR Bundle URLs Processed by Lantern:"),
           tags$td(style = "font-weight: 700; color: #2c3e50; text-align: right; padding: 4px 0;",
             format(as.integer(counts$lantern_chpl_bundle_count[1]), big.mark = ","))
         )
@@ -1078,7 +1068,7 @@ developerfeedbackmodule <- function(
     dev_data <- all_data_issues()
     source_filter_val <- input$source_filter
 
-    if (!is.null(source_filter_val) && source_filter_val == "CHPL Developers") {
+    if (!is.null(source_filter_val) && source_filter_val == "CHPL Certified API Developers") {
       dev_data <- dev_data[dev_data$is_chpl_developer == TRUE, ]
     } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
       dev_data <- dev_data[dev_data$is_chpl_developer == FALSE, ]
@@ -1151,20 +1141,20 @@ developerfeedbackmodule <- function(
     
     chart_data <- data.frame(
       Category = c("Identifier", "Organization Name", "Address"),
-      Valid = c(
+      Complete = c(
         as.numeric(summary$valid_identifier_count),
         as.numeric(summary$valid_name_count),
         as.numeric(summary$valid_address_count)
       ),
-      Invalid = c(
+      Incomplete = c(
         as.numeric(summary$total_orgs) - as.numeric(summary$valid_identifier_count),
         as.numeric(summary$total_orgs) - as.numeric(summary$valid_name_count),
         as.numeric(summary$total_orgs) - as.numeric(summary$valid_address_count)
       ),
       stringsAsFactors = FALSE
     )
-    
-    if (sum(chart_data$Valid) == 0 && sum(chart_data$Invalid) == 0) {
+
+    if (sum(chart_data$Complete) == 0 && sum(chart_data$Incomplete) == 0) {
       return(
         ggplot() + 
           geom_text(aes(x = 0.5, y = 0.5, label = "No data available"), size = 6, color = "#7f8c8d") +
@@ -1173,14 +1163,14 @@ developerfeedbackmodule <- function(
     }
     
     chart_data_long <- chart_data %>%
-      pivot_longer(cols = c(Valid, Invalid), names_to = "Status", values_to = "Count")
+      pivot_longer(cols = c(Complete, Incomplete), names_to = "Status", values_to = "Count")
     
     ggplot(chart_data_long, aes(x = Category, y = Count, fill = Status)) +
       geom_col(position = "dodge", width = 0.7) +
       geom_text(aes(label = format(Count, big.mark = ",")), 
                 position = position_dodge(width = 0.7), vjust = -0.5, 
                 fontface = "bold", size = 4) +
-      scale_fill_manual(values = c("Valid" = "#28a745", "Invalid" = "#dc3545")) +
+      scale_fill_manual(values = c("Complete" = "#28a745", "Incomplete" = "#D4970A")) +
       labs(x = NULL, y = "Number of Organizations") +
       theme_minimal() +
       theme(
@@ -1203,9 +1193,9 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     
     status_data <- data.frame(
-      Status = c("Valid Identifiers", 
-                 "No Identifiers", 
-                 "Only Invalid Identifiers"),
+      Status = c("Conformant Identifiers",
+                 "No Identifier Published",
+                 "Identifier Format Not Recognized"),
       Count = c(
         as.numeric(id_summary$orgs_with_valid),
         as.numeric(id_summary$orgs_with_no_identifiers),
@@ -1226,9 +1216,9 @@ developerfeedbackmodule <- function(
       )
     }
     
-    colors <- c("Valid Identifiers" = "#28a745",
-                "No Identifiers" = "#6c757d", 
-                "Only Invalid Identifiers" = "#dc3545")
+    colors <- c("Conformant Identifiers" = "#28a745",
+                "No Identifier Published" = "#6c757d",
+                "Identifier Format Not Recognized" = "#D4970A")
     
     ggplot(status_data, aes(x = reorder(Status, Count), y = Count, fill = Status)) +
       geom_col(width = 0.6) +
@@ -1316,19 +1306,20 @@ developerfeedbackmodule <- function(
     
     conformance_data <- data.frame(
       Type = c("NPI", "CLIA", "NAIC"),
-      Valid = c(
-        as.numeric(id_summary$npi_valid), 
-        as.numeric(id_summary$clia_valid), 
+      `Conformant Format` = c(
+        as.numeric(id_summary$npi_valid),
+        as.numeric(id_summary$clia_valid),
         as.numeric(id_summary$naic_valid)
       ),
-      Invalid = c(
-        as.numeric(id_summary$npi_invalid), 
-        as.numeric(id_summary$clia_invalid), 
+      `Non-Conformant Format` = c(
+        as.numeric(id_summary$npi_invalid),
+        as.numeric(id_summary$clia_invalid),
         as.numeric(id_summary$naic_invalid)
       ),
-      stringsAsFactors = FALSE
+      stringsAsFactors = FALSE,
+      check.names = FALSE
     ) %>%
-      filter(Valid + Invalid > 0)
+      filter(`Conformant Format` + `Non-Conformant Format` > 0)
     
     if (nrow(conformance_data) == 0) {
       return(
@@ -1340,15 +1331,15 @@ developerfeedbackmodule <- function(
     }
     
     conformance_long <- conformance_data %>%
-      pivot_longer(cols = c(Valid, Invalid), names_to = "Status", values_to = "Count")
+      pivot_longer(cols = c(`Conformant Format`, `Non-Conformant Format`), names_to = "Status", values_to = "Count")
     
     ggplot(conformance_long, aes(x = Type, y = Count, fill = Status)) +
       geom_col(position = "stack") +
       geom_text(aes(label = Count), position = position_stack(vjust = 0.5), 
                 fontface = "bold", color = "white", size = 4) +
-      scale_fill_manual(values = c("Valid" = "#28a745", "Invalid" = "#dc3545")) +
+      scale_fill_manual(values = c("Conformant Format" = "#28a745", "Non-Conformant Format" = "#D4970A")) +
       labs(x = "Identifier Type", y = "Number of Distinct Identifier Values",
-           title = "Valid vs. Invalid Identifier Values (NPI, CLIA, NAIC)") +
+           title = "Conformant vs. Non-Conformant Format (NPI, CLIA, NAIC)") +
       theme_minimal() +
       theme(
         plot.title = element_text(size = 12, face = "bold", margin = margin(b = 8)),
@@ -1427,9 +1418,9 @@ developerfeedbackmodule <- function(
                             style = function(value) {
                               if (value > 0) list(color = "#28a745", fontWeight = 600)
                             }),
-        Invalid_Count = colDef(name = "Invalid Values", format = colFormat(separators = TRUE), width = 110,
+        Invalid_Count = colDef(name = "Non-Conformant Values", format = colFormat(separators = TRUE), width = 110,
                               style = function(value) {
-                                if (value > 0) list(color = "#dc3545", fontWeight = 600)
+                                if (value > 0) list(color = "#B8860B", fontWeight = 600)
                               }),
         Conformance_Rate = colDef(
           name = "Conformance Rate", 
@@ -1486,13 +1477,9 @@ developerfeedbackmodule <- function(
     issues_data <- data.frame(
       Issue_Category = c("Identifier", "Organization Names", "Address"),
       Common_Issues = c(
-        paste0("Missing identifier data (", format(id_summary$no_identifier_count, big.mark = ","), "), ",
-               "invalid NPI check digits (", format(id_summary$npi_invalid, big.mark = ","), "), ",
-               "incorrect CLIA format (", format(id_summary$clia_invalid, big.mark = ","), "), ",
-               "wrong NAIC length (", format(id_summary$naic_invalid, big.mark = ","), "). ",
-               "Note: other health system IDs (", format(id_summary$other_count, big.mark = ","), ") are accepted per 89 FR 1288."),
-        "Placeholder names (-, ., N/A), names too short (<3 chars), excessive special characters",
-        "Missing street/city/state/ZIP, placeholder addresses (123 Main St), incomplete components"
+        "Checks for presence of at least one identifier. Validates NPI (10-digit + Luhn), CLIA (2D7), and NAIC (5-digit) formats. Other health system IDs are accepted per 89 FR 1288.",
+        "Flags potential placeholder values (e.g., -, ., N/A), names shorter than 3 characters, and names with excessive special characters",
+        "Checks for complete street, city, state, and ZIP. Flags common placeholder patterns (e.g., 123 Main St) and incomplete components"
       ),
       US_Core_Reference = c(
         "https://build.fhir.org/ig/HL7/US-Core/StructureDefinition-us-core-organization.html",
@@ -1505,9 +1492,9 @@ developerfeedbackmodule <- function(
     reactable(
       issues_data,
       columns = list(
-        Issue_Category = colDef(name = "Issue Category", width = 180,
+        Issue_Category = colDef(name = "Field", width = 180,
                                style = list(fontWeight = 600, color = "#2c3e50")),
-        Common_Issues = colDef(name = "Common Issues", minWidth = 350,
+        Common_Issues = colDef(name = "What Lantern Checks", minWidth = 350,
                               style = list(fontSize = "13px", color = "#5a6c7d", lineHeight = "1.5")),
         US_Core_Reference = colDef(
           name = "US-Core Reference",
@@ -1598,7 +1585,7 @@ developerfeedbackmodule <- function(
     }
 
     # Apply source filter
-    if (!is.null(source_filter_val) && source_filter_val == "CHPL Developers") {
+    if (!is.null(source_filter_val) && source_filter_val == "CHPL Certified API Developers") {
       dev_data <- dev_data[dev_data$is_chpl_developer == TRUE, ]
     } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
       dev_data <- dev_data[dev_data$is_chpl_developer == FALSE, ]
@@ -1628,7 +1615,7 @@ developerfeedbackmodule <- function(
       defaultSorted = list(developer_name = "asc"),
       columns = list(
         developer_name = colDef(
-          name = "Developer Name",
+          name = "Certified API Developer",
           minWidth = 180,
           style = list(fontWeight = 600, color = "#2c3e50")
         ),
@@ -1661,7 +1648,7 @@ developerfeedbackmodule <- function(
           }
         ),
         no_org_data_endpoints = colDef(
-          name = "No Org Data",
+          name = "Endpoints Without Org Data",
           width = 110,
           format = colFormat(separators = TRUE),
           align = "center",
@@ -1676,18 +1663,18 @@ developerfeedbackmodule <- function(
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
-            if (value == 0) list(color = "#dc3545", fontWeight = 600)
+            if (value == 0) list(color = "#B8860B", fontWeight = 600)
             else list(color = "#28a745", fontWeight = 600)
           }
         ),
         has_empty_bundle = colDef(
-          name = "Empty Bundle",
+          name = "Bundle Empty",
           width = 120,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
               tags$span(
-                style = "color: #dc3545; font-weight: 700;",
+                style = "color: #B8860B; font-weight: 700;",
                 tags$i(class = "fa fa-check-circle", style = "margin-right: 5px;"),
                 "Yes"
               )
@@ -1701,7 +1688,7 @@ developerfeedbackmodule <- function(
           }
         ),
         shares_list_source = colDef(
-          name = "Shares FHIR Bundle URL",
+          name = "Shared Bundle URL",
           width = 160,
           align = "center",
           cell = function(value) {
@@ -1721,7 +1708,7 @@ developerfeedbackmodule <- function(
           }
         ),
         shares_fhir_endpoints = colDef(
-          name = "Shares FHIR Endpoints",
+          name = "Overlapping Endpoints",
           width = 170,
           align = "center",
           cell = function(value) {
@@ -1773,12 +1760,12 @@ developerfeedbackmodule <- function(
       recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
-                     "Missing Identifier Data: "),
+                     "Identifier Not Provided: "),
           paste0(format(id_summary$no_identifier_count, big.mark = ","),
-                 " organizations (", no_id_percentage, "%) have no identifier data."),
+                 " organizations (", no_id_percentage, "%) do not include an identifier in their published data."),
           tags$br(),
-          tags$small("Organizations must include at least one identifier to meet US-Core requirements.",
-                     " Per 89 FR 1288, NPI, CLIA, CCN, or other health system IDs are all acceptable.")
+          tags$small("Per 89 FR 1288, organizations are expected to publish at least one facility-level identifier.",
+                     " Acceptable types include NPI, CLIA, CCN, NAIC, or other health system IDs.")
         )
       ))
     }
@@ -1789,11 +1776,11 @@ developerfeedbackmodule <- function(
       recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
-                     "Organizations with Only Invalid Identifiers: "),
+                     "Identifiers Not Matching Expected Format: "),
           paste0(format(id_summary$orgs_with_invalid_only, big.mark = ","),
-                 " organizations (", invalid_only_percentage, "%) have NPI/CLIA/NAIC identifiers that fail format validation."),
+                 " organizations (", invalid_only_percentage, "%) include NPI, CLIA, or NAIC identifiers that do not match expected format rules."),
           tags$br(),
-          tags$small("Review NPI (10-digit + Luhn), CLIA (2D7 format), and NAIC (5-digit) identifier formats.")
+          tags$small("Expected formats: NPI (10 digits with Luhn check digit), CLIA (2-digit + 'D' + 7 digits), NAIC (5 digits).")
         )
       ))
     }
@@ -1803,10 +1790,10 @@ developerfeedbackmodule <- function(
       recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-clipboard-check", style = "margin-right: 5px;"),
-                     "US-Core Identifier Conformance Issues: "),
-          paste0("Only ", summary$identifier_percentage, "% of organizations have conformant identifiers."),
+                     "Identifier Format Conformance Rate: "),
+          paste0(summary$identifier_percentage, "% of organizations with identifiers publish them in conformant format."),
           tags$br(),
-          tags$small("Ensure NPI identifiers are 10 digits with valid check digits, CLIA identifiers follow 2D7 format, and NAIC identifiers are 5 digits.")
+          tags$small("Lantern checks NPI (10 digits + Luhn), CLIA (2D7), and NAIC (5-digit) formats against US-Core profiles.")
         )
       ))
     }
@@ -1816,8 +1803,8 @@ developerfeedbackmodule <- function(
       recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-id-badge", style = "margin-right: 5px;"),
-                     "Invalid NPI Identifiers: "),
-          paste0(format(id_summary$npi_invalid, big.mark = ","), " NPIs failed validation (us-core-16/17)."),
+                     "NPI Format Observations: "),
+          paste0(format(id_summary$npi_invalid, big.mark = ","), " NPI values do not match the expected 10-digit + Luhn check digit format (us-core-16, us-core-17)."),
           tags$br(),
           tags$small("Verify NPIs are exactly 10 digits and have valid Luhn check digits.")
         )
@@ -1828,8 +1815,8 @@ developerfeedbackmodule <- function(
       recommendations <- c(recommendations, list(
         tags$div(class = "alert alert-warning",
           tags$strong(tags$i(class = "fa fa-flask", style = "margin-right: 5px;"),
-                     "Invalid CLIA Identifiers: "),
-          paste0(format(id_summary$clia_invalid, big.mark = ","), " CLIAs failed validation (us-core-18)."),
+                     "CLIA Format Observations: "),
+          paste0(format(id_summary$clia_invalid, big.mark = ","), " CLIA values do not match the expected 2D7 format (us-core-18)."),
           tags$br(),
           tags$small("CLIA format must be: 2 digits + 'D' + 7 digits (e.g., '12D3456789').")
         )
@@ -1884,7 +1871,7 @@ developerfeedbackmodule <- function(
   # Helper: apply source filter to developer data
   apply_source_filter <- function(data) {
     source_filter_val <- input$source_filter
-    if (!is.null(source_filter_val) && source_filter_val == "CHPL Developers") {
+    if (!is.null(source_filter_val) && source_filter_val == "CHPL Certified API Developers") {
       data <- data[data$is_chpl_developer == TRUE, ]
     } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
       data <- data[data$is_chpl_developer == FALSE, ]
