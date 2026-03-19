@@ -183,7 +183,16 @@ function(input, output, session) { #nolint
                 <u>Example 3:</u> Combine source filter with other filters (e.g., FHIR version):<br/>
                 <code>?source=CHPL&amp;fhir_version=4.0.1</code>
                 <br/><br/>
-                
+
+                <b>Endpoints API query parameters:</b> The Endpoints Download API (<code>https://lantern.healthit.gov/api/daily/download</code>) now supports the following query parameters to filter the downloaded data:<br/><br/>
+
+                <code>developer</code> – Filter by certified API developer name.<br/>
+                <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br/>
+                <code>source</code> – Filter by data source (e.g., CHPL, State Medicaid, Payer, Other).<br/><br/>
+
+                All filters can be used independently or in combination. For more details and examples, see the Downloads tab.
+                <br/><br/>
+
                 <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>')),
       easyClose = TRUE
     ))

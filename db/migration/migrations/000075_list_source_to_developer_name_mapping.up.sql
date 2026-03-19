@@ -199,10 +199,9 @@ WITH contact_info_extracted AS (
   WHERE capability_statement::jsonb != 'null' AND requested_fhir_version = 'None'
 ),
 endpoint_details AS (
-  -- DISTINCT ON (url): contact info is URL-scoped. When a list_source maps to multiple
-  -- vendors, endpoint_export fans out to one row per vendor; picking one vendor per URL
-  -- prevents contact rows from being duplicated once per shared vendor.
-  SELECT DISTINCT ON (url)
+  -- DISTINCT ON (url, vendor_name): produces one row per (url, vendor_name) pair so that
+  -- URLs shared by multiple vendors each get a row per vendor, enabling correct vendor filtering.
+  SELECT DISTINCT ON (url, vendor_name)
     url,
     -- Fix for handling Unknown vendor - make sure empty or NULL is replaced with 'Unknown'
     CASE
@@ -221,16 +220,16 @@ endpoint_details AS (
   ORDER BY url, vendor_name
 ),
 endpoint_names_grouped AS (
-  SELECT 
-    url, 
-    string_agg(DISTINCT endpoint_names_list, ';') AS endpoint_names -- Added DISTINCT to avoid duplications
+  SELECT
+    url,
+    vendor_name,
+    string_agg(DISTINCT endpoint_names_list, ';') AS endpoint_names
   FROM (
-    SELECT DISTINCT url, UNNEST(endpoint_names) as endpoint_names_list 
-    FROM endpoint_export 
+    SELECT DISTINCT url, vendor_name, UNNEST(endpoint_names) as endpoint_names_list
+    FROM endpoint_export
     WHERE requested_fhir_version = 'None'
-    ORDER BY endpoint_names_list
   ) AS unnested
-  GROUP BY url
+  GROUP BY url, vendor_name
 ),
 -- First, get URLs with contact info
 urls_with_contacts AS (
@@ -258,20 +257,20 @@ joined_with_contacts AS (
     COALESCE(c.contact_preference, 999) AS contact_preference,
     TRUE AS has_contact,
     MD5(CONCAT(
-      e.url, 
-      COALESCE(c.contact_name, ''), 
-      COALESCE(c.contact_type, ''), 
+      e.url,
+      e.vendor_name,
+      COALESCE(c.contact_name, ''),
+      COALESCE(c.contact_type, ''),
       COALESCE(c.contact_value, ''),
-      COALESCE(c.contact_preference::text, '999'),
-      COALESCE(random()::text, '')  -- Add randomness to handle duplicates
+      COALESCE(c.contact_preference::text, '999')
     )) AS unique_hash
-  FROM 
+  FROM
     endpoint_details e
-  INNER JOIN 
+  INNER JOIN
     urls_with_contacts uc ON e.url = uc.url
-  LEFT JOIN 
-    endpoint_names_grouped eng ON e.url = eng.url
-  LEFT JOIN 
+  LEFT JOIN
+    endpoint_names_grouped eng ON e.url = eng.url AND e.vendor_name = eng.vendor_name
+  LEFT JOIN
     contact_info_extracted c ON e.url = c.url
 ),
 -- Handle URLs without contacts
@@ -288,16 +287,16 @@ joined_without_contacts AS (
     999 AS contact_preference,
     FALSE AS has_contact,
     MD5(CONCAT(
-      e.url, 
-      'no_contact',
-      COALESCE(random()::text, '')  -- Add randomness to handle duplicates
+      e.url,
+      e.vendor_name,
+      'no_contact'
     )) AS unique_hash
-  FROM 
+  FROM
     endpoint_details e
-  INNER JOIN 
+  INNER JOIN
     urls_without_contacts nc ON e.url = nc.url
-  LEFT JOIN 
-    endpoint_names_grouped eng ON e.url = eng.url
+  LEFT JOIN
+    endpoint_names_grouped eng ON e.url = eng.url AND e.vendor_name = eng.vendor_name
 )
 -- Combine both sets
 SELECT * FROM joined_with_contacts
