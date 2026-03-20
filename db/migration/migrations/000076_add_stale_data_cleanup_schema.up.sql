@@ -13,4 +13,7 @@ CREATE INDEX idx_list_source_info_updated_at ON list_source_info(updated_at);
 CREATE INDEX idx_fhir_endpoints_metadata_url ON fhir_endpoints_metadata(url);
 CREATE INDEX idx_fhir_endpoints_availability_url ON fhir_endpoints_availability(url);
 
+-- Add primary key constraint to list_source_info table
+ALTER TABLE list_source_info ADD CONSTRAINT list_source_info_pkey PRIMARY KEY (list_source);
+
 COMMIT;
