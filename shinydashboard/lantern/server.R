@@ -65,12 +65,18 @@ function(input, output, session) { #nolint
         "dashboard_page",
         reactive(input$httpvendor))
 
+  # Expand normalized FHIR versions (e.g., "4.4.0") to include short DB forms (e.g., "4.4", "4")
+  expanded_fhir_version <- reactive({
+    req(input$fhir_version)
+    expand_fhir_versions_for_db(input$fhir_version)
+  })
+
   observeEvent(database_fetch, {
     if (database_fetch() == 0) {
       callModule(
         endpointsmodule,
         "endpoints_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$availability),
         reactive(input$is_chpl))
@@ -82,33 +88,34 @@ function(input, output, session) { #nolint
       callModule(
         organizationsmodule,
         "organizations_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
-        reactive(input$match_confidence))
+        reactive(input$match_confidence),
+        reactive(input$is_chpl))
 
       callModule(
         capabilitystatementsizemodule,
         "capabilitystatementsize_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         securitymodule,
         "security_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$auth_type_code))
 
       callModule(
         smartresponsemodule,
         "smartresponse_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         resourcemodule,
         "resource_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$resources),
         reactive(input$operations))
@@ -116,19 +123,19 @@ function(input, output, session) { #nolint
       callModule(
         implementationmodule,
         "implementation_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         fieldsmodule,
         "fields_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor))
 
       callModule(
         profilemodule,
         "profile_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$profile_resource),
         reactive(input$profiles))
@@ -136,14 +143,14 @@ function(input, output, session) { #nolint
       callModule(
         valuesmodule,
         "values_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$field))
 
       callModule(
         contactsmodule,
         "contacts_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$has_contact)
       )
@@ -151,7 +158,7 @@ function(input, output, session) { #nolint
       callModule(
         validationsmodule,
         "validations_page",
-        reactive(input$fhir_version),
+        expanded_fhir_version,
         reactive(input$vendor),
         reactive(input$validation_group))
     }
@@ -161,60 +168,31 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = paste0(version_title, " - Release Notes"),
        p(HTML('
-                <b>State Medicaid Endpoints:</b> Lantern now displays data for the FHIR endpoints provided in the State Medicaid Agency (SMA) Provider Directory under the source name "State Medicaid" on the Endpoints tab.<br/><br/>
+                <b>Source filter for Organizations data:</b> The Organizations tab contains a new "Source" dropdown and column which allows users to filter the data based on the source which provided that data.<br/><br/>
 
-                <b>Organization data:</b> Lantern displays Organization\'s data as the following columns on the Organizations tab:<br/>
-                <ul>
-                  <li>Organization Identifier Type</li>
-                  <li>Organization Identifier</li>
-                  <li>Organization Name</li>
-                  <li>Organization Address</li>
-                </ul>
+                Additionally, the Organizations API contains a new "source" filter which would generate a filtered response based on the source.<br/><br/>
 
-                Lantern now shows only organizations that are marked as "active" in their respective FHIR bundles.<br/><br/>
+                <u>Example 1:</u> Download data from CHPL sources only:<br/>
+                <code>?source=CHPL</code>
+                <br/><br/>
 
-                <b>Download (page-level):</b> Added a Download Organizations action that returns data based on the filters applied on the page.<br/>
-                <ul>
-                  <li>No filters → downloads all rows.</li>
-                  <li>With filters → downloads filtered rows.</li>
-                </ul>
+                <u>Example 2:</u> Download data from State Medicaid sources only:<br/>
+                <code>?source=State%20Medicaid</code>
+                <br/><br/>
 
-                <b>Performance:</b> Performance improvements to render the pages.<br/><br/>
+                <u>Example 3:</u> Combine source filter with other filters (e.g., FHIR version):<br/>
+                <code>?source=CHPL&amp;fhir_version=4.0.1</code>
+                <br/><br/>
 
-                <b>New Organizations Download API:</b><br/>
-                <a href="https://lantern.healthit.gov/api/organizations/v1" target="_blank">
-                  https://lantern.healthit.gov/api/organizations/v1
-                </a><br/><br/>
+                <b>Endpoints API query parameters:</b> The Endpoints Download API (<code>https://lantern.healthit.gov/api/daily/download</code>) now supports the following query parameters to filter the downloaded data:<br/><br/>
 
-                <b>Access:</b> You can download the data by directly accessing the URL or by using tools like Postman.<br/>
-                <b>Filtering:</b> Use URL-encoded query parameters (you can combine them):<br/>
-                <ul>
-                  <li><code>developer</code> — filter by certified API developer name</li>
-                  <li><code>fhir_version</code> — comma-separated FHIR versions (e.g., 4.0.1)</li>
-                  <li><code>identifier</code> — exact organization identifier (e.g., NPI, Other)</li>
-                  <li><code>organization_detail</code> — use <code>organization_detail=present</code> to return only orgs with data</li>
-                </ul>
+                <code>developer</code> – Filter by certified API developer name.<br/>
+                <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br/>
+                <code>source</code> – Filter by data source (e.g., CHPL, State Medicaid, Payer, Other).<br/><br/>
 
-                <b>Examples:</b><br/>
-                By Developer:<br/>
-                .../api/organizations/v1?developer=Cerner%20Corporation<br/><br/>
-                By NPI:<br/>
-                .../api/organizations/v1?identifier=1922195171<br/><br/>
-                By FHIR Version:<br/>
-                .../api/organizations/v1?fhir_version=4.0.1<br/><br/>
-                Only with Data:<br/>
-                .../api/organizations/v1?organization_detail=present<br/><br/>
+                All filters can be used independently or in combination. For more details and examples, see the Downloads tab.
+                <br/><br/>
 
-                <b>Organization Data visibility & ingestion notes</b><br/>
-                Lantern now ingests all organizations found in FHIR bundles, even when data fields are missing.
-                This can help developers spot gaps in their data and fix them.<br/><br/>
-
-                <b>Bug Fixes:</b>
-                <ul>
-                  <li>1UP was not showing as a developer though they have data. Fixed to display 1UP.</li>
-                  <li>Lantern organizations were grouped by Organization name on the UI, potentially grouping unrelated organizations. This issue is resolved and we no longer group by name.</li>
-                  <li>If an organization information is changed or removed, changes to backend data processing to keep the database clean. This is only a backend change, no impact to the data on the front-end.</li>
-                </ul>
                 <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>')),
       easyClose = TRUE
     ))
@@ -268,6 +246,10 @@ function(input, output, session) { #nolint
 
   show_availability_filter <- reactive(
     input$side_menu %in% c("endpoints_tab")
+  )
+
+  show_source_filter <- reactive(
+    input$side_menu %in% c("organizations_tab")
   )
 
   show_validations_filter <- reactive(
@@ -335,7 +317,7 @@ function(input, output, session) { #nolint
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for specific tabs
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab")) {
+      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab", "values_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
@@ -401,6 +383,18 @@ function(input, output, session) { #nolint
           fhirDropdown_noLabel),
           column(width = 4, developerDropdown),
           column(width = 4, contactDropdown)
+        )
+      } else if (show_source_filter()) {
+        fluidRow(
+          column(width = 4,
+          tags$div(
+            p("FHIR Version: ", style = "font-weight: 700; font-size: 14px;"),
+            actionButton("fhirversion_selectall", "Select All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;"),
+            actionButton("fhirversion_removeall", "Remove All FHIR Versions", width = "145px", style = "font-size: 11px; margin-bottom: 3px; margin-left: auto; background-color: white;")
+          ),
+          fhirDropdown_noLabel),
+          column(width = 4, developerDropdown),
+          column(width = 4, chplDropdown)
         )
       } else {
         fluidRow(
@@ -516,7 +510,7 @@ function(input, output, session) { #nolint
 
   profile_options <- reactive({
     query <- tbl(db_connection, "endpoint_supported_profiles_mv") %>%
-      filter(fhir_version %in% !!input$fhir_version)
+      filter(fhir_version %in% !!expanded_fhir_version())
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       query <- query %>% filter(vendor_name == !!input$vendor)
@@ -545,7 +539,7 @@ function(input, output, session) { #nolint
     req(input$fhir_version, input$vendor)
 
     res <- res %>%
-    filter(fhir_version %in% input$fhir_version) %>%
+    filter(fhir_version %in% expanded_fhir_version()) %>%
     filter(resource != "")
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
@@ -570,8 +564,8 @@ function(input, output, session) { #nolint
     
     res <- tbl(db_connection, "mv_endpoint_resource_types")
     
-    res <- res %>% 
-      filter(fhir_version %in% !!input$fhir_version)
+    res <- res %>%
+      filter(fhir_version %in% !!expanded_fhir_version())
     
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
       res <- res %>% filter(vendor_name == !!input$vendor)
@@ -903,11 +897,13 @@ current_endpoint <- reactive({
     splitString <- strsplit(input$endpoint_popup, "&&")[[1]]
     endpointURL <- splitString[1]
     endpoint_requested_fhir_version <- splitString[2]
+    # splitString may have 2 or 3 parts depending on the source
+    endpoint_vendor_name <- if (length(splitString) >= 3) splitString[3] else NA
   } else {
     # Only URL is provided (from Organizations tab)
     endpointURL <- input$endpoint_popup
 
-    # Query DB for the most recent requested_fhir_version
+    # Query DB for the most recent requested_fhir_version and vendor_name
     res <- tbl(db_connection, "selected_fhir_endpoints_mv") %>%
       filter(url == !!endpointURL) %>%
       arrange(desc(info_updated)) %>%
@@ -915,12 +911,32 @@ current_endpoint <- reactive({
 
     if (nrow(res) == 0) {
       warning(paste("No matching rows found for URL:", endpointURL))
-      endpoint_requested_fhir_version <- NA 
+      endpoint_requested_fhir_version <- NA
+      endpoint_vendor_name <- NA
     } else {
       endpoint_requested_fhir_version <- res$requested_fhir_version[1]
+      endpoint_vendor_name <- res$vendor_name[1]
     }
   }
-  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version)
+
+  if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
+    endpoint_vendor_name <- input$vendor
+  }
+
+  # If vendor_name is still NA (e.g., splitString had only 2 parts and vendor filter is "All Developers"),
+  # look it up from the DB using the URL and requested_fhir_version
+  if (is.na(endpoint_vendor_name)) {
+    vendor_res <- tbl(db_connection, "selected_fhir_endpoints_mv") %>%
+      filter(url == !!endpointURL) %>%
+      filter(requested_fhir_version == !!endpoint_requested_fhir_version) %>%
+      arrange(desc(info_updated)) %>%
+      collect()
+    if (nrow(vendor_res) > 0) {
+      endpoint_vendor_name <- vendor_res$vendor_name[1]
+    }
+  }
+
+  current_endpoint_list <- list(url = endpointURL, requested_fhir_version = endpoint_requested_fhir_version, vendor_name = endpoint_vendor_name)
   current_endpoint_list
 })
 
@@ -928,7 +944,7 @@ current_endpoint <- reactive({
 ### CHPL Products Modal Page ###
 endpoint_products <- reactive({
   endpoint <- current_endpoint()
-  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 })
 
@@ -955,14 +971,14 @@ endpoint_products_page <- function() {
 endpoint_implementation_guides <- reactive({
   endpoint <- current_endpoint()
 
-  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   implementation_guides
 })
 
 endpoint_profiles <- reactive({
   endpoint <- current_endpoint()
 
-  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   profiles
 
 })
@@ -1001,21 +1017,21 @@ required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 endpoint_fields <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "false")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "false")
   res
 })
 
 endpoint_extensions <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, "true")
+  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "true")
   res
 })
 
 endpoint_resources <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 
 })
@@ -1023,7 +1039,7 @@ endpoint_resources <- reactive({
 endpoint_smart_capabilities <- reactive({
   endpoint <- current_endpoint()
 
-  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version)
+  res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
 
 })
@@ -1148,14 +1164,20 @@ endpoint_capabilities_page <- function() {
  get_endpoint_list_orgs <- reactive({
     endpoint <- current_endpoint()
 
-    # Get the actual cap_fhir_version using the url only
-    cap_fhir_ver <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL) %>%
+    # Use vendor_name for filtering; fall back to NULL (no filter) if unknown
+    vendor_filter <- if (!is.null(endpoint$vendor_name) && !is.na(endpoint$vendor_name))
+                       endpoint$vendor_name
+                     else
+                       NULL
+
+    # Get the actual cap_fhir_version using the url (and vendor filter)
+    cap_fhir_ver <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter) %>%
       filter(url == endpoint$url) %>%
-      pull(fhir_version) %>% 
+      pull(fhir_version) %>%
       unique()
-    
+
     # Now use cap_fhir_ver to filter
-    res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = NULL)
+    res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter)
     res <- res %>%
       filter(url == endpoint$url) %>%
       filter(fhir_version == cap_fhir_ver) %>%
@@ -1341,8 +1363,8 @@ output$endpoint_http_response_table <- reactable::renderReactable({
 
   endpoint <- current_endpoint()
 
-  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, db_connection)
-  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version)
+  detailsInfo <- get_details_page_info(endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, db_connection)
+  metricsInfo <- get_details_page_metrics(endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
 
   page <- fluidPage(
     h1("Endpoint Details"),

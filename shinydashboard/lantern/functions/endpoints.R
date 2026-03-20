@@ -29,8 +29,12 @@ get_endpoint_export_tbl <- function(db_tables) {
 }
 
 get_endpoint_organization_list <- function(endpoint) {
+  splitString <- strsplit(endpoint, "&&")[[1]]
+    endpoint_name <- splitString[1]
+    vendor_name <- splitString[2]
+  
   res <- tbl(db_connection,
-  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint, "' ORDER BY endpoint_names_list"))) %>%
+  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint_name, "' AND vendor_name = '", vendor_name, "' ORDER BY endpoint_names_list"))) %>%
   collect() %>%
   group_by(url) %>%
   summarise(endpoint_names_list = list(endpoint_names_list)) %>%
@@ -126,6 +130,8 @@ get_fhir_version_factors <- function(endpoint_tbl) {
 get_distinct_fhir_version_list_no_capstat <- function(endpoint_export_tbl) {
   res <- endpoint_export_tbl %>%
   distinct(fhir_version) %>%
+  mutate(fhir_version = normalize_fhir_version(fhir_version)) %>%
+  distinct(fhir_version) %>%
   split(.$fhir_version) %>%
   purrr::map(~ .$fhir_version)
 }
@@ -133,6 +139,8 @@ get_distinct_fhir_version_list_no_capstat <- function(endpoint_export_tbl) {
 get_distinct_fhir_version_list <- function(endpoint_export_tbl) {
   res <- endpoint_export_tbl %>%
   filter(fhir_version != "No Cap Stat") %>%
+  distinct(fhir_version) %>%
+  mutate(fhir_version = normalize_fhir_version(fhir_version)) %>%
   distinct(fhir_version) %>%
   split(.$fhir_version) %>%
   purrr::map(~ .$fhir_version)
@@ -143,6 +151,8 @@ get_fhir_version_list <- function(endpoint_export_tbl, no_cap_stat) {
   fhir_version_list <- list()
 
   res <- endpoint_export_tbl %>%
+  distinct(fhir_version) %>%
+  mutate(fhir_version = normalize_fhir_version(fhir_version)) %>%
   distinct(fhir_version)
 
   res <- res %>% mutate(fhir_version_name = case_when(
@@ -255,10 +265,6 @@ get_vendor_list <- function(endpoint_export_tbl) {
 
 # Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
 get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name, page_size = -1, offset = -1, search_query = NULL) {
-  
-  message("PAGESIZE: ", page_size)
-  message("OFFSET: ", offset)
-
   # Create the base query string
   query_str <- "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n 
             FROM mv_resource_interactions
@@ -271,10 +277,8 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
   }
 
   # Add a filter for vendor name if a specific vendor is selected
-  if(vendor_name != 'All Developers'){
-    query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
-  }
-
+  query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
+  
   # Add search filter if present
   if (!is.null(search_query) && search_query != "") {
     pattern <- paste0("%", search_query, "%")
@@ -297,20 +301,22 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
   res
 }
 
-get_endpoint_resource_by_op <- function(db_connection, endpointURL, requestedFhirVersion, field) {
+get_endpoint_resource_by_op <- function(db_connection, endpointURL, requestedFhirVersion, vendorName, field) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
-      jsonb_array_elements_text(operation_resource->'", field, "') as type
-      from fhir_endpoints_info
-      WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+      jsonb_array_elements_text(f.operation_resource->'", field, "') as type
+      from fhir_endpoints_info f, vendors v
+      WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
+      AND v.name = '", vendorName, "' AND f.vendor_id = v.id"))) %>%
     collect()
   res
 }
 
-get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVersion) {
+get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
   res <- tbl(db_connection,
-    sql(paste0("SELECT jsonb_object_keys(operation_resource::jsonb) as operations
-         FROM fhir_endpoints_info WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"
+    sql(paste0("SELECT jsonb_object_keys(f.operation_resource::jsonb) as operations
+         FROM fhir_endpoints_info f, vendors v WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
+         AND v.name = '", vendorName, "' AND v.id = f.vendor_id"
     ))
   ) %>%
   collect()
@@ -321,7 +327,7 @@ get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVers
 
   if (length(op_list) > 0) {
     for (op in op_list) {
-      resources <- isolate(get_endpoint_resource_by_op(db_connection, endpointURL, requestedFhirVersion, op))
+      resources <- isolate(get_endpoint_resource_by_op(db_connection, endpointURL, requestedFhirVersion, vendorName, op))
       newTable <- data.frame("Operation" = c(op), "Resource" = c(resources$type))
       table <- rbind(table, newTable)
     }
@@ -335,15 +341,16 @@ get_capstat_fields <- function(db_connection) {
   return(res)
 }
 
-get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, extensionBool) {
+get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, vendorName, extensionBool) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
-      url,
-      json_array_elements(included_fields::json) ->> 'Field' as field,
-      json_array_elements(included_fields::json) ->> 'Exists' as exist,
-      json_array_elements(included_fields::json) ->> 'Extension' as extension
-      from fhir_endpoints_info f
-      WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "' AND included_fields::text <> 'null'"
+      f.url,
+      json_array_elements(f.included_fields::json) ->> 'Field' as field,
+      json_array_elements(f.included_fields::json) ->> 'Exists' as exist,
+      json_array_elements(f.included_fields::json) ->> 'Extension' as extension
+      from fhir_endpoints_info f, vendors v
+      WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
+      AND v.name = '", vendorName, "' AND f.vendor_id = v.id AND included_fields::text <> 'null'"
     ))
   ) %>%
     collect() %>%
@@ -355,14 +362,15 @@ get_supported_profiles <- function(db_connection) {
   res <- tbl(db_connection, "endpoint_supported_profiles_mv") %>% collect()
 }
 
-get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion) {
+get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
     res <- tbl(db_connection,
     sql(paste0("SELECT
-      json_array_elements(supported_profiles::json) ->> 'ProfileURL' as profileurl,
-      json_array_elements(supported_profiles::json) ->> 'ProfileName' as profilename,
-      json_array_elements(supported_profiles::json) ->> 'Resource' as resource
-      from fhir_endpoints_info f
-      WHERE supported_profiles != 'null' AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+      json_array_elements(f.supported_profiles::json) ->> 'ProfileURL' as profileurl,
+      json_array_elements(f.supported_profiles::json) ->> 'ProfileName' as profilename,
+      json_array_elements(f.supported_profiles::json) ->> 'Resource' as resource
+      from fhir_endpoints_info f, vendors v
+      WHERE f.supported_profiles != 'null' AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
+      AND v.name = '", vendorName, "' AND f.vendor_id = v.id"))) %>%
     collect()
 
     res
@@ -459,24 +467,27 @@ get_security_endpoints <- function(db_connection) {
   return(res)
 }
 
-get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion) {
+get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
-      json_array_elements_text((smart_response->'capabilities')::json) as capability
+      json_array_elements_text((f.smart_response->'capabilities')::json) as capability
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
+    LEFT JOIN vendors v on f.vendor_id = v.id
     WHERE f.metadata_id = m.id AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-    AND m.smart_http_response=200"))) %>%
+    AND m.smart_http_response=200 AND v.name = '", vendorName, "'"))) %>%
     collect()
   res
 }
 
-get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersion) {
+get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersion, vendor_name) {
+  message("Inside get_endpoint_products")
   res <- tbl(db_connection,
     sql(paste0("SELECT
         f.url, h.name, h.version, h.api_url, h.certification_status, h.certification_date, h.certification_edition,
-        h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h, healthit_products_map hm WHERE f.healthit_mapping_id = hm.id AND
-        hm.healthit_product_id = h.id AND f.healthit_mapping_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+        h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h, healthit_products_map hm, vendors v WHERE f.healthit_mapping_id = hm.id AND
+        hm.healthit_product_id = h.id AND f.healthit_mapping_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'",
+        "AND f.vendor_id = v.id AND v.name = '", vendor_name, "'"))) %>%
         collect() %>%
     select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
   res
@@ -514,12 +525,13 @@ get_response_tally_list <- function(db_tables) {
 }
 
 
-get_endpoint_implementation_guide <- function(db_connection, endpointURL, requestedFhirVersion) {
+get_endpoint_implementation_guide <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
   res <- tbl(db_connection,
     sql(paste0("SELECT
-          json_array_elements(capability_statement::json#>'{implementationGuide}') as implementation_guide
-          FROM fhir_endpoints_info f
-          WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+          json_array_elements(f.capability_statement::json#>'{implementationGuide}') as implementation_guide
+          FROM fhir_endpoints_info f, vendors v
+          WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
+          AND v.name = '", vendorName, "' AND f.vendor_id = v.id"))) %>%
     collect()
 
   res
@@ -534,7 +546,7 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
     query <- query %>% filter(fhir_version %in% !!fhir_version)
   }
 
-  if (!is.null(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
+  if (!is.null(vendor) && !is.na(vendor) && vendor != ui_special_values$ALL_DEVELOPERS) {
     query <- query %>% filter(vendor_name == !!vendor)
   }
 
@@ -551,17 +563,18 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
 get_capability_and_smart_response <- function(db_connection, endpointURL, requestedFhirVersion) {
   res <- tbl(db_connection,
     sql(paste0("SELECT capability_statement, smart_response FROM fhir_endpoints_info WHERE
-          url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))
+          url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "' LIMIT 1"))
    ) %>%
     collect()
   res
 
 }
 
-get_details_page_metrics <- function(endpointURL, requestedFhirVersion) {
+get_details_page_metrics <- function(endpointURL, requestedFhirVersion, vendorName) {
   res <- app$endpoint_export_tbl() %>%
     filter(url == endpointURL) %>%
     filter(requested_fhir_version == requestedFhirVersion) %>%
+    filter(vendor_name == vendorName) %>%
     distinct(url, http_response, smart_http_response, errors, cap_stat_exists, availability) %>%
     mutate(status = if_else(http_response == 200, "ACTIVE", "INACTIVE")) %>%
     mutate(errors = if_else(errors == "", "None", errors)) %>%
@@ -576,22 +589,24 @@ get_details_page_metrics <- function(endpointURL, requestedFhirVersion) {
 
 }
 
-get_details_page_info <- function(endpointURL, requestedFhirVersion, db_connection) {
+get_details_page_info <- function(endpointURL, requestedFhirVersion, vendorName, db_connection) {
     res <- app$endpoint_export_tbl() %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
+          filter(vendor_name == vendorName) %>%
           distinct(url, fhir_version, vendor_name, software_name, software_version, software_releasedate, format, info_created, info_updated)
 
     resListSource <- app$endpoint_export_tbl() %>%
           filter(url == endpointURL) %>%
           filter(requested_fhir_version == requestedFhirVersion) %>%
+          filter(vendor_name == vendorName) %>%
           distinct(list_source)
 
     resSecurity <-  tbl(db_connection,
         sql(paste0("SELECT
             json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as security
             FROM fhir_endpoints_info
-            WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "'"))) %>%
+            WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "' LIMIT 1"))) %>%
     collect()
 
     resSupportedVersions <- tbl(db_connection,

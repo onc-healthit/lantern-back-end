@@ -1,12 +1,45 @@
 BEGIN;
 
-ALTER TABLE list_source_info RENAME is_chpl TO is_chpl_old;
+DROP TABLE IF EXISTS shared_list_sources CASCADE;
 
-ALTER TABLE list_source_info ADD COLUMN is_chpl BOOLEAN;
+DROP VIEW IF EXISTS joined_export_tables CASCADE;
 
-UPDATE list_source_info SET is_chpl = TRUE WHERE is_chpl_old = 'CHPL';
+CREATE or REPLACE VIEW joined_export_tables AS
+SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
+    endpt_orgnames.organization_ids AS endpoint_ids,
+    vendors.name as vendor_name,
+    endpts_info.tls_version, endpts_info.mime_types, endpts_metadata.http_response,
+    endpts_metadata.response_time_seconds, endpts_metadata.smart_http_response, endpts_metadata.errors,
+    EXISTS (SELECT 1 FROM fhir_endpoints_info WHERE capability_statement::jsonb != 'null' AND endpts.url = fhir_endpoints_info.url) as CAP_STAT_EXISTS,
+    endpts_info.capability_fhir_version AS FHIR_VERSION,
+    endpts_info.capability_statement->>'publisher' AS PUBLISHER,
+    endpts_info.capability_statement->'software'->'name' AS SOFTWARE_NAME,
+    endpts_info.capability_statement->'software'->'version' AS SOFTWARE_VERSION,
+    endpts_info.capability_statement->'software'->'releaseDate' AS SOFTWARE_RELEASEDATE,
+    endpts_info.capability_statement->'format' AS FORMAT,
+    endpts_info.capability_statement->>'kind' AS KIND,
+    endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
+    endpts_info.requested_fhir_version, endpts_metadata.availability
+FROM fhir_endpoints AS endpts
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
+LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
+LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
+FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
+WHERE fe.id = fom.id AND fom.org_database_id = fo.id
+GROUP BY fom.id) as endpt_orgnames ON endpts.id = endpt_orgnames.id;
 
-UPDATE list_source_info SET is_chpl = FALSE WHERE is_chpl_old <> 'CHPL';
+DROP VIEW IF EXISTS organization_location CASCADE;
+
+CREATE or REPLACE VIEW organization_location AS
+    SELECT export_tables.url, export_tables.endpoint_names, export_tables.fhir_version,
+    export_tables.requested_fhir_version, export_tables.vendor_name, orgs.name AS ORGANIZATION_NAME, orgs.secondary_name AS ORGANIZATION_SECONDARY_NAME,
+    orgs.taxonomy, orgs.Location->>'state' AS STATE, orgs.Location->>'zipcode' AS ZIPCODE, orgs.npi_id as NPI_ID,
+    links.confidence AS MATCH_SCORE
+FROM endpoint_organization AS links
+RIGHT JOIN joined_export_tables AS export_tables ON links.url = export_tables.url
+LEFT JOIN npi_organizations AS orgs ON links.organization_npi_id = orgs.npi_id
+WHERE links.confidence > .97 AND orgs.Location->>'zipcode' IS NOT null;
 
 DROP VIEW IF EXISTS endpoint_export CASCADE;
 
@@ -269,7 +302,7 @@ CREATE INDEX idx_mv_contacts_info_contact_preference ON mv_contacts_info(contact
 
 DROP MATERIALIZED VIEW IF EXISTS mv_endpoint_list_organizations CASCADE;
 
-CREATE MATERIALIZED VIEW mv_endpoint_list_organizations
+CREATE MATERIALIZED VIEW IF NOT EXISTS mv_endpoint_list_organizations
 AS
 SELECT DISTINCT
     endpoint_export.url,
@@ -290,8 +323,10 @@ SELECT DISTINCT
         WHEN endpoint_export.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
         ELSE endpoint_export.fhir_version
     END AS fhir_version,
-    
-    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name
+
+    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
+
+    endpoint_export.is_chpl
 
 FROM
     endpoint_export
@@ -302,7 +337,6 @@ LEFT JOIN LATERAL (
     FROM
         unnest(endpoint_export.endpoint_names, endpoint_export.endpoint_ids) AS u(name_elem, id_elem)
 ) AS name_id ON TRUE
-
 WITH DATA;
 
 -- Create indexes for endpoint list organizations materialized view
@@ -310,6 +344,7 @@ CREATE UNIQUE INDEX idx_mv_endpoint_list_org_uniq ON mv_endpoint_list_organizati
 CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
 CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
 CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
+CREATE INDEX idx_mv_endpoint_list_org_is_chpl ON mv_endpoint_list_organizations(is_chpl);
 
 CREATE MATERIALIZED VIEW mv_organizations_aggregated AS
 WITH base_filtered_data AS (
@@ -319,7 +354,8 @@ WITH base_filtered_data AS (
         mv.organization_id,
         mv.url,
         mv.fhir_version,
-        mv.vendor_name
+        mv.vendor_name,
+        mv.is_chpl
     FROM mv_endpoint_list_organizations mv
 ),
 processed_data AS (
@@ -354,7 +390,8 @@ processed_data AS (
             THEN fhir_version
             ELSE 'Unknown'
         END AS fhir_version,
-        vendor_name
+        vendor_name,
+        is_chpl
     FROM base_filtered_data
     WHERE organization_id IS NOT NULL AND organization_id != '' AND organization_id != 'Unknown'
 ),
@@ -500,10 +537,7 @@ endpoint_data_agg AS (
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
-        string_agg(
-            DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&quot,{priority: ''event''});"> ' || url || '</a>',
-            '<br/>'
-        ) as endpoint_urls_html,
+        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || '&&None&&' || vendor_name || ''',{priority: ''event''});"> ' || url || '</a>'), '<br/>') as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
             WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
@@ -526,10 +560,13 @@ endpoint_data_agg AS (
         string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
         string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
         string_agg(DISTINCT vendor_name, E'\n') as vendor_names_csv,
+        string_agg(DISTINCT is_chpl, '<br/>') as is_chpl_html,
+        string_agg(DISTINCT is_chpl, E'\n') as is_chpl_csv,
         -- Arrays for filtering (exactly as original code)
         ARRAY(SELECT DISTINCT unnest(array_agg(fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
         ARRAY(SELECT DISTINCT unnest(array_agg(vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array
+        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
     FROM processed_data
     GROUP BY org_id  -- KEY CHANGE: Group by org_id instead of organization_name
 )
@@ -545,6 +582,7 @@ SELECT
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
+    eda.is_chpl_html,
     
     -- For CSV export - split identifier columns
     COALESCE(ia.identifier_types_csv, '') as identifier_types_csv,
@@ -554,11 +592,13 @@ SELECT
     COALESCE(ua.org_urls_csv, '') as org_urls_csv,
     eda.fhir_versions_csv,
     eda.vendor_names_csv,
+    eda.is_chpl_csv,
     
     -- Arrays for filtering 
     eda.fhir_versions_array,
     eda.vendor_names_array,
-    eda.urls_array
+    eda.urls_array,
+    eda.is_chpl_array
     
 FROM endpoint_data_agg eda
 LEFT JOIN identifiers_agg ia ON eda.org_id = ia.org_id
@@ -573,6 +613,7 @@ CREATE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_na
 CREATE INDEX idx_mv_orgs_agg_fhir_versions ON mv_organizations_aggregated USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_agg_vendor_names ON mv_organizations_aggregated USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_agg_urls ON mv_organizations_aggregated USING GIN(urls_array);
+CREATE INDEX idx_mv_orgs_agg_is_chpl ON mv_organizations_aggregated USING GIN(is_chpl_array);
 
 --LANTERN-973: Group organizations in Org Table if all the fields are same except endpoint url
 CREATE MATERIALIZED VIEW mv_organizations_final AS
@@ -587,6 +628,7 @@ SELECT
     string_agg(DISTINCT endpoint_urls_html, '<br/>') as endpoint_urls_html,
     fhir_versions_html,
     vendor_names_html,
+    is_chpl_html,
     
     -- CSV versions
     identifier_types_csv,
@@ -596,11 +638,13 @@ SELECT
     string_agg(DISTINCT endpoint_urls_csv, E'\n') as endpoint_urls_csv,
     fhir_versions_csv,
     vendor_names_csv,
+    is_chpl_csv,
     
     -- Arrays for filtering (combine from all matching rows) - FIXED: Use |||| delimiter instead of comma
     ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(fhir_versions_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as fhir_versions_array,
     ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(vendor_names_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as vendor_names_array,
-    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array,
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(is_chpl_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as is_chpl_array
     
 FROM mv_organizations_aggregated
 GROUP BY 
@@ -611,12 +655,14 @@ GROUP BY
     org_urls_html,
     fhir_versions_html,
     vendor_names_html,
+    is_chpl_html,
     identifier_types_csv,
     identifier_values_csv,
     addresses_csv,
     org_urls_csv,
     fhir_versions_csv,
-    vendor_names_csv
+    vendor_names_csv,
+    is_chpl_csv
 ORDER BY organization_name;
 
 -- Create indexes for performance
@@ -625,6 +671,7 @@ CREATE INDEX idx_mv_orgs_final_name ON mv_organizations_final(organization_name)
 CREATE INDEX idx_mv_orgs_final_fhir_versions ON mv_organizations_final USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_final_vendor_names ON mv_organizations_final USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_final_urls ON mv_organizations_final USING GIN(urls_array);
+CREATE INDEX idx_mv_orgs_final_is_chpl ON mv_organizations_final USING GIN(is_chpl_array);
 
 DROP MATERIALIZED VIEW IF EXISTS security_endpoints_mv CASCADE;
 
@@ -705,7 +752,7 @@ SELECT
                     '; '
                 ),
                 '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''show_details'',''', 
-                se.url, 
+                se.url, '&&', se.vendor_name, 
                 ''',{priority: ''event''});"> Click For More... </a>'
             )
         ELSE 
@@ -715,12 +762,15 @@ SELECT
     -- Create the URL with modal functionality
     CONCAT(
         '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''', 
-        se.url, 
-        '&&None'',{priority: ''event''});">', 
-        se.url, 
+        se.url,
+        '&&None',
+        '&&',
+        se.vendor_name,
+        ''',{priority: ''event''});">',
+        se.url,
         '</a>'
     ) AS url_modal
-FROM 
+FROM
     security_endpoints_mv se;
 
 -- Add indexing for better performance
@@ -944,7 +994,7 @@ WITH original AS (
             CASE
                 WHEN cardinality(string_to_array(mv_well_known_endpoints.organization_names, ';'::text)) > 5 THEN (((array_to_string(( SELECT array_agg(t.elem) AS array_agg
                    FROM unnest(string_to_array(mv_well_known_endpoints.organization_names, ';'::text)) WITH ORDINALITY t(elem, ord)
-                  WHERE t.ord <= 5), ';'::text) || '; '::text) || '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click();}})(event)" onclick="Shiny.setInputValue(''show_details'','''::text) || mv_well_known_endpoints.url::text) || ''',{priority: ''event''});"> Click For More... </a>'::text
+                  WHERE t.ord <= 5), ';'::text) || '; '::text) || '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click();}})(event)" onclick="Shiny.setInputValue(''show_details'','''::text) || mv_well_known_endpoints.url::text) || '&&'::text || mv_well_known_endpoints.vendor_name::text || ''',{priority: ''event''});"> Click For More... </a>'::text
                 ELSE mv_well_known_endpoints.organization_names
             END
         END AS condensed_organization_names,
@@ -1017,15 +1067,16 @@ DROP MATERIALIZED VIEW IF EXISTS endpoint_export_mv CASCADE;
 
 CREATE MATERIALIZED VIEW endpoint_export_mv AS
 WITH endpoint_organizations AS (
-    SELECT DISTINCT url, UNNEST(endpoint_names) AS endpoint_name
+    SELECT DISTINCT url, vendor_name, UNNEST(endpoint_names) AS endpoint_name
     FROM endpoint_export
 ),
 grouped_organizations AS (
     SELECT url, 
+           vendor_name,
            STRING_AGG(endpoint_name, '; ') AS endpoint_names 
     FROM endpoint_organizations
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
-    GROUP BY url
+    GROUP BY url, vendor_name
 ),
 processed_versions AS (
     SELECT 
@@ -1082,7 +1133,7 @@ FROM processed_versions p
 LEFT JOIN list_source_info lsi 
     ON p.list_source = lsi.list_source
 LEFT JOIN grouped_organizations g 
-    ON p.url = g.url;
+    ON p.url = g.url AND COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') = COALESCE(NULLIF(g.vendor_name, ''), 'Unknown');
 
 -- Unique Index for refeshing the MV concurrently 
 CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
@@ -1176,7 +1227,7 @@ SELECT
     -- Generate URL modal link
     CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint." 
             onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>') 
+            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, '&&', e.vendor_name, ''',{priority: ''event''});">', e.url, '</a>')
     AS "urlModal",
 
     -- Generate Condensed Endpoint Names
@@ -1187,7 +1238,7 @@ SELECT
             array_to_string(ARRAY(SELECT unnest(string_to_array(e.endpoint_names, ';')) LIMIT 5), '; '),
             '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing the endpoint''s entire list of API information source names." 
                 onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-                onclick="Shiny.setInputValue(''show_details'',''', e.url, ''',{priority: ''event''});"> Click For More... </a>'
+                onclick="Shiny.setInputValue(''show_details'',''', e.url, '&&', e.vendor_name, ''',{priority: ''event''});"> Click For More... </a>'
         )
         ELSE e.endpoint_names
     END AS condensed_endpoint_names

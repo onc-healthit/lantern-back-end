@@ -45,6 +45,26 @@ var vendors []*endpointmanager.Vendor = []*endpointmanager.Vendor{
 		DeveloperCode: "C",
 		CHPLID:        3,
 	},
+	{
+		Name:          "Carefluence",
+		DeveloperCode: "D",
+		CHPLID:        4,
+	},
+	{
+		Name:          "Medical Information Technology, Inc. (MEDITECH)",
+		DeveloperCode: "E",
+		CHPLID:        5,
+	},
+	{
+		Name:          "Allscripts",
+		DeveloperCode: "F",
+		CHPLID:        6,
+	},
+	{
+		Name:          "NextGen Healthcare",
+		DeveloperCode: "G",
+		CHPLID:        7,
+	},
 }
 
 func TestMain(m *testing.M) {
@@ -411,6 +431,14 @@ func Test_saveMsgInDB(t *testing.T) {
 	queueTmp["httpResponse"] = 200
 
 	// check that error adding to store throws error
+
+	// seed endpoint first so saveMsgInDB is allowed to enrich it
+	overflowEndpoint := &endpointmanager.FHIREndpoint{
+		URL: "https://a-new-url.com",
+	}
+	err = store.AddFHIREndpoint(ctx, overflowEndpoint)
+	th.Assert(t, err == nil, err)
+
 	queueTmp["url"] = "https://a-new-url.com"
 	queueTmp["tlsVersion"] = strings.Repeat("a", 510) // too long. causes db error
 

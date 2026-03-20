@@ -10,7 +10,32 @@ import (
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/capabilityparser"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/smartparser"
+	log "github.com/sirupsen/logrus"
 )
+
+// returns valid JSON bytes or NULL
+func safeJSONOrNull(b []byte) []byte {
+	if len(b) == 0 {
+		return []byte("null")
+	}
+
+	var js json.RawMessage
+	if err := json.Unmarshal(b, &js); err != nil {
+		prefixLen := 50
+		if len(b) < prefixLen {
+			prefixLen = len(b)
+		}
+
+		log.Warnf(
+			"[INVALID JSON DROPPED] prefix=%q",
+			string(b[:prefixLen]),
+		)
+
+		return []byte("null")
+	}
+
+	return b
+}
 
 // prepared statements are left open to be used throughout the execution of the application
 var addFHIREndpointInfoStatement *sql.Stmt
@@ -266,7 +291,7 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		metadata_id,
 		requested_fhir_version,
 		capability_fhir_version
-	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND fhir_endpoints_info.requested_fhir_version = $2`
+	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND fhir_endpoints_info.requested_fhir_version = $2 LIMIT 1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, url, requestedVersion)
 
@@ -358,8 +383,10 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 	var err error
 	var capabilityStatementJSON []byte
 
+	log.Infof("Adding FHIREndpointInfo with URL: %s", e.URL)
+
 	if e.CapabilityStatementBytes != nil {
-		capabilityStatementJSON = e.CapabilityStatementBytes
+		capabilityStatementJSON = safeJSONOrNull(e.CapabilityStatementBytes)
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
@@ -381,7 +408,7 @@ func (s *Store) AddFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIR
 
 	var smartResponseJSON []byte
 	if e.SMARTResponseBytes != nil {
-		smartResponseJSON = e.SMARTResponseBytes
+		smartResponseJSON = safeJSONOrNull(e.SMARTResponseBytes)
 	} else {
 		smartResponseJSON = []byte("null")
 	}
@@ -415,12 +442,13 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	var capabilityStatementJSON []byte
 
 	if e.CapabilityStatementBytes != nil {
-		capabilityStatementJSON = e.CapabilityStatementBytes
+		capabilityStatementJSON = safeJSONOrNull(e.CapabilityStatementBytes)
 	} else if e.CapabilityStatement != nil {
 		capabilityStatementJSON, err = e.CapabilityStatement.GetJSON()
 		if err != nil {
 			return err
 		}
+		capabilityStatementJSON = safeJSONOrNull(capabilityStatementJSON)
 	} else {
 		capabilityStatementJSON = []byte("null")
 	}
@@ -442,12 +470,13 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 
 	var smartResponseJSON []byte
 	if e.SMARTResponseBytes != nil {
-		smartResponseJSON = e.SMARTResponseBytes
+		smartResponseJSON = safeJSONOrNull(e.SMARTResponseBytes)
 	} else if e.SMARTResponse != nil {
 		smartResponseJSON, err = e.SMARTResponse.GetJSON()
 		if err != nil {
 			return err
 		}
+		smartResponseJSON = safeJSONOrNull(smartResponseJSON)
 	} else {
 		smartResponseJSON = []byte("null")
 	}
@@ -494,7 +523,7 @@ func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int
 
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
 func (s *Store) DeleteFHIREndpointInfo(ctx context.Context, e *endpointmanager.FHIREndpointInfo) error {
-	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.ID)
+	_, err := deleteFHIREndpointInfoStatement.ExecContext(ctx, e.URL, e.RequestedFhirVersion)
 	return err
 }
 
@@ -650,7 +679,7 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	}
 	deleteFHIREndpointInfoStatement, err = s.DB.Prepare(`
         DELETE FROM fhir_endpoints_info
-        WHERE id = $1`)
+        WHERE url = $1 AND requested_fhir_version = $2`)
 	if err != nil {
 		return err
 	}

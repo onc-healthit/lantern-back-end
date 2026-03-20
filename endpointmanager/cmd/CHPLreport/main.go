@@ -57,7 +57,7 @@ func main() {
 				   GROUP BY f.url) as totals ON totals.url = hist.url
 		LEFT JOIN healthit_products_map AS HITmap ON hist.healthit_mapping_id  = HITmap.id
 		LEFT JOIN healthit_products AS HIT ON HITmap.healthit_product_id = HIT.id
-		WHERE list_source_info.is_chpl = true AND age(hist.updated_at) < '30 days'
+		WHERE list_source_info.is_chpl = 'CHPL' AND age(hist.updated_at) < '30 days'
 		GROUP BY
 			f.list_source,
 			f.url,

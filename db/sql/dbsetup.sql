@@ -227,7 +227,7 @@ CREATE TABLE fhir_endpoints_info (
     metadata_id             INT REFERENCES fhir_endpoints_metadata(id) ON DELETE SET NULL,
     requested_fhir_version  VARCHAR(500),
     capability_fhir_version VARCHAR(500),
-    CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version)
+    CONSTRAINT fhir_endpoints_info_unique UNIQUE(url, requested_fhir_version, vendor_id)
 );
 
 CREATE TABLE fhir_endpoints_info_history (
@@ -263,9 +263,12 @@ CREATE TABLE endpoint_organization (
 );
 
 CREATE TABLE list_source_info (
-    list_source            VARCHAR(500),
-    is_chpl                VARCHAR(500) 
+    list_source            VARCHAR(500) PRIMARY KEY,
+    is_chpl                VARCHAR(500),
+    updated_at             TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_list_source_info_updated_at ON list_source_info(updated_at);
 
 CREATE TABLE product_criteria (
     healthit_product_id      INT REFERENCES healthit_products(id) ON DELETE CASCADE,
@@ -306,6 +309,20 @@ CREATE TABLE info_history_pruning_metadata (
     query_int_start_date                timestamp with time zone NOT NULL,
     query_int_end_date                  timestamp with time zone NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS shared_list_sources (
+    list_source VARCHAR(500) NOT NULL,
+    developer_name VARCHAR(500) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (list_source, developer_name)
+);
+
+-- Create index for faster lookups
+CREATE INDEX IF NOT EXISTS idx_shared_list_sources_list_source
+ON shared_list_sources(list_source);
+
+CREATE INDEX IF NOT EXISTS idx_shared_list_sources_updated_at
+ON shared_list_sources(updated_at);
 
 CREATE TRIGGER set_timestamp_fhir_endpoints
 BEFORE UPDATE ON fhir_endpoints
@@ -375,7 +392,7 @@ BEFORE INSERT OR UPDATE on fhir_endpoints_metadata
 FOR EACH ROW
 EXECUTE PROCEDURE update_fhir_endpoint_availability_info();
 
-CREATE or REPLACE VIEW joined_export_tables AS
+CREATE OR REPLACE VIEW joined_export_tables AS
 SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endpoint_names,
     endpt_orgnames.organization_ids AS endpoint_ids,
     vendors.name as vendor_name,
@@ -392,9 +409,10 @@ SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endp
     endpts_info.updated_at AS INFO_UPDATED, endpts_info.created_at AS INFO_CREATED,
     endpts_info.requested_fhir_version, endpts_metadata.availability
 FROM fhir_endpoints AS endpts
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+LEFT JOIN shared_list_sources AS sls ON endpts.list_source = sls.list_source
+LEFT JOIN vendors ON vendors.name = sls.developer_name
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url AND endpts_info.vendor_id = vendors.id
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
-LEFT JOIN vendors ON endpts_info.vendor_id = vendors.id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
@@ -441,6 +459,10 @@ CREATE INDEX fhir_endpoint_organizations_id ON fhir_endpoint_organizations (id);
 CREATE INDEX fhir_endpoint_organizations_name ON fhir_endpoint_organizations (organization_name);
 CREATE INDEX fhir_endpoint_organizations_zipcode ON fhir_endpoint_organizations (organization_zipcode);
 CREATE INDEX fhir_endpoint_organizations_npi_id ON fhir_endpoint_organizations (organization_npi_id);
+
+--For chpl stale data cleanup
+CREATE INDEX idx_fhir_endpoints_metadata_url ON fhir_endpoints_metadata(url);
+CREATE INDEX idx_fhir_endpoints_availability_url ON fhir_endpoints_availability(url);
 
 CREATE INDEX vendor_id_idx ON vendors (id);
 CREATE INDEX fhir_endpoints_info_vendor_id_idx ON fhir_endpoints_info (vendor_id);
@@ -510,7 +532,7 @@ CREATE MATERIALIZED VIEW mv_response_tally AS
 WITH response_counts AS (
     SELECT 
         fem.http_response,
-        count(*) AS response_count
+        count(distinct(fei.url)) AS response_count
     FROM fhir_endpoints_info fei
     JOIN fhir_endpoints_metadata fem 
         ON fei.metadata_id = fem.id
@@ -569,7 +591,7 @@ endpoint_counts_base AS (
             -- Apply the dash rule: if there's a dash, trim after it
             WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
             -- If it's not in the valid list, mark as Unknown
-            WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown'
+            WHEN e.fhir_version NOT IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'Unknown'
             ELSE e.fhir_version
         END AS fhir_version,
         COUNT(DISTINCT e.url) AS n,
@@ -588,7 +610,7 @@ endpoint_counts_base AS (
         CASE
             WHEN e.fhir_version IS NULL OR trim(e.fhir_version) = '' THEN 'No Cap Stat'
             WHEN position('-' in e.fhir_version) > 0 THEN substring(e.fhir_version, 1, position('-' in e.fhir_version) - 1)
-            WHEN e.fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown'
+            WHEN e.fhir_version NOT IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'Unknown'
             ELSE e.fhir_version
         END,
         r.rank,
@@ -737,12 +759,82 @@ WITH response_by_vendor AS (
 response_all_devs AS (
     SELECT
         'ALL_DEVELOPERS' AS vendor_name,
-        http_code,
-        code_label,
-        -- Cast the sum to an integer to ensure it's not displayed as a decimal
-        SUM(count_endpoints)::INTEGER AS count_endpoints
-    FROM response_by_vendor
-    GROUP BY http_code, code_label
+        m.http_response AS http_code,
+        CASE 
+            WHEN m.http_response = 100 THEN 'Continue'
+            WHEN m.http_response = 101 THEN 'Switching Protocols'
+            WHEN m.http_response = 102 THEN 'Processing'
+            WHEN m.http_response = 103 THEN 'Early Hints'
+            WHEN m.http_response = 200 THEN 'OK'
+            WHEN m.http_response = 201 THEN 'Created'
+            WHEN m.http_response = 202 THEN 'Accepted'
+            WHEN m.http_response = 203 THEN 'Non-Authoritative Information'
+            WHEN m.http_response = 204 THEN 'No Content'
+            WHEN m.http_response = 205 THEN 'Reset Content'
+            WHEN m.http_response = 206 THEN 'Partial Content'
+            WHEN m.http_response = 207 THEN 'Multi-Status'
+            WHEN m.http_response = 208 THEN 'Already Reported'
+            WHEN m.http_response = 226 THEN 'IM Used'
+            WHEN m.http_response = 300 THEN 'Multiple Choices'
+            WHEN m.http_response = 301 THEN 'Moved Permanently'
+            WHEN m.http_response = 302 THEN 'Found'
+            WHEN m.http_response = 303 THEN 'See Other'
+            WHEN m.http_response = 304 THEN 'Not Modified'
+            WHEN m.http_response = 305 THEN 'Use Proxy'
+            WHEN m.http_response = 306 THEN 'Switch Proxy'
+            WHEN m.http_response = 307 THEN 'Temporary Redirect'
+            WHEN m.http_response = 308 THEN 'Permanent Redirect'
+            WHEN m.http_response = 400 THEN 'Bad Request'
+            WHEN m.http_response = 401 THEN 'Unauthorized'
+            WHEN m.http_response = 402 THEN 'Payment Required'
+            WHEN m.http_response = 403 THEN 'Forbidden'
+            WHEN m.http_response = 404 THEN 'Not Found'
+            WHEN m.http_response = 405 THEN 'Method Not Allowed'
+            WHEN m.http_response = 406 THEN 'Not Acceptable'
+            WHEN m.http_response = 407 THEN 'Proxy Authentication Required'
+            WHEN m.http_response = 408 THEN 'Request Timeout'
+            WHEN m.http_response = 409 THEN 'Conflict'
+            WHEN m.http_response = 410 THEN 'Gone'
+            WHEN m.http_response = 411 THEN 'Length Required'
+            WHEN m.http_response = 412 THEN 'Precondition Failed'
+            WHEN m.http_response = 413 THEN 'Payload Too Large'
+            WHEN m.http_response = 414 THEN 'Request URI Too Long'
+            WHEN m.http_response = 415 THEN 'Unsupported Media Type'
+            WHEN m.http_response = 416 THEN 'Requested Range Not Satisfiable'
+            WHEN m.http_response = 417 THEN 'Expectation Failed'
+            WHEN m.http_response = 418 THEN 'I''m a teapot'
+            WHEN m.http_response = 421 THEN 'Misdirected Request'
+            WHEN m.http_response = 422 THEN 'Unprocessable Entity'
+            WHEN m.http_response = 423 THEN 'Locked'
+            WHEN m.http_response = 424 THEN 'Failed Dependency'
+            WHEN m.http_response = 425 THEN 'Too Early'
+            WHEN m.http_response = 426 THEN 'Upgrade Required'
+            WHEN m.http_response = 428 THEN 'Precondition Required'
+            WHEN m.http_response = 429 THEN 'Too Many Requests'
+            WHEN m.http_response = 431 THEN 'Request Header Fields Too Large'
+            WHEN m.http_response = 451 THEN 'Unavailable for Legal Reasons'
+            WHEN m.http_response = 500 THEN 'Internal Server Error'
+            WHEN m.http_response = 501 THEN 'Not Implemented'
+            WHEN m.http_response = 502 THEN 'Bad Gateway'
+            WHEN m.http_response = 503 THEN 'Service Unavailable'
+            WHEN m.http_response = 504 THEN 'Gateway Timeout'
+            WHEN m.http_response = 505 THEN 'HTTP Version Not Supported'
+            WHEN m.http_response = 506 THEN 'Variant Also Negotiates'
+            WHEN m.http_response = 507 THEN 'Insufficient Storage'
+            WHEN m.http_response = 508 THEN 'Loop Detected'
+            WHEN m.http_response = 509 THEN 'Bandwidth Limit Exceeded'
+            WHEN m.http_response = 510 THEN 'Not Extended'
+            WHEN m.http_response = 511 THEN 'Network Authentication Required'
+            ELSE 'Other'
+        END AS code_label,
+        -- Cast the count to an integer
+        COUNT(DISTINCT f.url)::INTEGER AS count_endpoints
+    FROM fhir_endpoints_info f
+    LEFT JOIN fhir_endpoints_metadata m
+           ON f.metadata_id = m.id
+    WHERE m.http_response IS NOT NULL
+      AND f.requested_fhir_version = 'None'
+    GROUP BY m.http_response
 )
 SELECT 
     now() AS aggregation_date,
@@ -772,6 +864,7 @@ CREATE INDEX mv_http_responses_vendor_name_idx
 CREATE MATERIALIZED VIEW mv_resource_interactions AS
 WITH expanded_resources AS (
   SELECT
+    f.url as url,
     f.id AS endpoint_id,
     COALESCE(v.name, 'Unknown') AS vendor_name,
     CASE WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
@@ -808,18 +901,33 @@ aggregated_operations AS (
 
   FROM expanded_resources
   GROUP BY vendor_name, fhir_version, resource_type
-)
-SELECT *
-FROM aggregated_operations;
-
-CREATE UNIQUE INDEX mv_resource_interactions_uniq
-  ON mv_resource_interactions (
-    vendor_name,
+),
+all_devs_aggregated_operations AS (
+  WITH vendor_ops AS (
+    SELECT
+      url,
+      fhir_version,
+      resource_type,
+      vendor_name,
+      COUNT(DISTINCT endpoint_id) AS endpoint_count,
+      ARRAY_AGG(DISTINCT operation_name) AS operations
+    FROM expanded_resources
+    GROUP BY url, fhir_version, resource_type, vendor_name
+  )
+  SELECT DISTINCT ON (url, fhir_version, resource_type)
+    'All Developers' AS vendor_name,
     fhir_version,
     resource_type,
     endpoint_count,
     operations
-  );
+  FROM vendor_ops
+  ORDER BY url, fhir_version, resource_type, vendor_name
+)
+SELECT *
+FROM aggregated_operations
+UNION ALL
+SELECT *
+FROM all_devs_aggregated_operations;
 
 CREATE INDEX mv_resource_interactions_vendor_name_idx
   ON mv_resource_interactions (vendor_name);
@@ -837,15 +945,16 @@ CREATE INDEX mv_resource_interactions_operations_idx
 -- endpoint_export_mv
 CREATE MATERIALIZED VIEW endpoint_export_mv AS
 WITH endpoint_organizations AS (
-    SELECT DISTINCT url, UNNEST(endpoint_names) AS endpoint_name
+    SELECT DISTINCT url, vendor_name, UNNEST(endpoint_names) AS endpoint_name
     FROM endpoint_export
 ),
 grouped_organizations AS (
-    SELECT url, 
-           STRING_AGG(endpoint_name, '; ') AS endpoint_names 
+    SELECT url,
+           vendor_name,
+           STRING_AGG(endpoint_name, '; ') AS endpoint_names
     FROM endpoint_organizations
     WHERE endpoint_name IS NOT NULL AND endpoint_name <> 'NULL'
-    GROUP BY url
+    GROUP BY url, vendor_name
 ),
 processed_versions AS (
     SELECT 
@@ -871,11 +980,11 @@ SELECT
     -- Step 3: Use the fixed list of valid FHIR versions 
     CASE 
         WHEN p.capability_fhir_version = 'No Cap Stat' THEN 'No Cap Stat'  -- Ensure "No Cap Stat" is preserved
-        WHEN p.fhir_version_raw IN ('No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', 
-                                  '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', 
-                                  '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', 
-                                  '4.0.0', '4.0.1', '4.1.0', '4.3.0', 
-                                  '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0')
+        WHEN p.fhir_version_raw IN ('No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2',
+                                  '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3',
+                                  '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0',
+                                  '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3',
+                                  '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5')
             THEN p.fhir_version_raw
         ELSE 'Unknown'  
     END AS fhir_version,
@@ -901,8 +1010,8 @@ SELECT
 FROM processed_versions p
 LEFT JOIN list_source_info lsi 
     ON p.list_source = lsi.list_source
-LEFT JOIN grouped_organizations g 
-    ON p.url = g.url;
+LEFT JOIN grouped_organizations g
+    ON p.url = g.url AND COALESCE(NULLIF(p.vendor_name, ''), 'Unknown') = COALESCE(NULLIF(g.vendor_name, ''), 'Unknown');
 
 -- Unique Index for refeshing the MV concurrently 
 CREATE UNIQUE INDEX endpoint_export_mv_unique_idx ON endpoint_export_mv (url, list_source, vendor_name, fhir_version, info_updated);
@@ -994,7 +1103,7 @@ SELECT
     -- Generate URL modal link
     CONCAT('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing additional information for this endpoint." 
             onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, ''',{priority: ''event''});">', e.url, '</a>') 
+            onclick="Shiny.setInputValue(''endpoint_popup'',''', e.url, '&&', e.requested_fhir_version, '&&', e.vendor_name, ''',{priority: ''event''});">', e.url, '</a>') 
     AS "urlModal",
 
     -- Generate Condensed Endpoint Names
@@ -1005,7 +1114,7 @@ SELECT
             array_to_string(ARRAY(SELECT unnest(string_to_array(e.endpoint_names, ';')) LIMIT 5), '; '),
             '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop-up modal containing the endpoint''s entire list of API information source names." 
                 onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-                onclick="Shiny.setInputValue(''show_details'',''', e.url, ''',{priority: ''event''});"> Click For More... </a>'
+                onclick="Shiny.setInputValue(''show_details'',''', e.url, '&&', e.vendor_name, ''',{priority: ''event''});"> Click For More... </a>'
         )
         ELSE e.endpoint_names
     END AS condensed_endpoint_names
@@ -1072,7 +1181,7 @@ endpoint_details AS (
     CASE 
       WHEN fhir_version = '' OR fhir_version IS NULL THEN 'No Cap Stat'
       WHEN position('-' in fhir_version) > 0 THEN substring(fhir_version from 1 for position('-' in fhir_version) - 1)
-      WHEN fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown'
+      WHEN fhir_version NOT IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'Unknown'
       ELSE fhir_version
     END AS fhir_version,
     requested_fhir_version
@@ -1191,7 +1300,7 @@ SELECT
              WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
              ELSE f.capability_fhir_version 
            END, '-', 1)
-         IN ('No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0')
+         IN ('No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5')
       THEN split_part(
              CASE 
                WHEN f.capability_fhir_version = '' THEN 'No Cap Stat' 
@@ -1221,10 +1330,10 @@ SELECT
     WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
     WHEN split_part(f.capability_fhir_version, '-', 1) = ANY (
       ARRAY[
-        'No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0',
-        '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2',
-        '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', 
-        '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
+        'No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1',
+        '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2',
+        '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1',
+        '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
       ]
     ) THEN split_part(f.capability_fhir_version, '-', 1)
     ELSE 'Unknown'
@@ -1262,11 +1371,11 @@ SELECT
              END,
              '-.*', ''
            ) IN (
-             'No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2',
-             '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0',
-             '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0',
-             '4.0.0', '4.0.1', '4.1.0', '4.3.0', 
-             '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
+             'No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2',
+             '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3',
+             '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0',
+             '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3',
+             '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
            )
       THEN REGEXP_REPLACE(
              CASE 
@@ -1284,7 +1393,7 @@ WHERE f.capability_fhir_version != ''
   AND f.requested_fhir_version = 'None';
 
 -- Create indexes for mv_capstat_sizes
-CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url);
+CREATE UNIQUE INDEX idx_mv_capstat_sizes_uniq ON mv_capstat_sizes_tbl(url, vendor_name);
 CREATE INDEX idx_mv_capstat_sizes_fhir ON mv_capstat_sizes_tbl(fhir_version);
 CREATE INDEX idx_mv_capstat_sizes_vendor ON mv_capstat_sizes_tbl(vendor_name);
 
@@ -1364,11 +1473,11 @@ CREATE UNIQUE INDEX idx_get_capstat_values_mv_unique ON get_capstat_values_mv(en
 
 CREATE MATERIALIZED VIEW get_capstat_fields_mv AS
 WITH valid_fhir_versions AS (
-    SELECT unnest(ARRAY['No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', 
-                         '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', 
-                         '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', 
-                         '4.0.0', '4.0.1', '4.1.0', '4.3.0', 
-                         '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0']) AS version
+    SELECT unnest(ARRAY['No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2',
+                         '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3',
+                         '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0',
+                         '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3',
+                         '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5']) AS version
 )
 SELECT 
     f.id AS endpoint_id,
@@ -1541,7 +1650,9 @@ SELECT DISTINCT
         ELSE endpoint_export.fhir_version
     END AS fhir_version,
     
-    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name
+    COALESCE(endpoint_export.vendor_name, 'Unknown'::character varying) AS vendor_name,
+    
+    endpoint_export.is_chpl
 
 FROM
     endpoint_export
@@ -1560,6 +1671,7 @@ WITH DATA;
  CREATE INDEX idx_mv_endpoint_list_org_fhir ON mv_endpoint_list_organizations(fhir_version);
  CREATE INDEX idx_mv_endpoint_list_org_vendor ON mv_endpoint_list_organizations(vendor_name);
  CREATE INDEX idx_mv_endpoint_list_org_url ON mv_endpoint_list_organizations(url);
+ CREATE INDEX idx_mv_endpoint_list_org_is_chpl ON mv_endpoint_list_organizations(is_chpl);
 
 CREATE MATERIALIZED VIEW mv_validation_results_plot AS
 SELECT DISTINCT t.url,
@@ -1571,12 +1683,13 @@ t.expected,
 t.actual,
 t.comment,
 t.reference
-FROM ( SELECT COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
+FROM (SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id)
+        COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_name,
         f.url,
             CASE
                 WHEN f.capability_fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
                 WHEN "position"(f.capability_fhir_version::text, '-'::text) > 0 THEN "substring"(f.capability_fhir_version::text, 1, "position"(f.capability_fhir_version::text, '-'::text) - 1)::character varying
-                WHEN f.capability_fhir_version::text <> ALL (ARRAY['0.4.0'::character varying, '0.5.0'::character varying, '1.0.0'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, '1.1.0'::character varying, '1.2.0'::character varying, '1.4.0'::character varying, '1.6.0'::character varying, '1.8.0'::character varying, '3.0.0'::character varying, '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.3.0'::character varying, '3.5.0'::character varying, '3.5a.0'::character varying, '4.0.0'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.3.0'::character varying, '4.2.0'::character varying, '4.4.0'::character varying, '4.5.0'::character varying, '4.6.0'::character varying, '5.0.0'::character varying]::text[]) THEN 'Unknown'::character varying
+                WHEN f.capability_fhir_version::text <> ALL (ARRAY['0.4.0'::character varying, '0.4'::character varying, '0.5.0'::character varying, '0.5'::character varying, '1.0.0'::character varying, '1.0'::character varying, '1'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, '1.1.0'::character varying, '1.1'::character varying, '1.2.0'::character varying, '1.2'::character varying, '1.4.0'::character varying, '1.4'::character varying, '1.6.0'::character varying, '1.6'::character varying, '1.8.0'::character varying, '1.8'::character varying, '3.0.0'::character varying, '3.0'::character varying, '3'::character varying, '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.2'::character varying, '3.3.0'::character varying, '3.3'::character varying, '3.5.0'::character varying, '3.5'::character varying, '3.5a.0'::character varying, '4.0.0'::character varying, '4.0'::character varying, '4'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.1'::character varying, '4.3.0'::character varying, '4.3'::character varying, '4.2.0'::character varying, '4.2'::character varying, '4.4.0'::character varying, '4.4'::character varying, '4.5.0'::character varying, '4.5'::character varying, '4.6.0'::character varying, '4.6'::character varying, '5.0.0'::character varying, '5.0'::character varying, '5'::character varying]::text[]) THEN 'Unknown'::character varying
                 ELSE f.capability_fhir_version
             END AS fhir_version,
         v.rule_name,
@@ -1590,7 +1703,7 @@ FROM ( SELECT COALESCE(vendors.name, 'Unknown'::character varying) AS vendor_nam
         FROM fhir_endpoints_info f
             JOIN validations v ON f.validation_result_id = v.validation_result_id
             LEFT JOIN vendors ON f.vendor_id = vendors.id
-        ORDER BY v.validation_result_id, v.rule_name) t;
+        ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id) t;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
 ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual);
@@ -1609,7 +1722,7 @@ WITH validation_data AS (
         CASE 
             WHEN capability_fhir_version = '' THEN 'No Cap Stat' 
             WHEN position('-' in capability_fhir_version) > 0 THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) 
-            WHEN capability_fhir_version NOT IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'Unknown' 
+            WHEN capability_fhir_version NOT IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'Unknown' 
             ELSE capability_fhir_version 
         END AS fhir_version, 
         rule_name, 
@@ -1624,20 +1737,20 @@ mapped_versions AS (
     SELECT DISTINCT
         rule_name,
         CASE 
-            WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2' 
-            WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3' 
-            WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4' 
-            WHEN fhir_version IN ('4.1.0', '4.3.0') THEN 'R4B'
-            WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'R5'
+            WHEN fhir_version IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2') THEN 'DSTU2' 
+            WHEN fhir_version IN ('1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2') THEN 'STU3'
+            WHEN fhir_version IN ('3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1') THEN 'R4'
+            WHEN fhir_version IN ('4.1.0', '4.1', '4.3.0', '4.3') THEN 'R4B'
+            WHEN fhir_version IN ('4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'R5'
             ELSE fhir_version
         END AS version_name,
         -- Add a sort order to maintain the original ordering
         CASE
-            WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 1 -- DSTU2
-            WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 2 -- STU3
-            WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 3 -- R4
-            WHEN fhir_version IN ('4.1.0', '4.3.0') THEN 4 -- R4B
-            WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 5 -- R5
+            WHEN fhir_version IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2') THEN 1 -- DSTU2
+            WHEN fhir_version IN ('1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2') THEN 2 -- STU3
+            WHEN fhir_version IN ('3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1') THEN 3 -- R4
+            WHEN fhir_version IN ('4.1.0', '4.1', '4.3.0', '4.3') THEN 4 -- R4B
+            WHEN fhir_version IN ('4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 5 -- R5
             ELSE 6 -- Others
         END AS sort_order
     FROM validation_data
@@ -1704,22 +1817,22 @@ SELECT
         -- First transform empty to "No Cap Stat"
         WHEN e.fhir_version = '' THEN 'No Cap Stat'
         -- Then handle version with dash
-        WHEN e.fhir_version LIKE '%-%' THEN 
-            CASE 
+        WHEN e.fhir_version LIKE '%-%' THEN
+            CASE
                 WHEN SPLIT_PART(e.fhir_version, '-', 1) IN (
-                    '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-                    '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-                    '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
-                ) 
+                    '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+                    '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+                    '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
+                )
                 THEN SPLIT_PART(e.fhir_version, '-', 1)
                 ELSE 'Unknown'
             END
         -- Handle regular versions
         WHEN e.fhir_version IN (
-            '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-            '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-            '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
-        ) 
+            '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+            '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+            '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
+        )
         THEN e.fhir_version
         ELSE 'Unknown'
     END AS fhir_version_final
@@ -1728,7 +1841,7 @@ JOIN fhir_endpoints_info f ON e.url = f.url
 JOIN LATERAL (
     SELECT json_array_elements(json_array_elements(f.capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' AS code
 ) codes ON true
-WHERE f.requested_fhir_version = 'None';
+WHERE f.requested_fhir_version = 'None' and f.vendor_id = (SELECT id FROM vendors WHERE name = e.vendor_name);
 
 --indexing 
 CREATE INDEX idx_security_endpoints_url ON security_endpoints_mv (url);
@@ -1762,7 +1875,7 @@ SELECT
                     '; '
                 ),
                 '; <a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''show_details'',''', 
-                se.url, 
+                se.url, '&&', se.vendor_name, 
                 ''',{priority: ''event''});"> Click For More... </a>'
             )
         ELSE 
@@ -1773,7 +1886,10 @@ SELECT
     CONCAT(
         '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''', 
         se.url, 
-        '&&None'',{priority: ''event''});">', 
+        '&&None',
+        '&&', 
+        se.vendor_name,
+        ''',{priority: ''event''});">', 
         se.url, 
         '</a>'
     ) AS url_modal
@@ -1811,19 +1927,19 @@ SELECT
   COALESCE(v.name, 'Unknown') AS name,
   CASE 
     WHEN capability_fhir_version = '' THEN 'No Cap Stat'
-    WHEN position('-' in capability_fhir_version) > 0 THEN 
+    WHEN position('-' in capability_fhir_version) > 0 THEN
       CASE
-        WHEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) IN 
-            ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-             '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-             '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
+        WHEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1) IN
+            ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+             '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+             '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5', 'No Cap Stat')
         THEN substring(capability_fhir_version, 1, position('-' in capability_fhir_version) - 1)
         ELSE 'Unknown'
       END
-    WHEN capability_fhir_version IN 
-        ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-         '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-         '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
+    WHEN capability_fhir_version IN
+        ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+         '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+         '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5', 'No Cap Stat')
     THEN capability_fhir_version
     ELSE 'Unknown'
   END AS fhir_version,
@@ -2007,13 +2123,13 @@ validated AS (
     url,
     COALESCE(vendor_name, 'Unknown') AS vendor_name,
     capability_fhir_version,
-    CASE 
+    CASE
       WHEN fhir_version IN (
-           'No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2',
-           '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0',
-           '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0',
-           '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-           '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
+           'No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2',
+           '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+           '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3',
+           '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+           '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
          )
       THEN fhir_version
       ELSE 'Unknown'
@@ -2077,6 +2193,7 @@ WITH grouped AS (
   GROUP BY f.id, f.url, e.http_response, e.vendor_name, e.fhir_version
 )
 SELECT
+  DISTINCT ON (url)
   row_number() OVER () AS mv_id,
   id,
   url,
@@ -2113,8 +2230,8 @@ WITH base AS (
           WHERE m.smart_http_response = 200 AND f.requested_fhir_version::text = 'None'::text AND jsonb_typeof(f.smart_response::jsonb) = 'object'::text
         )
  SELECT 
-    DISTINCT ON (base.url)
-   	row_number() OVER () AS mv_id,
+   	DISTINCT ON (base.url)
+    row_number() OVER () AS mv_id,
 	base.url,
     regexp_replace(regexp_replace(regexp_replace(base.organization_names, '[{}]'::text, ''::text, 'g'::text), '","'::text, '; '::text, 'g'::text), '"'::text, ''::text, 'g'::text) AS organization_names,
     base.vendor_name,
@@ -2125,15 +2242,15 @@ WITH base AS (
                 WHEN base.capability_fhir_version::text ~~ '%-%'::text THEN split_part(base.capability_fhir_version::text, '-'::text, 1)::character varying
                 ELSE base.capability_fhir_version
             END::text = ANY (ARRAY[
-                'No Cap Stat'::character varying, '0.4.0'::character varying, '0.5.0'::character varying, 
-                '1.0.0'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, 
-                '1.1.0'::character varying, '1.2.0'::character varying, '1.4.0'::character varying, 
-                '1.6.0'::character varying, '1.8.0'::character varying, '3.0.0'::character varying, 
-                '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, 
-                '3.3.0'::character varying, '3.5.0'::character varying, '3.5a.0'::character varying, 
-                '4.0.0'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, 
-                '4.3.0'::character varying, '4.2.0'::character varying, '4.4.0'::character varying, 
-                '4.5.0'::character varying, '4.6.0'::character varying, '5.0.0'::character varying
+                'No Cap Stat'::character varying, '0.4.0'::character varying, '0.4'::character varying, '0.5.0'::character varying, '0.5'::character varying,
+                '1.0.0'::character varying, '1.0'::character varying, '1'::character varying, '1.0.1'::character varying, '1.0.2'::character varying,
+                '1.1.0'::character varying, '1.1'::character varying, '1.2.0'::character varying, '1.2'::character varying, '1.4.0'::character varying, '1.4'::character varying,
+                '1.6.0'::character varying, '1.6'::character varying, '1.8.0'::character varying, '1.8'::character varying, '3.0.0'::character varying, '3.0'::character varying, '3'::character varying,
+                '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.2'::character varying,
+                '3.3.0'::character varying, '3.3'::character varying, '3.5.0'::character varying, '3.5'::character varying, '3.5a.0'::character varying,
+                '4.0.0'::character varying, '4.0'::character varying, '4'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.1'::character varying,
+                '4.3.0'::character varying, '4.3'::character varying, '4.2.0'::character varying, '4.2'::character varying, '4.4.0'::character varying, '4.4'::character varying,
+                '4.5.0'::character varying, '4.5'::character varying, '4.6.0'::character varying, '4.6'::character varying, '5.0.0'::character varying, '5.0'::character varying, '5'::character varying
             ]::text[]) THEN
             CASE
                 WHEN base.capability_fhir_version::text ~~ '%-%'::text THEN split_part(base.capability_fhir_version::text, '-'::text, 1)::character varying
@@ -2185,15 +2302,15 @@ SELECT
 			WHEN base.fhir_version::text ~~ '%-%'::text THEN split_part(base.fhir_version::text, '-'::text, 1)::character varying
 			ELSE base.fhir_version
 		END::text = ANY (ARRAY[
-            'No Cap Stat'::character varying, '0.4.0'::character varying, '0.5.0'::character varying, 
-            '1.0.0'::character varying, '1.0.1'::character varying, '1.0.2'::character varying, 
-            '1.1.0'::character varying, '1.2.0'::character varying, '1.4.0'::character varying, 
-            '1.6.0'::character varying, '1.8.0'::character varying, '3.0.0'::character varying, 
-            '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, 
-            '3.3.0'::character varying, '3.5.0'::character varying, '3.5a.0'::character varying, 
-            '4.0.0'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, 
-            '4.3.0'::character varying, '4.2.0'::character varying, '4.4.0'::character varying, 
-            '4.5.0'::character varying, '4.6.0'::character varying, '5.0.0'::character varying
+            'No Cap Stat'::character varying, '0.4.0'::character varying, '0.4'::character varying, '0.5.0'::character varying, '0.5'::character varying,
+            '1.0.0'::character varying, '1.0'::character varying, '1'::character varying, '1.0.1'::character varying, '1.0.2'::character varying,
+            '1.1.0'::character varying, '1.1'::character varying, '1.2.0'::character varying, '1.2'::character varying, '1.4.0'::character varying, '1.4'::character varying,
+            '1.6.0'::character varying, '1.6'::character varying, '1.8.0'::character varying, '1.8'::character varying, '3.0.0'::character varying, '3.0'::character varying, '3'::character varying,
+            '3.0.1'::character varying, '3.0.2'::character varying, '3.2.0'::character varying, '3.2'::character varying,
+            '3.3.0'::character varying, '3.3'::character varying, '3.5.0'::character varying, '3.5'::character varying, '3.5a.0'::character varying,
+            '4.0.0'::character varying, '4.0'::character varying, '4'::character varying, '4.0.1'::character varying, '4.1.0'::character varying, '4.1'::character varying,
+            '4.3.0'::character varying, '4.3'::character varying, '4.2.0'::character varying, '4.2'::character varying, '4.4.0'::character varying, '4.4'::character varying,
+            '4.5.0'::character varying, '4.5'::character varying, '4.6.0'::character varying, '4.6'::character varying, '5.0.0'::character varying, '5.0'::character varying, '5'::character varying
         ]::text[]) THEN
 		CASE
 			WHEN base.fhir_version::text = ''::text THEN 'No Cap Stat'::character varying
@@ -2225,30 +2342,30 @@ WITH original AS (
             WHEN f.capability_fhir_version::text ~~ '%-%'::text THEN
             CASE
                 WHEN split_part(f.capability_fhir_version::text, '-'::text, 1) = ANY (ARRAY[
-                    'No Cap Stat'::text, '0.4.0'::text, '0.5.0'::text, '1.0.0'::text, '1.0.1'::text, 
-                    '1.0.2'::text, '1.1.0'::text, '1.2.0'::text, '1.4.0'::text, '1.6.0'::text, 
-                    '1.8.0'::text, '3.0.0'::text, '3.0.1'::text, '3.0.2'::text, '3.2.0'::text, 
-                    '3.3.0'::text, '3.5.0'::text, '3.5a.0'::text, '4.0.0'::text, '4.0.1'::text,
-                    '4.1.0'::text, '4.3.0'::text, '4.2.0'::text, '4.4.0'::text, '4.5.0'::text, 
-                    '4.6.0'::text, '5.0.0'::text
+                    'No Cap Stat'::text, '0.4.0'::text, '0.4'::text, '0.5.0'::text, '0.5'::text, '1.0.0'::text, '1.0'::text, '1'::text, '1.0.1'::text,
+                    '1.0.2'::text, '1.1.0'::text, '1.1'::text, '1.2.0'::text, '1.2'::text, '1.4.0'::text, '1.4'::text, '1.6.0'::text, '1.6'::text,
+                    '1.8.0'::text, '1.8'::text, '3.0.0'::text, '3.0'::text, '3'::text, '3.0.1'::text, '3.0.2'::text, '3.2.0'::text, '3.2'::text,
+                    '3.3.0'::text, '3.3'::text, '3.5.0'::text, '3.5'::text, '3.5a.0'::text, '4.0.0'::text, '4.0'::text, '4'::text, '4.0.1'::text,
+                    '4.1.0'::text, '4.1'::text, '4.3.0'::text, '4.3'::text, '4.2.0'::text, '4.2'::text, '4.4.0'::text, '4.4'::text, '4.5.0'::text, '4.5'::text,
+                    '4.6.0'::text, '4.6'::text, '5.0.0'::text, '5.0'::text, '5'::text
                 ]) THEN split_part(f.capability_fhir_version::text, '-'::text, 1)
                 ELSE 'Unknown'::text
             END
             WHEN f.capability_fhir_version::text = ANY (ARRAY[
-                'No Cap Stat'::character varying::text, '0.4.0'::character varying::text, 
-                '0.5.0'::character varying::text, '1.0.0'::character varying::text, 
-                '1.0.1'::character varying::text, '1.0.2'::character varying::text, 
-                '1.1.0'::character varying::text, '1.2.0'::character varying::text, 
-                '1.4.0'::character varying::text, '1.6.0'::character varying::text, 
-                '1.8.0'::character varying::text, '3.0.0'::character varying::text, 
-                '3.0.1'::character varying::text, '3.0.2'::character varying::text, 
-                '3.2.0'::character varying::text, '3.3.0'::character varying::text, 
-                '3.5.0'::character varying::text, '3.5a.0'::character varying::text, 
-                '4.0.0'::character varying::text, '4.0.1'::character varying::text,
-                '4.1.0'::character varying::text, 
-                '4.3.0'::character varying::text, '4.2.0'::character varying::text,
-                '4.4.0'::character varying::text, '4.5.0'::character varying::text,
-                '4.6.0'::character varying::text, '5.0.0'::character varying::text
+                'No Cap Stat'::character varying::text, '0.4.0'::character varying::text, '0.4'::character varying::text,
+                '0.5.0'::character varying::text, '0.5'::character varying::text, '1.0.0'::character varying::text, '1.0'::character varying::text, '1'::character varying::text,
+                '1.0.1'::character varying::text, '1.0.2'::character varying::text,
+                '1.1.0'::character varying::text, '1.1'::character varying::text, '1.2.0'::character varying::text, '1.2'::character varying::text,
+                '1.4.0'::character varying::text, '1.4'::character varying::text, '1.6.0'::character varying::text, '1.6'::character varying::text,
+                '1.8.0'::character varying::text, '1.8'::character varying::text, '3.0.0'::character varying::text, '3.0'::character varying::text, '3'::character varying::text,
+                '3.0.1'::character varying::text, '3.0.2'::character varying::text,
+                '3.2.0'::character varying::text, '3.2'::character varying::text, '3.3.0'::character varying::text, '3.3'::character varying::text,
+                '3.5.0'::character varying::text, '3.5'::character varying::text, '3.5a.0'::character varying::text,
+                '4.0.0'::character varying::text, '4.0'::character varying::text, '4'::character varying::text, '4.0.1'::character varying::text,
+                '4.1.0'::character varying::text, '4.1'::character varying::text,
+                '4.3.0'::character varying::text, '4.3'::character varying::text, '4.2.0'::character varying::text, '4.2'::character varying::text,
+                '4.4.0'::character varying::text, '4.4'::character varying::text, '4.5.0'::character varying::text, '4.5'::character varying::text,
+                '4.6.0'::character varying::text, '4.6'::character varying::text, '5.0.0'::character varying::text, '5.0'::character varying::text, '5'::character varying::text
             ]) THEN f.capability_fhir_version::text
             ELSE 'Unknown'::text
         END AS fhir_version,
@@ -2283,7 +2400,7 @@ WITH original AS (
             CASE
                 WHEN cardinality(string_to_array(mv_well_known_endpoints.organization_names, ';'::text)) > 5 THEN (((array_to_string(( SELECT array_agg(t.elem) AS array_agg
                    FROM unnest(string_to_array(mv_well_known_endpoints.organization_names, ';'::text)) WITH ORDINALITY t(elem, ord)
-                  WHERE t.ord <= 5), ';'::text) || '; '::text) || '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click();}})(event)" onclick="Shiny.setInputValue(''show_details'','''::text) || mv_well_known_endpoints.url::text) || ''',{priority: ''event''});"> Click For More... </a>'::text
+                  WHERE t.ord <= 5), ';'::text) || '; '::text) || '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing the endpoint''s entire list of API information source names." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click();}})(event)" onclick="Shiny.setInputValue(''show_details'','''::text) || mv_well_known_endpoints.url::text) || '&&'::text || mv_well_known_endpoints.vendor_name::text || ''',{priority: ''event''});"> Click For More... </a>'::text
                 ELSE mv_well_known_endpoints.organization_names
             END
         END AS condensed_organization_names,
@@ -2311,11 +2428,11 @@ SELECT
   COALESCE(vendors.name, 'Unknown') AS vendor_name,
   CASE
     WHEN REGEXP_REPLACE(f.capability_fhir_version, '-.*', '') IN (
-      'No Cap Stat', '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2',
-      '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0',
-      '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0',
-      '4.0.0', '4.0.1', '4.1.0', '4.3.0', '4.2.0', '4.4.0', 
-      '4.5.0', '4.6.0', '5.0.0'
+      'No Cap Stat', '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2',
+      '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3',
+      '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0',
+      '4.0.0', '4.0', '4', '4.0.1', '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4',
+      '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
     )
     THEN REGEXP_REPLACE(f.capability_fhir_version, '-.*', '')
     ELSE 'Unknown'
@@ -2349,11 +2466,11 @@ with_version AS (
     field,
     fhir_version,
     CASE
-      WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2'
-      WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3'
-      WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4'
-      WHEN fhir_version IN ('4.1.0', '4.3.0') THEN 'R4B'
-      WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'R5'
+      WHEN fhir_version IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2') THEN 'DSTU2'
+      WHEN fhir_version IN ('1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2') THEN 'STU3'
+      WHEN fhir_version IN ('3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1') THEN 'R4'
+      WHEN fhir_version IN ('4.1.0', '4.1', '4.3.0', '4.3') THEN 'R4B'
+      WHEN fhir_version IN ('4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'R5'
       ELSE 'DSTU2'
     END AS fhir_version_name
   FROM base
@@ -2393,11 +2510,11 @@ with_version AS (
     field,
     fhir_version,
     CASE
-      WHEN fhir_version IN ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2') THEN 'DSTU2'
-      WHEN fhir_version IN ('1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', '3.0.0', '3.0.1', '3.0.2') THEN 'STU3'
-      WHEN fhir_version IN ('3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1') THEN 'R4'
-      WHEN fhir_version IN ('4.1.0', '4.3.0') THEN 'R4B'
-      WHEN fhir_version IN ('4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0') THEN 'R5'
+      WHEN fhir_version IN ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2') THEN 'DSTU2'
+      WHEN fhir_version IN ('1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8', '3.0.0', '3.0', '3', '3.0.1', '3.0.2') THEN 'STU3'
+      WHEN fhir_version IN ('3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1') THEN 'R4'
+      WHEN fhir_version IN ('4.1.0', '4.1', '4.3.0', '4.3') THEN 'R4B'
+      WHEN fhir_version IN ('4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5') THEN 'R5'
       ELSE 'DSTU2'
     END AS fhir_version_name
   FROM base
@@ -2434,10 +2551,10 @@ SELECT
         WHEN f.capability_fhir_version = '' THEN 'No Cap Stat'
         WHEN position('-' in f.capability_fhir_version) > 0 THEN substring(f.capability_fhir_version from 1 for position('-' in f.capability_fhir_version) - 1)
         WHEN f.capability_fhir_version IN (
-            '0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-            '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-            '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0'
-        ) 
+            '0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+            '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+            '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5'
+        )
             THEN f.capability_fhir_version
         ELSE 'Unknown'
     END AS fhir_version,
@@ -2532,7 +2649,8 @@ WITH base_filtered_data AS (
         mv.organization_id,
         mv.url,
         mv.fhir_version,
-        mv.vendor_name
+        mv.vendor_name,
+        mv.is_chpl
     FROM mv_endpoint_list_organizations mv
 ),
 processed_data AS (
@@ -2551,25 +2669,26 @@ processed_data AS (
         END as org_id,
         url,
         -- Replicate the consistent FHIR version processing
-        CASE 
+        CASE
             WHEN fhir_version = '' OR fhir_version IS NULL THEN 'No Cap Stat'
-            WHEN position('-' in fhir_version) > 0 THEN 
+            WHEN position('-' in fhir_version) > 0 THEN
                 CASE
-                    WHEN substring(fhir_version, 1, position('-' in fhir_version) - 1) IN 
-                        ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-                         '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-                         '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
+                    WHEN substring(fhir_version, 1, position('-' in fhir_version) - 1) IN
+                        ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+                         '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+                         '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5', 'No Cap Stat')
                     THEN substring(fhir_version, 1, position('-' in fhir_version) - 1)
                     ELSE 'Unknown'
                 END
-            WHEN fhir_version IN 
-                ('0.4.0', '0.5.0', '1.0.0', '1.0.1', '1.0.2', '1.1.0', '1.2.0', '1.4.0', '1.6.0', '1.8.0', 
-                 '3.0.0', '3.0.1', '3.0.2', '3.2.0', '3.3.0', '3.5.0', '3.5a.0', '4.0.0', '4.0.1',
-                 '4.1.0', '4.3.0', '4.2.0', '4.4.0', '4.5.0', '4.6.0', '5.0.0', 'No Cap Stat')
+            WHEN fhir_version IN
+                ('0.4.0', '0.4', '0.5.0', '0.5', '1.0.0', '1.0', '1', '1.0.1', '1.0.2', '1.1.0', '1.1', '1.2.0', '1.2', '1.4.0', '1.4', '1.6.0', '1.6', '1.8.0', '1.8',
+                 '3.0.0', '3.0', '3', '3.0.1', '3.0.2', '3.2.0', '3.2', '3.3.0', '3.3', '3.5.0', '3.5', '3.5a.0', '4.0.0', '4.0', '4', '4.0.1',
+                 '4.1.0', '4.1', '4.3.0', '4.3', '4.2.0', '4.2', '4.4.0', '4.4', '4.5.0', '4.5', '4.6.0', '4.6', '5.0.0', '5.0', '5', 'No Cap Stat')
             THEN fhir_version
             ELSE 'Unknown'
         END AS fhir_version,
-        vendor_name
+        vendor_name,
+        is_chpl
     FROM base_filtered_data
     WHERE organization_id IS NOT NULL AND organization_id != '' AND organization_id != 'Unknown'
 ),
@@ -2715,10 +2834,7 @@ endpoint_data_agg AS (
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
-        string_agg(
-            DISTINCT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',&quot;' || url || '&quot,{priority: ''event''});"> ' || url || '</a>',
-            '<br/>'
-        ) as endpoint_urls_html,
+        string_agg(DISTINCT url, '<br/>') as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
             WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
@@ -2741,10 +2857,13 @@ endpoint_data_agg AS (
         string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
         string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
         string_agg(DISTINCT vendor_name, E'\n') as vendor_names_csv,
+        string_agg(DISTINCT is_chpl, '<br/>') as is_chpl_html,
+        string_agg(DISTINCT is_chpl, E'\n') as is_chpl_csv,
         -- Arrays for filtering (exactly as original code)
         ARRAY(SELECT DISTINCT unnest(array_agg(fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
         ARRAY(SELECT DISTINCT unnest(array_agg(vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array
+        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
     FROM processed_data
     GROUP BY org_id  -- KEY CHANGE: Group by org_id instead of organization_name
 )
@@ -2756,10 +2875,21 @@ SELECT
     COALESCE(ia.identifier_types_html, '') as identifier_types_html,
     COALESCE(ia.identifier_values_html, '') as identifier_values_html,
     COALESCE(aa.addresses_html, '') as addresses_html,
-    eda.endpoint_urls_html,
+    -- Convert plain URLs to HTML format with onclick handler
+    array_to_string(
+        ARRAY(
+            SELECT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." 
+                    onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
+                    onclick="Shiny.setInputValue(''endpoint_popup'',''' || url_elem || '&&None&&' || COALESCE(eda.vendor_names_array[1], '') || ''',{priority: ''event''});"> ' || url_elem || '</a>'
+            FROM unnest(string_to_array(eda.endpoint_urls_html, '<br/>')) AS url_elem
+            WHERE url_elem != ''
+        ),
+        '<br/>'
+    ) as endpoint_urls_html,
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
+    eda.is_chpl_html,
     
     -- For CSV export - split identifier columns
     COALESCE(ia.identifier_types_csv, '') as identifier_types_csv,
@@ -2769,11 +2899,13 @@ SELECT
     COALESCE(ua.org_urls_csv, '') as org_urls_csv,
     eda.fhir_versions_csv,
     eda.vendor_names_csv,
+    eda.is_chpl_csv,
     
     -- Arrays for filtering 
     eda.fhir_versions_array,
     eda.vendor_names_array,
-    eda.urls_array
+    eda.urls_array,
+    eda.is_chpl_array
     
 FROM endpoint_data_agg eda
 LEFT JOIN identifiers_agg ia ON eda.org_id = ia.org_id
@@ -2788,6 +2920,7 @@ CREATE INDEX idx_mv_orgs_agg_name ON mv_organizations_aggregated(organization_na
 CREATE INDEX idx_mv_orgs_agg_fhir_versions ON mv_organizations_aggregated USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_agg_vendor_names ON mv_organizations_aggregated USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_agg_urls ON mv_organizations_aggregated USING GIN(urls_array);
+CREATE INDEX idx_mv_orgs_agg_is_chpl ON mv_organizations_aggregated USING GIN(is_chpl_array);
 
 --LANTERN-973: Group organizations in Org Table if all the fields are same except endpoint url
 CREATE MATERIALIZED VIEW mv_organizations_final AS
@@ -2802,6 +2935,7 @@ SELECT
     string_agg(DISTINCT endpoint_urls_html, '<br/>') as endpoint_urls_html,
     fhir_versions_html,
     vendor_names_html,
+    is_chpl_html,
     
     -- CSV versions
     identifier_types_csv,
@@ -2811,11 +2945,13 @@ SELECT
     string_agg(DISTINCT endpoint_urls_csv, E'\n') as endpoint_urls_csv,
     fhir_versions_csv,
     vendor_names_csv,
+    is_chpl_csv,
     
     -- Arrays for filtering (combine from all matching rows) - FIXED: Use |||| delimiter instead of comma
     ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(fhir_versions_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as fhir_versions_array,
     ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(vendor_names_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as vendor_names_array,
-    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(urls_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as urls_array,
+    ARRAY(SELECT DISTINCT elem FROM unnest(string_to_array(string_agg(array_to_string(is_chpl_array, '||||'), '||||'), '||||')) AS elem ORDER BY elem) as is_chpl_array
     
 FROM mv_organizations_aggregated
 GROUP BY 
@@ -2826,12 +2962,14 @@ GROUP BY
     org_urls_html,
     fhir_versions_html,
     vendor_names_html,
+    is_chpl_html,
     identifier_types_csv,
     identifier_values_csv,
     addresses_csv,
     org_urls_csv,
     fhir_versions_csv,
-    vendor_names_csv
+    vendor_names_csv,
+    is_chpl_csv
 ORDER BY organization_name;
 
 -- Create indexes for performance
@@ -2840,3 +2978,4 @@ CREATE INDEX idx_mv_orgs_final_name ON mv_organizations_final(organization_name)
 CREATE INDEX idx_mv_orgs_final_fhir_versions ON mv_organizations_final USING GIN(fhir_versions_array);
 CREATE INDEX idx_mv_orgs_final_vendor_names ON mv_organizations_final USING GIN(vendor_names_array);
 CREATE INDEX idx_mv_orgs_final_urls ON mv_organizations_final USING GIN(urls_array);
+CREATE INDEX idx_mv_orgs_final_is_chpl ON mv_organizations_final USING GIN(is_chpl_array);

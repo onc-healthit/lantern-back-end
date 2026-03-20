@@ -585,7 +585,10 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 	} else if URLsEqual(chplURL, capellaEHRURL) {
 		CapellaEHRBundleParser(chplURL, fileToWriteTo)
 	} else {
-		log.Infof("Parsing via bundle parser for URL %s", chplURL)
+		log.Warnf(
+			"CHPL ENDPOINT QUERIER PARSER FALLBACK: No explicit handler matched. Using BundleQuerierParser. url=%s",
+			chplURL,
+		)
 		BundleQuerierParser(chplURL, fileToWriteTo)
 	}
 

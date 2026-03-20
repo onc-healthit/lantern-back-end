@@ -69,8 +69,8 @@ endpointsmodule <- function(
   total_pages <- reactive({
     # Count the actual distinct rows that will be displayed in the table
     table_data <- selected_fhir_endpoints_without_limit() %>% 
-      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% 
-      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability)
+      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
+      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl)
     
     total_records <- nrow(table_data)
     max(1, ceiling(total_records / page_size))
@@ -212,12 +212,12 @@ endpointsmodule <- function(
       }
     }
 
-    # Apply external search filter
+    # Apply external search filter (including is_chpl)
     if (trimws(input$search_query) != "") {
       keyword <- tolower(trimws(input$search_query))
       query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
       query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
-      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search})")
+      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search} OR LOWER(is_chpl) LIKE {search})")
       params$search <- paste0("%", keyword, "%")
     }
 
@@ -269,12 +269,12 @@ endpointsmodule <- function(
       }
     }
 
-    # Apply external search filter
+    # Apply external search filter (including is_chpl)
     if (trimws(input$search_query) != "") {
       keyword <- tolower(trimws(input$search_query))
       query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
       query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
-      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search})")
+      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search} OR LOWER(is_chpl) LIKE {search})")
       params$search <- paste0("%", keyword, "%")
     }
 
@@ -308,7 +308,11 @@ endpointsmodule <- function(
 
   output$endpoints_table <- reactable::renderReactable({
      reactable(
-              selected_fhir_endpoints() %>% select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability) %>% group_by(urlModal) %>% mutate_at(vars(-group_cols()), as.character),
+              selected_fhir_endpoints() %>% 
+                select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
+                distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
+                group_by(urlModal) %>% 
+                mutate_at(vars(-group_cols()), as.character),
               defaultColDef = colDef(
                 align = "center"
               ),
@@ -331,7 +335,8 @@ endpointsmodule <- function(
                   format = colDef(name = "Supported Formats", sortable = TRUE),
                   cap_stat_exists = colDef(name = "Capability Statement Returned", sortable = TRUE),
                   status = colDef(name = "HTTP Response", sortable = TRUE),
-                  availability = colDef(name = "Availability", sortable = TRUE)
+                  availability = colDef(name = "Availability", sortable = TRUE),
+                  is_chpl = colDef(name = "Source", sortable = TRUE, minWidth = 120)
               ),
               searchable = FALSE,
               showSortIcon = TRUE,

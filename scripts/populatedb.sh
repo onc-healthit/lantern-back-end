@@ -31,6 +31,10 @@ jq -c '.[]' /etc/lantern/resources/EndpointResourcesList.json | while read endpo
     go run main.go /etc/lantern/resources/$FILENAME $FORMAT $NAME "Other" $LISTURL >> $log_file 2>&1
 done
 
+# Set start time BEFORE processing CHPL endpoints:
+POPULATION_START_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+echo "$(date '+%Y-%m-%d %H:%M:%S') - CHPL population started at: $POPULATION_START_TIME" >> $log_file
+
 jq -c '.[]' /etc/lantern/resources/CHPLEndpointResourcesList.json | while read endpoint; do
     NAME=$(echo $endpoint | jq -c -r '.EndpointName')
     FORMAT=$(echo $endpoint | jq -c -r '.FormatType')
@@ -65,6 +69,16 @@ jq -c '.[]' /etc/lantern/resources/CHPLEndpointResourcesList.json | while read e
     fi
 done
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - All CHPL sources processed, starting cleanup..." >> $log_file
+
+# Run stale CHPL data cleanup once after all CHPL sources have been processed
+cd ../staledatacleaner
+if go run main.go "$POPULATION_START_TIME" >> $log_file 2>&1; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - Stale data cleanup completed successfully" >> $log_file
+else
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - WARNING: Stale data cleanup failed - check logs" >> $log_file
+    # Continue execution - don't fail the entire process
+fi
 
 # run data validation to ensure number of endpoints does not exceed maximum for query interval
 cd ../datavalidation
