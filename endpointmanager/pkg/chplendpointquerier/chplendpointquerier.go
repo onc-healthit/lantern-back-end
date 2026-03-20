@@ -161,19 +161,19 @@ var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
 var inpracsysURL = "https://inpracsys.com/fhir/"
 
 // State Payer list
-var atenaURL = "https://developerportal.aetna.com/fhirapis"
+var aetnaURL = "https://developerportal.aetna.com/fhirapis"
 var centeneURL = "https://partners.centene.com/apiDetail/2718669d-6e2e-42b5-8c90-0a82f13a30ba"
 var cignaURL = "https://developer.cigna.com/docs/service-apis/patient-access/implementation-guide#Implementation-Guide-Base-URL"
 var anthemURL = "https://patient360.anthem.com/P360Member/fhir"
 
 var hcscURL = "https://interoperability.hcsc.com/s/provider-directory-api"
-var guidewellPatAccURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/306/api/285#/CMSInteroperabilityPatientAccessMetadata_100/operation/%2FR4%2Fmetadata/get"
-var guidewellP2PURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/309/api/288#/CMSInteroperabilityPayer2PayerOutboundMetadata_100/operation/%2FP2P%2FR4%2Fmetadata/get"
+var guidewellPatAccURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/396/api/375#/CMSInteroperabilityPatientAccessMetadata_100/operation/%2FR4%2Fmetadata/get"
+var guidewellP2PURL = "https://developer.bcbsfl.com/interop/interop-developer-portal/product/399/api/378#/CMSInteroperabilityPayer2PayerOutboundMetadata_100/operation/%2FP2P%2FR4%2Fmetadata/get"
 var humanaURL = "https://developers.humana.com/apis/patient-api/doc"
 var kaiserURL = "https://developer.kp.org/#/apis/639c015049655aa96ab5b2f1"
 
 // var molinaURL = "https://developer.interop.molinahealthcare.com/api-details#api=patient-access&operation=5f72ab665269f310ef58b361"
-var unitedHealthURL = "https://www.uhc.com/legal/interoperability-apis"
+var unitedHealthURL = "https://www.uhc.com/legal/interoperability-apis/patient-access-api"
 var meldrxURL = "https://app.meldrx.com/api/Directories/fhir/endpoints"
 var emr4MDURL = "https://appstudio.interopengine.com/partner/fhirR4endpoints-mednetmedical.json"
 var smartCareURL = "https://dhfhirpresentation.smartcarenet.com/"
@@ -524,8 +524,8 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string) {
 		QualifactsWebscraper(qualifactsURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nextgenAPIURL) {
 		NextgenAPIWebscraper(nextgenAPIURL, fileToWriteTo)
-	} else if URLsEqual(chplURL, atenaURL) {
-		AetnaURLWebscraper("https://developerportal.aetna.com/fhir/apis/swagger/_v2_patientaccess_Binary_%7Bid%7D.yaml", fileToWriteTo)
+	} else if URLsEqual(chplURL, aetnaURL) {
+		AetnaURLWebscraper("https://developerportal.aetna.com/fhir/apis/swagger/_v2_patientaccess_Endpoint_id.yaml", fileToWriteTo)
 	} else if URLsEqual(chplURL, centeneURL) {
 		CenteneURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, cignaURL) {
