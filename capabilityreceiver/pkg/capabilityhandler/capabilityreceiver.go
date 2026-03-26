@@ -375,9 +375,33 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
 			}
 
-			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.ID)
+			err = updateMetadataIDForRequestedVersionRows(
+				ctx,
+				store,
+				existingEndpt.URL,
+				existingEndpt.RequestedFhirVersion,
+				metadataID,
+			)
 			if err != nil {
 				return fmt.Errorf("just adding the Metadata ID failed, %s", err)
+			}
+
+			fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, existingEndpt.URL)
+			if err != nil {
+				return errors.Wrap(err, "error getting fhir endpoints from DB for metadata-only reconciliation")
+			}
+
+			err = insertEndpointRows(
+				ctx,
+				store,
+				existingEndpt,
+				fhirEndpointList,
+				softwareListMap,
+				fmt.Sprintf("%v", qa.chplMatchFile),
+				metadataID,
+			)
+			if err != nil {
+				return err
 			}
 		}
 	}
@@ -403,6 +427,32 @@ func productIDsForDeveloper(
 	}
 
 	return productIdsPerDeveloper
+}
+
+func updateMetadataIDForRequestedVersionRows(
+	ctx context.Context,
+	store *postgresql.Store,
+	url string,
+	requestedVersion string,
+	metadataID int,
+) error {
+	allRows, err := store.GetFHIREndpointInfosUsingURL(ctx, url)
+	if err != nil {
+		return err
+	}
+
+	for _, row := range allRows {
+		if row.RequestedFhirVersion != requestedVersion {
+			continue
+		}
+
+		err = store.UpdateMetadataIDInfo(ctx, metadataID, row.ID)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func insertEndpointRows(
@@ -454,6 +504,16 @@ func insertEndpointRows(
 			epRow.HealthITProductID = 0
 			err = store.AddFHIREndpointInfo(ctx, &epRow, metadataID)
 			if err != nil {
+				if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
+					log.Warnf(
+						"Duplicate fhir_endpoints_info row skipped (vendorID=%d source=%s url=%s requestedVersion=%s)",
+						vm.VendorID,
+						vm.Source,
+						epRow.URL,
+						epRow.RequestedFhirVersion,
+					)
+					continue
+				}
 				return fmt.Errorf("add to fhir_endpoints_info failed, %s", err)
 			}
 			continue
