@@ -113,54 +113,14 @@ func deleteListSourcesBatch(ctx context.Context, tx *sql.Tx, listSources []strin
 func deleteEndpointDataBatch(ctx context.Context, tx *sql.Tx, listSources []string) error {
 	log.Infof("Deleting endpoint data for %d list sources", len(listSources))
 
-	// Step 1: Get all URLs from endpoints to be deleted
-	findEndpointsQuery := `
-		SELECT DISTINCT url FROM fhir_endpoints 
-		WHERE list_source = ANY($1)
-	`
-
-	rows, err := tx.QueryContext(ctx, findEndpointsQuery, pq.Array(listSources))
+	err := deleteBatchEndpointData(ctx, tx, listSources)
 	if err != nil {
-		return fmt.Errorf("failed to find endpoints for list sources: %w", err)
-	}
-	defer rows.Close()
-
-	var endpointURLs []string
-	for rows.Next() {
-		var url string
-		if err := rows.Scan(&url); err != nil {
-			return fmt.Errorf("failed to scan endpoint URL: %w", err)
-		}
-		endpointURLs = append(endpointURLs, url)
+		return fmt.Errorf("failed to delete endpoint data: %w", err)
 	}
 
-	if len(endpointURLs) == 0 {
-		log.Info("No endpoints found for the stale list sources")
-		return nil
-	}
-
-	log.Infof("Found %d unique endpoints to delete", len(endpointURLs))
-
-	// Process URLs in batches to avoid parameter limits
-	batchSize := 1000
-	for i := 0; i < len(endpointURLs); i += batchSize {
-		end := i + batchSize
-		if end > len(endpointURLs) {
-			end = len(endpointURLs)
-		}
-
-		batch := endpointURLs[i:end]
-		log.Infof("Processing batch %d-%d (%d URLs)", i+1, end, len(batch))
-
-		err = deleteBatchEndpointData(ctx, tx, batch)
-		if err != nil {
-			return fmt.Errorf("failed to delete batch %d-%d: %w", i+1, end, err)
-		}
-	}
-
-	// Step 2: Delete from fhir_endpoints (this should be last)
+	// Delete from fhir_endpoints last
 	result, err := tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoints 
+		DELETE FROM fhir_endpoints
 		WHERE list_source = ANY($1)
 	`, pq.Array(listSources))
 	if err != nil {
@@ -173,21 +133,23 @@ func deleteEndpointDataBatch(ctx context.Context, tx *sql.Tx, listSources []stri
 	return nil
 }
 
-func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) error {
+func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, listSources []string) error {
 	// Delete in order of foreign key dependencies
 	// REMOVED: fhir_endpoints_info, fhir_endpoints_info_history, fhir_endpoints_availability, fhir_endpoints_metadata
 	// These tables preserve history and metadata and should NOT be deleted
 
-	// 1. Delete from fhir_endpoint_organizations first
+	// 1. Delete from fhir_endpoint_organizations first.
+	// Scoped by list_source (via fhir_endpoints.id) so that org records shared with
+	// a live list source that happens to contain the same URL are not affected.
 	result, err := tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoint_organizations 
+		DELETE FROM fhir_endpoint_organizations
 		WHERE id IN (
-			SELECT m.org_database_id 
-			FROM fhir_endpoints e, fhir_endpoint_organizations_map m 
-			WHERE e.id = m.id 
-			AND e.url = ANY($1)
+			SELECT m.org_database_id
+			FROM fhir_endpoints e
+			JOIN fhir_endpoint_organizations_map m ON e.id = m.id
+			WHERE e.list_source = ANY($1)
 		)
-	`, pq.Array(urls))
+	`, pq.Array(listSources))
 	if err != nil {
 		log.Errorf("Failed to delete from fhir_endpoint_organizations: %v", err)
 		return err
@@ -198,14 +160,15 @@ func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) err
 		log.Infof("No records to delete from fhir_endpoint_organizations")
 	}
 
-	// 2. Delete from fhir_endpoint_organizations_map
+	// 2. Delete from fhir_endpoint_organizations_map.
+	// Scoped by list_source so entries for the same URL in a live list source are preserved.
 	result, err = tx.ExecContext(ctx, `
-		DELETE FROM fhir_endpoint_organizations_map 
+		DELETE FROM fhir_endpoint_organizations_map
 		WHERE id IN (
-			SELECT id FROM fhir_endpoints 
-			WHERE url = ANY($1)
+			SELECT id FROM fhir_endpoints
+			WHERE list_source = ANY($1)
 		)
-	`, pq.Array(urls))
+	`, pq.Array(listSources))
 	if err != nil {
 		log.Errorf("Failed to delete from fhir_endpoint_organizations_map: %v", err)
 		return err
@@ -216,11 +179,21 @@ func deleteBatchEndpointData(ctx context.Context, tx *sql.Tx, urls []string) err
 		log.Infof("No records to delete from fhir_endpoint_organizations_map")
 	}
 
-	// 3. Delete from endpoint_organization
+	// 3. Delete from endpoint_organization only for URLs that are no longer referenced
+	// by any live list source. If a URL exists in another active list source, keep it.
+	// NOT EXISTS is used instead of NOT IN to correctly handle NULL urls and improve
+	// performance via index on (url, list_source).
 	result, err = tx.ExecContext(ctx, `
-		DELETE FROM endpoint_organization 
-		WHERE url = ANY($1)
-	`, pq.Array(urls))
+		DELETE FROM endpoint_organization
+		WHERE url IN (
+			SELECT url FROM fhir_endpoints WHERE list_source = ANY($1)
+		)
+		AND NOT EXISTS (
+			SELECT 1 FROM fhir_endpoints fe2
+			WHERE fe2.url = endpoint_organization.url
+			AND NOT (fe2.list_source = ANY($1))
+		)
+	`, pq.Array(listSources))
 	if err != nil {
 		log.Errorf("Failed to delete from endpoint_organization: %v", err)
 		return err
