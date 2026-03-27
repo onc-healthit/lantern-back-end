@@ -9,7 +9,7 @@ require (
 	github.com/lib/pq v1.3.0
 	github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20260320213521-f758cf835802
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.8.1
+	github.com/sirupsen/logrus v1.8.3
 	github.com/spf13/viper v1.10.1
 	github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
 	github.com/xuri/excelize/v2 v2.4.1
