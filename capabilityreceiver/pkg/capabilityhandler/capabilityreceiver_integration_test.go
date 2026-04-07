@@ -427,6 +427,19 @@ func Test_saveMsgInDB(t *testing.T) {
 	th.Assert(t, err == nil, err)
 	th.Assert(t, valID2 != valID3, "No new validation ID was added to the validation_results table")
 
+	// Verify the full update path produces 'U' history rows, not 'D'+'I' pairs
+	var uCount, dCount int
+	store.DB.QueryRow(
+		"SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE url=$1 AND operation='U'",
+		testFhirEndpoint1.URL,
+	).Scan(&uCount)
+	store.DB.QueryRow(
+		"SELECT COUNT(*) FROM fhir_endpoints_info_history WHERE url=$1 AND operation='D'",
+		testFhirEndpoint1.URL,
+	).Scan(&dCount)
+	th.Assert(t, uCount >= 1, "full update path should produce at least one 'U' history row")
+	th.Assert(t, dCount == 0, fmt.Sprintf("full update path should not produce any 'D' history rows, found %d", dCount))
+
 	queueTmp["tlsVersion"] = "TLS 1.2" // resetting value
 	queueTmp["httpResponse"] = 200
 
