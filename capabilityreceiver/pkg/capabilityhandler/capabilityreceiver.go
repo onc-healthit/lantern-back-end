@@ -350,7 +350,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return errors.Wrap(err, "error getting fhir endpoints from DB")
 			}
 
-			err = insertEndpointRows(
+			err = updateOrInsertEndpointRows(
 				ctx,
 				store,
 				existingEndpt,
