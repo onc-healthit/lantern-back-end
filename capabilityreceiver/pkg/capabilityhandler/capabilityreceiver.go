@@ -371,14 +371,43 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
 			}
 
-			err = store.UpdateMetadataIDInfo(ctx, metadataID, existingEndpt.ID)
-			if err != nil {
-				return fmt.Errorf("just adding the Metadata ID failed, %s", err)
-			}
+			err = updateMetadataIDForRequestedVersionRows(
+				ctx,
+				store,
+				existingEndpt.URL,
+				existingEndpt.RequestedFhirVersion,
+				metadataID,
+			)
 		}
 	}
 
 	log.Info("[saveMsgInDB] --- END ---")
+	return nil
+}
+
+func updateMetadataIDForRequestedVersionRows(
+	ctx context.Context,
+	store *postgresql.Store,
+	url string,
+	requestedVersion string,
+	metadataID int,
+) error {
+	allRows, err := store.GetFHIREndpointInfosUsingURL(ctx, url)
+	if err != nil {
+		return err
+	}
+
+	for _, row := range allRows {
+		if row.RequestedFhirVersion != requestedVersion {
+			continue
+		}
+
+		err = store.UpdateMetadataIDInfo(ctx, metadataID, row.ID)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
