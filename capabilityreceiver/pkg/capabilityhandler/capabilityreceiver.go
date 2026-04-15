@@ -472,7 +472,9 @@ func insertEndpointRows(
 			)
 
 			if err != nil {
-				return fmt.Errorf("resolve vendor failed, %s", err)
+				log.Errorf("[insertEndpointRows] resolve vendor failed, setting vendorID=0: listSource=%s url=%s err=%s",
+					listSource, epRow.URL, err)
+				vm.VendorID = 0
 			}
 			epRow.VendorID = vm.VendorID
 
@@ -506,7 +508,9 @@ func insertEndpointRows(
 			)
 
 			if err != nil {
-				return fmt.Errorf("resolve vendor failed, %s", err)
+				log.Errorf("[insertEndpointRows] resolve vendor failed, setting vendorID=0: developer=%s listSource=%s url=%s err=%s",
+					developerName, listSource, epRow.URL, err)
+				vm.VendorID = 0
 			}
 			epRow.VendorID = vm.VendorID
 
@@ -593,7 +597,9 @@ func updateOrInsertEndpointRows(
 		if len(developerNames) == 0 {
 			vm, err := ResolveVendor(ctx, store, listSource, "", baseEndpoint.CapabilityStatement)
 			if err != nil {
-				return fmt.Errorf("resolve vendor failed, %s", err)
+				log.Errorf("[updateOrInsertEndpointRows] resolve vendor failed, setting vendorID=0: listSource=%s url=%s err=%s",
+					listSource, baseEndpoint.URL, err)
+				vm.VendorID = 0
 			}
 
 			log.Infof(
@@ -650,7 +656,9 @@ func updateOrInsertEndpointRows(
 
 			vm, err := ResolveVendor(ctx, store, listSource, developerName, baseEndpoint.CapabilityStatement)
 			if err != nil {
-				return fmt.Errorf("resolve vendor failed, %s", err)
+				log.Errorf("[updateOrInsertEndpointRows] resolve vendor failed, setting vendorID=0: developer=%s listSource=%s url=%s err=%s",
+					developerName, listSource, baseEndpoint.URL, err)
+				vm.VendorID = 0
 			}
 
 			log.Infof(
