@@ -236,21 +236,22 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	if err != nil {
 		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
 	}
+	log.Infof("[saveMsgInDB] CHPL endpoint list info file loaded successfully url=%s", fhirEndpoint.URL)
 
 	// Try to find existing row
+	log.Infof("[saveMsgInDB] Looking up existing endpoint url=%s requestedVersion=%s", fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
-
-	log.Info("Inside saveMsgInDB - outer")
 
 	// CASE 1: Endpoint does NOT exist yet (sql.ErrNoRows)
 	if err == sql.ErrNoRows {
-		log.Info("[saveMsgInDB] NEW endpoint detected: inserting")
+		log.Infof("[saveMsgInDB] CASE 1: new endpoint url=%s requestedVersion=%s", fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
 		// If the endpoint info entry doesn't exist, add it to the DB
 		metadataID, err := store.AddFHIREndpointMetadata(ctx, fhirEndpoint.Metadata)
 		if err != nil {
 			return fmt.Errorf("doesn't exist, add endpoint metadata failed, %s", err)
 		}
+		log.Infof("[saveMsgInDB] added metadata metadataID=%d url=%s", metadataID, fhirEndpoint.URL)
 
 		// Create validation ID
 		valResID, err := store.AddValidationResult(ctx)
@@ -258,21 +259,20 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			return fmt.Errorf("adding new validation result ID failed, %s", err)
 		}
 		fhirEndpoint.ValidationID = valResID
+		log.Infof("[saveMsgInDB] added validation result validationID=%d url=%s", valResID, fhirEndpoint.URL)
 
 		err = store.AddValidation(ctx, validation, valResID)
 		if err != nil {
 			return fmt.Errorf("error adding validation rows to table, %s", err)
 		}
+		log.Infof("[saveMsgInDB] added validation rows url=%s", fhirEndpoint.URL)
 
 		// Pull url, list_source pairs from the db (url will be the same, list_source values will differ)
 		fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, fhirEndpoint.URL)
 		if err != nil {
 			return errors.Wrap(err, "error getting fhir endpoints from DB")
 		}
-
-		log.Info("Inside saveMsgInDB")
-
-		log.Info("fhirEndpoint.URL: ", fhirEndpoint.URL, "\n")
+		log.Infof("[saveMsgInDB] fetched fhirEndpointList count=%d url=%s", len(fhirEndpointList), fhirEndpoint.URL)
 
 		err = insertEndpointRows(
 			ctx,
@@ -290,14 +290,18 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		log.Info("[saveMsgInDB] NEW endpoint inserted successfully")
 	} else if err != nil {
 		// CASE 2: A different DB error occurred
+		log.Errorf("[saveMsgInDB] CASE 2: DB error looking up endpoint url=%s err=%s", fhirEndpoint.URL, err)
 		return err
 	} else {
 		// CASE 3: Endpoint already exists -> must update / merge
-		log.Info("[saveMsgInDB] EXISTING endpoint found: updating")
+		log.Infof("[saveMsgInDB] CASE 3: existing endpoint found id=%d url=%s vendorID=%d healthITProductID=%d",
+			existingEndpt.ID, existingEndpt.URL, existingEndpt.VendorID, existingEndpt.HealthITProductID)
 
-		// Carry vendor & product IDs forward
+		// Carry vendor & product IDs forward solely for the capability comparison below.
+		// Vendor/product resolution for all vendor rows is handled by updateOrInsertEndpointRows.
 		fhirEndpoint.VendorID = existingEndpt.VendorID
 		fhirEndpoint.HealthITProductID = existingEndpt.HealthITProductID
+		log.Infof("[saveMsgInDB] using existing vendorID=%d healthITProductID=%d for capability comparison url=%s", fhirEndpoint.VendorID, fhirEndpoint.HealthITProductID, fhirEndpoint.URL)
 
 		// Sync metadata
 		existingEndpt.Metadata.URL = fhirEndpoint.Metadata.URL
@@ -311,11 +315,15 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 		// until there's a reason to update it
 		fhirEndpoint.ValidationID = existingEndpt.ValidationID
 
-		// If the existing endpoint info does not equal the stored endpoint info, update it with the new information, otherwise only update metadata.
-		if !existingEndpt.EqualExcludeMetadata(fhirEndpoint) {
-			log.Info("[saveMsgInDB] Detected changed fields -> rewriting endpoint row")
+		// Check whether capability fields changed. Vendor/product IDs are carried forward above so
+		// they do not affect this check; they are re-resolved by updateOrInsertEndpointRows below.
+		capabilityChanged := !existingEndpt.EqualExcludeMetadata(fhirEndpoint)
+		log.Infof("[saveMsgInDB] capability check: capabilityChanged=%v url=%s", capabilityChanged, existingEndpt.URL)
 
-			// Update capability fields
+		if capabilityChanged {
+			log.Infof("[saveMsgInDB] capability fields changed -> updating url=%s", existingEndpt.URL)
+
+			// Copy capability fields into existingEndpt for use by updateOrInsertEndpointRows.
 			existingEndpt.CapabilityStatement = fhirEndpoint.CapabilityStatement
 			existingEndpt.CapabilityStatementBytes = fhirEndpoint.CapabilityStatementBytes
 			existingEndpt.SMARTResponseBytes = fhirEndpoint.SMARTResponseBytes
@@ -327,58 +335,52 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 			existingEndpt.SupportedProfiles = fhirEndpoint.SupportedProfiles
 			existingEndpt.CapabilityFhirVersion = fhirEndpoint.CapabilityFhirVersion
 
-			log.Info("Updating other fields in existing endpoints")
-
-			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
-			if err != nil {
-				return fmt.Errorf("exists, add endpoint metadata failed, %s", err)
-			}
+			log.Infof("[saveMsgInDB] copying capability fields to existingEndpt url=%s", existingEndpt.URL)
 
 			valResID, err := store.AddValidationResult(ctx)
 			if err != nil {
 				return fmt.Errorf("adding new validation result ID failed, %s", err)
 			}
 			existingEndpt.ValidationID = valResID
+			log.Infof("[saveMsgInDB] added validation result validationID=%d url=%s", valResID, existingEndpt.URL)
 
 			err = store.AddValidation(ctx, validation, valResID)
 			if err != nil {
 				return fmt.Errorf("error adding validation rows to table, %s", err)
 			}
-
-			fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, existingEndpt.URL)
-			if err != nil {
-				return errors.Wrap(err, "error getting fhir endpoints from DB")
-			}
-
-			err = updateOrInsertEndpointRows(
-				ctx,
-				store,
-				existingEndpt,
-				fhirEndpointList,
-				softwareListMap,
-				fmt.Sprintf("%v", qa.chplMatchFile),
-				metadataID,
-			)
-			if err != nil {
-				return err
-			}
-
-			log.Info("[saveMsgInDB] EXISTING endpoint updated successfully")
-		} else {
-			// Metadata only update
-			metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
-			if err != nil {
-				return fmt.Errorf("just adding endpoint metadata failed, %s", err)
-			}
-
-			err = updateMetadataIDForRequestedVersionRows(
-				ctx,
-				store,
-				existingEndpt.URL,
-				existingEndpt.RequestedFhirVersion,
-				metadataID,
-			)
+			log.Infof("[saveMsgInDB] added validation rows url=%s", existingEndpt.URL)
 		}
+
+		// Always add new metadata and call updateOrInsertEndpointRows. When capability fields are
+		// unchanged, updateOrInsertEndpointRows will still re-resolve vendor/product IDs from the
+		// current CHPL data and update any row where they have changed. Its per-row equality guard
+		// prevents unnecessary writes (and history rows) when nothing changed.
+		metadataID, err := store.AddFHIREndpointMetadata(ctx, existingEndpt.Metadata)
+		if err != nil {
+			return fmt.Errorf("exists, add endpoint metadata failed, %s", err)
+		}
+		log.Infof("[saveMsgInDB] added metadata metadataID=%d url=%s", metadataID, existingEndpt.URL)
+
+		fhirEndpointList, err := store.GetFHIREndpointUsingURL(ctx, existingEndpt.URL)
+		if err != nil {
+			return errors.Wrap(err, "error getting fhir endpoints from DB")
+		}
+		log.Infof("[saveMsgInDB] fetched fhirEndpointList count=%d url=%s", len(fhirEndpointList), existingEndpt.URL)
+
+		err = updateOrInsertEndpointRows(
+			ctx,
+			store,
+			existingEndpt,
+			fhirEndpointList,
+			softwareListMap,
+			fmt.Sprintf("%v", qa.chplMatchFile),
+			metadataID,
+		)
+		if err != nil {
+			return err
+		}
+
+		log.Infof("[saveMsgInDB] EXISTING endpoint processed successfully url=%s", existingEndpt.URL)
 	}
 
 	log.Info("[saveMsgInDB] --- END ---")
@@ -439,6 +441,8 @@ func insertEndpointRows(
 	matchFile string,
 	metadataID int,
 ) error {
+	log.Infof("[insertEndpointRows] START url=%s metadataID=%d fhirEndpointList count=%d",
+		baseEndpoint.URL, metadataID, len(fhirEndpointList))
 
 	// For each list_source
 	for _, fhirEp := range fhirEndpointList {
@@ -479,12 +483,17 @@ func insertEndpointRows(
 			epRow.VendorID = vm.VendorID
 
 			epRow.HealthITProductID = 0
+			log.Infof("[insertEndpointRows] inserting row (no developers) vendorID=%d url=%s", epRow.VendorID, epRow.URL)
 			err = store.AddFHIREndpointInfo(ctx, &epRow, metadataID)
 			if err != nil {
 				return fmt.Errorf("add to fhir_endpoints_info failed, %s", err)
 			}
+			log.Infof("[insertEndpointRows] inserted row (no developers) vendorID=%d url=%s", epRow.VendorID, epRow.URL)
 			continue
 		}
+
+		log.Infof("[insertEndpointRows] developer branch listSource=%s developerCount=%d url=%s",
+			listSource, len(developerNames), baseEndpoint.URL)
 
 		// Track the developers that have already been processed
 		isDeveloperSeen := make(map[string]bool)
@@ -518,6 +527,8 @@ func insertEndpointRows(
 				productIDsForDeveloper(developerNames, productIds, developerName)
 
 			epRow.HealthITProductID = 0 // Reset before matching to product
+			log.Infof("[insertEndpointRows] matching endpoint to product developer=%s vendorID=%d url=%s",
+				developerName, epRow.VendorID, epRow.URL)
 			err = chplmapper.MatchEndpointToProduct(
 				ctx,
 				&epRow,
@@ -528,7 +539,11 @@ func insertEndpointRows(
 			if err != nil {
 				return fmt.Errorf("match endpoint to product failed, %s", err)
 			}
+			log.Infof("[insertEndpointRows] product match complete developer=%s vendorID=%d healthITProductID=%d url=%s",
+				developerName, epRow.VendorID, epRow.HealthITProductID, epRow.URL)
 
+			log.Infof("[insertEndpointRows] inserting row developer=%s vendorID=%d url=%s",
+				developerName, epRow.VendorID, epRow.URL)
 			err = store.AddFHIREndpointInfo(ctx, &epRow, metadataID)
 			if err != nil {
 				if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23505" {
@@ -552,6 +567,7 @@ func insertEndpointRows(
 		}
 	}
 
+	log.Infof("[insertEndpointRows] END url=%s", baseEndpoint.URL)
 	return nil
 }
 
@@ -564,6 +580,9 @@ func updateOrInsertEndpointRows(
 	matchFile string,
 	metadataID int,
 ) error {
+	log.Infof("[updateOrInsertEndpointRows] START url=%s requestedVersion=%s metadataID=%d fhirEndpointList count=%d",
+		baseEndpoint.URL, baseEndpoint.RequestedFhirVersion, metadataID, len(fhirEndpointList))
+
 	// Build a map of existing rows for this url+requestedVersion keyed by vendorID.
 	// The unique constraint UNIQUE(url, requested_fhir_version, vendor_id) guarantees at most
 	// one row per vendorID for a given url+version combination.
@@ -581,6 +600,8 @@ func updateOrInsertEndpointRows(
 			currentRowByVendorID[row.VendorID] = row
 		}
 	}
+	log.Infof("[updateOrInsertEndpointRows] existing rows in currentRowByVendorID count=%d url=%s requestedVersion=%s",
+		len(currentRowByVendorID), baseEndpoint.URL, baseEndpoint.RequestedFhirVersion)
 
 	// Track which vendorIDs are expected so we can delete stale rows afterward.
 	expectedVendorIDSeen := make(map[int]bool)
@@ -592,6 +613,8 @@ func updateOrInsertEndpointRows(
 
 		developerNames := softwareListMap[listSource].ChplDeveloper
 		productIds := softwareListMap[listSource].ChplProductIDs
+		log.Infof("[updateOrInsertEndpointRows] listSource=%s developerCount=%d productCount=%d url=%s",
+			listSource, len(developerNames), len(productIds), baseEndpoint.URL)
 
 		// No-developer branch: resolve one vendor via listSource/capability fallback.
 		if len(developerNames) == 0 {
@@ -608,6 +631,7 @@ func updateOrInsertEndpointRows(
 			)
 
 			if expectedVendorIDSeen[vm.VendorID] {
+				log.Infof("[updateOrInsertEndpointRows] vendorID=%d already seen this run, skipping url=%s", vm.VendorID, baseEndpoint.URL)
 				continue
 			}
 			expectedVendorIDSeen[vm.VendorID] = true
@@ -617,7 +641,17 @@ func updateOrInsertEndpointRows(
 			epRow.HealthITProductID = 0
 
 			if existingRow, exists := currentRowByVendorID[vm.VendorID]; exists {
+				log.Infof("[updateOrInsertEndpointRows] existing row found for vendorID=%d rowID=%d url=%s", vm.VendorID, existingRow.ID, baseEndpoint.URL)
 				epRow.ID = existingRow.ID
+				epRow.ValidationID = existingRow.ValidationID
+				if existingRow.EqualExcludeMetadata(&epRow) {
+					log.Infof("[updateOrInsertEndpointRows] no change for vendorID=%d, metadata-only url=%s", vm.VendorID, epRow.URL)
+					err = store.UpdateMetadataIDInfo(ctx, metadataID, existingRow.ID)
+					if err != nil {
+						return fmt.Errorf("update metadata id failed, %s", err)
+					}
+					continue
+				}
 				err = store.UpdateFHIREndpointInfo(ctx, &epRow, metadataID)
 				if err != nil {
 					return fmt.Errorf("update fhir_endpoints_info failed, %s", err)
@@ -667,22 +701,49 @@ func updateOrInsertEndpointRows(
 			)
 
 			if expectedVendorIDSeen[vm.VendorID] {
+				log.Infof("[updateOrInsertEndpointRows] vendorID=%d already seen this run, skipping developer=%s url=%s",
+					vm.VendorID, developerName, baseEndpoint.URL)
 				continue
 			}
 			expectedVendorIDSeen[vm.VendorID] = true
 
 			epRow := *baseEndpoint
 			epRow.VendorID = vm.VendorID
-			epRow.HealthITProductID = 0
+
+			// Seed HealthITProductID from the existing row so that AddHealthITProductMap
+			// can reuse the existing mapping group (ON CONFLICT returns the same ID when
+			// the same products are already mapped), preventing a new mapping ID from being
+			// created on every run when nothing has changed. For new rows, fall back to 0.
+			if existingRow, exists := currentRowByVendorID[vm.VendorID]; exists {
+				epRow.HealthITProductID = existingRow.HealthITProductID
+			} else {
+				epRow.HealthITProductID = 0
+			}
 
 			productIdsPerDeveloper := productIDsForDeveloper(developerNames, productIds, developerName)
+			log.Infof("[updateOrInsertEndpointRows] matching endpoint to product developer=%s vendorID=%d productIDs=%v url=%s",
+				developerName, epRow.VendorID, productIdsPerDeveloper, epRow.URL)
 			err = chplmapper.MatchEndpointToProduct(ctx, &epRow, store, matchFile, productIdsPerDeveloper)
 			if err != nil {
 				return fmt.Errorf("match endpoint to product failed, %s", err)
 			}
+			log.Infof("[updateOrInsertEndpointRows] product match complete developer=%s vendorID=%d healthITProductID=%d url=%s",
+				developerName, epRow.VendorID, epRow.HealthITProductID, epRow.URL)
 
 			if existingRow, exists := currentRowByVendorID[vm.VendorID]; exists {
+				log.Infof("[updateOrInsertEndpointRows] existing row found for developer=%s vendorID=%d rowID=%d url=%s",
+					developerName, vm.VendorID, existingRow.ID, baseEndpoint.URL)
 				epRow.ID = existingRow.ID
+				epRow.ValidationID = existingRow.ValidationID
+
+				if existingRow.EqualExcludeMetadata(&epRow) {
+					log.Infof("[updateOrInsertEndpointRows] no change for developer=%s vendorID=%d, metadata-only url=%s", developerName, vm.VendorID, epRow.URL)
+					err = store.UpdateMetadataIDInfo(ctx, metadataID, existingRow.ID)
+					if err != nil {
+						return fmt.Errorf("update metadata id failed, %s", err)
+					}
+					continue
+				}
 				err = store.UpdateFHIREndpointInfo(ctx, &epRow, metadataID)
 				if err != nil {
 					return fmt.Errorf("update fhir_endpoints_info failed, %s", err)
@@ -712,10 +773,13 @@ func updateOrInsertEndpointRows(
 	}
 
 	// Delete any rows whose vendorID is no longer expected.
+	log.Infof("[updateOrInsertEndpointRows] cleanup phase: currentRowByVendorID count=%d expectedVendorIDSeen count=%d url=%s",
+		len(currentRowByVendorID), len(expectedVendorIDSeen), baseEndpoint.URL)
 	for vendorID, row := range currentRowByVendorID {
 		if expectedVendorIDSeen[vendorID] {
 			continue
 		}
+		log.Infof("[updateOrInsertEndpointRows] deleting stale row vendorID=%d rowID=%d url=%s", vendorID, row.ID, row.URL)
 		err = deleteEndpointInfoRowByID(ctx, store, row.ID)
 		if err != nil {
 			return fmt.Errorf("delete stale fhir_endpoints_info row failed, %s", err)
@@ -726,6 +790,7 @@ func updateOrInsertEndpointRows(
 		)
 	}
 
+	log.Infof("[updateOrInsertEndpointRows] END url=%s", baseEndpoint.URL)
 	return nil
 }
 
