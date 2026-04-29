@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -262,12 +263,16 @@ func Test_saveMsgInDB(t *testing.T) {
 	defer ctStmt.Close()
 	ctx := context.Background()
 
+	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile("../../testdata/test_chpl_products_info.json")
+	th.Assert(t, err == nil, err)
+
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
 		store:                    store,
 		ctx:                      ctx,
 		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
 		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
+		softwareListMap:          softwareListMap,
 	}
 
 	// populate vendors

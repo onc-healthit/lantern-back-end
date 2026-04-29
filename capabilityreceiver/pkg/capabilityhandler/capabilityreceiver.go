@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"sync/atomic"
+	"time"
 
 	"github.com/lib/pq"
 	"github.com/onc-healthit/lantern-back-end/lanternmq/pkg/accessqueue"
@@ -41,6 +43,9 @@ type capStatQueryArgs struct {
 	ctx                      context.Context
 	chplMatchFile            string
 	chplEndpointListInfoFile string
+	softwareListMap          map[string]chplmapper.ChplMapResults
+	msgCount                 *int64
+	startTime                time.Time
 }
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
@@ -232,11 +237,7 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	log.Infof("[saveMsgInDB] Processing URL=%s RequestedVersion=%s", fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
-	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile(fmt.Sprintf("%v", qa.chplEndpointListInfoFile))
-	if err != nil {
-		return fmt.Errorf("Opening CHPL endpoint list info file failed, %s", err)
-	}
-	log.Infof("[saveMsgInDB] CHPL endpoint list info file loaded successfully url=%s", fhirEndpoint.URL)
+	softwareListMap := qa.softwareListMap
 
 	// Try to find existing row
 	log.Infof("[saveMsgInDB] Looking up existing endpoint url=%s requestedVersion=%s", fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
@@ -384,6 +385,14 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	}
 
 	log.Info("[saveMsgInDB] --- END ---")
+
+	count := atomic.AddInt64(qa.msgCount, 1)
+	if count%1000 == 0 {
+		elapsed := time.Since(qa.startTime)
+		rate := float64(count) / elapsed.Minutes()
+		log.Infof("[receiver] Processed %d capability statements in %s (%.1f msg/min)", count, elapsed.Round(time.Second), rate)
+	}
+
 	return nil
 }
 
@@ -872,6 +881,8 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 
 	supportedVersions = append(supportedVersions, "None")
 
+	log.Infof("[versionsReceiver] url=%s dispatching %d capability queries (versions: %v)", url, len(supportedVersions), supportedVersions)
+
 	err = removeNoLongerExistingVersionsInfos(ctx, store, url, supportedVersions)
 	if err != nil {
 		return err
@@ -905,12 +916,23 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	channelID lanternmq.ChannelID,
 	qName string) error {
 
+	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile("/etc/lantern/resources/CHPLProductsInfo.json")
+	if err != nil {
+		return fmt.Errorf("loading CHPL endpoint list info file failed: %s", err)
+	}
+	log.Info("CHPL endpoint list info file loaded at startup")
+
+	var msgCount int64 = 0
+
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
 		store:                    store,
 		ctx:                      ctx,
 		chplMatchFile:            "/etc/lantern/resources/CHPLProductMapping.json",
 		chplEndpointListInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
+		softwareListMap:          softwareListMap,
+		msgCount:                 &msgCount,
+		startTime:                time.Now(),
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)

@@ -58,6 +58,7 @@ func queryEndpointsCapabilityStatement(message []byte, args *map[string]interfac
 	defaultVersion := msgJSON["defaultVersion"]
 
 	if urlString == "FINISHED" {
+		log.Info("[capabilityQuerier] FINISHED sentinel received — all capability queries dispatched")
 		return nil
 	}
 

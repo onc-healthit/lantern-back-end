@@ -106,6 +106,9 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 	}
 
 	// If Finished message, pass on to versions response queue
+	if qa.FhirURL == "FINISHED" {
+		log.Info("[versionsQuerier] FINISHED sentinel received — forwarding to capability queue")
+	}
 	if qa.FhirURL != "FINISHED" {
 		// Cast string url to type url then cast back to string to ensure url string in correct url format
 		castURL, err := url.Parse(qa.FhirURL)

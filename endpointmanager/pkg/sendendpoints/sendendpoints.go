@@ -81,6 +81,7 @@ func GetEnptsAndSend(
 		}
 
 		if len(listOfEndpoints) != 0 {
+			log.Infof("All %d endpoint URLs enqueued. Sending FINISHED sentinel.", len(listOfEndpoints))
 			err = accessqueue.SendToQueue(ctx, "FINISHED", mq, channelID, qName)
 			if err != nil {
 				errs <- err

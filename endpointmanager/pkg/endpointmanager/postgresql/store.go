@@ -3,6 +3,7 @@ package postgresql
 import (
 	"database/sql"
 	"fmt"
+	"time"
 
 	_ "github.com/lib/pq" // specified to do this for accessing postgres db
 )
@@ -41,6 +42,10 @@ func NewStore(host string, port int, user string, password string, dbname string
 		err = fmt.Errorf("Error creating connection to database: %s", err.Error())
 		panic(err.Error())
 	}
+
+	store.DB.SetMaxOpenConns(25)
+	store.DB.SetMaxIdleConns(10)
+	store.DB.SetConnMaxLifetime(5 * time.Minute)
 
 	err = prepareFHIREndpointStatements(&store)
 	if err != nil {
