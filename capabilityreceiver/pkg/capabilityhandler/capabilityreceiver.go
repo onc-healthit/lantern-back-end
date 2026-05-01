@@ -923,6 +923,8 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	log.Info("CHPL endpoint list info file loaded at startup")
 
 	var msgCount int64 = 0
+	receiverStart := time.Now()
+	log.Infof("[capabilityReceiver] started at %s", receiverStart.UTC().Format(time.RFC3339))
 
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
@@ -932,7 +934,7 @@ func ReceiveCapabilityStatements(ctx context.Context,
 		chplEndpointListInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
 		softwareListMap:          softwareListMap,
 		msgCount:                 &msgCount,
-		startTime:                time.Now(),
+		startTime:                receiverStart,
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
@@ -947,6 +949,10 @@ func ReceiveCapabilityStatements(ctx context.Context,
 		log.Warn(elem)
 	}
 
+	elapsed := time.Since(receiverStart)
+	log.Infof("[capabilityReceiver] finished at %s — processed %d capability statements in %s (%.1f msg/min)",
+		time.Now().UTC().Format(time.RFC3339), atomic.LoadInt64(&msgCount), elapsed.Round(time.Second), float64(atomic.LoadInt64(&msgCount))/elapsed.Minutes())
+
 	return nil
 }
 
@@ -960,6 +966,9 @@ func ReceiveVersionResponses(ctx context.Context,
 	capQueryQueue lanternmq.MessageQueue,
 	capQueryChannelID lanternmq.ChannelID) error {
 	args := make(map[string]interface{})
+
+	versionsStart := time.Now()
+	log.Infof("[versionsReceiver] started at %s", versionsStart.UTC().Format(time.RFC3339))
 
 	args["queryArgs"] = versionsQueryArgs{
 		ctx:               ctx,
@@ -979,6 +988,9 @@ func ReceiveVersionResponses(ctx context.Context,
 	for elem := range errs {
 		log.Warn(elem)
 	}
+
+	elapsed := time.Since(versionsStart)
+	log.Infof("[versionsReceiver] finished at %s — duration %s", time.Now().UTC().Format(time.RFC3339), elapsed.Round(time.Second))
 
 	return nil
 }

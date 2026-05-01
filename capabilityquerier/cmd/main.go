@@ -155,6 +155,9 @@ func setupQueue(store *postgresql.Store, userAgent string, ctx context.Context, 
 	err = workers.Start(ctx, numWorkers, errs)
 	helpers.FailOnError("", err)
 
+	queueStart := time.Now()
+	log.Infof("[%s] started at %s (workers=%d)", endptQName, queueStart.UTC().Format(time.RFC3339), numWorkers)
+
 	args := make(map[string]interface{})
 	args["queryArgs"] = queryArgs{
 		workers: workers,
@@ -176,6 +179,9 @@ func setupQueue(store *postgresql.Store, userAgent string, ctx context.Context, 
 	for elem := range errs {
 		log.Warn(elem)
 	}
+
+	elapsed := time.Since(queueStart)
+	log.Infof("[%s] finished at %s — duration %s", endptQName, time.Now().UTC().Format(time.RFC3339), elapsed.Round(time.Second))
 }
 
 func main() {
