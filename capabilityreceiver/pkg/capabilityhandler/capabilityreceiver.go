@@ -362,32 +362,6 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 	return nil
 }
 
-func updateMetadataIDForRequestedVersionRows(
-	ctx context.Context,
-	store *postgresql.Store,
-	url string,
-	requestedVersion string,
-	metadataID int,
-) error {
-	allRows, err := store.GetFHIREndpointInfosUsingURL(ctx, url)
-	if err != nil {
-		return err
-	}
-
-	for _, row := range allRows {
-		if row.RequestedFhirVersion != requestedVersion {
-			continue
-		}
-
-		err = store.UpdateMetadataIDInfo(ctx, metadataID, row.ID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func productIDsForDeveloper(
 	developerNames []string,
 	productIds []string,
