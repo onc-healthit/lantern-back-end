@@ -232,6 +232,13 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			}
 		}
 
+		if operResourceJSON != nil {
+			err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		if supportedProfilesJSON != nil {
 			err = json.Unmarshal(supportedProfilesJSON, &endpointInfo.SupportedProfiles)
 			if err != nil {
