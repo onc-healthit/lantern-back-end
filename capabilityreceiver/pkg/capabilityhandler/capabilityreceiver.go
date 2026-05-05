@@ -34,6 +34,7 @@ type versionsQueryArgs struct {
 	ctx               context.Context
 	capQueryChannelID lanternmq.ChannelID
 	capQueryQueue     lanternmq.MessageQueue
+	startTime         time.Time
 }
 
 // capStatQueryArgs is a struct to hold the args that will be consumed by the
@@ -847,6 +848,11 @@ func saveVersionResponseMsgInDB(message []byte, args *map[string]interface{}) er
 		return fmt.Errorf("unable to cast message URL to string")
 	}
 
+	if url == "FINISHED" {
+		elapsed := time.Since(qa.startTime)
+		log.Infof("[versionsReceiver] finished at %s — duration %s", time.Now().UTC().Format(time.RFC3339), elapsed.Round(time.Second))
+	}
+
 	store := qa.store
 	ctx := qa.ctx
 
@@ -945,13 +951,27 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	errs := make(chan error)
 	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
 
+	// ProcessMessages blocks indefinitely because RabbitMQ keeps the delivery
+	// channel open even when the queue is empty. Log the finish when msgCount
+	// stops changing for 2 minutes, which means the queue has drained.
+	go func() {
+		for {
+			time.Sleep(2 * time.Minute)
+			prev := atomic.LoadInt64(&msgCount)
+			time.Sleep(2 * time.Minute)
+			curr := atomic.LoadInt64(&msgCount)
+			if curr == prev && curr > 0 {
+				elapsed := time.Since(receiverStart)
+				log.Infof("[capabilityReceiver] finished at %s — processed %d capability statements in %s (%.1f msg/min)",
+					time.Now().UTC().Format(time.RFC3339), curr, elapsed.Round(time.Second), float64(curr)/elapsed.Minutes())
+				return
+			}
+		}
+	}()
+
 	for elem := range errs {
 		log.Warn(elem)
 	}
-
-	elapsed := time.Since(receiverStart)
-	log.Infof("[capabilityReceiver] finished at %s — processed %d capability statements in %s (%.1f msg/min)",
-		time.Now().UTC().Format(time.RFC3339), atomic.LoadInt64(&msgCount), elapsed.Round(time.Second), float64(atomic.LoadInt64(&msgCount))/elapsed.Minutes())
 
 	return nil
 }
@@ -975,6 +995,7 @@ func ReceiveVersionResponses(ctx context.Context,
 		capQueryChannelID: capQueryChannelID,
 		capQueryQueue:     capQueryQueue,
 		store:             store,
+		startTime:         versionsStart,
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)
@@ -988,9 +1009,6 @@ func ReceiveVersionResponses(ctx context.Context,
 	for elem := range errs {
 		log.Warn(elem)
 	}
-
-	elapsed := time.Since(versionsStart)
-	log.Infof("[versionsReceiver] finished at %s — duration %s", time.Now().UTC().Format(time.RFC3339), elapsed.Round(time.Second))
 
 	return nil
 }
