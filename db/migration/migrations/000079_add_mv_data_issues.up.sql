@@ -384,7 +384,7 @@ SELECT
     MAX(sls.updated_at)                                                                   AS last_updated,
     COUNT(DISTINCT sls.developer_name)                                                    AS chpl_dev_count,
     COUNT(DISTINCT sls.list_source)                                                       AS chpl_bundle_count,
-    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' THEN lsi.list_source END)              AS lantern_chpl_bundle_count,
+    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND fe.list_source IS NOT NULL THEN fe.list_source END) AS lantern_chpl_bundle_count,
     COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND v.name IS NOT NULL THEN v.name END) AS lantern_chpl_dev_count
 FROM shared_list_sources sls
 LEFT JOIN list_source_info lsi    ON sls.list_source = lsi.list_source
