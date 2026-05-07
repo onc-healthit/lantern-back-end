@@ -1246,14 +1246,13 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     
     chart_data <- data.frame(
-      Type = c("NPI", "CLIA", "NAIC", "CCN", "Other", "No Data"),
+      Type = c("NPI", "CLIA", "NAIC", "CCN", "Other"),
       Count = c(
         as.numeric(id_summary$npi_count),
         as.numeric(id_summary$clia_count),
         as.numeric(id_summary$naic_count),
         0,  # CCN placeholder — not yet in Lantern DB
-        as.numeric(id_summary$other_count),
-        as.numeric(id_summary$no_identifier_count)
+        as.numeric(id_summary$other_count)
       ),
       stringsAsFactors = FALSE
     )
@@ -1275,7 +1274,7 @@ developerfeedbackmodule <- function(
     }
 
     type_colors <- c("NPI" = "#28a745", "CLIA" = "#007bff", "NAIC" = "#fd7e14",
-                    "CCN" = "#17a2b8", "Other" = "#9b59b6", "No Data" = "#6c757d")
+                    "CCN" = "#17a2b8", "Other" = "#9b59b6")
     
     ggplot(chart_data, aes(x = reorder(Type, Count), y = Count, fill = Type)) +
       geom_col(width = 0.6) +
@@ -1436,7 +1435,7 @@ developerfeedbackmodule <- function(
                 } else if (rate >= 70) {
                   div(style = "color: #ffc107; font-weight: 700; font-size: 14px;", value)  
                 } else {
-                  div(style = "color: #dc3545; font-weight: 700; font-size: 14px;", value)
+                  div(style = "color: #ffc107; font-weight: 700; font-size: 14px;", value)
                 }
               } else {
                 div(style = "color: #6c757d; font-weight: 500;", value)
@@ -1644,7 +1643,7 @@ developerfeedbackmodule <- function(
           align = "center",
           style = function(value) {
             if (value > 0) list(color = "#28a745", fontWeight = 600)
-            else list(color = "#dc3545", fontWeight = 600)
+            else list(color = "#ffc107", fontWeight = 600)
           }
         ),
         no_org_data_endpoints = colDef(
@@ -1653,7 +1652,7 @@ developerfeedbackmodule <- function(
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
-            if (value > 0) list(color = "#dc3545", fontWeight = 700)
+            if (value > 0) list(color = "#ffc107", fontWeight = 700)
             else list(color = "#6c757d")
           }
         ),
