@@ -364,14 +364,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("empty_bundles_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
-                      "FHIR Bundles — Empty or Unreachable"
+                      "FHIR Bundles — Empty or Invalid or Unreachable"
                     ),
                     div(class = "metric-value", style = "color: #B8860B;",
                       textOutput(ns("developers_empty_bundles_count"), inline = TRUE),
                       uiOutput(ns("empty_bundles_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "Bundles that returned no endpoint data when queried by Lantern",
+                      "Bundles that returned no endpoint data when queried by Lantern or have other issues",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -1667,7 +1667,7 @@ developerfeedbackmodule <- function(
           }
         ),
         has_empty_bundle = colDef(
-          name = "Bundle Empty",
+          name = "FHIR Bundle Issues",
           width = 120,
           align = "center",
           cell = function(value) {
