@@ -615,6 +615,12 @@ developerfeedbackmodule_UI <- function(id) {
                 label = "Certified API Developer:",
                 choices = NULL,
                 selected = "All Developers"
+              ),
+              selectInput(
+                inputId = ns("org_source_filter"),
+                label = "Source:",
+                choices = c("All", "CHPL Certified API Developers", "Non-CHPL"),
+                selected = "All"
               )
             ),
 
@@ -654,16 +660,24 @@ developerfeedbackmodule <- function(
   # Reactive value to track active card filter: NULL = no filter, "shares_list_source" or "has_empty_bundle"
   table_filter <- reactiveVal(NULL)
 
-  # Initialize vendor choices as soon as the vendor list is available.
-  # Do NOT gate on input$main_tabs == "tier2": with choices = NULL, Shiny sets
-  # input$vendor_filter = "" (not NULL), so the query runs with vendor_name = ''
-  # and returns 0 rows before the tab is ever visited.
-  observe({
-    req(app$vendor_list())
-    # app$vendor_list() already contains "All Developers" as its first entry
-    vendor_choices <- app$vendor_list()
-    updateSelectInput(session, "vendor_filter", choices = vendor_choices, selected = "All Developers")
-  })
+  # Sync vendor dropdown when org source filter changes.
+  # ignoreInit = FALSE ensures the dropdown is populated correctly on first render,
+  # replacing the need for a separate initialization observe().
+  observeEvent(input$org_source_filter, {
+    req(app$vendor_list(), length(chpl_vendor_names()) > 0)
+    chpl_names <- chpl_vendor_names()
+    source_val <- input$org_source_filter
+
+    if (source_val == "CHPL Certified API Developers") {
+      filtered_vendors <- app$vendor_list()[names(app$vendor_list()) %in% c("All Developers", chpl_names)]
+    } else if (source_val == "Non-CHPL") {
+      filtered_vendors <- app$vendor_list()[!(names(app$vendor_list()) %in% chpl_names) | names(app$vendor_list()) == "All Developers"]
+    } else {
+      filtered_vendors <- app$vendor_list()
+    }
+
+    updateSelectInput(session, "vendor_filter", choices = filtered_vendors, selected = "All Developers")
+  }, ignoreInit = FALSE)
 
   # Handle click on Shared FHIR Bundle Hyperlinks card — toggle filter
   observeEvent(input$shared_sources_card_click, {
@@ -752,14 +766,58 @@ developerfeedbackmodule <- function(
   filtered_quality_summary <- reactive({
     current_vendor <- input$vendor_filter
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
-    
-    # Query the summary materialized view
-    query_str <- "SELECT * FROM mv_organization_quality_summary WHERE vendor_name = {vendor}"
-    
-    data_query <- glue::glue_sql(query_str, vendor = current_vendor, .con = db_connection)
-    
+
+    source_val <- input$org_source_filter
+    chpl_names <- chpl_vendor_names()
+    req(length(chpl_names) > 0)
+
+    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All") {
+      if (source_val == "CHPL Certified API Developers") {
+        data_query <- glue::glue_sql(
+          "SELECT * FROM mv_organization_quality_summary WHERE vendor_name IN ({chpl_names*})",
+          chpl_names = chpl_names, .con = db_connection
+        )
+      } else {
+        data_query <- glue::glue_sql(
+          "SELECT * FROM mv_organization_quality_summary WHERE vendor_name NOT IN ({chpl_names*}) AND vendor_name != 'All Developers'",
+          chpl_names = chpl_names, .con = db_connection
+        )
+      }
+    } else {
+      data_query <- glue::glue_sql(
+        "SELECT * FROM mv_organization_quality_summary WHERE vendor_name = {vendor}",
+        vendor = current_vendor, .con = db_connection
+      )
+    }
+
     result <- tbl(db_connection, sql(data_query)) %>% collect()
-    
+
+    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All" && nrow(result) > 1) {
+      result <- result %>%
+        summarise(
+          vendor_name = source_val,
+          total_organizations = sum(total_organizations, na.rm = TRUE),
+          organizations_with_valid_identifiers = sum(organizations_with_valid_identifiers, na.rm = TRUE),
+          organizations_with_no_identifiers = sum(organizations_with_no_identifiers, na.rm = TRUE),
+          organizations_with_invalid_only = sum(organizations_with_invalid_only, na.rm = TRUE),
+          organizations_all_valid = sum(organizations_all_valid, na.rm = TRUE),
+          organizations_mixed_valid = sum(organizations_mixed_valid, na.rm = TRUE),
+          organizations_with_valid_names = sum(organizations_with_valid_names, na.rm = TRUE),
+          organizations_with_valid_addresses = sum(organizations_with_valid_addresses, na.rm = TRUE),
+          high_quality_organizations = sum(high_quality_organizations, na.rm = TRUE),
+          low_quality_organizations = sum(low_quality_organizations, na.rm = TRUE),
+          fully_conformant = sum(fully_conformant, na.rm = TRUE),
+          partially_conformant = sum(partially_conformant, na.rm = TRUE),
+          minimally_conformant = sum(minimally_conformant, na.rm = TRUE),
+          non_conformant = sum(non_conformant, na.rm = TRUE),
+          avg_conformance_rate = mean(avg_conformance_rate, na.rm = TRUE),
+          avg_quality_score = mean(avg_quality_score, na.rm = TRUE),
+          identifier_percentage = mean(identifier_percentage, na.rm = TRUE),
+          name_percentage = mean(name_percentage, na.rm = TRUE),
+          address_percentage = mean(address_percentage, na.rm = TRUE)
+        )
+    }
+
     # Debug output
     if (nrow(result) == 0) {
       cat("No data found for vendor:", current_vendor, "\n")
@@ -812,13 +870,58 @@ developerfeedbackmodule <- function(
   filtered_identifier_summary <- reactive({
     current_vendor <- input$vendor_filter
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
-    
-    query_str <- "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name = {vendor}"
-    
-    data_query <- glue::glue_sql(query_str, vendor = current_vendor, .con = db_connection)
-    
+
+    source_val <- input$org_source_filter
+    chpl_names <- chpl_vendor_names()
+    req(length(chpl_names) > 0)
+
+    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All") {
+      if (source_val == "CHPL Certified API Developers") {
+        data_query <- glue::glue_sql(
+          "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name IN ({chpl_names*})",
+          chpl_names = chpl_names, .con = db_connection
+        )
+      } else {
+        data_query <- glue::glue_sql(
+          "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name NOT IN ({chpl_names*}) AND vendor_name != 'All Developers'",
+          chpl_names = chpl_names, .con = db_connection
+        )
+      }
+    } else {
+      data_query <- glue::glue_sql(
+        "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name = {vendor}",
+        vendor = current_vendor, .con = db_connection
+      )
+    }
+
     result <- tbl(db_connection, sql(data_query)) %>% collect()
-    
+
+    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All" && nrow(result) > 1) {
+      result <- result %>%
+        summarise(
+          vendor_name = source_val,
+          total_npi = sum(total_npi, na.rm = TRUE),
+          total_clia = sum(total_clia, na.rm = TRUE),
+          total_naic = sum(total_naic, na.rm = TRUE),
+          total_other = sum(total_other, na.rm = TRUE),
+          total_no_identifiers = sum(total_no_identifiers, na.rm = TRUE),
+          total_npi_valid = sum(total_npi_valid, na.rm = TRUE),
+          total_clia_valid = sum(total_clia_valid, na.rm = TRUE),
+          total_naic_valid = sum(total_naic_valid, na.rm = TRUE),
+          total_npi_invalid = sum(total_npi_invalid, na.rm = TRUE),
+          total_clia_invalid = sum(total_clia_invalid, na.rm = TRUE),
+          total_naic_invalid = sum(total_naic_invalid, na.rm = TRUE),
+          total_other_invalid = sum(total_other_invalid, na.rm = TRUE),
+          total_all_identifiers = sum(total_all_identifiers, na.rm = TRUE),
+          total_all_conformant = sum(total_all_conformant, na.rm = TRUE),
+          npi_percentage = mean(npi_percentage, na.rm = TRUE),
+          clia_percentage = mean(clia_percentage, na.rm = TRUE),
+          naic_percentage = mean(naic_percentage, na.rm = TRUE),
+          other_percentage = mean(other_percentage, na.rm = TRUE),
+          conformance_rate = mean(conformance_rate, na.rm = TRUE)
+        )
+    }
+
     if (nrow(result) == 0) {
       # Return default values
       return(data.frame(
@@ -863,7 +966,11 @@ developerfeedbackmodule <- function(
   filtered_org_data <- reactive({
     current_vendor <- input$vendor_filter
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
-    
+
+    source_val <- input$org_source_filter
+    chpl_names <- chpl_vendor_names()
+    req(length(chpl_names) > 0)
+
     # Query the detailed organization quality data
     if (current_vendor == "All Developers") {
       query_str <- "SELECT * FROM mv_organization_quality"
@@ -874,10 +981,16 @@ developerfeedbackmodule <- function(
     }
     
     result <- tbl(db_connection, sql(data_query)) %>% collect()
-    
+
+    if (!is.null(source_val) && source_val == "CHPL Certified API Developers") {
+      result <- result %>% filter(sapply(vendor_names_array, function(v) any(v %in% chpl_names)))
+    } else if (!is.null(source_val) && source_val == "Non-CHPL") {
+      result <- result %>% filter(sapply(vendor_names_array, function(v) !any(v %in% chpl_names)))
+    }
+
     return(result)
   })
-  
+
   # Summary statistics using materialized view data 
   quality_summary <- reactive({
     summary_data <- filtered_quality_summary()
@@ -982,6 +1095,11 @@ developerfeedbackmodule <- function(
   })
 
   output$chpl_last_updated <- renderText({ chpl_last_updated() })
+
+  chpl_vendor_names <- reactive({
+    result <- tbl(db_connection, sql("SELECT DISTINCT developer_name FROM shared_list_sources")) %>% collect()
+    result$developer_name
+  })
 
   # CHPL vs Lantern coverage counts for the static card
   chpl_lantern_counts <- reactive({
