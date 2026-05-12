@@ -1623,4 +1623,34 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_m
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_chpl_coverage_summary_unique." >> $log_file
 }
 
+# Refresh and reindex mv_problematic_organizations
+# Must run after mv_organization_quality (depends on it)
+docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_problematic_organizations;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_problematic_organizations." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_problematic_organizations_org_id;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_problematic_organizations_org_id." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_problematic_organizations_org_id ON mv_problematic_organizations(org_id);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_problematic_organizations_org_id." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_problematic_organizations_is_chpl;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_problematic_organizations_is_chpl." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_problematic_organizations_is_chpl ON mv_problematic_organizations(is_chpl_org);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_problematic_organizations_is_chpl." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_problematic_organizations_vendor;" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_problematic_organizations_vendor." >> $log_file
+}
+
+docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE INDEX idx_mv_problematic_organizations_vendor ON mv_problematic_organizations USING GIN(vendor_names_array);" -U lantern -d lantern || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_problematic_organizations_vendor." >> $log_file
+}
+
 echo "$(date +"%Y-%m-%d %H:%M:%S") - done." >> $log_file

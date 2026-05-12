@@ -396,4 +396,52 @@ LEFT JOIN vendors v               ON fei.vendor_id = v.id;
 CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique
     ON mv_chpl_coverage_summary((1));
 
+-- ========================================
+-- MATERIALIZED VIEW: mv_problematic_organizations
+-- ========================================
+-- Purpose: Pre-compute the list of organizations that fail at least one quality check
+-- (no identifiers, invalid-only identifiers, invalid name, or incomplete address).
+-- Includes developer names as a plain text string (not a Postgres array) so the
+-- Developer Feedback tab can display them without client-side parsing.
+-- Depends on: mv_organization_quality, shared_list_sources
+-- ========================================
+
+DROP MATERIALIZED VIEW IF EXISTS mv_problematic_organizations CASCADE;
+
+CREATE MATERIALIZED VIEW mv_problematic_organizations AS
+SELECT
+    oq.org_id,
+    oq.organization_name,
+    array_to_string(oq.vendor_names_array, '; ') AS developer_names,
+    oq.vendor_names_array,
+    oq.identifier_status,
+    oq.has_valid_name,
+    oq.has_valid_address,
+    oq.overall_quality_score,
+    TRIM(BOTH ', ' FROM CONCAT_WS(', ',
+        CASE WHEN oq.identifier_status = 'no_identifiers'  THEN 'No identifiers'          END,
+        CASE WHEN oq.identifier_status = 'invalid_only'    THEN 'Invalid identifiers only' END,
+        CASE WHEN NOT oq.has_valid_name                    THEN 'Invalid or missing name'  END,
+        CASE WHEN NOT oq.has_valid_address                 THEN 'Incomplete address'        END
+    )) AS issues,
+    -- NULL means no source restriction (org is visible to all filters)
+    -- TRUE  means at least one vendor is a CHPL developer
+    -- FALSE means no vendor is a CHPL developer (Non-CHPL org)
+    EXISTS (
+        SELECT 1 FROM shared_list_sources sls
+        WHERE sls.developer_name = ANY(oq.vendor_names_array)
+    ) AS is_chpl_org
+FROM mv_organization_quality oq
+WHERE
+    oq.identifier_status IN ('no_identifiers', 'invalid_only')
+    OR NOT oq.has_valid_name
+    OR NOT oq.has_valid_address;
+
+CREATE UNIQUE INDEX idx_mv_problematic_organizations_org_id
+    ON mv_problematic_organizations(org_id);
+CREATE INDEX idx_mv_problematic_organizations_is_chpl
+    ON mv_problematic_organizations(is_chpl_org);
+CREATE INDEX idx_mv_problematic_organizations_vendor
+    ON mv_problematic_organizations USING GIN(vendor_names_array);
+
 COMMIT;

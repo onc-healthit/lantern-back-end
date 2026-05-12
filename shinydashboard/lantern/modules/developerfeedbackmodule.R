@@ -600,6 +600,23 @@ developerfeedbackmodule_UI <- function(id) {
                   "The same NPI or CLIA appearing in multiple organizations is counted once."),
                 reactable::reactableOutput(ns("identifier_type_table"))
               )
+            ),
+
+            # Problematic orgs collapsible section
+            div(class = "modern-card", style = "margin-top: 20px;",
+              div(
+                style = "display: flex; align-items: center; justify-content: space-between; cursor: pointer;",
+                onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("prob_orgs_toggle")),
+                div(
+                  tags$i(class = "fa fa-exclamation-triangle", style = "color: #e67e22; margin-right: 8px;"),
+                  tags$strong(style = "color: #1B5A7F; font-size: 1em;", "Organizations with Data Issues"),
+                  tags$span(style = "color: #7f8c8d; font-size: 0.85em; margin-left: 8px;",
+                    "(", textOutput(ns("prob_orgs_count"), inline = TRUE), " organizations)"
+                  )
+                ),
+                uiOutput(ns("prob_orgs_toggle_icon"))
+              ),
+              uiOutput(ns("prob_orgs_panel"))
             )
           ),
 
@@ -636,7 +653,7 @@ developerfeedbackmodule_UI <- function(id) {
 
         # Tier 2 download
         fluidRow(
-          column(width = 12, style = "padding-top: 20px; text-align: center;",
+          column(width = 12, style = "padding-top: 10px; text-align: center;",
             downloadButton(
               outputId = ns("download_feedback_report"),
               label = "Download Organization Details Report (CSV)",
@@ -659,6 +676,13 @@ developerfeedbackmodule <- function(
 
   # Reactive value to track active card filter: NULL = no filter, "shares_list_source" or "has_empty_bundle"
   table_filter <- reactiveVal(NULL)
+
+  # Tracks whether the problematic orgs drilldown panel is visible
+  prob_orgs_visible <- reactiveVal(FALSE)
+
+  observeEvent(input$prob_orgs_toggle, {
+    prob_orgs_visible(!isTRUE(prob_orgs_visible()))
+  })
 
   # Sync vendor dropdown when org source filter changes.
   # ignoreInit = FALSE ensures the dropdown is populated correctly on first render,
@@ -968,30 +992,75 @@ developerfeedbackmodule <- function(
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
 
     source_val <- input$org_source_filter
-    chpl_names <- chpl_vendor_names()
-    req(length(chpl_names) > 0)
 
-    # Query the detailed organization quality data
-    if (current_vendor == "All Developers") {
-      query_str <- "SELECT * FROM mv_organization_quality"
-      data_query <- glue::glue_sql(query_str, .con = db_connection)
+    # Build the vendor clause
+    vendor_clause <- if (current_vendor == "All Developers") {
+      ""
     } else {
-      query_str <- "SELECT * FROM mv_organization_quality WHERE vendor_names_array && ARRAY[{vendor}]"
-      data_query <- glue::glue_sql(query_str, vendor = current_vendor, .con = db_connection)
+      glue::glue_sql("vendor_names_array && ARRAY[{vendor}]", vendor = current_vendor, .con = db_connection)
     }
-    
-    result <- tbl(db_connection, sql(data_query)) %>% collect()
 
-    if (!is.null(source_val) && source_val == "CHPL Certified API Developers") {
-      result <- result %>% filter(sapply(vendor_names_array, function(v) any(v %in% chpl_names)))
+    # Build the source clause using the same shared_list_sources join the existing MVs use,
+    # so developer name matching is consistent (no cross-source string comparison).
+    source_clause <- if (!is.null(source_val) && source_val == "CHPL Certified API Developers") {
+      paste0(
+        "EXISTS (",
+        "  SELECT 1 FROM shared_list_sources sls",
+        "  WHERE sls.developer_name = ANY(mv_organization_quality.vendor_names_array)",
+        ")"
+      )
     } else if (!is.null(source_val) && source_val == "Non-CHPL") {
-      result <- result %>% filter(sapply(vendor_names_array, function(v) !any(v %in% chpl_names)))
+      paste0(
+        "NOT EXISTS (",
+        "  SELECT 1 FROM shared_list_sources sls",
+        "  WHERE sls.developer_name = ANY(mv_organization_quality.vendor_names_array)",
+        ")"
+      )
+    } else {
+      ""
     }
 
-    return(result)
+    where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause))
+    where_str   <- if (length(where_parts) > 0) paste("WHERE", paste(where_parts, collapse = " AND ")) else ""
+    data_query  <- glue::glue_sql(
+      paste("SELECT * FROM mv_organization_quality", where_str),
+      .con = db_connection
+    )
+
+    tbl(db_connection, sql(data_query)) %>% collect()
   })
 
-  # Summary statistics using materialized view data 
+  problematic_orgs <- reactive({
+    current_vendor <- input$vendor_filter
+    if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
+
+    source_val <- input$org_source_filter
+
+    vendor_clause <- if (current_vendor == "All Developers") {
+      ""
+    } else {
+      glue::glue_sql("vendor_names_array && ARRAY[{vendor}]", vendor = current_vendor, .con = db_connection)
+    }
+
+    source_clause <- if (!is.null(source_val) && source_val == "CHPL Certified API Developers") {
+      "is_chpl_org = TRUE"
+    } else if (!is.null(source_val) && source_val == "Non-CHPL") {
+      "is_chpl_org = FALSE"
+    } else {
+      ""
+    }
+
+    where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause))
+    where_str   <- if (length(where_parts) > 0) paste("WHERE", paste(where_parts, collapse = " AND ")) else ""
+    data_query  <- glue::glue_sql(
+      paste("SELECT organization_name, developer_names, issues FROM mv_problematic_organizations", where_str),
+      .con = db_connection
+    )
+
+    tbl(db_connection, sql(data_query)) %>% collect()
+  })
+
+  # Summary statistics using materialized view data
   quality_summary <- reactive({
     summary_data <- filtered_quality_summary()
     
@@ -1095,6 +1164,60 @@ developerfeedbackmodule <- function(
   })
 
   output$chpl_last_updated <- renderText({ chpl_last_updated() })
+
+  output$prob_orgs_toggle_icon <- renderUI({
+    icon_name <- if (isTRUE(prob_orgs_visible())) "fa fa-chevron-up" else "fa fa-chevron-down"
+    tags$i(class = icon_name, style = "color: #1B5A7F; font-size: 0.9em;")
+  })
+
+  output$prob_orgs_count <- renderText({
+    nrow(problematic_orgs())
+  })
+
+  output$prob_orgs_panel <- renderUI({
+    req(isTRUE(prob_orgs_visible()))
+    div(style = "margin-top: 12px;",
+      reactable::reactableOutput(ns("prob_orgs_table"))
+    )
+  })
+
+  output$prob_orgs_table <- reactable::renderReactable({
+    req(isTRUE(prob_orgs_visible()))
+    data <- problematic_orgs()
+
+    if (nrow(data) == 0) {
+      return(reactable::reactable(
+        data.frame(Message = "No problematic organizations found for this developer."),
+        columns = list(Message = reactable::colDef(name = ""))
+      ))
+    }
+
+    reactable::reactable(
+      data,
+      searchable      = TRUE,
+      filterable      = TRUE,
+      defaultPageSize = 10,
+      defaultSorted   = list(organization_name = "asc"),
+      columns = list(
+        organization_name = reactable::colDef(name = "Organization", minWidth = 180,
+          style = list(whiteSpace = "normal", wordBreak = "break-word")),
+        developer_names   = reactable::colDef(name = "Developer(s)", minWidth = 160,
+          style = list(whiteSpace = "normal", wordBreak = "break-word")),
+        issues            = reactable::colDef(name = "Issues", minWidth = 200,
+          style = function(value) list(color = "#c0392b", fontWeight = "600",
+            whiteSpace = "normal", wordBreak = "break-word"))
+      ),
+      striped   = TRUE,
+      highlight = TRUE,
+      bordered  = TRUE,
+      theme = reactable::reactableTheme(
+        headerStyle    = list(background = "#1B5A7F", color = "white", fontSize = "13px"),
+        stripedColor   = "#f8f9fa",
+        highlightColor = "#f0f8ff",
+        borderColor    = "#e0e0e0"
+      )
+    )
+  })
 
   chpl_vendor_names <- reactive({
     result <- tbl(db_connection, sql("SELECT DISTINCT developer_name FROM shared_list_sources")) %>% collect()
