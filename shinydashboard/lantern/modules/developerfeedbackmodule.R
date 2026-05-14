@@ -602,21 +602,20 @@ developerfeedbackmodule_UI <- function(id) {
               )
             ),
 
-            # Problematic orgs collapsible section
+            # Problematic orgs download section
             div(class = "modern-card", style = "margin-top: 20px;",
-              div(
-                style = "display: flex; align-items: center; justify-content: space-between; cursor: pointer;",
-                onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("prob_orgs_toggle")),
-                div(
-                  tags$i(class = "fa fa-exclamation-triangle", style = "color: #e67e22; margin-right: 8px;"),
-                  tags$strong(style = "color: #1B5A7F; font-size: 1em;", "Organizations with Data Issues"),
-                  tags$span(style = "color: #7f8c8d; font-size: 0.85em; margin-left: 8px;",
-                    "(", textOutput(ns("prob_orgs_count"), inline = TRUE), " organizations)"
-                  )
-                ),
-                uiOutput(ns("prob_orgs_toggle_icon"))
+              div(style = "display: flex; align-items: center; margin-bottom: 4px;",
+                tags$i(class = "fa fa-exclamation-triangle", style = "color: #e67e22; margin-right: 8px;"),
+                tags$strong(style = "color: #1B5A7F; font-size: 1em;", "Organizations with Data Issues")
               ),
-              uiOutput(ns("prob_orgs_panel"))
+              uiOutput(ns("prob_orgs_summary")),
+              downloadButton(
+                outputId = ns("download_prob_orgs"),
+                label = "Download CSV",
+                class = "btn-download btn-sm",
+                icon = icon("download"),
+                style = "font-size: 0.8em; padding: 4px 10px;"
+              )
             )
           ),
 
@@ -628,16 +627,16 @@ developerfeedbackmodule_UI <- function(id) {
                  tags$i(class = "fa fa-filter", style = "margin-right: 8px;"),
                  "Filters"),
               selectInput(
-                inputId = ns("vendor_filter"),
-                label = "Certified API Developer:",
-                choices = NULL,
-                selected = "All Developers"
-              ),
-              selectInput(
                 inputId = ns("org_source_filter"),
                 label = "Source:",
                 choices = c("All", "CHPL Certified API Developers", "Non-CHPL"),
                 selected = "All"
+              ),
+              selectInput(
+                inputId = ns("vendor_filter"),
+                label = "Certified API Developer:",
+                choices = NULL,
+                selected = "All Developers"
               )
             ),
 
@@ -677,12 +676,6 @@ developerfeedbackmodule <- function(
   # Reactive value to track active card filter: NULL = no filter, "shares_list_source" or "has_empty_bundle"
   table_filter <- reactiveVal(NULL)
 
-  # Tracks whether the problematic orgs drilldown panel is visible
-  prob_orgs_visible <- reactiveVal(FALSE)
-
-  observeEvent(input$prob_orgs_toggle, {
-    prob_orgs_visible(!isTRUE(prob_orgs_visible()))
-  })
 
   # Sync vendor dropdown when org source filter changes.
   # ignoreInit = FALSE ensures the dropdown is populated correctly on first render,
@@ -1165,59 +1158,29 @@ developerfeedbackmodule <- function(
 
   output$chpl_last_updated <- renderText({ chpl_last_updated() })
 
-  output$prob_orgs_toggle_icon <- renderUI({
-    icon_name <- if (isTRUE(prob_orgs_visible())) "fa fa-chevron-up" else "fa fa-chevron-down"
-    tags$i(class = icon_name, style = "color: #1B5A7F; font-size: 0.9em;")
-  })
-
-  output$prob_orgs_count <- renderText({
-    nrow(problematic_orgs())
-  })
-
-  output$prob_orgs_panel <- renderUI({
-    req(isTRUE(prob_orgs_visible()))
-    div(style = "margin-top: 12px;",
-      reactable::reactableOutput(ns("prob_orgs_table"))
+  output$prob_orgs_summary <- renderUI({
+    data   <- problematic_orgs()
+    vendor <- input$vendor_filter
+    label  <- if (is.null(vendor) || vendor == "All Developers") "All Developers" else vendor
+    count  <- nrow(data)
+    tags$p(
+      style = "color: #5a6c7d; font-size: 0.9em; margin: 4px 0 10px 0;",
+      tags$strong(label), " — ",
+      tags$strong(format(count, big.mark = ",")),
+      " organizations with data issues"
     )
   })
 
-  output$prob_orgs_table <- reactable::renderReactable({
-    req(isTRUE(prob_orgs_visible()))
-    data <- problematic_orgs()
-
-    if (nrow(data) == 0) {
-      return(reactable::reactable(
-        data.frame(Message = "No problematic organizations found for this developer."),
-        columns = list(Message = reactable::colDef(name = ""))
-      ))
+  output$download_prob_orgs <- downloadHandler(
+    filename = function() {
+      vendor <- input$vendor_filter
+      label  <- if (is.null(vendor) || vendor == "All Developers") "all" else gsub("[^a-zA-Z0-9]", "_", tolower(vendor))
+      paste0("problematic_organizations_", label, "_", Sys.Date(), ".csv")
+    },
+    content = function(file) {
+      write.csv(problematic_orgs(), file, row.names = FALSE)
     }
-
-    reactable::reactable(
-      data,
-      searchable      = TRUE,
-      filterable      = TRUE,
-      defaultPageSize = 10,
-      defaultSorted   = list(organization_name = "asc"),
-      columns = list(
-        organization_name = reactable::colDef(name = "Organization", minWidth = 180,
-          style = list(whiteSpace = "normal", wordBreak = "break-word")),
-        developer_names   = reactable::colDef(name = "Developer(s)", minWidth = 160,
-          style = list(whiteSpace = "normal", wordBreak = "break-word")),
-        issues            = reactable::colDef(name = "Issues", minWidth = 200,
-          style = function(value) list(color = "#c0392b", fontWeight = "600",
-            whiteSpace = "normal", wordBreak = "break-word"))
-      ),
-      striped   = TRUE,
-      highlight = TRUE,
-      bordered  = TRUE,
-      theme = reactable::reactableTheme(
-        headerStyle    = list(background = "#1B5A7F", color = "white", fontSize = "13px"),
-        stripedColor   = "#f8f9fa",
-        highlightColor = "#f0f8ff",
-        borderColor    = "#e0e0e0"
-      )
-    )
-  })
+  )
 
   chpl_vendor_names <- reactive({
     result <- tbl(db_connection, sql("SELECT DISTINCT developer_name FROM shared_list_sources")) %>% collect()
