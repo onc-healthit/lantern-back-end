@@ -510,22 +510,35 @@ func (s *Store) UpdateFHIREndpointInfo(ctx context.Context, e *endpointmanager.F
 	return err
 }
 
-// UpdateMetadataIDInfo only updates the metadata_id in the info table without affecting the info history table
+// UpdateMetadataIDInfo only updates the metadata_id in the info table without
+// affecting the info history table. The history trigger reads the session-level
+// PostgreSQL variable `metadata.setting` to decide whether to suppress the
+// history row, so all three statements (set TRUE, UPDATE, set FALSE) MUST run
+// on the same connection. Wrapping them in a *sql.Tx guarantees this, because
+// a transaction is pinned to one connection for its lifetime. Without the
+// transaction, each ExecContext on s.DB may acquire a different connection
+// from the pool — which corrupts the trigger's view of the session variable
+// under concurrent workers.
 func (s *Store) UpdateMetadataIDInfo(ctx context.Context, metadataID int, id int) error {
-	_, err := s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'TRUE', 'FALSE');")
+	tx, err := s.DB.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
-	_, err = updateFHIREndpointInfoMetadataStatement.ExecContext(ctx, metadataID, id)
-	if err != nil {
+	// Rollback is a no-op once Commit succeeds; on any early return below it
+	// releases the pinned connection back to the pool.
+	defer tx.Rollback()
+
+	if _, err = tx.ExecContext(ctx, "SELECT set_config('metadata.setting', 'TRUE', 'FALSE');"); err != nil {
 		return err
 	}
-	_, err = s.DB.ExecContext(ctx, "SELECT set_config('metadata.setting', 'FALSE', 'FALSE');")
-	if err != nil {
+	if _, err = tx.StmtContext(ctx, updateFHIREndpointInfoMetadataStatement).ExecContext(ctx, metadataID, id); err != nil {
+		return err
+	}
+	if _, err = tx.ExecContext(ctx, "SELECT set_config('metadata.setting', 'FALSE', 'FALSE');"); err != nil {
 		return err
 	}
 
-	return err
+	return tx.Commit()
 }
 
 // DeleteFHIREndpointInfo deletes the FHIREndpointInfo from the database using the FHIREndpointInfo's database id  as the key.
