@@ -168,7 +168,11 @@ func (s *Store) GetVendorNames(ctx context.Context) ([]string, error) {
 	return developers, nil
 }
 
-// AddVendor adds the Vendor to the database.
+// AddVendor adds the Vendor to the database. The prepared statement uses
+// ON CONFLICT (name) DO NOTHING so concurrent inserts of the same vendor name
+// do not produce duplicate-key errors. When the insert is skipped because the
+// row already exists (another goroutine won the race), we re-fetch the
+// winner's id by name so v.ID is always populated for the caller.
 func (s *Store) AddVendor(ctx context.Context, v *endpointmanager.Vendor) error {
 	var err error
 
@@ -187,6 +191,17 @@ func (s *Store) AddVendor(ctx context.Context, v *endpointmanager.Vendor) error 
 		v.CHPLID)
 
 	err = row.Scan(&v.ID)
+	if err == sql.ErrNoRows {
+		// Another goroutine inserted this vendor concurrently — the conflict
+		// was suppressed by ON CONFLICT DO NOTHING and RETURNING produced no
+		// row. Look up the existing row by name to populate v.ID.
+		existing, fetchErr := s.GetVendorUsingName(ctx, v.Name)
+		if fetchErr != nil {
+			return fetchErr
+		}
+		v.ID = existing.ID
+		return nil
+	}
 
 	return err
 }
@@ -222,6 +237,10 @@ func (s *Store) DeleteVendor(ctx context.Context, v *endpointmanager.Vendor) err
 
 func prepareVendorStatements(s *Store) error {
 	var err error
+	// ON CONFLICT (name) DO NOTHING makes the INSERT atomic and concurrent-safe.
+	// If two goroutines race to insert the same vendor name, one wins and the
+	// other gets zero rows back from RETURNING — AddVendor then re-fetches the
+	// winner's id by name.
 	addVendorStatement, err = s.DB.Prepare(`
 		INSERT INTO vendors (
 			name,
@@ -232,6 +251,7 @@ func prepareVendorStatements(s *Store) error {
 			last_modified_in_chpl,
 			chpl_id)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		ON CONFLICT (name) DO NOTHING
 		RETURNING id`)
 	if err != nil {
 		return err
