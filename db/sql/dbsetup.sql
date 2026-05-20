@@ -12,12 +12,34 @@ CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $
 BEGIN
     -- For INSERT/DELETE operations, always create history
     IF (TG_OP = 'DELETE') THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'D', now(), user, OLD.*;
+        INSERT INTO fhir_endpoints_info_history (
+            operation, entered_at, user_id,
+            id, healthit_mapping_id, vendor_id, url, tls_version, mime_types,
+            capability_statement, validation_result_id, included_fields,
+            operation_resource, supported_profiles, created_at, updated_at,
+            smart_response, metadata_id, requested_fhir_version, capability_fhir_version)
+        VALUES (
+            'D', now(), user,
+            OLD.id, OLD.healthit_mapping_id, OLD.vendor_id, OLD.url, OLD.tls_version,
+            OLD.mime_types, OLD.capability_statement, OLD.validation_result_id,
+            OLD.included_fields, OLD.operation_resource, OLD.supported_profiles,
+            OLD.created_at, OLD.updated_at, OLD.smart_response, OLD.metadata_id,
+            OLD.requested_fhir_version, OLD.capability_fhir_version);
         RETURN OLD;
     ELSIF (TG_OP = 'INSERT') THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'I', now(), user, NEW.*;
+        INSERT INTO fhir_endpoints_info_history (
+            operation, entered_at, user_id,
+            id, healthit_mapping_id, vendor_id, url, tls_version, mime_types,
+            capability_statement, validation_result_id, included_fields,
+            operation_resource, supported_profiles, created_at, updated_at,
+            smart_response, metadata_id, requested_fhir_version, capability_fhir_version)
+        VALUES (
+            'I', now(), user,
+            NEW.id, NEW.healthit_mapping_id, NEW.vendor_id, NEW.url, NEW.tls_version,
+            NEW.mime_types, NEW.capability_statement, NEW.validation_result_id,
+            NEW.included_fields, NEW.operation_resource, NEW.supported_profiles,
+            NEW.created_at, NEW.updated_at, NEW.smart_response, NEW.metadata_id,
+            NEW.requested_fhir_version, NEW.capability_fhir_version);
         RETURN NEW;
     END IF;
 
@@ -39,8 +61,19 @@ BEGIN
         NEW.requested_fhir_version IS DISTINCT FROM OLD.requested_fhir_version OR
         NEW.capability_fhir_version IS DISTINCT FROM OLD.capability_fhir_version
     ) THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'U', now(), user, NEW.*;
+        INSERT INTO fhir_endpoints_info_history (
+            operation, entered_at, user_id,
+            id, healthit_mapping_id, vendor_id, url, tls_version, mime_types,
+            capability_statement, validation_result_id, included_fields,
+            operation_resource, supported_profiles, created_at, updated_at,
+            smart_response, metadata_id, requested_fhir_version, capability_fhir_version)
+        VALUES (
+            'U', now(), user,
+            NEW.id, NEW.healthit_mapping_id, NEW.vendor_id, NEW.url, NEW.tls_version,
+            NEW.mime_types, NEW.capability_statement, NEW.validation_result_id,
+            NEW.included_fields, NEW.operation_resource, NEW.supported_profiles,
+            NEW.created_at, NEW.updated_at, NEW.smart_response, NEW.metadata_id,
+            NEW.requested_fhir_version, NEW.capability_fhir_version);
     END IF;
 
     RETURN NEW;
@@ -410,9 +443,11 @@ SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endp
     endpts_info.requested_fhir_version, endpts_metadata.availability
 FROM fhir_endpoints AS endpts
 LEFT JOIN shared_list_sources AS sls ON endpts.list_source = sls.list_source
-LEFT JOIN vendors ON vendors.name = sls.developer_name
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url AND endpts_info.vendor_id = vendors.id
+LEFT JOIN vendors AS sls_vendors ON sls_vendors.name = sls.developer_name
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+    AND (sls.list_source IS NULL OR endpts_info.vendor_id = sls_vendors.id)
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
+LEFT JOIN vendors ON vendors.id = endpts_info.vendor_id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
@@ -499,6 +534,13 @@ CREATE INDEX capstat_implementation_custodian_idx ON fhir_endpoints_info ((capab
 
 CREATE INDEX capability_fhir_version_idx ON fhir_endpoints_info (capability_fhir_version);
 CREATE INDEX requested_fhir_version_idx ON fhir_endpoints_info (requested_fhir_version);
+
+-- Composite indexes for the common (url, requested_fhir_version) filter used by
+-- GetFHIREndpointInfoUsingURLAndRequestedVersion and the availability trigger.
+CREATE INDEX idx_fhir_endpoints_info_url_reqver
+    ON fhir_endpoints_info (url, requested_fhir_version);
+CREATE INDEX idx_fhir_endpoints_availability_url_reqver
+    ON fhir_endpoints_availability (url, requested_fhir_version);
 
 CREATE INDEX security_code_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security,service}'->'coding'->>'code'));
 CREATE INDEX security_service_idx ON fhir_endpoints_info ((capability_statement::json#>'{rest,0,security}' -> 'service' ->> 'text'));
