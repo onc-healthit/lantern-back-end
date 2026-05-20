@@ -1260,7 +1260,8 @@ developerfeedbackmodule <- function(
         has_empty_bundle    = has_empty_bundle,
         shares_list_source  = shares_list_source,
         shares_fhir_endpoints = shares_fhir_endpoints,
-        is_chpl_developer   = FALSE
+        is_chpl_developer   = FALSE,
+        error_message       = NA_character_
       )
 
     bind_rows(chpl_rows, non_chpl_rows)
@@ -1806,6 +1807,7 @@ developerfeedbackmodule <- function(
         shares_list_source = FALSE,
         shares_fhir_endpoints = FALSE,
         is_chpl_developer = FALSE,
+        error_message = NA_character_,
         stringsAsFactors = FALSE
       )
     }
@@ -1928,6 +1930,14 @@ developerfeedbackmodule <- function(
                 "No"
               )
             }
+          }
+        ),
+        error_message = colDef(
+          name = "Comments",
+          minWidth = 200,
+          cell = function(value) {
+            if (is.na(value) || value == "") return("")
+            tags$span(style = "color: #5a6c7d; font-size: 0.9em;", value)
           }
         ),
         is_chpl_developer = colDef(show = FALSE)

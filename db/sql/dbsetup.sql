@@ -3813,6 +3813,16 @@ ORDER BY
 CREATE UNIQUE INDEX idx_mv_developer_data_issues_vendor ON mv_developer_data_issues(vendor_name);
 CREATE INDEX idx_mv_developer_data_issues_no_org_data ON mv_developer_data_issues(no_org_data_endpoints);
 
+DROP TABLE IF EXISTS endpoint_query_errors;
+
+CREATE TABLE IF NOT EXISTS endpoint_query_errors (
+    id              SERIAL PRIMARY KEY,
+    list_source     VARCHAR(500),
+    error_message   TEXT,
+    queried_at      TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- ========================================
 -- MATERIALIZED VIEW: mv_developer_bundle_issues
 -- ========================================
@@ -3888,6 +3898,14 @@ shared_urls AS (
 dev_shares_fhir AS (
     SELECT vendor_name, shares_fhir_endpoints
     FROM mv_developer_data_issues
+),
+-- Most recent error message per bundle URL from endpoint_query_errors
+latest_query_errors AS (
+    SELECT DISTINCT ON (list_source)
+        list_source,
+        error_message
+    FROM endpoint_query_errors
+    ORDER BY list_source, queried_at DESC NULLS LAST
 )
 SELECT
     sls.developer_name,
@@ -3901,7 +3919,8 @@ SELECT
     CASE WHEN su.list_source IS NOT NULL
          THEN TRUE ELSE FALSE END               AS shares_list_source,
     COALESCE(dsf.shares_fhir_endpoints, FALSE)  AS shares_fhir_endpoints,
-    TRUE                                        AS is_chpl_developer
+    TRUE                                        AS is_chpl_developer,
+    COALESCE(lqe.error_message, 'N/A')           AS error_message
 FROM shared_list_sources sls
 LEFT JOIN bundle_total_endpoints    bte  ON sls.list_source = bte.list_source
 LEFT JOIN bundle_endpoints_with_data bewd ON sls.list_source = bewd.list_source
@@ -3909,6 +3928,7 @@ LEFT JOIN bundle_no_org_data         bnod ON sls.list_source = bnod.list_source
 LEFT JOIN bundle_organizations       bo   ON sls.list_source = bo.list_source
 LEFT JOIN shared_urls                su   ON sls.list_source = su.list_source
 LEFT JOIN dev_shares_fhir            dsf  ON sls.developer_name = dsf.vendor_name
+LEFT JOIN latest_query_errors         lqe  ON sls.list_source = lqe.list_source
 ORDER BY sls.developer_name, sls.list_source;
 
 CREATE UNIQUE INDEX idx_mv_developer_bundle_issues_unique
