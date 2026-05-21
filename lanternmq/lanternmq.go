@@ -84,6 +84,9 @@ type MessageQueue interface {
 	// ProcessMessages applies the 'handler' MessageHandler with arguments 'args' to each
 	// message that is received through 'msgs'. Sends any errors to the 'errs' channel.
 	ProcessMessages(ctx context.Context, msgs Messages, handler MessageHandler, args *map[string]interface{}, errs chan<- error)
+	// ConcurrentProcessMessages is like ProcessMessages but dispatches up to numWorkers
+	// messages concurrently. At numWorkers=1 the behavior is identical to ProcessMessages.
+	ConcurrentProcessMessages(ctx context.Context, msgs Messages, handler MessageHandler, args *map[string]interface{}, numWorkers int, errs chan<- error)
 	// DeclareExchange creates an exchange with the name 'name' and type 'exchangeType' on the channel with
 	// ID 'chID' if one does not exist.
 	DeclareExchange(chID ChannelID, name string, exchangeType string) error

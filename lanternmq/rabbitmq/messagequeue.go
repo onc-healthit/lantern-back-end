@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 
 	"github.com/onc-healthit/lantern-back-end/lanternmq"
 	"github.com/streadway/amqp"
@@ -274,6 +275,46 @@ func (mq *MessageQueue) ProcessMessages(ctx context.Context, msgs lanternmq.Mess
 			errs <- err
 		}
 	}
+}
+
+// ConcurrentProcessMessages is like ProcessMessages but dispatches each delivery to one of
+// numWorkers goroutines so that up to numWorkers messages are handled concurrently.
+// Each goroutine ACKs its own delivery after the handler returns.
+// At numWorkers=1 the behavior is identical to ProcessMessages.
+func (mq *MessageQueue) ConcurrentProcessMessages(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, numWorkers int, errs chan<- error) {
+	msgsd, ok := msgs.(*Messages)
+	if !ok {
+		errs <- errors.New("the messages are of the wrong type")
+		return
+	}
+
+	sem := make(chan struct{}, numWorkers)
+	var wg sync.WaitGroup
+
+	for d := range msgsd.deliveryChannel {
+		select {
+		case <-ctx.Done():
+			goto drain
+		default:
+		}
+
+		sem <- struct{}{}
+		wg.Add(1)
+		delivery := d
+		go func() {
+			defer wg.Done()
+			defer func() { <-sem }()
+			if err := handler(delivery.Body, args); err != nil {
+				errs <- err
+			}
+			if err := delivery.Ack(false); err != nil {
+				errs <- err
+			}
+		}()
+	}
+
+drain:
+	wg.Wait()
 }
 
 // DeclareExchange creates a target named 'name' and exchangeType 'exchangeType' over the channel with ID 'chID'.

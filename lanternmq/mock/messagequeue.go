@@ -28,6 +28,8 @@ type MessageQueue struct {
 
 	ProcessMessagesFn func(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error)
 
+	ConcurrentProcessMessagesFn func(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, numWorkers int, errs chan<- error)
+
 	DeclareExchangeFn func(chID lanternmq.ChannelID, name string, exchangeType string) error
 
 	PublishToExchangeFn func(chID lanternmq.ChannelID, name string, routingKey string, message string) error
@@ -75,6 +77,11 @@ func (mq *MessageQueue) ConsumeFromQueue(chID lanternmq.ChannelID, qName string)
 // ProcessMessages mocks lanternmq.ProcessMessages and sets mq.ProcessMessagesInvoked to true and calls mq.ProcessMessagesFn with the given arguments.
 func (mq *MessageQueue) ProcessMessages(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, errs chan<- error) {
 	mq.ProcessMessagesFn(ctx, msgs, handler, args, errs)
+}
+
+// ConcurrentProcessMessages mocks lanternmq.ConcurrentProcessMessages and calls mq.ConcurrentProcessMessagesFn with the given arguments.
+func (mq *MessageQueue) ConcurrentProcessMessages(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, numWorkers int, errs chan<- error) {
+	mq.ConcurrentProcessMessagesFn(ctx, msgs, handler, args, numWorkers, errs)
 }
 
 // DeclareExchange mocks lanternmq.DeclareExchange and calls mq.DeclareExchangeFn with the given arguments.

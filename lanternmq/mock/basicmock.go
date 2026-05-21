@@ -63,6 +63,10 @@ func NewBasicMockMessageQueue() lanternmq.MessageQueue {
 		}
 	}
 
+	mq.ConcurrentProcessMessagesFn = func(ctx context.Context, msgs lanternmq.Messages, handler lanternmq.MessageHandler, args *map[string]interface{}, numWorkers int, errs chan<- error) {
+		mq.ProcessMessagesFn(ctx, msgs, handler, args, errs)
+	}
+
 	mq.CloseFn = func() {}
 	return &mq
 }
