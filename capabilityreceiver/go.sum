@@ -699,6 +699,8 @@ github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20251216211916-fc6b8bb
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20260320213521-f758cf835802/go.mod h1:SqHZORxlzADj1B1ZMiRUk+sYQLJDUKCBGaxlVX+9O8g=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20260416181110-f059836a2ec1 h1:qB19CIWj401EPQO7IElKI2zlgcSuchaG6ALD/xNPUi0=
 github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20260416181110-f059836a2ec1/go.mod h1:Jp3mOOsntPQCt/8dHS2CAmgBEHdaP9snpnR5YPIMB3A=
+github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20260521204819-0134dcb1dee5 h1:CUmMUa34SLqFByRAMC3aF7LE1eIlu8FHhFUHc4a+d8k=
+github.com/onc-healthit/lantern-back-end/lanternmq v0.0.0-20260521204819-0134dcb1dee5/go.mod h1:Gzq6de09g9GnHLpDmObdjDpknXCNDGAQoJFzzUwqRpw=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200319114800-a2d86dc950c6/go.mod h1:jPu3HTPUBd+0vKKBa4yKFouFWo+HvwXoY4hKCrfiAOw=
 github.com/onc-healthit/lantern-back-end/networkstatsquerier v0.0.0-20200325112617-d9df26e6fd2b/go.mod h1:jPu3HTPUBd+0vKKBa4yKFouFWo+HvwXoY4hKCrfiAOw=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
@@ -977,6 +979,7 @@ golang.org/x/net v0.0.0-20210503060351-7fd8e65b6420/go.mod h1:9nx3DQGgdP8bBQD5qx
 golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/net v0.0.0-20210916014120-12bc252f5db8/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
+golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f h1:OfiFi4JbukWwe3lzw+xunroH1mnC1e2Gy5cxNJApiSY=
 golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
 golang.org/x/net v0.0.0-20211206223403-eba003a116a9 h1:HhGRSJWlxVO54+s9MeOVrZrbnwv+6oZQIvsUrMUte7U=
 golang.org/x/net v0.0.0-20211206223403-eba003a116a9/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=

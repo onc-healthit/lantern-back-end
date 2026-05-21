@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
 	"sync/atomic"
 	"time"
 
@@ -948,8 +950,14 @@ func ReceiveCapabilityStatements(ctx context.Context,
 		return err
 	}
 
+	numWorkers := 1
+	if n, err := strconv.Atoi(os.Getenv("LANTERN_RECEIVER_NUMWORKERS")); err == nil && n > 0 {
+		numWorkers = n
+	}
+	log.Infof("[capabilityReceiver] starting with %d concurrent worker(s)", numWorkers)
+
 	errs := make(chan error)
-	go messageQueue.ProcessMessages(ctx, messages, saveMsgInDB, &args, errs)
+	go messageQueue.ConcurrentProcessMessages(ctx, messages, saveMsgInDB, &args, numWorkers, errs)
 
 	// ProcessMessages blocks indefinitely because RabbitMQ keeps the delivery
 	// channel open even when the queue is empty. Log the finish when msgCount
