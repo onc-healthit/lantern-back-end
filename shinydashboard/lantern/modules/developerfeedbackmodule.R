@@ -589,16 +589,16 @@ developerfeedbackmodule_UI <- function(id) {
                   )
                 )
               ),
-              div(class = "chart-container",
-                h4(class = "subsection-header", "Organization Identifier Coverage"),
-                plotOutput(ns("organization_identifier_status_chart"), height = "300px")
-              ),
               div(style = "margin-top: 20px;",
                 h4(class = "subsection-header", "Unique Identifier Values by Type"),
                 p(style = "font-size: 13px; color: #5a6c7d; margin-bottom: 8px;",
                   "Counts reflect globally distinct identifier values across all organizations. ",
                   "The same NPI or CLIA appearing in multiple organizations is counted once."),
                 reactable::reactableOutput(ns("identifier_type_table"))
+              ),
+              div(class = "chart-container",
+                h4(class = "subsection-header", "Organization Identifier Coverage"),
+                plotOutput(ns("organization_identifier_status_chart"), height = "300px")
               )
             ),
 
