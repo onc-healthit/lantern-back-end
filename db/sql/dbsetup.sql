@@ -3834,6 +3834,8 @@ CREATE TABLE IF NOT EXISTS endpoint_query_errors (
 -- shares_fhir_endpoints is inherently developer-level and is joined from
 -- mv_developer_data_issues — it correctly repeats across all bundle rows for
 -- the same developer.
+-- sharing_group_id assigns the same integer to all developers sharing an identical
+-- resolved endpoint URL set. NULL for developers with no peer.
 -- ========================================
 
 DROP MATERIALIZED VIEW IF EXISTS mv_developer_bundle_issues;
@@ -3906,29 +3908,56 @@ latest_query_errors AS (
         error_message
     FROM endpoint_query_errors
     ORDER BY list_source, queried_at DESC NULLS LAST
+),
+-- Endpoint URL sets per developer (used to identify sharing groups)
+dev_endpoint_sets AS (
+    SELECT
+        sls.developer_name,
+        ARRAY_AGG(DISTINCT fe.url ORDER BY fe.url) AS endpoint_set
+    FROM shared_list_sources sls
+    INNER JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    GROUP BY sls.developer_name
+),
+-- Developers that share their endpoint set with at least one other developer
+sharing_devs AS (
+    SELECT DISTINCT d1.developer_name
+    FROM dev_endpoint_sets d1
+    JOIN dev_endpoint_sets d2
+        ON d1.developer_name != d2.developer_name
+        AND d1.endpoint_set = d2.endpoint_set
+),
+-- Assign a stable integer group ID per unique endpoint set (only for sharing devs)
+endpoint_group_ids AS (
+    SELECT
+        developer_name,
+        DENSE_RANK() OVER (ORDER BY endpoint_set) AS sharing_group_id
+    FROM dev_endpoint_sets
+    WHERE developer_name IN (SELECT developer_name FROM sharing_devs)
 )
 SELECT
     sls.developer_name,
     sls.list_source,
-    COALESCE(bte.total_endpoints, 0)           AS total_endpoints,
-    COALESCE(bewd.endpoints_with_org_data, 0)  AS endpoints_with_org_data,
-    COALESCE(bnod.no_org_data_endpoints, 0)    AS no_org_data_endpoints,
-    COALESCE(bo.organization_count, 0)          AS organization_count,
+    COALESCE(bte.total_endpoints, 0)            AS total_endpoints,
+    COALESCE(bewd.endpoints_with_org_data, 0)   AS endpoints_with_org_data,
+    COALESCE(bnod.no_org_data_endpoints, 0)     AS no_org_data_endpoints,
+    COALESCE(bo.organization_count, 0)           AS organization_count,
     CASE WHEN COALESCE(bte.total_endpoints, 0) = 0
-         THEN TRUE ELSE FALSE END               AS has_empty_bundle,
+         THEN TRUE ELSE FALSE END                AS has_empty_bundle,
     CASE WHEN su.list_source IS NOT NULL
-         THEN TRUE ELSE FALSE END               AS shares_list_source,
-    COALESCE(dsf.shares_fhir_endpoints, FALSE)  AS shares_fhir_endpoints,
-    TRUE                                        AS is_chpl_developer,
-    COALESCE(lqe.error_message, 'N/A')           AS error_message
+         THEN TRUE ELSE FALSE END                AS shares_list_source,
+    COALESCE(dsf.shares_fhir_endpoints, FALSE)   AS shares_fhir_endpoints,
+    TRUE                                         AS is_chpl_developer,
+    COALESCE(lqe.error_message, 'N/A')           AS error_message,
+    eg.sharing_group_id
 FROM shared_list_sources sls
-LEFT JOIN bundle_total_endpoints    bte  ON sls.list_source = bte.list_source
+LEFT JOIN bundle_total_endpoints     bte  ON sls.list_source = bte.list_source
 LEFT JOIN bundle_endpoints_with_data bewd ON sls.list_source = bewd.list_source
-LEFT JOIN bundle_no_org_data         bnod ON sls.list_source = bnod.list_source
-LEFT JOIN bundle_organizations       bo   ON sls.list_source = bo.list_source
-LEFT JOIN shared_urls                su   ON sls.list_source = su.list_source
-LEFT JOIN dev_shares_fhir            dsf  ON sls.developer_name = dsf.vendor_name
+LEFT JOIN bundle_no_org_data          bnod ON sls.list_source = bnod.list_source
+LEFT JOIN bundle_organizations        bo   ON sls.list_source = bo.list_source
+LEFT JOIN shared_urls                 su   ON sls.list_source = su.list_source
+LEFT JOIN dev_shares_fhir             dsf  ON sls.developer_name = dsf.vendor_name
 LEFT JOIN latest_query_errors         lqe  ON sls.list_source = lqe.list_source
+LEFT JOIN endpoint_group_ids          eg   ON sls.developer_name = eg.developer_name
 ORDER BY sls.developer_name, sls.list_source;
 
 CREATE UNIQUE INDEX idx_mv_developer_bundle_issues_unique

@@ -1810,16 +1810,43 @@ developerfeedbackmodule <- function(
         shares_fhir_endpoints = FALSE,
         is_chpl_developer = FALSE,
         error_message = NA_character_,
+        sharing_group_id = NA_integer_,
         stringsAsFactors = FALSE
       )
     }
+
+    # Compute group_key for peer-grouping when a sharing card is active.
+    # group_key drives both sort order and alternating row colors so peers cluster visually.
+    if (!is.null(active_filter) && active_filter == "shares_list_source") {
+      # Same bundle URL = same sharing group
+      dev_data$group_key <- dev_data$list_source
+    } else if (!is.null(active_filter) && active_filter == "shares_fhir_endpoints") {
+      # sharing_group_id from MV: same integer for devs with identical resolved endpoint sets.
+      # Zero-pad to 6 digits so string sort matches numeric sort for any realistic group count.
+      # Devs with NULL sharing_group_id (no confirmed peer) sort last under their own name.
+      dev_data$group_key <- ifelse(
+        is.na(dev_data$sharing_group_id),
+        paste0("z_", dev_data$developer_name),
+        sprintf("%06d", as.integer(dev_data$sharing_group_id))
+      )
+    } else {
+      dev_data$group_key <- dev_data$developer_name
+    }
+
+    # Assign a numeric group index per unique group_key (in the same sorted order reactable uses)
+    # so even-numbered groups get the alternate background color.
+    sorted_keys <- unique(dev_data$group_key[order(dev_data$group_key, dev_data$developer_name)])
+    dev_data$group_index <- match(dev_data$group_key, sorted_keys)
+
+    use_group_colors <- !is.null(active_filter) &&
+      active_filter %in% c("shares_list_source", "shares_fhir_endpoints")
 
     reactable(
       dev_data,
       filterable = TRUE,
       searchable = TRUE,
       defaultPageSize = 20,
-      defaultSorted = list(developer_name = "asc"),
+      defaultSorted = list(group_key = "asc", developer_name = "asc"),
       columns = list(
         developer_name = colDef(
           name = "Certified API Developer",
@@ -1942,9 +1969,20 @@ developerfeedbackmodule <- function(
             tags$span(style = "color: #5a6c7d; font-size: 0.9em;", value)
           }
         ),
-        is_chpl_developer = colDef(show = FALSE)
+        is_chpl_developer = colDef(show = FALSE),
+        sharing_group_id = colDef(show = FALSE),
+        group_key = colDef(show = FALSE),
+        group_index = colDef(show = FALSE)
       ),
-      striped = TRUE,
+      rowStyle = if (use_group_colors) {
+        function(index) {
+          if (dev_data$group_index[index] %% 2 == 0)
+            list(background = "#eaf4fb")
+          else
+            list(background = "#ffffff")
+        }
+      } else NULL,
+      striped = !use_group_colors,
       highlight = TRUE,
       bordered = TRUE,
       theme = reactableTheme(

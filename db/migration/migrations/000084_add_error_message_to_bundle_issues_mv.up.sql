@@ -1,11 +1,14 @@
 BEGIN;
 
 -- ========================================
--- Migration 000084: Add error_message to mv_developer_bundle_issues
+-- Migration 000084: Add error_message and sharing_group_id to mv_developer_bundle_issues
 -- ========================================
--- Purpose: Surface the most recent error message from endpoint_query_errors
--- in the bundle issues materialized view so the Developer Feedback tab can
--- display it as a "Comments" column in the All Developers with Data Issues table.
+-- Purpose:
+--   error_message: Surface the most recent error from endpoint_query_errors per bundle URL,
+--     displayed as the "Comments" column in the Developer Feedback tab.
+--   sharing_group_id: Assign the same integer to all developers whose resolved FHIR endpoint
+--     URL sets are identical, enabling visual peer-grouping in the UI without adding visible
+--     columns. Developers with no sharing peer get NULL.
 -- Depends on: mv_developer_data_issues (migration 000079),
 --             endpoint_query_errors (migration 000083)
 -- ========================================
@@ -80,6 +83,31 @@ latest_query_errors AS (
         error_message
     FROM endpoint_query_errors
     ORDER BY list_source, queried_at DESC NULLS LAST
+),
+-- Endpoint URL sets per developer (used to identify sharing groups)
+dev_endpoint_sets AS (
+    SELECT
+        sls.developer_name,
+        ARRAY_AGG(DISTINCT fe.url ORDER BY fe.url) AS endpoint_set
+    FROM shared_list_sources sls
+    INNER JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    GROUP BY sls.developer_name
+),
+-- Developers that share their endpoint set with at least one other developer
+sharing_devs AS (
+    SELECT DISTINCT d1.developer_name
+    FROM dev_endpoint_sets d1
+    JOIN dev_endpoint_sets d2
+        ON d1.developer_name != d2.developer_name
+        AND d1.endpoint_set = d2.endpoint_set
+),
+-- Assign a stable integer group ID per unique endpoint set (only for sharing devs)
+endpoint_group_ids AS (
+    SELECT
+        developer_name,
+        DENSE_RANK() OVER (ORDER BY endpoint_set) AS sharing_group_id
+    FROM dev_endpoint_sets
+    WHERE developer_name IN (SELECT developer_name FROM sharing_devs)
 )
 SELECT
     sls.developer_name,
@@ -94,7 +122,8 @@ SELECT
          THEN TRUE ELSE FALSE END                AS shares_list_source,
     COALESCE(dsf.shares_fhir_endpoints, FALSE)   AS shares_fhir_endpoints,
     TRUE                                         AS is_chpl_developer,
-    COALESCE(lqe.error_message, 'N/A')           AS error_message
+    COALESCE(lqe.error_message, 'N/A')           AS error_message,
+    eg.sharing_group_id
 FROM shared_list_sources sls
 LEFT JOIN bundle_total_endpoints     bte  ON sls.list_source = bte.list_source
 LEFT JOIN bundle_endpoints_with_data bewd ON sls.list_source = bewd.list_source
@@ -103,6 +132,7 @@ LEFT JOIN bundle_organizations        bo   ON sls.list_source = bo.list_source
 LEFT JOIN shared_urls                 su   ON sls.list_source = su.list_source
 LEFT JOIN dev_shares_fhir             dsf  ON sls.developer_name = dsf.vendor_name
 LEFT JOIN latest_query_errors         lqe  ON sls.list_source = lqe.list_source
+LEFT JOIN endpoint_group_ids          eg   ON sls.developer_name = eg.developer_name
 ORDER BY sls.developer_name, sls.list_source;
 
 CREATE UNIQUE INDEX idx_mv_developer_bundle_issues_unique
