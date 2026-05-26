@@ -548,60 +548,45 @@ urls_agg AS (
     FROM urls_raw
     GROUP BY org_id
 ),
--- Step 6a: Pick one canonical vendor per (org_id, url) for HTML link generation.
--- When multiple vendors share the same list_source they produce duplicate rows with the
--- same URL but different vendor_name. Embedding vendor_name in the onclick string
--- prevents string_agg(DISTINCT ...) from collapsing them, causing the URL to repeat
--- once per vendor on the organizations tab.
-url_deduped AS (
-    SELECT DISTINCT ON (org_id, url)
-        org_id,
-        url,
-        vendor_name
-    FROM processed_data
-    ORDER BY org_id, url, vendor_name
-),
--- Step 6: Group by organization ID
+-- Step 6: Group by organization ID 
 endpoint_data_agg AS (
-    SELECT
-        pd.org_id,
+    SELECT 
+        org_id,
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
-        MAX(pd.organization_name) as organization_name,
-        -- HTML formatted endpoint URLs - use url_deduped so the onclick vendor_name is the
-        -- same for all vendor rows sharing a URL, letting DISTINCT collapse them to one link.
-        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || ud.url || '&&None&&' || ud.vendor_name || ''',{priority: ''event''});"> ' || ud.url || '</a>'), '<br/>') as endpoint_urls_html,
+        MAX(organization_name) as organization_name,
+        -- HTML formatted endpoint URLs
+        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || ''',{priority: ''event''});"> ' || url || '</a>'), '<br/>') as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
-        CASE
-            WHEN LENGTH(string_agg(DISTINCT pd.url, E'\n')) <= 32765
-            THEN string_agg(DISTINCT pd.url, E'\n')
-            ELSE
+        CASE 
+            WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
+            THEN string_agg(DISTINCT url, E'\n')
+            ELSE 
                 -- Find the last complete line within 32765 chars
                 LEFT(
-                    string_agg(DISTINCT pd.url, E'\n'),
+                    string_agg(DISTINCT url, E'\n'), 
                     GREATEST(
                         1,
-                        CASE
-                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT pd.url, E'\n'), 32765))) > 0
-                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT pd.url, E'\n'), 32765))) + 1
+                        CASE 
+                            WHEN POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT url, E'\n'), 32765))) > 0
+                            THEN 32765 - POSITION(E'\n' IN REVERSE(LEFT(string_agg(DISTINCT url, E'\n'), 32765))) + 1
                             ELSE 32765
                         END
                     )
                 )
         END as endpoint_urls_csv,
-        string_agg(DISTINCT pd.fhir_version, '<br/>') as fhir_versions_html,
-        string_agg(DISTINCT pd.fhir_version, E'\n') as fhir_versions_csv,
-        string_agg(DISTINCT pd.vendor_name, '<br/>') as vendor_names_html,
-        string_agg(DISTINCT pd.vendor_name, E'\n') as vendor_names_csv,
-        string_agg(DISTINCT pd.is_chpl, '<br/>') as is_chpl_html,
-        string_agg(DISTINCT pd.is_chpl, E'\n') as is_chpl_csv,
+        string_agg(DISTINCT fhir_version, '<br/>') as fhir_versions_html,
+        string_agg(DISTINCT fhir_version, E'\n') as fhir_versions_csv,
+        string_agg(DISTINCT vendor_name, '<br/>') as vendor_names_html,
+        string_agg(DISTINCT vendor_name, E'\n') as vendor_names_csv,
+        string_agg(DISTINCT is_chpl, '<br/>') as is_chpl_html,
+        string_agg(DISTINCT is_chpl, E'\n') as is_chpl_csv,
         -- Arrays for filtering (exactly as original code)
-        ARRAY(SELECT DISTINCT unnest(array_agg(pd.fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(pd.vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(pd.url))::text ORDER BY unnest)::text[] as urls_array,
-        ARRAY(SELECT DISTINCT unnest(array_agg(pd.is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
-    FROM processed_data pd
-    JOIN url_deduped ud ON pd.org_id = ud.org_id AND pd.url = ud.url
-    GROUP BY pd.org_id  -- KEY CHANGE: Group by org_id instead of organization_name
+        ARRAY(SELECT DISTINCT unnest(array_agg(fhir_version))::text ORDER BY unnest)::text[] as fhir_versions_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(vendor_name))::text ORDER BY unnest)::text[] as vendor_names_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(url))::text ORDER BY unnest)::text[] as urls_array,
+        ARRAY(SELECT DISTINCT unnest(array_agg(is_chpl))::text ORDER BY unnest)::text[] as is_chpl_array
+    FROM processed_data
+    GROUP BY org_id  -- KEY CHANGE: Group by org_id instead of organization_name
 )
 -- Step 7: Final select with JOINs to get all related data per organization ID
 SELECT 
