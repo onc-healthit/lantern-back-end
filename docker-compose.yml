@@ -103,6 +103,7 @@ services:
       - LANTERN_QPASSWORD=${LANTERN_QPASSWORD}
       - LANTERN_QHOST=${LANTERN_QHOST}
       - LANTERN_QPORT=${LANTERN_QPORT}
+      - LANTERN_RECEIVER_NUMWORKERS=${LANTERN_RECEIVER_NUMWORKERS}
     volumes:
       - ./resources/prod_resources/CHPLProductMapping.json:/etc/lantern/resources/CHPLProductMapping.json
       - ./resources/prod_resources/CHPLProductsInfo.json:/etc/lantern/resources/CHPLProductsInfo.json
