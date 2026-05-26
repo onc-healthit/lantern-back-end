@@ -2144,7 +2144,8 @@ developerfeedbackmodule <- function(
         organization_count,
         has_empty_bundle,
         shares_list_source,
-        shares_fhir_endpoints
+        shares_fhir_endpoints,
+        error_message
       )
   }
 
@@ -2183,7 +2184,8 @@ developerfeedbackmodule <- function(
           organization_count = integer(0),
           has_empty_bundle = logical(0),
           shares_list_source = logical(0),
-          shares_fhir_endpoints = logical(0)
+          shares_fhir_endpoints = logical(0),
+          error_message = character(0)
         ), file, row.names = FALSE)
       }
     }
