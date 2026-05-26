@@ -387,7 +387,7 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_sources_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-share-alt", style = "margin-right: 5px;"),
-                      "Shared FHIR Bundle URLs"
+                      "Developers with shared FHIR bundles"
                     ),
                     div(class = "metric-value", style = "color: #2E7D9C;",
                       textOutput(ns("developers_sharing_list_sources_count"), inline = TRUE),
@@ -410,7 +410,7 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("shared_endpoints_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-code-fork", style = "margin-right: 5px;"),
-                      "Overlapping Endpoint Sets"
+                      "Developers with shared FHIR Endpoints"
                     ),
                     div(class = "metric-value", style = "color: #2E7D9C;",
                       textOutput(ns("developers_sharing_fhir_endpoints_count"), inline = TRUE),
@@ -433,14 +433,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("no_org_data_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
-                      "Organization Details Not Available"
+                      "FHIR Bundles with missing organization data"
                     ),
                     div(class = "metric-value", style = "color: #B8860B;",
                       textOutput(ns("developers_no_org_data_count"), inline = TRUE),
                       uiOutput(ns("no_org_data_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "Endpoints that did not return organization name, address, or identifier information",
+                      "FHIR bundles that are missing organization data such as name, address or identifier",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -1759,7 +1759,8 @@ developerfeedbackmodule <- function(
          paste0(" / ", format(n, big.mark = ",")))
   }
   output$empty_bundles_denom <- renderUI({
-    denom_span(filtered_data_issues_counts()$total_developers_count)
+    counts <- chpl_lantern_counts()
+    denom_span(as.integer(counts$chpl_bundle_count[1]))
   })
   output$shared_sources_denom <- renderUI({
     denom_span(filtered_data_issues_counts()$total_developers_count)
