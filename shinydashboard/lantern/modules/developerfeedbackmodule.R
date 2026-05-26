@@ -1769,7 +1769,8 @@ developerfeedbackmodule <- function(
     denom_span(filtered_data_issues_counts()$total_developers_count)
   })
   output$no_org_data_denom <- renderUI({
-    denom_span(filtered_data_issues_counts()$total_developers_count)
+    counts <- chpl_lantern_counts()
+    denom_span(as.integer(counts$chpl_bundle_count[1]))
   })
 
   # Comprehensive developer data issues table
