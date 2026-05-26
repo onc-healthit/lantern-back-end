@@ -3382,9 +3382,9 @@ FROM (
     FROM mv_organization_quality
     
     UNION ALL
-    
-    -- Add "All Developers" summary
-    SELECT 
+
+    -- Add "All Developers" summary (all orgs, no filter)
+    SELECT
         'All Developers' as vendor_name,
         has_valid_identifiers,
         identifier_status,
@@ -3394,6 +3394,42 @@ FROM (
         identifier_conformance_category,
         identifier_conformance_rate
     FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Add "CHPL Certified API Developers" summary (orgs associated with at least one CHPL vendor)
+    SELECT
+        'CHPL Certified API Developers' as vendor_name,
+        has_valid_identifiers,
+        identifier_status,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        identifier_conformance_category,
+        identifier_conformance_rate
+    FROM mv_organization_quality
+    WHERE EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
+
+    UNION ALL
+
+    -- Add "Non-CHPL" summary (orgs with no CHPL vendor association)
+    SELECT
+        'Non-CHPL' as vendor_name,
+        has_valid_identifiers,
+        identifier_status,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        identifier_conformance_category,
+        identifier_conformance_rate
+    FROM mv_organization_quality
+    WHERE NOT EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
 ) vendor_expanded
 GROUP BY vendor_name;
 
@@ -3424,6 +3460,36 @@ WITH vendor_identifier_rows AS (
         total_identifier_count,
         conformant_identifier_count
     FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Include under "CHPL Certified API Developers" (orgs with at least one CHPL vendor)
+    SELECT
+        'CHPL Certified API Developers' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+    WHERE EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
+
+    UNION ALL
+
+    -- Include under "Non-CHPL" (orgs with no CHPL vendor association)
+    SELECT
+        'Non-CHPL' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+    WHERE NOT EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
 ),
 -- Org-level aggregates (count of orgs, not identifier values)
 vendor_org_summary AS (

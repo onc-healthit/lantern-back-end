@@ -634,7 +634,7 @@ developerfeedbackmodule_UI <- function(id) {
               ),
               selectInput(
                 inputId = ns("vendor_filter"),
-                label = "Certified API Developer:",
+                label = "API Developer:",
                 choices = NULL,
                 selected = "All Developers"
               )
@@ -785,55 +785,24 @@ developerfeedbackmodule <- function(
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
 
     source_val <- input$org_source_filter
-    chpl_names <- chpl_vendor_names()
-    req(length(chpl_names) > 0)
 
-    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All") {
-      if (source_val == "CHPL Certified API Developers") {
-        data_query <- glue::glue_sql(
-          "SELECT * FROM mv_organization_quality_summary WHERE vendor_name IN ({chpl_names*})",
-          chpl_names = chpl_names, .con = db_connection
-        )
-      } else {
-        data_query <- glue::glue_sql(
-          "SELECT * FROM mv_organization_quality_summary WHERE vendor_name NOT IN ({chpl_names*}) AND vendor_name != 'All Developers'",
-          chpl_names = chpl_names, .con = db_connection
-        )
-      }
+    # When a specific vendor is selected, fetch that vendor's row directly.
+    # When "All Developers" is selected with a source filter, fetch the pre-computed
+    # aggregate row from the MV ('CHPL Certified API Developers' or 'Non-CHPL'),
+    # which uses COUNT(DISTINCT org_id) scoped correctly — avoiding double-counting
+    # orgs that appear under multiple vendors.
+    lookup_name <- if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All") {
+      source_val
     } else {
-      data_query <- glue::glue_sql(
-        "SELECT * FROM mv_organization_quality_summary WHERE vendor_name = {vendor}",
-        vendor = current_vendor, .con = db_connection
-      )
+      current_vendor
     }
+
+    data_query <- glue::glue_sql(
+      "SELECT * FROM mv_organization_quality_summary WHERE vendor_name = {lookup_name}",
+      lookup_name = lookup_name, .con = db_connection
+    )
 
     result <- tbl(db_connection, sql(data_query)) %>% collect()
-
-    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All" && nrow(result) > 1) {
-      result <- result %>%
-        summarise(
-          vendor_name = source_val,
-          total_organizations = sum(total_organizations, na.rm = TRUE),
-          organizations_with_valid_identifiers = sum(organizations_with_valid_identifiers, na.rm = TRUE),
-          organizations_with_no_identifiers = sum(organizations_with_no_identifiers, na.rm = TRUE),
-          organizations_with_invalid_only = sum(organizations_with_invalid_only, na.rm = TRUE),
-          organizations_all_valid = sum(organizations_all_valid, na.rm = TRUE),
-          organizations_mixed_valid = sum(organizations_mixed_valid, na.rm = TRUE),
-          organizations_with_valid_names = sum(organizations_with_valid_names, na.rm = TRUE),
-          organizations_with_valid_addresses = sum(organizations_with_valid_addresses, na.rm = TRUE),
-          high_quality_organizations = sum(high_quality_organizations, na.rm = TRUE),
-          low_quality_organizations = sum(low_quality_organizations, na.rm = TRUE),
-          fully_conformant = sum(fully_conformant, na.rm = TRUE),
-          partially_conformant = sum(partially_conformant, na.rm = TRUE),
-          minimally_conformant = sum(minimally_conformant, na.rm = TRUE),
-          non_conformant = sum(non_conformant, na.rm = TRUE),
-          avg_conformance_rate = mean(avg_conformance_rate, na.rm = TRUE),
-          avg_quality_score = mean(avg_quality_score, na.rm = TRUE),
-          identifier_percentage = mean(identifier_percentage, na.rm = TRUE),
-          name_percentage = mean(name_percentage, na.rm = TRUE),
-          address_percentage = mean(address_percentage, na.rm = TRUE)
-        )
-    }
 
     # Debug output
     if (nrow(result) == 0) {
@@ -889,55 +858,19 @@ developerfeedbackmodule <- function(
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
 
     source_val <- input$org_source_filter
-    chpl_names <- chpl_vendor_names()
-    req(length(chpl_names) > 0)
 
-    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All") {
-      if (source_val == "CHPL Certified API Developers") {
-        data_query <- glue::glue_sql(
-          "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name IN ({chpl_names*})",
-          chpl_names = chpl_names, .con = db_connection
-        )
-      } else {
-        data_query <- glue::glue_sql(
-          "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name NOT IN ({chpl_names*}) AND vendor_name != 'All Developers'",
-          chpl_names = chpl_names, .con = db_connection
-        )
-      }
+    lookup_name <- if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All") {
+      source_val
     } else {
-      data_query <- glue::glue_sql(
-        "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name = {vendor}",
-        vendor = current_vendor, .con = db_connection
-      )
+      current_vendor
     }
+
+    data_query <- glue::glue_sql(
+      "SELECT * FROM mv_organization_identifier_summary WHERE vendor_name = {lookup_name}",
+      lookup_name = lookup_name, .con = db_connection
+    )
 
     result <- tbl(db_connection, sql(data_query)) %>% collect()
-
-    if (current_vendor == "All Developers" && !is.null(source_val) && source_val != "All" && nrow(result) > 1) {
-      result <- result %>%
-        summarise(
-          vendor_name = source_val,
-          total_npi = sum(total_npi, na.rm = TRUE),
-          total_clia = sum(total_clia, na.rm = TRUE),
-          total_naic = sum(total_naic, na.rm = TRUE),
-          total_other = sum(total_other, na.rm = TRUE),
-          total_no_identifiers = sum(total_no_identifiers, na.rm = TRUE),
-          total_npi_valid = sum(total_npi_valid, na.rm = TRUE),
-          total_clia_valid = sum(total_clia_valid, na.rm = TRUE),
-          total_naic_valid = sum(total_naic_valid, na.rm = TRUE),
-          total_npi_invalid = sum(total_npi_invalid, na.rm = TRUE),
-          total_clia_invalid = sum(total_clia_invalid, na.rm = TRUE),
-          total_naic_invalid = sum(total_naic_invalid, na.rm = TRUE),
-          total_other_invalid = sum(total_other_invalid, na.rm = TRUE),
-          total_all_identifiers = sum(total_all_identifiers, na.rm = TRUE),
-          total_all_conformant = sum(total_all_conformant, na.rm = TRUE),
-          npi_percentage = mean(npi_percentage, na.rm = TRUE),
-          clia_percentage = mean(clia_percentage, na.rm = TRUE),
-          naic_percentage = mean(naic_percentage, na.rm = TRUE),
-          other_percentage = mean(other_percentage, na.rm = TRUE),
-          conformance_rate = mean(conformance_rate, na.rm = TRUE)
-        )
-    }
 
     if (nrow(result) == 0) {
       # Return default values
