@@ -348,7 +348,11 @@ developerfeedbackmodule_UI <- function(id) {
                            border-radius: 4px; margin-bottom: 16px; font-size: 0.88em; color: #2c3e50;",
                 tags$i(class = "fa fa-clock-o", style = "margin-right: 6px; color: #17a2b8;"),
                 tags$strong("CHPL data last fetched: "),
-                textOutput(ns("chpl_last_updated"), inline = TRUE)
+                textOutput(ns("chpl_last_updated"), inline = TRUE),
+                tags$span(style = "margin-left: 16px; color: #5a6a7a;",
+                  "| Synced every weekend. Next CHPL data sync: ",
+                  textOutput(ns("chpl_next_sync"), inline = TRUE)
+                )
               ),
 
               # 5-card flex row: static Coverage Overview + 4 clickable cards
@@ -1090,6 +1094,13 @@ developerfeedbackmodule <- function(
   })
 
   output$chpl_last_updated <- renderText({ chpl_last_updated() })
+
+  output$chpl_next_sync <- renderText({
+    today <- Sys.Date()
+    days_to_monday <- (8L - as.integer(format(today, "%u"))) %% 7L
+    if (days_to_monday == 0L) days_to_monday <- 7L
+    format(today + days_to_monday, "%B %d, %Y")
+  })
 
   output$prob_orgs_summary <- renderUI({
     data   <- problematic_orgs()
