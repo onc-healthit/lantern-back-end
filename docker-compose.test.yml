@@ -12,6 +12,15 @@ services:
       - LANTERN_DBHOST=postgres
       - LANTERN_QHOST=lantern-mq
 
+  capability_querier_2:
+    environment:
+      - LANTERN_DBHOST=postgres
+
+  capability_receiver_2:
+    environment:
+      - LANTERN_DBHOST=postgres
+      - LANTERN_QHOST=lantern-mq
+
   endpoint_manager:
     environment:
       - LANTERN_DBHOST=postgres

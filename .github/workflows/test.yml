@@ -21,7 +21,7 @@ jobs:
         id: start-system
         run: |
           sudo apt-get install -y docker-compose
-          docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+          docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_querier_2 capability_receiver capability_receiver_2
         env:
           LANTERN_DBHOST: localhost
           LANTERN_DBPORT: 5432
@@ -58,7 +58,7 @@ jobs:
         id: start-system
         run: |
           sudo apt-get install -y docker-compose
-          docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_receiver
+          docker-compose up -d --build postgres lantern-mq endpoint_manager capability_querier capability_querier_2 capability_receiver capability_receiver_2
       - name: Run E2E Tests
         run: make test_e2e_CI
         env:

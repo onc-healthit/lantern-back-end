@@ -36,6 +36,16 @@ services:
       - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
       - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
 
+  capability_querier_2:
+    environment:
+      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
+      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+
+  capability_receiver_2:
+    environment:
+      - LANTERN_TEST_QUSER=${LANTERN_TEST_QUSER}
+      - LANTERN_TEST_QPASSWORD=${LANTERN_TEST_QPASSWORD}
+
   shinydashboard:
     build:
       args:
