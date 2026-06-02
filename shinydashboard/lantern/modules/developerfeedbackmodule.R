@@ -1785,6 +1785,17 @@ developerfeedbackmodule <- function(
     use_group_colors <- !is.null(active_filter) &&
       active_filter %in% c("shares_list_source", "shares_fhir_endpoints")
 
+    dev_data$has_missing_org_data <- !is.na(dev_data$no_org_data_endpoints) & dev_data$no_org_data_endpoints > 0
+
+    # Reorder columns so reactable renders them in the correct visual order.
+    # reactable uses data frame column order, not colDef order.
+    dev_data <- dev_data[, c(
+      "developer_name", "list_source", "total_endpoints", "endpoints_with_org_data",
+      "no_org_data_endpoints", "organization_count", "has_empty_bundle",
+      "shares_list_source", "shares_fhir_endpoints", "has_missing_org_data",
+      "error_message", "is_chpl_developer", "sharing_group_id", "group_key", "group_index"
+    )]
+
     reactable(
       dev_data,
       filterable = TRUE,
@@ -1811,13 +1822,13 @@ developerfeedbackmodule <- function(
         ),
         total_endpoints = colDef(
           name = "Total Endpoints",
-          width = 130,
+          width = 100,
           format = colFormat(separators = TRUE),
           align = "center"
         ),
         endpoints_with_org_data = colDef(
           name = "With Org Data",
-          width = 120,
+          width = 100,
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
@@ -1827,7 +1838,7 @@ developerfeedbackmodule <- function(
         ),
         no_org_data_endpoints = colDef(
           name = "Endpoints Without Org Data",
-          width = 110,
+          width = 100,
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
@@ -1837,7 +1848,7 @@ developerfeedbackmodule <- function(
         ),
         organization_count = colDef(
           name = "Organizations",
-          width = 120,
+          width = 105,
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
@@ -1847,7 +1858,7 @@ developerfeedbackmodule <- function(
         ),
         has_empty_bundle = colDef(
           name = "FHIR Bundle Issues",
-          width = 120,
+          width = 110,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
@@ -1866,8 +1877,8 @@ developerfeedbackmodule <- function(
           }
         ),
         shares_list_source = colDef(
-          name = "Shared Bundle URL",
-          width = 160,
+          name = "Shared FHIR Bundles",
+          width = 145,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
@@ -1886,8 +1897,8 @@ developerfeedbackmodule <- function(
           }
         ),
         shares_fhir_endpoints = colDef(
-          name = "Overlapping Endpoints",
-          width = 170,
+          name = "Shared FHIR Endpoints",
+          width = 150,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
@@ -1905,9 +1916,29 @@ developerfeedbackmodule <- function(
             }
           }
         ),
+        has_missing_org_data = colDef(
+          name = "Missing Org Data",
+          width = 130,
+          align = "center",
+          cell = function(value) {
+            if (isTRUE(value)) {
+              tags$span(
+                style = "color: #B8860B; font-weight: 700;",
+                tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
+                "Yes"
+              )
+            } else {
+              tags$span(
+                style = "color: #6c757d;",
+                tags$i(class = "fa fa-times-circle", style = "margin-right: 5px;"),
+                "No"
+              )
+            }
+          }
+        ),
         error_message = colDef(
           name = "Comments",
-          minWidth = 200,
+          minWidth = 160,
           cell = function(value) {
             if (is.na(value) || value == "") return("")
             tags$span(style = "color: #5a6c7d; font-size: 0.9em;", value)
@@ -2079,17 +2110,18 @@ developerfeedbackmodule <- function(
   # Helper: select and rename columns for CSV export
   format_for_csv <- function(data) {
     data %>%
-      select(
-        developer_name,
-        list_source,
-        total_endpoints,
-        endpoints_with_org_data,
-        no_org_data_endpoints,
-        organization_count,
-        has_empty_bundle,
-        shares_list_source,
-        shares_fhir_endpoints,
-        error_message
+      transmute(
+        `Certified API Developer`    = developer_name,
+        `FHIR Bundle URL`            = list_source,
+        `Total Endpoints`            = total_endpoints,
+        `With Org Data`              = endpoints_with_org_data,
+        `Endpoints Without Org Data` = no_org_data_endpoints,
+        `Organizations`              = organization_count,
+        `Missing Org Data`           = ifelse(!is.na(no_org_data_endpoints) & no_org_data_endpoints > 0, "Yes", "No"),
+        `FHIR Bundle Issues`         = ifelse(has_empty_bundle, "Yes", "No"),
+        `Shared FHIR Bundles`        = ifelse(shares_list_source, "Yes", "No"),
+        `Shared FHIR Endpoints`      = ifelse(shares_fhir_endpoints, "Yes", "No"),
+        `Comments`                   = error_message
       )
   }
 
@@ -2100,7 +2132,7 @@ developerfeedbackmodule <- function(
     },
     content = function(file) {
       data <- apply_source_filter(all_data_issues())
-      data <- data[data$has_empty_bundle == TRUE | data$shares_list_source == TRUE | data$shares_fhir_endpoints == TRUE, ]
+      data <- data[data$has_empty_bundle == TRUE | data$shares_list_source == TRUE | data$shares_fhir_endpoints == TRUE | (!is.na(data$no_org_data_endpoints) & data$no_org_data_endpoints > 0), ]
       if (nrow(data) > 0) {
         write.csv(format_for_csv(data), file, row.names = FALSE)
       } else {
