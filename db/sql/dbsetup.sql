@@ -1799,16 +1799,7 @@ CREATE MATERIALIZED VIEW security_endpoints_mv AS
 SELECT 
     ROW_NUMBER() OVER () AS id,
     e.url,
-    REPLACE(
-        REPLACE(
-            REPLACE(
-                REPLACE(e.endpoint_names::TEXT, '{', ''), 
-                '}', ''
-            ), 
-            '","', '; '
-        ),
-        '"', ''
-    ) AS organization_names,
+    array_to_string(e.endpoint_names, '; ') AS organization_names,
     COALESCE(e.vendor_name, 'Unknown') AS vendor_name,
     CASE 
         WHEN e.fhir_version = '' THEN 'No Cap Stat'
