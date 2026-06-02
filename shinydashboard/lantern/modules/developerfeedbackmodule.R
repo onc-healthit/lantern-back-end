@@ -368,7 +368,7 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("empty_bundles_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-folder-open", style = "margin-right: 5px;"),
-                      "FHIR Bundles — Empty or Invalid or Unreachable"
+                      "Developers with empty, unreachable or invalid bundles"
                     ),
                     div(class = "metric-value", style = "color: #B8860B;",
                       textOutput(ns("developers_empty_bundles_count"), inline = TRUE),
@@ -437,14 +437,14 @@ developerfeedbackmodule_UI <- function(id) {
                       onclick = sprintf("Shiny.setInputValue('%s', Math.random());", ns("no_org_data_card_click")),
                     div(class = "metric-title",
                       tags$i(class = "fa fa-exclamation-triangle", style = "margin-right: 5px;"),
-                      "FHIR Bundles with missing organization data"
+                      "Developers with missing organization data"
                     ),
                     div(class = "metric-value", style = "color: #B8860B;",
                       textOutput(ns("developers_no_org_data_count"), inline = TRUE),
                       uiOutput(ns("no_org_data_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "FHIR bundles that are missing organization data such as name, address or identifier",
+                      "Developers whose FHIR bundles are missing organization data such as name, address or identifier",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
@@ -1704,7 +1704,7 @@ developerfeedbackmodule <- function(
   }
   output$empty_bundles_denom <- renderUI({
     counts <- chpl_lantern_counts()
-    denom_span(as.integer(counts$chpl_bundle_count[1]))
+    denom_span(as.integer(counts$chpl_dev_count[1]))
   })
   output$shared_sources_denom <- renderUI({
     denom_span(filtered_data_issues_counts()$total_developers_count)
@@ -1714,7 +1714,7 @@ developerfeedbackmodule <- function(
   })
   output$no_org_data_denom <- renderUI({
     counts <- chpl_lantern_counts()
-    denom_span(as.integer(counts$chpl_bundle_count[1]))
+    denom_span(as.integer(counts$chpl_dev_count[1]))
   })
 
   # Comprehensive developer data issues table
