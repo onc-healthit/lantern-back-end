@@ -1227,7 +1227,7 @@ developerfeedbackmodule <- function(
     unique_devs <- dev_data[!duplicated(dev_data$developer_name), ]
 
     list(
-      developers_with_no_org_data_count       = sum(unique_devs$no_org_data_endpoints > 0, na.rm = TRUE),
+      developers_with_no_org_data_count       = sum(tapply(dev_data$no_org_data_endpoints, dev_data$developer_name, sum, na.rm = TRUE) > 0),
       endpoints_with_no_org_data_count        = sum(dev_data$no_org_data_endpoints, na.rm = TRUE),
       developers_sharing_list_sources_count   = sum(unique_devs$shares_list_source == TRUE, na.rm = TRUE),
       inaccessible_list_sources_count         = 0L,
