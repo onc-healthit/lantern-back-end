@@ -1709,7 +1709,7 @@ FROM (SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_i
         ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id) t;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
-ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual);
+ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference);
 
 CREATE INDEX mv_validation_results_plot_vendor_idx ON mv_validation_results_plot(vendor_name);
 CREATE INDEX mv_validation_results_plot_fhir_idx ON mv_validation_results_plot(fhir_version);
@@ -1787,7 +1787,7 @@ SELECT fhir_version, url, expected, actual, vendor_name, rule_name, reference
 FROM mv_validation_results_plot
 WHERE valid = 'false';
 
-CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(url, fhir_version, vendor_name, rule_name);
+CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures (url, fhir_version, vendor_name, rule_name, expected, actual, reference);
 CREATE INDEX mv_validation_failures_url_idx ON mv_validation_failures(url);
 CREATE INDEX mv_validation_failures_fhir_version_idx ON mv_validation_failures(fhir_version);
 CREATE INDEX mv_validation_failures_vendor_name_idx ON mv_validation_failures(vendor_name);
