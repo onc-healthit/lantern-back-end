@@ -128,6 +128,8 @@ downloadsmodule <- function(
                     "State Medicaid Agency (SMA) Provider Directory",
                     list_source)) %>%
       ungroup() %>%
+      group_by(across(-list_source)) %>%
+      summarise(list_source = paste(unique(list_source), collapse = "; "), .groups = "drop") %>%
       rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds) %>%

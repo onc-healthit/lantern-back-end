@@ -1043,7 +1043,7 @@ SELECT
     t.status,
     t.cap_stat_exists
 FROM (
-    SELECT DISTINCT ON (e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version)
+    SELECT DISTINCT ON (e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version, e.list_source)
         e.url,
         e.endpoint_names,
         e.info_created,
@@ -1073,7 +1073,7 @@ FROM (
     FROM endpoint_export_mv e
     LEFT JOIN mv_http_responses r ON e.http_response = r.http_code
     LEFT JOIN list_source_info lsi ON e.list_source = lsi.list_source
-    ORDER BY e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version
+    ORDER BY e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version, e.list_source
 ) t;
 
 --Unique index for refreshing the MV concurrently
@@ -1147,8 +1147,7 @@ totals AS (
         -- Count (url, fhir_version) combinations to match Endpoints tab logic
         (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
         (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
-        FROM fhir_endpoints_info fei
-        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
+        FROM fhir_endpoints_info fei) AS combinations) AS indexed_endpoints
 )
 SELECT 
     now() AS aggregation_date,
