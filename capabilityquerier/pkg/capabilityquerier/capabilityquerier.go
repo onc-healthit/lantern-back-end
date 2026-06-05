@@ -114,7 +114,7 @@ func GetAndSendVersionsResponse(ctx context.Context, args *map[string]interface{
 		}
 		versionsURL := endpointmanager.NormalizeVersionsURL(castURL.String())
 		// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
-		time.Sleep(time.Duration(500 * time.Millisecond))
+		time.Sleep(time.Duration(1000 * time.Millisecond))
 		req, err := http.NewRequest("GET", versionsURL, nil)
 		if err != nil {
 			log.Errorf("unable to create new GET request from URL: %s", versionsURL)
@@ -248,7 +248,7 @@ func requestCapabilityStatementAndSmartOnFhir(ctx context.Context, fhirURL strin
 	var triedMIMEType string
 
 	// Add a short time buffer before sending HTTP request to reduce burden on servers hosting multiple endpoints
-	time.Sleep(time.Duration(500 * time.Millisecond))
+	time.Sleep(time.Duration(1000 * time.Millisecond))
 	req, err := http.NewRequest("GET", fhirURL, nil)
 	if err != nil {
 		return errors.Wrap(err, "unable to create new GET request from URL: "+fhirURL)
