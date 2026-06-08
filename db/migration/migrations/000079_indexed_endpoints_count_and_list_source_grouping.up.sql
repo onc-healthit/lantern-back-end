@@ -1,5 +1,7 @@
+BEGIN;
+
 --fhir_endpoint_comb_mv
-DROP MATERIALIZED VIEW IF EXISTS fhir_endpoint_comb_mv;
+DROP MATERIALIZED VIEW IF EXISTS fhir_endpoint_comb_mv CASCADE;
 
 CREATE MATERIALIZED VIEW IF NOT EXISTS fhir_endpoint_comb_mv AS 
 SELECT 
@@ -214,3 +216,4 @@ ORDER BY sort_order;
 -- Create a unique index
 CREATE UNIQUE INDEX idx_mv_endpoint_security_counts ON mv_endpoint_security_counts("Status");
 
+COMMIT;
