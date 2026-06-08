@@ -61,6 +61,7 @@ get_endpoints_csv_data <- function(db_connection, developer = NULL, fhir_version
       ungroup() %>%
       group_by(across(-list_source)) %>%
       summarise(list_source = paste(unique(list_source), collapse = "\n"), .groups = "drop") %>%
+      relocate(list_source, .after = info_updated) %>%
       rename(api_information_source_name = endpoint_names, api_developer_name = vendor_name) %>%
       rename(created_at = info_created, updated = info_updated) %>%
       rename(http_response_time_second = response_time_seconds) %>%
