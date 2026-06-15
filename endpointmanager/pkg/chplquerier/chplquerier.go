@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -51,24 +53,61 @@ func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAge
 	time.Sleep(time.Duration(5000 * time.Millisecond))
 	req, err := http.NewRequest("GET", chplURL.String(), nil)
 	if err != nil {
+		log.Errorf("CHPL ERROR: Failed to create request for URL=%s | Error=%v", chplURL.String(), err)
 		return nil, errors.Wrap(err, "creating http request failed")
 	}
+
 	req.Header.Set("User-Agent", userAgent)
 	req = req.WithContext(ctx)
 
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Errorf("CHPL NETWORK ERROR: GET request failed for URL=%s | Error=%v", chplURL.String(), err)
+
+		// DNS failures
+		if strings.Contains(err.Error(), "no such host") {
+			log.Errorf("CHPL DNS ERROR: Host could not be resolved for URL=%s", chplURL.String())
+		}
+
+		// Timeout
+		if strings.Contains(err.Error(), "timeout") {
+			log.Errorf("CHPL TIMEOUT: Request timed out for URL=%s", chplURL.String())
+		}
+
+		// Connection failures
+		if strings.Contains(err.Error(), "refused") || strings.Contains(err.Error(), "reset") {
+			log.Errorf("CHPL CONNECTION ERROR: Could not connect to URL=%s", chplURL.String())
+		}
+
 		return nil, errors.Wrap(err, "making the GET request to the CHPL server failed")
 	}
 	defer resp.Body.Close()
 
+	// Server returned non-200
 	if resp.StatusCode != http.StatusOK {
+		log.Errorf("CHPL SERVER ERROR: URL=%s responded with status %s", chplURL.String(), resp.Status)
 		return nil, errors.New("CHPL request responded with status: " + resp.Status)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Errorf("CHPL READ ERROR: Could not read response body for URL=%s | Error=%v", chplURL.String(), err)
 		return nil, errors.Wrap(err, "reading the CHPL response body failed")
+	}
+
+	// Detect empty response
+	if len(body) == 0 {
+		log.Warnf("CHPL EMPTY BODY: URL=%s returned an empty response", chplURL.String())
+	}
+
+	trimmed := strings.TrimSpace(string(body))
+	// Detect HTML response instead of JSON
+	if strings.HasPrefix(trimmed, "<") {
+		log.Warnf("CHPL NON-JSON RESPONSE: URL=%s returned HTML instead of JSON.", chplURL.String())
+		if len(trimmed) > 50 {
+			trimmed = trimmed[:50]
+		}
+		log.Warnf("CHPL FIRST BYTES: %s", trimmed)
 	}
 
 	return body, nil

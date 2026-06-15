@@ -27,7 +27,7 @@ func AetnaURLWebscraper(CHPLURL string, fileToWriteTo string) {
 				// Check if any matches were found
 				if len(matches) >= 2 {
 					url := matches[1]
-					url = "https://" + url + "/patientaccess"
+					url = "https://" + url
 					var entry LanternEntry
 					entryURL := url
 					entry.URL = entryURL

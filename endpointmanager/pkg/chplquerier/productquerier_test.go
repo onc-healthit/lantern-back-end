@@ -473,9 +473,13 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	same := testHITP
 	expectedResults = append(expectedResults, expectedResult{name: "same", hitProd: same, needsUpdate: false, err: nil})
 
+	// NOTE:
+	// Previously, an invalid CertificationEdition caused prodNeedsUpdate to error.
+	// This behavior was changed to tolerate bad CHPL data and skip edition comparison.
+	// Invalid editions should no longer error or trigger updates.
 	badEdition := testHITP
 	badEdition.CertificationEdition = "asdf"
-	expectedResults = append(expectedResults, expectedResult{name: "badEdition", hitProd: badEdition, needsUpdate: false, err: errors.New(`strconv.Atoi: parsing "asdf": invalid syntax`)})
+	expectedResults = append(expectedResults, expectedResult{name: "badEdition", hitProd: badEdition, needsUpdate: false, err: nil})
 
 	editionAfter := testHITP
 	editionAfter.CertificationEdition = "2015"
@@ -501,9 +505,12 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	critListLonger.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37, 38, 40}
 	expectedResults = append(expectedResults, expectedResult{name: "critListLonger", hitProd: critListLonger, needsUpdate: true, err: nil})
 
+	// NOTE:
+	// Criteria lists with equal length but different contents are now treated
+	// as a legitimate update (CHPL can replace criteria, not just append).
 	critListDif := testHITP
 	critListDif.CertificationCriteria = []int{30, 31, 32, 33, 34, 35, 36, 37, 40}
-	expectedResults = append(expectedResults, expectedResult{name: "critListDifference", hitProd: critListDif, needsUpdate: false, err: fmt.Errorf("HealthITProducts certification criteria have the same length but are not equal; not performing update: %s:%s to %s:%s", testHITP.Name, testHITP.CHPLID, testHITP.Name, testHITP.CHPLID)})
+	expectedResults = append(expectedResults, expectedResult{name: "critListDifference", hitProd: critListDif, needsUpdate: true, err: nil})
 
 	chplID := testHITP
 	chplID.CHPLID = "15.04.04.2657.Care.01.00.0.160733"
@@ -553,14 +560,14 @@ func Test_prodNeedsUpdate(t *testing.T) {
 	baseBadEdition := testHITP
 	baseBadEdition.CertificationEdition = "asdf"
 	name := "baseBadEdition"
+	// NOTE:
+	// Invalid certification editions are now tolerated and skipped.
+	// This is treated as a safe no-op rather than an error.
 	expectedNeedsUpdate := false
-	expectedErrorStr := `strconv.Atoi: parsing "asdf": invalid syntax`
 
 	needsUpdate, err := prodNeedsUpdate(&baseBadEdition, &base)
 	th.Assert(t, needsUpdate == expectedNeedsUpdate, fmt.Sprintf("For 'prodNeedsUpdate' using %s, expected %t and got %t.", name, expectedNeedsUpdate, needsUpdate))
-	th.Assert(t, err != nil, "Expected an error")
-	origErr := errors.Cause(err)
-	th.Assert(t, origErr.Error() == expectedErrorStr, fmt.Sprintf("For 'prodNeedsUpdate' using %s, expected error\n%v\nAnd got error\n%v", name, expectedErrorStr, origErr))
+	th.Assert(t, err == nil, "Did not expect an error for invalid edition")
 }
 
 func Test_getProductJSON(t *testing.T) {

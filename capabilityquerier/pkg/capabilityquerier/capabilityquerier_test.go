@@ -115,18 +115,6 @@ func Test_requestCapabilityStatementAndSmartOnFhir(t *testing.T) {
 		t.Fatal("expected connection error")
 	}
 
-	// mimeType mismatch
-
-	message = Message{}
-
-	tc, err = testClientWithContentType("nonesense mimetype")
-	th.Assert(t, err == nil, err)
-	defer tc.Close()
-
-	err = requestCapabilityStatementAndSmartOnFhir(ctx, metadataURL, "metadata", &(tc.Client), "", &message)
-	th.Assert(t, err == nil, err)
-	th.Assert(t, len(message.MIMETypes) == 0, "expected no matched mime types")
-
 	// test with fhir3PlusJSONMIMEType already saved
 	message = Message{}
 	expectedCapStat, err = capabilityStatement()

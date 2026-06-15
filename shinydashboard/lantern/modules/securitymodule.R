@@ -4,7 +4,6 @@ log_duration <- function(label, expr) {
   start_time <- Sys.time()
   result <- expr
   duration <- Sys.time() - start_time
-  message(sprintf("[%s] Duration: %.3fs", label, as.numeric(duration, units = "secs")))
   result
 }
 

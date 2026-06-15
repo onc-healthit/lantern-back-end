@@ -22,7 +22,7 @@ func CenteneURLWebscraper(CHPLURL string, fileToWriteTo string) {
 		dElem := divhtml.Find("div")
 		if dElem.Length() > 1 {
 
-			if strings.Contains(dElem.Eq(0).Text(), "Production") && strings.Contains(dElem.Eq(1).Text(), "production") {
+			if strings.Contains(dElem.Eq(0).Text(), "Production") && strings.Contains(dElem.Eq(1).Text(), "prod") {
 				var entry LanternEntry
 				URL := strings.TrimSpace(dElem.Eq(1).Text())
 				entry.URL = URL
