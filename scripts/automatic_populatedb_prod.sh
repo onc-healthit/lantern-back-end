@@ -7,6 +7,7 @@ EMAIL=
 #PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 log_file="/etc/lantern/logs/automatic_populatedb_prod_logs.txt"
 current_datetime=$(date +"%Y-%m-%d %H:%M:%S")
+population_job_start_datetime="$current_datetime"
 LOGFILE=populatedb_logs_$(date +%Y%m%d%H%M%S).txt
 
 chmod +rx query-endpoint-resources.sh; ./query-endpoint-resources.sh
@@ -37,10 +38,16 @@ fi
 
 echo "$current_datetime - Populating db with endpoint information..." >> $log_file
 
-docker exec lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh || {
+if docker exec lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh; then
+  echo "$current_datetime - Deleting old CHPL query errors..." >> $log_file
+
+  docker exec lantern-back-end-postgres-1 psql -U lantern -d lantern -c "DELETE FROM endpoint_query_errors WHERE created_at < '$population_job_start_datetime';" >> $log_file 2>&1 || {
+    echo "$current_datetime - Failed to delete old CHPL query errors." >> $log_file
+  }
+else
   echo "$current_datetime - Lantern failed to save endpoint information in database." >> $log_file
   echo "Lantern failed to save endpoint information in database." | /usr/bin/mail -s "Automatic prod database population error." ${EMAIL}
-}
+fi
 
 echo "$current_datetime - done" >> $log_file
 
