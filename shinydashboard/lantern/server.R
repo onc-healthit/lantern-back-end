@@ -172,30 +172,16 @@ function(input, output, session) { #nolint
     showModal(modalDialog(
       title = paste0(version_title, " - Release Notes"),
        p(HTML('
-                <b>Source filter for Organizations data:</b> The Organizations tab contains a new "Source" dropdown and column which allows users to filter the data based on the source which provided that data.<br/><br/>
+                <b>Data Quality Dashboard:</b><br/><br/>
 
-                Additionally, the Organizations API contains a new "source" filter which would generate a filtered response based on the source.<br/><br/>
+                The new "Developer &amp; Org Data Review" tab provides the following insights on the endpoints, organizations and developers data displayed on Lantern:<br/><br/>
 
-                <u>Example 1:</u> Download data from CHPL sources only:<br/>
-                <code>?source=CHPL</code>
-                <br/><br/>
-
-                <u>Example 2:</u> Download data from State Medicaid sources only:<br/>
-                <code>?source=State%20Medicaid</code>
-                <br/><br/>
-
-                <u>Example 3:</u> Combine source filter with other filters (e.g., FHIR version):<br/>
-                <code>?source=CHPL&amp;fhir_version=4.0.1</code>
-                <br/><br/>
-
-                <b>Endpoints API query parameters:</b> The Endpoints Download API (<code>https://lantern.healthit.gov/api/daily/download</code>) now supports the following query parameters to filter the downloaded data:<br/><br/>
-
-                <code>developer</code> – Filter by certified API developer name.<br/>
-                <code>fhir_version</code> – Comma-separated list of FHIR versions to include.<br/>
-                <code>source</code> – Filter by data source (e.g., CHPL, State Medicaid, Payer, Other).<br/><br/>
-
-                All filters can be used independently or in combination. For more details and examples, see the Downloads tab.
-                <br/><br/>
+                1. For each developer, it highlights the number of FHIR endpoints and organizations associated along with any issues / missing data in the associated FHIR bundles.<br/>
+                2. Filtering the above-mentioned details based on different category of developer issues and source of data (either CHPL or other sources).<br/>
+                3. CSV file downloads for the above-mentioned data.<br/>
+                4. Organization data insights on address, name and identifier completeness, identifier distribution and identifier conformance.<br/>
+                5. The validation rules and US-core references are mentioned along with a summary of insights + suggestions for the overall organization data assessment.<br/>
+                6. CSV file downloads for the above-mentioned organization data insights.<br/><br/>
 
                 <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>')),
       easyClose = TRUE

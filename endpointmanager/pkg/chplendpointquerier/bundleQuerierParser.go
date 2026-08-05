@@ -6,10 +6,19 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
+
+// maxEmptyBundleRetries is the number of extra attempts made when a query
+// succeeds but returns a bundle with 0 entries, since some URLs
+// intermittently return no data on the first hit.
+const maxEmptyBundleRetries = 2
+
+// emptyBundleRetryDelay is the pause between empty-bundle retry attempts.
+const emptyBundleRetryDelay = 2 * time.Second
 
 type Entry struct {
 	ID      string `json:"id"`
@@ -32,60 +41,89 @@ func BundleQuerierParser(CHPLURL string, fileToWriteTo string, errorFilePath str
 		Endpoints: []LanternEntry{},
 	}
 
+	for attempt := 0; attempt <= maxEmptyBundleRetries; attempt++ {
+		if attempt > 0 {
+			log.Warnf("Retrying BundleQuerierParser for %s due to empty bundle (attempt %d of %d)", CHPLURL, attempt, maxEmptyBundleRetries)
+			time.Sleep(emptyBundleRetryDelay)
+		}
+
+		endpoints, emptyBundle := queryAndParseBundle(CHPLURL, errorFilePath, listSource)
+		if !emptyBundle {
+			endpointEntryList.Endpoints = endpoints
+			break
+		}
+
+		if attempt == maxEmptyBundleRetries {
+			emptyErr := fmt.Errorf("FHIR bundle has 0 entries")
+			log.Warn(emptyErr)
+			AppendQueryError(errorFilePath, listSource, emptyErr.Error())
+		}
+	}
+
+	return WriteCHPLFile(endpointEntryList, fileToWriteTo)
+}
+
+// queryAndParseBundle performs a single query+parse attempt. It returns the
+// parsed endpoints and, when the response was well-formed but contained no
+// usable entries, emptyBundle=true so the caller can decide whether to retry.
+// All other failures (network errors, malformed responses, inactive orgs)
+// are terminal and are logged/appended here.
+func queryAndParseBundle(CHPLURL string, errorFilePath string, listSource string) (endpoints []LanternEntry, emptyBundle bool) {
 	respBody, err := helpers.QueryEndpointList(CHPLURL)
 	if err != nil {
 		errMsg := classifyNetworkError(err)
 		log.Errorf(errMsg)
 		AppendQueryError(errorFilePath, listSource, errMsg)
-	} else {
-		// Check for invalid response format before attempting to parse
-		trimmed := strings.TrimSpace(string(respBody))
-		if len(trimmed) == 0 {
-			parseErr := fmt.Errorf("FHIR bundle parsing failed: empty response body")
-			log.Warn(parseErr)
-			AppendQueryError(errorFilePath, listSource, parseErr.Error())
-		} else if strings.HasPrefix(trimmed, "<") {
-			parseErr := fmt.Errorf("FHIR bundle parsing failed: non-JSON (HTML/XML) response")
-			log.Warn(parseErr)
-			AppendQueryError(errorFilePath, listSource, parseErr.Error())
-		} else if !strings.HasPrefix(trimmed, "{") && !strings.HasPrefix(trimmed, "[") {
-			parseErr := fmt.Errorf("FHIR bundle parsing failed: unexpected response format, first bytes: %.30s", trimmed)
-			log.Warn(parseErr)
-			AppendQueryError(errorFilePath, listSource, parseErr.Error())
-		} else if !json.Valid(respBody) {
-			parseErr := fmt.Errorf("FHIR bundle parsing failed: malformed JSON")
-			log.Warn(parseErr)
-			AppendQueryError(errorFilePath, listSource, parseErr.Error())
-		} else {
-			var resourceCheck struct {
-				ResourceType string `json:"resourceType"`
-			}
-			if json.Unmarshal(respBody, &resourceCheck) == nil &&
-				resourceCheck.ResourceType != "" &&
-				resourceCheck.ResourceType != "Bundle" {
-				parseErr := fmt.Errorf("FHIR bundle parsing failed: JSON resource is not of type Bundle (got %s)",
-					resourceCheck.ResourceType)
-				log.Warn(parseErr)
-				AppendQueryError(errorFilePath, listSource, parseErr.Error())
-			} else {
-				// Convert bundle data to lantern format
-				endpointEntryList.Endpoints = BundleToLanternFormat(respBody, CHPLURL)
-
-				if len(endpointEntryList.Endpoints) == 0 {
-					var emptyErr error
-					if bytes.Contains(respBody, []byte(`"active":false`)) || bytes.Contains(respBody, []byte(`"active": false`)) {
-						emptyErr = fmt.Errorf("FHIR bundle has entries but all organizations have active=false")
-					} else {
-						emptyErr = fmt.Errorf("FHIR bundle has 0 entries")
-					}
-					log.Warn(emptyErr)
-					AppendQueryError(errorFilePath, listSource, emptyErr.Error())
-				}
-			}
-		}
+		return nil, false
 	}
 
-	return WriteCHPLFile(endpointEntryList, fileToWriteTo)
+	if validationErr := validateBundleResponse(respBody); validationErr != nil {
+		log.Warn(validationErr)
+		AppendQueryError(errorFilePath, listSource, validationErr.Error())
+		return nil, false
+	}
+
+	endpoints = BundleToLanternFormat(respBody, CHPLURL)
+	if len(endpoints) > 0 {
+		return endpoints, false
+	}
+
+	if bytes.Contains(respBody, []byte(`"active":false`)) || bytes.Contains(respBody, []byte(`"active": false`)) {
+		emptyErr := fmt.Errorf("FHIR bundle has entries but all organizations have active=false")
+		log.Warn(emptyErr)
+		AppendQueryError(errorFilePath, listSource, emptyErr.Error())
+		return nil, false
+	}
+
+	return nil, true
+}
+
+// validateBundleResponse checks that respBody looks like a parseable FHIR Bundle
+// before it is handed to BundleToLanternFormat.
+func validateBundleResponse(respBody []byte) error {
+	trimmed := strings.TrimSpace(string(respBody))
+	switch {
+	case len(trimmed) == 0:
+		return fmt.Errorf("FHIR bundle parsing failed: empty response body")
+	case strings.HasPrefix(trimmed, "<"):
+		return fmt.Errorf("FHIR bundle parsing failed: non-JSON (HTML/XML) response")
+	case !strings.HasPrefix(trimmed, "{") && !strings.HasPrefix(trimmed, "["):
+		return fmt.Errorf("FHIR bundle parsing failed: unexpected response format, first bytes: %.30s", trimmed)
+	case !json.Valid(respBody):
+		return fmt.Errorf("FHIR bundle parsing failed: malformed JSON")
+	}
+
+	var resourceCheck struct {
+		ResourceType string `json:"resourceType"`
+	}
+	if json.Unmarshal(respBody, &resourceCheck) == nil &&
+		resourceCheck.ResourceType != "" &&
+		resourceCheck.ResourceType != "Bundle" {
+		return fmt.Errorf("FHIR bundle parsing failed: JSON resource is not of type Bundle (got %s)",
+			resourceCheck.ResourceType)
+	}
+
+	return nil
 }
 
 func classifyNetworkError(err error) string {

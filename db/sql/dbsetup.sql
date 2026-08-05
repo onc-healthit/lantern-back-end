@@ -12,12 +12,34 @@ CREATE OR REPLACE FUNCTION add_fhir_endpoint_info_history() RETURNS TRIGGER AS $
 BEGIN
     -- For INSERT/DELETE operations, always create history
     IF (TG_OP = 'DELETE') THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'D', now(), user, OLD.*;
+        INSERT INTO fhir_endpoints_info_history (
+            operation, entered_at, user_id,
+            id, healthit_mapping_id, vendor_id, url, tls_version, mime_types,
+            capability_statement, validation_result_id, included_fields,
+            operation_resource, supported_profiles, created_at, updated_at,
+            smart_response, metadata_id, requested_fhir_version, capability_fhir_version)
+        VALUES (
+            'D', now(), user,
+            OLD.id, OLD.healthit_mapping_id, OLD.vendor_id, OLD.url, OLD.tls_version,
+            OLD.mime_types, OLD.capability_statement, OLD.validation_result_id,
+            OLD.included_fields, OLD.operation_resource, OLD.supported_profiles,
+            OLD.created_at, OLD.updated_at, OLD.smart_response, OLD.metadata_id,
+            OLD.requested_fhir_version, OLD.capability_fhir_version);
         RETURN OLD;
     ELSIF (TG_OP = 'INSERT') THEN
-        INSERT INTO fhir_endpoints_info_history 
-        SELECT 'I', now(), user, NEW.*;
+        INSERT INTO fhir_endpoints_info_history (
+            operation, entered_at, user_id,
+            id, healthit_mapping_id, vendor_id, url, tls_version, mime_types,
+            capability_statement, validation_result_id, included_fields,
+            operation_resource, supported_profiles, created_at, updated_at,
+            smart_response, metadata_id, requested_fhir_version, capability_fhir_version)
+        VALUES (
+            'I', now(), user,
+            NEW.id, NEW.healthit_mapping_id, NEW.vendor_id, NEW.url, NEW.tls_version,
+            NEW.mime_types, NEW.capability_statement, NEW.validation_result_id,
+            NEW.included_fields, NEW.operation_resource, NEW.supported_profiles,
+            NEW.created_at, NEW.updated_at, NEW.smart_response, NEW.metadata_id,
+            NEW.requested_fhir_version, NEW.capability_fhir_version);
         RETURN NEW;
     END IF;
 
