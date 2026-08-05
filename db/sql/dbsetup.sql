@@ -410,9 +410,11 @@ SELECT endpts.url, endpts.list_source, endpt_orgnames.organization_names AS endp
     endpts_info.requested_fhir_version, endpts_metadata.availability
 FROM fhir_endpoints AS endpts
 LEFT JOIN shared_list_sources AS sls ON endpts.list_source = sls.list_source
-LEFT JOIN vendors ON vendors.name = sls.developer_name
-LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url AND endpts_info.vendor_id = vendors.id
+LEFT JOIN vendors AS sls_vendors ON sls_vendors.name = sls.developer_name
+LEFT JOIN fhir_endpoints_info AS endpts_info ON endpts.url = endpts_info.url
+    AND (sls.list_source IS NULL OR endpts_info.vendor_id = sls_vendors.id)
 LEFT JOIN fhir_endpoints_metadata AS endpts_metadata ON endpts_info.metadata_id = endpts_metadata.id
+LEFT JOIN vendors ON vendors.id = endpts_info.vendor_id
 LEFT JOIN (SELECT fom.id as id, array_agg(fo.organization_name) as organization_names, array_agg(fo.id) as organization_ids 
 FROM fhir_endpoints AS fe, fhir_endpoint_organizations_map AS fom, fhir_endpoint_organizations AS fo
 WHERE fe.id = fom.id AND fom.org_database_id = fo.id
@@ -527,7 +529,21 @@ CREATE INDEX healthit_products_chpl_id_idx ON healthit_products (chpl_id);
 CREATE INDEX fhir_endpoint_organizations_map_id_idx ON fhir_endpoint_organizations_map (id);
 CREATE INDEX fhir_endpoint_organizations_map_org_database_id_idx ON fhir_endpoint_organizations_map (org_database_id);
 
+-- Create table to store developers sharing the same service base URLs (list_sources)
+-- This data is populated from CHPL's "Service Base URL List" CSV download
+CREATE TABLE IF NOT EXISTS shared_list_sources (
+    list_source VARCHAR(500) NOT NULL,
+    developer_name VARCHAR(500) NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (list_source, developer_name)
+);
 
+-- Create index for faster lookups
+CREATE INDEX IF NOT EXISTS idx_shared_list_sources_list_source
+ON shared_list_sources(list_source);
+
+CREATE INDEX IF NOT EXISTS idx_shared_list_sources_updated_at
+ON shared_list_sources(updated_at);
 
 CREATE MATERIALIZED VIEW mv_response_tally AS
 WITH response_counts AS (
@@ -1041,7 +1057,7 @@ SELECT
     t.status,
     t.cap_stat_exists
 FROM (
-    SELECT DISTINCT ON (e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version)
+    SELECT DISTINCT ON (e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version, e.list_source)
         e.url,
         e.endpoint_names,
         e.info_created,
@@ -1071,7 +1087,7 @@ FROM (
     FROM endpoint_export_mv e
     LEFT JOIN mv_http_responses r ON e.http_response = r.http_code
     LEFT JOIN list_source_info lsi ON e.list_source = lsi.list_source
-    ORDER BY e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version
+    ORDER BY e.url, e.vendor_name, e.fhir_version, e.http_response, e.requested_fhir_version, e.list_source
 ) t;
 
 --Unique index for refreshing the MV concurrently
@@ -1145,8 +1161,7 @@ totals AS (
         -- Count (url, fhir_version) combinations to match Endpoints tab logic
         (SELECT count(*) FROM (SELECT DISTINCT url, fhir_version FROM selected_fhir_endpoints_mv) AS combinations) AS all_endpoints,
         (SELECT count(*) FROM (SELECT DISTINCT fei.url, fei.capability_fhir_version 
-        FROM fhir_endpoints_info fei
-        WHERE fei.requested_fhir_version = 'None') AS combinations) AS indexed_endpoints
+        FROM fhir_endpoints_info fei) AS combinations) AS indexed_endpoints
 )
 SELECT 
     now() AS aggregation_date,
@@ -1707,7 +1722,7 @@ FROM (SELECT DISTINCT ON (f.url, f.requested_fhir_version, v.validation_result_i
         ORDER BY f.url, f.requested_fhir_version, v.validation_result_id, v.rule_name, f.vendor_id) t;
 
 CREATE UNIQUE INDEX mv_validation_results_plot_unique_idx 
-ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual);
+ON mv_validation_results_plot(url, fhir_version, vendor_name, rule_name, valid, expected, actual, comment, reference);
 
 CREATE INDEX mv_validation_results_plot_vendor_idx ON mv_validation_results_plot(vendor_name);
 CREATE INDEX mv_validation_results_plot_fhir_idx ON mv_validation_results_plot(fhir_version);
@@ -1785,7 +1800,7 @@ SELECT fhir_version, url, expected, actual, vendor_name, rule_name, reference
 FROM mv_validation_results_plot
 WHERE valid = 'false';
 
-CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures(url, fhir_version, vendor_name, rule_name);
+CREATE UNIQUE INDEX mv_validation_failures_unique_idx ON mv_validation_failures (url, fhir_version, vendor_name, rule_name, expected, actual, reference);
 CREATE INDEX mv_validation_failures_url_idx ON mv_validation_failures(url);
 CREATE INDEX mv_validation_failures_fhir_version_idx ON mv_validation_failures(fhir_version);
 CREATE INDEX mv_validation_failures_vendor_name_idx ON mv_validation_failures(vendor_name);
@@ -1797,16 +1812,7 @@ CREATE MATERIALIZED VIEW security_endpoints_mv AS
 SELECT 
     ROW_NUMBER() OVER () AS id,
     e.url,
-    REPLACE(
-        REPLACE(
-            REPLACE(
-                REPLACE(e.endpoint_names::TEXT, '{', ''), 
-                '}', ''
-            ), 
-            '","', '; '
-        ),
-        '"', ''
-    ) AS organization_names,
+    array_to_string(e.endpoint_names, '; ') AS organization_names,
     COALESCE(e.vendor_name, 'Unknown') AS vendor_name,
     CASE 
         WHEN e.fhir_version = '' THEN 'No Cap Stat'
@@ -2835,7 +2841,7 @@ endpoint_data_agg AS (
         -- Use any organization name for this org_id (they should all be the same after UPPER conversion)
         MAX(organization_name) as organization_name,
         -- HTML formatted endpoint URLs
-        string_agg(DISTINCT url, '<br/>') as endpoint_urls_html,
+        string_agg(DISTINCT ('<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" onclick="Shiny.setInputValue(''endpoint_popup'',''' || url || ''',{priority: ''event''});"> ' || url || '</a>'), '<br/>') as endpoint_urls_html,
         -- Truncate at complete lines to prevent CSV corruption
         CASE 
             WHEN LENGTH(string_agg(DISTINCT url, E'\n')) <= 32765 
@@ -2876,17 +2882,7 @@ SELECT
     COALESCE(ia.identifier_types_html, '') as identifier_types_html,
     COALESCE(ia.identifier_values_html, '') as identifier_values_html,
     COALESCE(aa.addresses_html, '') as addresses_html,
-    -- Convert plain URLs to HTML format with onclick handler
-    array_to_string(
-        ARRAY(
-            SELECT '<a class="lantern-url" tabindex="0" aria-label="Press enter to open a pop up modal containing additional information for this endpoint." 
-                    onkeydown="javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)" 
-                    onclick="Shiny.setInputValue(''endpoint_popup'',''' || url_elem || '&&None&&' || COALESCE(eda.vendor_names_array[1], '') || ''',{priority: ''event''});"> ' || url_elem || '</a>'
-            FROM unnest(string_to_array(eda.endpoint_urls_html, '<br/>')) AS url_elem
-            WHERE url_elem != ''
-        ),
-        '<br/>'
-    ) as endpoint_urls_html,
+    eda.endpoint_urls_html,
     COALESCE(ua.org_urls_html, '') as org_urls_html,
     eda.fhir_versions_html,
     eda.vendor_names_html,
@@ -2992,3 +2988,1252 @@ CREATE INDEX idx_fhir_endpoints_info_url_reqver
 -- update_fhir_endpoint_availability_info trigger on every metadata insert/update.
 CREATE INDEX idx_fhir_endpoints_availability_url_reqver
     ON fhir_endpoints_availability (url, requested_fhir_version);
+    
+--LANTERN-976: Developer Feedback / Organization Data Quality with SQL Functions and Materialized Views
+
+-- Function to validate NPI using Luhn algorithm 
+CREATE OR REPLACE FUNCTION validate_npi_luhn(npi TEXT) 
+RETURNS BOOLEAN AS $$
+DECLARE
+    digits INTEGER[];
+    checksum INTEGER := 0;
+    doubled INTEGER;
+    i INTEGER;
+BEGIN
+    -- Check if NPI is exactly 10 digits
+    IF length(npi) != 10 OR npi !~ '^[0-9]{10}$' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Convert string to array of integers
+    FOR i IN 1..10 LOOP
+        digits[i] := substring(npi FROM i FOR 1)::INTEGER;
+    END LOOP;
+    
+    -- Double digits in positions 1,3,5,7,9 (R uses 1-indexed positions)
+    FOR i IN 1..5 LOOP
+        doubled := digits[i*2-1] * 2;
+        IF doubled > 9 THEN
+            doubled := doubled - 9;
+        END IF;
+        checksum := checksum + doubled;
+    END LOOP;
+    
+    -- Add digits in positions 2,4,6,8,10
+    FOR i IN 1..5 LOOP
+        checksum := checksum + digits[i*2];
+    END LOOP;
+    
+    -- Add 24 and check modulo 10
+    checksum := checksum + 24;
+    RETURN (checksum % 10) = 0;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Function to check if name is address-like 
+CREATE OR REPLACE FUNCTION is_address_like(name_text TEXT)
+RETURNS BOOLEAN AS $$
+DECLARE
+    clean_name TEXT;
+    score INTEGER := 0;
+    has_healthcare_context BOOLEAN := FALSE;
+BEGIN
+    IF name_text IS NULL OR name_text = '' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Clean the name (remove HTML tags)
+    clean_name := regexp_replace(name_text, '<[^>]+>', '', 'g');
+    clean_name := trim(clean_name);
+    
+    -- Expanded healthcare/organization context detection
+    IF clean_name ~* '(^|\s)(HOSPITALS?|CLINICS?|CENTERS?|CENTRES?|HEALTH|HEALTHCARE|MEDICAL|SYSTEMS?|SERVICES?|LLC|CORPS?|CORPORATION|INC|INCORPORATED|LTD|LIMITED|ASSOCIATES|GROUP|FOUNDATION|INSTITUTE|UNIVERSITY|COLLEGE|PHARMACY|LABORATORY|LABS?|BEAUTY|WELLNESS|DENTAL|VISION|EYE|CARE|THERAPY|REHAB|REHABILITATION|PRACTICE|MEDICINE|DOCTOR|PHYSICIAN)(\s|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Additional medical degree and title detection
+    IF clean_name ~* '(^|\s)(MD|DO|DDS|DMD|DPM|DVM|PharmD|PhD|RN|NP|PA|LPN|CNA|RPh|OD|PT|OT|SLP|RD|MSW|LCSW|LMFT|PSYD|EDD|JD|CPA|DBA|PLLC|P\.?C\.?|P\.?A\.?)(\s|,|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Medical specialty detection
+    IF clean_name ~* '(^|\s)(FAMILY|INTERNAL|PRIMARY|URGENT|EMERGENCY|PEDIATRICS?|UROLOGY|DIABETES|LUNGS?|HEART|CANCER|CARDIOLOGY|CARDIAC|SURG|SURGEONS?|ENDOCRINOLOGY|ORTHOPEDIC|DERMATOLOGY|NEUROLOGY|ONCOLOGY|RADIOLOGY|PATHOLOGY|ANESTHESIA|PSYCHIATRY|PSYCHOLOGY|AUDIOLOGY|OPTOMETRY|PODIATRY|CHIROPRACTIC|OBSTETRICS|GYNECOLOGY|GASTROENTEROLOGY|PULMONOLOGY|NEPHROLOGY|RHEUMATOLOGY|HEMATOLOGY|INFECTIOUS|GERIATRIC|SPORTS|PAIN|WOUND|DIALYSIS|IMAGING|SURGICAL|REHABILITATION|BEHAVIORAL|MENTAL)(\s|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Healthcare organization names
+    IF clean_name ~* '(^|\s)(BAYCARE|KAISER|MAYO|CLEVELAND|JOHNS|HOPKINS|MEMORIAL|REGIONAL|COMMUNITY|MERCY|PROVIDENCE|ADVENTIST|BAPTIST|METHODIST|CATHOLIC|CHRISTIAN|PRESBYTERIAN|EPISCOPAL|HEALING|HEARTS|WELLNESS|CHRISTI|TERESA)(\s|$)' THEN
+        has_healthcare_context := TRUE;
+    END IF;
+    
+    -- Strong address indicators
+    IF clean_name ~ '^[0-9]+' THEN 
+        score := score + 3; -- Starts with number
+    END IF;
+    
+    -- Street suffix detection - concatenate the regex properly
+    IF clean_name ~* '(^|\s)(ST|STREET|AVE|AVENUE|BLVD|BOULEVARD|RD|ROAD|DR|DRIVE|LN|LANE|CT|COURT|CIR|CIRCLE|WAY|PL|PLACE|PKWY|PARKWAY|TER|TERRACE|HWY|HIGHWAY|EXPY|EXPRESSWAY|FWY|FREEWAY|RTE|ROUTE|TPKE|TURNPIKE|SQ|SQUARE|CTR|CENTER|PLZ|PLAZA|MALL|ALY|ALLEY|LOOP|PASS|PATH|TRCE|TRACE|TRL|TRAIL|RUN|CRK|CREEK|VW|VIEW|PT|POINT|HOLW|HOLLOW|MTN|MOUNTAIN|HLS|HILLS|PK|PARK|IS|ISLAND|BCH|BEACH|EST|ESTATES|LDG|LODGE)(\s|$)' THEN
+        score := score + 3;
+    END IF;
+    
+    -- Special handling for "ST" - only count as street if no religious/healthcare context
+    IF clean_name ~* '(^|\s)ST(\s|$)' AND NOT has_healthcare_context AND NOT clean_name ~* '(SAINT|TERESA|FRANCIS|MARY|JOSEPH|JOHN|PAUL|PETER|MICHAEL|GABRIEL|CHRISTOPHER|ANTHONY|VINCENT|PATRICK|THOMAS|JAMES|ROBERT|ELIZABETH|ANNE|CATHERINE|MARGARET|BARBARA)' THEN
+        score := score + 3; -- ST as street
+    END IF;
+    
+    -- Unit detection
+    IF clean_name ~* '(^|\s)(SUITE|STE|APT|APARTMENT|UNIT|FLOOR|FL|ROOM|RM|BUILDING|BLDG|#)(\s|$)' THEN 
+        score := score + 2;
+    END IF;
+    
+    -- IMPROVED: ZIP code detection - handle both 5-digit and partial ZIP codes
+    IF clean_name ~ '[0-9]{5}(-[0-9]{3,4})?(\s|$)' THEN 
+        score := score + 3;
+    END IF;
+    
+    -- State detection - only apply if NOT in healthcare/business context
+    IF NOT has_healthcare_context AND clean_name ~* '(^|\s)(AL|AK|AZ|AR|CA|CO|CT|DE|FL|GA|HI|ID|IL|IN|IA|KS|KY|LA|ME|MD|MA|MI|MN|MS|MO|MT|NE|NV|NH|NJ|NM|NY|NC|ND|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VT|VA|WA|WV|WI|WY)(\s|$)' THEN 
+        score := score + 2; -- State abbreviation
+    END IF;
+    
+    -- Directional indicators 
+    IF clean_name ~* '(^|\s)(NORTH|SOUTH|EAST|WEST|N|S|E|W)(\s|$)' THEN 
+        score := score + 1;
+    END IF;
+    
+    -- Multiple commas (address format)
+    IF length(clean_name) - length(replace(clean_name, ',', '')) >= 2 THEN 
+        score := score + 2;
+    END IF;
+    
+    -- Strong penalty for clear healthcare/business context
+    IF has_healthcare_context THEN
+        score := score - 6;
+    END IF;
+    
+    RETURN score >= 4;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Function to validate individual identifier 
+CREATE OR REPLACE FUNCTION validate_identifier_value(identifier_type TEXT, identifier_value TEXT)
+RETURNS TABLE(valid BOOLEAN, error_msg TEXT) AS $$
+BEGIN
+    IF identifier_value IS NULL OR trim(identifier_value) = '' THEN
+        RETURN QUERY SELECT FALSE, 'Missing identifier value';
+        RETURN;
+    END IF;
+    
+    identifier_type := upper(trim(identifier_type));
+    identifier_value := trim(identifier_value);
+    
+    IF identifier_type = 'NPI' THEN
+        -- us-core-16: NPI must be 10 digits
+        IF identifier_value !~ '^[0-9]{10}$' THEN
+            RETURN QUERY SELECT FALSE, 'NPI must be exactly 10 digits';
+            RETURN;
+        END IF;
+        
+        -- us-core-17: NPI check digit must be valid (Luhn algorithm)
+        IF NOT validate_npi_luhn(identifier_value) THEN
+            RETURN QUERY SELECT FALSE, 'NPI check digit is invalid (Luhn algorithm failed)';
+            RETURN;
+        END IF;
+        
+        RETURN QUERY SELECT TRUE, NULL::TEXT;
+        
+    ELSIF identifier_type = 'CLIA' THEN
+        -- us-core-18: CLIA number must be 10 digits with a letter "D" in third position
+        IF identifier_value !~ '^[0-9]{2}D[0-9]{7}$' THEN
+            RETURN QUERY SELECT FALSE, 'CLIA must be 10 characters: 2 digits + ''D'' + 7 digits';
+            RETURN;
+        END IF;
+        
+        RETURN QUERY SELECT TRUE, NULL::TEXT;
+        
+    ELSIF identifier_type = 'NAIC' THEN
+        -- us-core-19: NAIC must be 5 digits
+        IF identifier_value !~ '^[0-9]{5}$' THEN
+            RETURN QUERY SELECT FALSE, 'NAIC must be exactly 5 digits';
+            RETURN;
+        END IF;
+        
+        RETURN QUERY SELECT TRUE, NULL::TEXT;
+        
+    ELSE
+        -- Per 89 FR 1288: other health system IDs (e.g. CCN, parent org IDs) are acceptable.
+        -- Any identifier present (regardless of type) is considered valid.
+        RETURN QUERY SELECT TRUE, NULL::TEXT;
+    END IF;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Function for comprehensive name validation
+CREATE OR REPLACE FUNCTION is_valid_organization_name(org_name TEXT)
+RETURNS BOOLEAN AS $$
+DECLARE
+    clean_name TEXT;
+    special_chars INTEGER;
+    total_chars INTEGER;
+BEGIN
+    IF org_name IS NULL OR org_name = '' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Remove HTML tags and clean
+    clean_name := regexp_replace(org_name, '<[^>]+>', '', 'g');
+    clean_name := trim(clean_name);
+    
+    -- Minimum length check
+    IF length(clean_name) < 3 THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Placeholder patterns
+    IF upper(clean_name) IN ('-', '.', 'N/A', 'NA', 'UNKNOWN', 'TEST', 'EXAMPLE', 'TBD', 'TODO') THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Reject if all digits
+    IF clean_name ~ '^[0-9]+$' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Reject digits with only separators/symbols
+    IF clean_name ~ '^[0-9()/.\\-]+$' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Reject only non-word characters
+    IF clean_name ~ '^\W+$' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Reject phone number patterns
+    IF clean_name ~ '^\(?[0-9]{3}\)?[- ]?[0-9]{3}[- ]?[0-9]{4}$' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Reject if it looks like an address
+    IF is_address_like(clean_name) THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Check special character ratio (equivalent to original R logic)
+    total_chars := length(clean_name);
+    special_chars := length(regexp_replace(clean_name, '[a-zA-Z0-9 ]', '', 'g'));
+    
+    IF special_chars::DECIMAL / total_chars::DECIMAL > 0.3 THEN
+        RETURN FALSE;
+    END IF;
+    
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Function for comprehensive address validation 
+CREATE OR REPLACE FUNCTION is_valid_organization_address(address_text TEXT)
+RETURNS BOOLEAN AS $$
+DECLARE
+    clean_address TEXT;
+    comma_count INTEGER;
+BEGIN
+    IF address_text IS NULL OR address_text = '' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Remove HTML tags and clean
+    clean_address := regexp_replace(address_text, '<[^>]+>', '', 'g');
+    clean_address := trim(clean_address);
+    
+    -- Minimum length check
+    IF length(clean_address) < 10 THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Check for placeholder addresses (equivalent to original R logic)
+    IF upper(clean_address) ~ '123 (MAIN|TEST) ST' OR upper(clean_address) ~ '123 (MAIN|TEST) STREET' THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Must have street number
+    IF NOT (clean_address ~ '[0-9]+') THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Must have city, state structure (at least 2 commas)
+    comma_count := length(clean_address) - length(replace(clean_address, ',', ''));
+    IF comma_count < 2 THEN
+        RETURN FALSE;
+    END IF;
+    
+    -- Must have ZIP code
+    IF NOT (clean_address ~ '[0-9]{5}') THEN
+        RETURN FALSE;
+    END IF;
+    
+    RETURN TRUE;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- 1. Complete organization quality materialized view with ALL original validations
+CREATE MATERIALIZED VIEW mv_organization_quality AS
+WITH base_org_data AS (
+    SELECT
+        org_id,
+        organization_name,
+        identifier_types_html,
+        identifier_values_html,
+        addresses_html,
+        vendor_names_array,
+        urls_array,
+        endpoint_urls_html
+    FROM mv_organizations_final
+),
+identifier_parsing AS (
+    SELECT 
+        org_id,
+        organization_name,
+        identifier_types_html,
+        identifier_values_html,
+        addresses_html,
+        vendor_names_array,
+        urls_array,
+        endpoint_urls_html,
+        
+        -- Check if identifier data exists (equivalent to original R logic)
+        CASE 
+            WHEN (identifier_types_html IS NULL OR identifier_types_html = '') AND 
+                 (identifier_values_html IS NULL OR identifier_values_html = '') THEN 'no_identifiers'
+            WHEN (identifier_types_html IS NULL OR identifier_types_html = '') OR 
+                 (identifier_values_html IS NULL OR identifier_values_html = '') THEN 'incomplete_data'
+            ELSE 'has_data'
+        END as identifier_data_status,
+        
+        -- Parse identifier types and values from HTML format
+        CASE 
+            WHEN identifier_types_html IS NULL OR identifier_types_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(
+                    regexp_replace(identifier_types_html, '<br/?>', '|', 'gi'), 
+                    '\s+', ' ', 'g'
+                ), '|'
+            )
+        END as parsed_types,
+        
+        CASE 
+            WHEN identifier_values_html IS NULL OR identifier_values_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(
+                    regexp_replace(identifier_values_html, '<br/?>', '|', 'gi'), 
+                    '\s+', ' ', 'g'
+                ), '|'
+            )
+        END as parsed_values
+        
+    FROM base_org_data
+),
+identifier_validation_detailed AS (
+    SELECT *,
+        -- Count total identifiers
+        CASE 
+            WHEN identifier_data_status = 'no_identifiers' THEN 0
+            WHEN parsed_types IS NULL THEN 0
+            ELSE COALESCE(array_length(parsed_types, 1), 0)
+        END as total_identifier_count,
+        
+        -- Comprehensive identifier validation using the new functions
+        CASE 
+            WHEN identifier_data_status = 'no_identifiers' THEN 0
+            WHEN identifier_data_status = 'incomplete_data' THEN 0
+            WHEN parsed_types IS NULL OR parsed_values IS NULL THEN 0
+            WHEN COALESCE(array_length(parsed_types, 1), 0) != COALESCE(array_length(parsed_values, 1), 0) THEN 0
+            ELSE (
+                SELECT COUNT(*)::INT
+                FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
+                WHERE (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+            )
+        END as conformant_identifier_count,
+        
+        -- Detailed identifier counts by type with full validation
+        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) = 'NPI'), 0)::INT as npi_count,
+        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) = 'CLIA'), 0)::INT as clia_count,
+        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) = 'NAIC'), 0)::INT as naic_count,
+        COALESCE((SELECT COUNT(*) FROM unnest(parsed_types) t WHERE upper(trim(t)) NOT IN ('NPI', 'CLIA', 'NAIC') AND trim(t) != ''), 0)::INT as other_count,
+        
+        -- Valid counts by type using full validation functions
+        COALESCE((
+            SELECT COUNT(*)::INT
+            FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
+            WHERE upper(trim(itype)) = 'NPI' 
+              AND (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+        ), 0) as npi_valid,
+        
+        COALESCE((
+            SELECT COUNT(*)::INT
+            FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
+            WHERE upper(trim(itype)) = 'CLIA' 
+              AND (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+        ), 0) as clia_valid,
+        
+        COALESCE((
+            SELECT COUNT(*)::INT
+            FROM unnest(parsed_types, parsed_values) AS t(itype, ivalue)
+            WHERE upper(trim(itype)) = 'NAIC' 
+              AND (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+        ), 0) as naic_valid
+        
+    FROM identifier_parsing
+),
+quality_calculations AS (
+    SELECT *,
+        -- Identifier validation results
+        conformant_identifier_count > 0 as has_valid_identifiers,
+        CASE 
+            WHEN total_identifier_count = 0 THEN 0.0
+            ELSE (conformant_identifier_count::DECIMAL / total_identifier_count::DECIMAL * 100)
+        END as identifier_conformance_rate,
+        
+        -- Name validation using the comprehensive function
+        is_valid_organization_name(organization_name) as has_valid_name,
+        
+        -- Address validation using the comprehensive function
+        is_valid_organization_address(addresses_html) as has_valid_address,
+        
+        -- Calculate invalid counts
+        GREATEST(0, npi_count - npi_valid) as npi_invalid,
+        GREATEST(0, clia_count - clia_valid) as clia_invalid,
+        GREATEST(0, naic_count - naic_valid) as naic_invalid
+        
+    FROM identifier_validation_detailed
+)
+SELECT 
+    org_id,
+    organization_name,
+    identifier_types_html,
+    identifier_values_html,
+    addresses_html,
+    vendor_names_array,
+    urls_array,
+    endpoint_urls_html,
+    identifier_data_status,
+    total_identifier_count,
+    conformant_identifier_count,
+    ROUND(identifier_conformance_rate::NUMERIC, 1) as identifier_conformance_rate,
+    has_valid_identifiers,
+    has_valid_name,
+    has_valid_address,
+    
+    -- Identifier counts by type
+    npi_count,
+    clia_count,
+    naic_count,
+    other_count,
+    npi_valid,
+    clia_valid,
+    naic_valid,
+    npi_invalid,
+    clia_invalid,
+    naic_invalid,
+    other_count as other_invalid, -- All "other" types are invalid
+    
+    -- Overall quality score (0-3)
+    (CASE WHEN has_valid_identifiers THEN 1 ELSE 0 END +
+     CASE WHEN has_valid_name THEN 1 ELSE 0 END +
+     CASE WHEN has_valid_address THEN 1 ELSE 0 END) as overall_quality_score,
+     
+    -- Conformance categories
+    CASE 
+        WHEN identifier_conformance_rate = 100 THEN 'Fully Conformant'
+        WHEN identifier_conformance_rate >= 50 THEN 'Partially Conformant'
+        WHEN conformant_identifier_count > 0 THEN 'Minimally Conformant'
+        ELSE 'Non-Conformant'
+    END as identifier_conformance_category,
+    
+    -- Status categories
+    CASE 
+        WHEN identifier_data_status = 'no_identifiers' THEN 'no_identifiers'
+        WHEN conformant_identifier_count = 0 THEN 'invalid_only'
+        WHEN conformant_identifier_count = total_identifier_count THEN 'all_valid'
+        ELSE 'mixed_valid_invalid'
+    END as identifier_status
+    
+FROM quality_calculations;
+
+-- Create indexes
+CREATE UNIQUE INDEX idx_mv_organization_quality_complete_org_id ON mv_organization_quality(org_id);
+CREATE INDEX idx_mv_organization_quality_complete_vendor ON mv_organization_quality USING GIN(vendor_names_array);
+CREATE INDEX idx_mv_organization_quality_complete_valid_id ON mv_organization_quality(has_valid_identifiers);
+CREATE INDEX idx_mv_organization_quality_complete_valid_name ON mv_organization_quality(has_valid_name);
+CREATE INDEX idx_mv_organization_quality_complete_valid_address ON mv_organization_quality(has_valid_address);
+CREATE INDEX idx_mv_organization_quality_complete_conformance ON mv_organization_quality(identifier_conformance_category);
+CREATE INDEX idx_mv_organization_quality_complete_status ON mv_organization_quality(identifier_status);
+CREATE INDEX idx_mv_organization_quality_complete_score ON mv_organization_quality(overall_quality_score);
+
+-- 2. Update summary views to use the complete validation data
+CREATE MATERIALIZED VIEW mv_organization_quality_summary AS
+SELECT 
+    vendor_name,
+    COUNT(*) as total_organizations,
+    
+    -- Identifier validation summary
+    COUNT(*) FILTER (WHERE has_valid_identifiers) as organizations_with_valid_identifiers,
+    COUNT(*) FILTER (WHERE identifier_status = 'no_identifiers') as organizations_with_no_identifiers,
+    COUNT(*) FILTER (WHERE identifier_status = 'invalid_only') as organizations_with_invalid_only,
+    COUNT(*) FILTER (WHERE identifier_status = 'all_valid') as organizations_all_valid,
+    COUNT(*) FILTER (WHERE identifier_status = 'mixed_valid_invalid') as organizations_mixed_valid,
+    
+    -- Quality metrics
+    COUNT(*) FILTER (WHERE has_valid_name) as organizations_with_valid_names,
+    COUNT(*) FILTER (WHERE has_valid_address) as organizations_with_valid_addresses,
+    COUNT(*) FILTER (WHERE overall_quality_score = 3) as high_quality_organizations,
+    COUNT(*) FILTER (WHERE overall_quality_score < 3) as low_quality_organizations,
+    
+    -- Conformance breakdown
+    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Fully Conformant') as fully_conformant,
+    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Partially Conformant') as partially_conformant,
+    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Minimally Conformant') as minimally_conformant,
+    COUNT(*) FILTER (WHERE identifier_conformance_category = 'Non-Conformant') as non_conformant,
+    
+    -- Averages
+    ROUND(AVG(identifier_conformance_rate), 1) as avg_conformance_rate,
+    ROUND(AVG(overall_quality_score), 2) as avg_quality_score,
+    
+    -- Percentages
+    ROUND(COUNT(*) FILTER (WHERE has_valid_identifiers)::DECIMAL / COUNT(*)::DECIMAL * 100, 1) as identifier_percentage,
+    ROUND(COUNT(*) FILTER (WHERE has_valid_name)::DECIMAL / COUNT(*)::DECIMAL * 100, 1) as name_percentage,
+    ROUND(COUNT(*) FILTER (WHERE has_valid_address)::DECIMAL / COUNT(*)::DECIMAL * 100, 1) as address_percentage
+
+FROM (
+    SELECT 
+        UNNEST(vendor_names_array) as vendor_name,
+        has_valid_identifiers,
+        identifier_status,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        identifier_conformance_category,
+        identifier_conformance_rate
+    FROM mv_organization_quality
+    
+    UNION ALL
+
+    -- Add "All Developers" summary (all orgs, no filter)
+    SELECT
+        'All Developers' as vendor_name,
+        has_valid_identifiers,
+        identifier_status,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        identifier_conformance_category,
+        identifier_conformance_rate
+    FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Add "CHPL Certified API Developers" summary (orgs associated with at least one CHPL vendor)
+    SELECT
+        'CHPL Certified API Developers' as vendor_name,
+        has_valid_identifiers,
+        identifier_status,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        identifier_conformance_category,
+        identifier_conformance_rate
+    FROM mv_organization_quality
+    WHERE EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
+
+    UNION ALL
+
+    -- Add "Non-CHPL" summary (orgs with no CHPL vendor association)
+    SELECT
+        'Non-CHPL' as vendor_name,
+        has_valid_identifiers,
+        identifier_status,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        identifier_conformance_category,
+        identifier_conformance_rate
+    FROM mv_organization_quality
+    WHERE NOT EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
+) vendor_expanded
+GROUP BY vendor_name;
+
+-- Create index
+CREATE UNIQUE INDEX idx_mv_org_quality_summary_complete_vendor ON mv_organization_quality_summary(vendor_name);
+
+-- 3. Update identifier summary view
+-- Uses COUNT(DISTINCT ivalue) so each unique identifier value is counted once
+-- regardless of how many organizations list it (globally distinct per vendor).
+CREATE MATERIALIZED VIEW mv_organization_identifier_summary AS
+WITH vendor_identifier_rows AS (
+    -- Expand each org to one row per vendor it belongs to
+    SELECT
+        UNNEST(vendor_names_array) as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Also include under "All Developers"
+    SELECT
+        'All Developers' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+
+    UNION ALL
+
+    -- Include under "CHPL Certified API Developers" (orgs with at least one CHPL vendor)
+    SELECT
+        'CHPL Certified API Developers' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+    WHERE EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
+
+    UNION ALL
+
+    -- Include under "Non-CHPL" (orgs with no CHPL vendor association)
+    SELECT
+        'Non-CHPL' as vendor_name,
+        identifier_types_html,
+        identifier_values_html,
+        total_identifier_count,
+        conformant_identifier_count
+    FROM mv_organization_quality
+    WHERE NOT EXISTS (
+        SELECT 1 FROM UNNEST(vendor_names_array) AS v
+        WHERE v IN (SELECT DISTINCT developer_name FROM shared_list_sources)
+    )
+),
+-- Org-level aggregates (count of orgs, not identifier values)
+vendor_org_summary AS (
+    SELECT
+        vendor_name,
+        SUM(CASE WHEN total_identifier_count = 0 THEN 1 ELSE 0 END) as total_no_identifiers,
+        SUM(total_identifier_count) as total_all_identifiers,
+        SUM(conformant_identifier_count) as total_all_conformant
+    FROM vendor_identifier_rows
+    GROUP BY vendor_name
+),
+-- Re-parse HTML into arrays (same logic as mv_organization_quality's identifier_parsing CTE)
+vendor_identifier_parsed AS (
+    SELECT
+        vendor_name,
+        CASE
+            WHEN identifier_types_html IS NULL OR identifier_types_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(regexp_replace(identifier_types_html, '<br/?>', '|', 'gi'), '\s+', ' ', 'g'), '|'
+            )
+        END as parsed_types,
+        CASE
+            WHEN identifier_values_html IS NULL OR identifier_values_html = '' THEN ARRAY[]::TEXT[]
+            ELSE string_to_array(
+                regexp_replace(regexp_replace(identifier_values_html, '<br/?>', '|', 'gi'), '\s+', ' ', 'g'), '|'
+            )
+        END as parsed_values
+    FROM vendor_identifier_rows
+),
+-- Flatten to one row per (vendor, identifier type, identifier value)
+vendor_identifier_flat AS (
+    SELECT
+        vip.vendor_name,
+        upper(trim(t.itype)) as itype,
+        trim(t.ivalue) as ivalue
+    FROM vendor_identifier_parsed vip,
+         LATERAL unnest(vip.parsed_types, vip.parsed_values) AS t(itype, ivalue)
+    WHERE t.itype IS NOT NULL AND trim(t.itype) != ''
+),
+-- Distinct valid values per vendor (validate each unique value once)
+vendor_valid_flat AS (
+    SELECT DISTINCT
+        vendor_name,
+        itype,
+        ivalue
+    FROM vendor_identifier_flat
+    WHERE (SELECT valid FROM validate_identifier_value(itype, ivalue)) = TRUE
+)
+SELECT
+    vos.vendor_name,
+    -- Distinct total counts by type
+    COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) as total_npi,
+    COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) as total_clia,
+    COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) as total_naic,
+    COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI', 'CLIA', 'NAIC') THEN vif.ivalue END) as total_other,
+    -- Org-level counts (unchanged)
+    vos.total_no_identifiers,
+    -- Distinct valid counts by type
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'NPI'  THEN vvf.ivalue END) as total_npi_valid,
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'CLIA' THEN vvf.ivalue END) as total_clia_valid,
+    COUNT(DISTINCT CASE WHEN vvf.itype = 'NAIC' THEN vvf.ivalue END) as total_naic_valid,
+    -- Invalid = distinct total - distinct valid
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'NPI'  THEN vvf.ivalue END)
+    ) as total_npi_invalid,
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'CLIA' THEN vvf.ivalue END)
+    ) as total_clia_invalid,
+    GREATEST(0,
+        COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) -
+        COUNT(DISTINCT CASE WHEN vvf.itype = 'NAIC' THEN vvf.ivalue END)
+    ) as total_naic_invalid,
+    -- Other: all distinct other-type values counted as invalid (no validation rule)
+    COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI', 'CLIA', 'NAIC') THEN vif.ivalue END) as total_other_invalid,
+    -- Org-level totals
+    vos.total_all_identifiers,
+    vos.total_all_conformant,
+    -- Percentages based on distinct counts
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'NPI' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
+        ELSE 0
+    END as npi_percentage,
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
+        ELSE 0
+    END as clia_percentage,
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
+        ELSE 0
+    END as naic_percentage,
+    CASE
+        WHEN (COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+              COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)) > 0
+        THEN ROUND(
+            COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END)::DECIMAL /
+            NULLIF(COUNT(DISTINCT CASE WHEN vif.itype = 'NPI'  THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'CLIA' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype = 'NAIC' THEN vif.ivalue END) +
+                   COUNT(DISTINCT CASE WHEN vif.itype NOT IN ('NPI','CLIA','NAIC') THEN vif.ivalue END), 0)::DECIMAL * 100, 1)
+        ELSE 0
+    END as other_percentage,
+    CASE
+        WHEN vos.total_all_identifiers > 0
+        THEN ROUND(vos.total_all_conformant::DECIMAL / vos.total_all_identifiers::DECIMAL * 100, 1)
+        ELSE 0
+    END as conformance_rate
+FROM vendor_org_summary vos
+LEFT JOIN vendor_identifier_flat vif ON vos.vendor_name = vif.vendor_name
+LEFT JOIN vendor_valid_flat vvf ON vos.vendor_name = vvf.vendor_name AND vif.itype = vvf.itype AND vif.ivalue = vvf.ivalue
+GROUP BY vos.vendor_name, vos.total_no_identifiers, vos.total_all_identifiers, vos.total_all_conformant;
+
+-- Create index
+CREATE UNIQUE INDEX idx_mv_org_identifier_summary_complete_vendor ON mv_organization_identifier_summary(vendor_name);
+
+
+-- MATERIALIZED VIEW: mv_latest_endpoint_metadata
+-- Purpose: Pre-compute the most recent metadata check result per endpoint.
+-- Built as a standalone MV so mv_developer_data_issues
+-- can reference it without re-scanning fhir_endpoints_metadata twice.
+
+CREATE MATERIALIZED VIEW mv_latest_endpoint_metadata AS
+SELECT DISTINCT ON (url, requested_fhir_version)
+    url,
+    requested_fhir_version,
+    http_response
+FROM fhir_endpoints_metadata
+ORDER BY url, requested_fhir_version, updated_at DESC;
+
+CREATE UNIQUE INDEX idx_mv_latest_endpoint_metadata_url_version
+    ON mv_latest_endpoint_metadata(url, requested_fhir_version);
+
+
+-- MATERIALIZED VIEW: mv_developer_data_issues
+-- Purpose: Detailed developer-level data issues tracking
+
+CREATE MATERIALIZED VIEW mv_developer_data_issues AS
+WITH
+-- Get all unique vendors from fhir_endpoints_info AND shared_list_sources
+-- Includes: (1) all FHIR endpoint vendors, (2) CHPL developers with empty bundles,
+-- (3) ALL developers sharing a list_source (catches vendors not in fhir_endpoints_info)
+all_vendors AS (
+    SELECT DISTINCT COALESCE(v.name, 'Unknown') as vendor_name
+    FROM fhir_endpoints_info fei
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE fei.requested_fhir_version = 'None'
+
+    UNION
+
+    -- Include developers with empty bundles (from shared_list_sources table)
+    -- NOTE: This only includes CHPL developers from the CHPL CSV
+    SELECT DISTINCT sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    LEFT JOIN fhir_endpoints fe ON REPLACE(REPLACE(sls.list_source, 'u0026', '&'), '%26', '&') = REPLACE(REPLACE(fe.list_source, 'u0026', '&'), '%26', '&')
+    GROUP BY sls.developer_name, sls.list_source
+    HAVING COUNT(fe.url) = 0
+
+    UNION
+
+    -- Include ALL developers sharing a list_source with at least one other developer
+    -- This catches developers (e.g. CareCloud Inc., Meridian) who appear in shared_list_sources
+    -- but have no endpoints in fhir_endpoints_info
+    SELECT DISTINCT sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    WHERE sls.list_source IN (
+        SELECT list_source
+        FROM shared_list_sources
+        GROUP BY list_source
+        HAVING COUNT(DISTINCT developer_name) > 1
+    )
+
+    UNION
+
+    -- Include ALL CHPL developers by developer_name (catches name-mismatch developers
+    -- who have endpoints in fhir_endpoints_info but their vendor name differs from CHPL name)
+    SELECT DISTINCT developer_name as vendor_name
+    FROM shared_list_sources
+),
+-- Total endpoints per vendor
+vendor_endpoints AS (
+    SELECT
+        COALESCE(v.name, 'Unknown') as vendor_name,
+        COUNT(DISTINCT fei.url) as total_endpoints
+    FROM fhir_endpoints_info fei
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE fei.requested_fhir_version = 'None'
+    GROUP BY v.name
+),
+-- Endpoints with organization data
+vendor_endpoints_with_data AS (
+    SELECT
+        COALESCE(v.name, 'Unknown') as vendor_name,
+        COUNT(DISTINCT sfem.url) as endpoints_with_data
+    FROM selected_fhir_endpoints_mv sfem
+    LEFT JOIN fhir_endpoints_info fei ON sfem.url = fei.url AND fei.requested_fhir_version = 'None'
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE
+        sfem.endpoint_names IS NOT NULL
+        AND sfem.endpoint_names != ''
+        AND TRIM(sfem.endpoint_names) != ''
+        AND sfem.requested_fhir_version = 'None'
+    GROUP BY v.name
+),
+-- Endpoints with no organization data
+vendor_no_org_data AS (
+    SELECT
+        COALESCE(v.name, 'Unknown') as vendor_name,
+        COUNT(DISTINCT sfem.url) as no_org_data_endpoints
+    FROM selected_fhir_endpoints_mv sfem
+    LEFT JOIN fhir_endpoints_info fei ON sfem.url = fei.url AND fei.requested_fhir_version = 'None'
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE
+        (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
+        AND sfem.requested_fhir_version = 'None'
+    GROUP BY v.name
+),
+-- Accessible endpoints per vendor
+-- Uses mv_latest_endpoint_metadata to get current state per endpoint (avoids double-counting)
+vendor_accessible_endpoints AS (
+    SELECT
+        COALESCE(v.name, 'Unknown') as vendor_name,
+        COUNT(DISTINCT lm.url) as accessible_endpoints
+    FROM mv_latest_endpoint_metadata lm
+    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE
+        lm.http_response = 200
+        AND lm.requested_fhir_version = 'None'
+    GROUP BY v.name
+),
+-- Inaccessible endpoints per vendor
+-- Uses mv_latest_endpoint_metadata; counts http_response >= 400 AND http_response = 0
+-- http_response = 0 means connection failed (no HTTP response received from server)
+vendor_inaccessible_endpoints AS (
+    SELECT
+        COALESCE(v.name, 'Unknown') as vendor_name,
+        COUNT(DISTINCT lm.url) as inaccessible_endpoints
+    FROM mv_latest_endpoint_metadata lm
+    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE
+        lm.http_response IS NOT NULL
+        AND (lm.http_response >= 400 OR lm.http_response = 0)
+        AND lm.requested_fhir_version = 'None'
+    GROUP BY v.name
+),
+-- Organization count per vendor from fhir_endpoint_organizations
+vendor_organizations AS (
+    SELECT
+        COALESCE(v.name, 'Unknown') as vendor_name,
+        COUNT(DISTINCT feo.organization_name) as organization_count
+    FROM fhir_endpoint_organizations feo
+    INNER JOIN fhir_endpoint_organizations_map feom ON feo.id = feom.org_database_id
+    INNER JOIN fhir_endpoints fe ON feom.id = fe.id
+    INNER JOIN fhir_endpoints_info fei ON fe.url = fei.url
+    LEFT JOIN vendors v ON fei.vendor_id = v.id
+    WHERE
+        feo.organization_name IS NOT NULL
+        AND feo.organization_name != ''
+        AND fei.requested_fhir_version = 'None'
+    GROUP BY v.name
+),
+-- Developers with empty bundles (list_sources returning no endpoints)
+-- Uses shared_list_sources table
+-- NOTE: This is CHPL-only because shared_list_sources only contains CHPL developers from CSV
+developers_empty_bundles AS (
+    SELECT DISTINCT
+        sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    LEFT JOIN fhir_endpoints fe ON REPLACE(REPLACE(sls.list_source, 'u0026', '&'), '%26', '&') = REPLACE(REPLACE(fe.list_source, 'u0026', '&'), '%26', '&')
+    GROUP BY sls.developer_name, sls.list_source
+    HAVING COUNT(fe.url) = 0
+),
+-- Developers/vendors sharing list sources (from shared_list_sources table)
+vendors_sharing_list_sources AS (
+    SELECT DISTINCT
+        sls.developer_name as vendor_name
+    FROM shared_list_sources sls
+    WHERE sls.list_source IN (
+        SELECT list_source
+        FROM shared_list_sources
+        GROUP BY list_source
+        HAVING COUNT(DISTINCT developer_name) > 1
+    )
+),
+-- CHPL developers: any developer with at least one entry in shared_list_sources
+chpl_developers AS (
+    SELECT DISTINCT developer_name as vendor_name
+    FROM shared_list_sources
+),
+-- Developers whose set of FHIR endpoint URLs exactly matches another developer's set
+-- Logic: two developers share FHIR endpoints if their endpoint URL sets are identical
+developers_sharing_fhir_endpoints AS (
+    WITH dev_endpoint_sets AS (
+        SELECT
+            sls.developer_name,
+            ARRAY_AGG(DISTINCT fe.url ORDER BY fe.url) AS endpoint_set
+        FROM shared_list_sources sls
+        INNER JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+        GROUP BY sls.developer_name
+    )
+    SELECT DISTINCT d1.developer_name AS vendor_name
+    FROM dev_endpoint_sets d1
+    JOIN dev_endpoint_sets d2
+        ON d1.developer_name != d2.developer_name
+        AND d1.endpoint_set = d2.endpoint_set
+)
+SELECT
+    av.vendor_name,
+    COALESCE(ve.total_endpoints, 0) as total_endpoints,
+    COALESCE(vewd.endpoints_with_data, 0) as endpoints_with_org_data,
+    COALESCE(vnod.no_org_data_endpoints, 0) as no_org_data_endpoints,
+    COALESCE(vae.accessible_endpoints, 0) as accessible_endpoints,
+    COALESCE(vie.inaccessible_endpoints, 0) as inaccessible_endpoints,
+    COALESCE(vo.organization_count, 0) as organization_count,
+    CASE
+        WHEN COALESCE(ve.total_endpoints, 0) = 0 THEN 0
+        ELSE ROUND((COALESCE(vewd.endpoints_with_data, 0)::numeric / ve.total_endpoints::numeric) * 100, 1)
+    END as data_completeness_percentage,
+    CASE
+        WHEN deb.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as has_empty_bundle,
+    CASE
+        WHEN vsls.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as shares_list_source,
+    CASE
+        WHEN cd.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as is_chpl_developer,
+    CASE
+        WHEN dsfe.vendor_name IS NOT NULL THEN TRUE
+        ELSE FALSE
+    END as shares_fhir_endpoints
+FROM all_vendors av
+LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
+LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
+LEFT JOIN vendor_no_org_data vnod ON av.vendor_name = vnod.vendor_name
+LEFT JOIN vendor_accessible_endpoints vae ON av.vendor_name = vae.vendor_name
+LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
+LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
+LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
+LEFT JOIN vendors_sharing_list_sources vsls ON av.vendor_name = vsls.vendor_name
+LEFT JOIN chpl_developers cd ON av.vendor_name = cd.vendor_name
+LEFT JOIN developers_sharing_fhir_endpoints dsfe ON av.vendor_name = dsfe.vendor_name
+ORDER BY
+    CASE
+        WHEN COALESCE(vnod.no_org_data_endpoints, 0) = COALESCE(ve.total_endpoints, 0)
+             AND COALESCE(ve.total_endpoints, 0) > 0 THEN 1  -- Critical: All endpoints have no org data
+        WHEN COALESCE(vnod.no_org_data_endpoints, 0) > 0 THEN 2  -- Warning: Some endpoints have no org data
+        ELSE 3  -- OK: All endpoints have org data
+    END,
+    av.vendor_name;
+
+-- Create indexes for faster queries
+CREATE UNIQUE INDEX idx_mv_developer_data_issues_vendor ON mv_developer_data_issues(vendor_name);
+CREATE INDEX idx_mv_developer_data_issues_no_org_data ON mv_developer_data_issues(no_org_data_endpoints);
+
+DROP TABLE IF EXISTS endpoint_query_errors;
+
+CREATE TABLE IF NOT EXISTS endpoint_query_errors (
+    id              SERIAL PRIMARY KEY,
+    list_source     VARCHAR(500),
+    error_message   TEXT,
+    queried_at      TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ========================================
+-- MATERIALIZED VIEW: mv_developer_bundle_issues
+-- ========================================
+-- Purpose: One row per (developer_name, list_source) pair from shared_list_sources.
+-- All endpoint/org counts are computed per bundle URL, so a developer with multiple
+-- list_sources appears as multiple rows with accurate per-URL counts.
+-- This replaces the ambiguous per-developer has_empty_bundle boolean in
+-- mv_developer_data_issues, which fired TRUE if ANY one URL had 0 endpoints.
+-- shares_fhir_endpoints is inherently developer-level and is joined from
+-- mv_developer_data_issues — it correctly repeats across all bundle rows for
+-- the same developer.
+-- sharing_group_id assigns the same integer to all developers sharing an identical
+-- resolved endpoint URL set. NULL for developers with no peer.
+-- ========================================
+
+DROP MATERIALIZED VIEW IF EXISTS mv_developer_bundle_issues;
+
+CREATE MATERIALIZED VIEW mv_developer_bundle_issues AS
+WITH
+-- Total endpoints per bundle URL
+bundle_total_endpoints AS (
+    SELECT
+        fe.list_source,
+        COUNT(DISTINCT fe.url) AS total_endpoints
+    FROM fhir_endpoints fe
+    GROUP BY fe.list_source
+),
+-- Endpoints with org data per bundle URL (endpoint_names populated)
+bundle_endpoints_with_data AS (
+    SELECT
+        sfem.list_source,
+        COUNT(DISTINCT sfem.url) AS endpoints_with_org_data
+    FROM selected_fhir_endpoints_mv sfem
+    WHERE
+        sfem.endpoint_names IS NOT NULL
+        AND sfem.endpoint_names != ''
+        AND TRIM(sfem.endpoint_names) != ''
+        AND sfem.requested_fhir_version = 'None'
+    GROUP BY sfem.list_source
+),
+-- Endpoints with NO org data per bundle URL
+bundle_no_org_data AS (
+    SELECT
+        sfem.list_source,
+        COUNT(DISTINCT sfem.url) AS no_org_data_endpoints
+    FROM selected_fhir_endpoints_mv sfem
+    WHERE
+        (sfem.endpoint_names IS NULL OR sfem.endpoint_names = '' OR TRIM(sfem.endpoint_names) = '')
+        AND sfem.requested_fhir_version = 'None'
+    GROUP BY sfem.list_source
+),
+-- Organization count per bundle URL
+bundle_organizations AS (
+    SELECT
+        fe.list_source,
+        COUNT(DISTINCT feo.organization_name) AS organization_count
+    FROM fhir_endpoint_organizations feo
+    INNER JOIN fhir_endpoint_organizations_map feom ON feo.id = feom.org_database_id
+    INNER JOIN fhir_endpoints fe ON feom.id = fe.id
+    INNER JOIN fhir_endpoints_info fei ON fe.url = fei.url
+    WHERE
+        feo.organization_name IS NOT NULL
+        AND feo.organization_name != ''
+        AND fei.requested_fhir_version = 'None'
+    GROUP BY fe.list_source
+),
+-- Bundle URLs shared by more than one developer
+shared_urls AS (
+    SELECT list_source
+    FROM shared_list_sources
+    GROUP BY list_source
+    HAVING COUNT(DISTINCT developer_name) > 1
+),
+-- Developer-level shares_fhir_endpoints flag (inherently developer-level)
+dev_shares_fhir AS (
+    SELECT vendor_name, shares_fhir_endpoints
+    FROM mv_developer_data_issues
+),
+-- Most recent error message per bundle URL from endpoint_query_errors
+latest_query_errors AS (
+    SELECT DISTINCT ON (list_source)
+        list_source,
+        error_message
+    FROM endpoint_query_errors
+    ORDER BY list_source, queried_at DESC NULLS LAST
+),
+-- Endpoint URL sets per developer (used to identify sharing groups)
+dev_endpoint_sets AS (
+    SELECT
+        sls.developer_name,
+        ARRAY_AGG(DISTINCT fe.url ORDER BY fe.url) AS endpoint_set
+    FROM shared_list_sources sls
+    INNER JOIN fhir_endpoints fe ON sls.list_source = fe.list_source
+    GROUP BY sls.developer_name
+),
+-- Developers that share their endpoint set with at least one other developer
+sharing_devs AS (
+    SELECT DISTINCT d1.developer_name
+    FROM dev_endpoint_sets d1
+    JOIN dev_endpoint_sets d2
+        ON d1.developer_name != d2.developer_name
+        AND d1.endpoint_set = d2.endpoint_set
+),
+-- Assign a stable integer group ID per unique endpoint set (only for sharing devs)
+endpoint_group_ids AS (
+    SELECT
+        developer_name,
+        DENSE_RANK() OVER (ORDER BY endpoint_set) AS sharing_group_id
+    FROM dev_endpoint_sets
+    WHERE developer_name IN (SELECT developer_name FROM sharing_devs)
+)
+SELECT
+    sls.developer_name,
+    sls.list_source,
+    COALESCE(bte.total_endpoints, 0)            AS total_endpoints,
+    COALESCE(bewd.endpoints_with_org_data, 0)   AS endpoints_with_org_data,
+    COALESCE(bnod.no_org_data_endpoints, 0)     AS no_org_data_endpoints,
+    COALESCE(bo.organization_count, 0)           AS organization_count,
+    CASE WHEN COALESCE(bte.total_endpoints, 0) = 0
+         THEN TRUE ELSE FALSE END                AS has_empty_bundle,
+    CASE WHEN su.list_source IS NOT NULL
+         THEN TRUE ELSE FALSE END                AS shares_list_source,
+    COALESCE(dsf.shares_fhir_endpoints, FALSE)   AS shares_fhir_endpoints,
+    TRUE                                         AS is_chpl_developer,
+    COALESCE(lqe.error_message, 'N/A')           AS error_message,
+    eg.sharing_group_id
+FROM shared_list_sources sls
+LEFT JOIN bundle_total_endpoints     bte  ON sls.list_source = bte.list_source
+LEFT JOIN bundle_endpoints_with_data bewd ON sls.list_source = bewd.list_source
+LEFT JOIN bundle_no_org_data          bnod ON sls.list_source = bnod.list_source
+LEFT JOIN bundle_organizations        bo   ON sls.list_source = bo.list_source
+LEFT JOIN shared_urls                 su   ON sls.list_source = su.list_source
+LEFT JOIN dev_shares_fhir             dsf  ON sls.developer_name = dsf.vendor_name
+LEFT JOIN latest_query_errors         lqe  ON sls.list_source = lqe.list_source
+LEFT JOIN endpoint_group_ids          eg   ON sls.developer_name = eg.developer_name
+ORDER BY sls.developer_name, sls.list_source;
+
+CREATE UNIQUE INDEX idx_mv_developer_bundle_issues_unique
+    ON mv_developer_bundle_issues(developer_name, list_source);
+CREATE INDEX idx_mv_developer_bundle_issues_developer
+    ON mv_developer_bundle_issues(developer_name);
+CREATE INDEX idx_mv_developer_bundle_issues_list_source
+    ON mv_developer_bundle_issues(list_source);
+
+-- ========================================
+-- MATERIALIZED VIEW: mv_chpl_coverage_summary
+-- ========================================
+-- Purpose: Pre-compute CHPL coverage counts and last-fetch timestamp for the
+--          Developer Feedback tab Coverage Overview card and "CHPL data last fetched" label.
+-- Single-row MV — refreshed on the same schedule as other developer MVs.
+-- ========================================
+DROP MATERIALIZED VIEW IF EXISTS mv_chpl_coverage_summary CASCADE;
+CREATE MATERIALIZED VIEW mv_chpl_coverage_summary AS
+SELECT
+    MAX(sls.updated_at)                                                                   AS last_updated,
+    COUNT(DISTINCT sls.developer_name)                                                    AS chpl_dev_count,
+    COUNT(DISTINCT sls.list_source)                                                       AS chpl_bundle_count,
+    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND fe.list_source IS NOT NULL THEN fe.list_source END) AS lantern_chpl_bundle_count,
+    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND v.name IS NOT NULL THEN v.name END) AS lantern_chpl_dev_count
+FROM shared_list_sources sls
+LEFT JOIN list_source_info lsi    ON sls.list_source = lsi.list_source
+LEFT JOIN fhir_endpoints fe       ON lsi.list_source = fe.list_source
+LEFT JOIN fhir_endpoints_info fei ON fe.url = fei.url AND fei.requested_fhir_version = 'None'
+LEFT JOIN vendors v               ON fei.vendor_id = v.id;
+
+-- Unique index on constant expression enables REFRESH CONCURRENTLY for this single-row MV
+CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique
+    ON mv_chpl_coverage_summary((1));
+
+-- ========================================
+-- MATERIALIZED VIEW: mv_problematic_organizations
+-- ========================================
+-- Purpose: Pre-compute the list of organizations that fail at least one quality check
+-- (no identifiers, invalid-only identifiers, invalid name, or incomplete address).
+-- Includes developer names as a plain text string (not a Postgres array) so the
+-- Developer Feedback tab can display them without client-side parsing.
+-- Depends on: mv_organization_quality, shared_list_sources
+-- ========================================
+
+DROP MATERIALIZED VIEW IF EXISTS mv_problematic_organizations CASCADE;
+
+CREATE MATERIALIZED VIEW mv_problematic_organizations AS
+SELECT
+    oq.org_id,
+    oq.organization_name,
+    array_to_string(oq.vendor_names_array, '; ') AS developer_names,
+    oq.vendor_names_array,
+    oq.identifier_status,
+    oq.has_valid_name,
+    oq.has_valid_address,
+    oq.overall_quality_score,
+    TRIM(BOTH ', ' FROM CONCAT_WS(', ',
+        CASE WHEN oq.identifier_status = 'no_identifiers'  THEN 'No identifiers'          END,
+        CASE WHEN oq.identifier_status = 'invalid_only'    THEN 'Invalid identifiers only' END,
+        CASE WHEN NOT oq.has_valid_name                    THEN 'Invalid or missing name'  END,
+        CASE WHEN NOT oq.has_valid_address                 THEN 'Incomplete address'        END
+    )) AS issues,
+    EXISTS (
+        SELECT 1 FROM shared_list_sources sls
+        WHERE sls.developer_name = ANY(oq.vendor_names_array)
+    ) AS is_chpl_org
+FROM mv_organization_quality oq
+WHERE
+    oq.identifier_status IN ('no_identifiers', 'invalid_only')
+    OR NOT oq.has_valid_name
+    OR NOT oq.has_valid_address;
+
+CREATE UNIQUE INDEX idx_mv_problematic_organizations_org_id
+    ON mv_problematic_organizations(org_id);
+CREATE INDEX idx_mv_problematic_organizations_is_chpl
+    ON mv_problematic_organizations(is_chpl_org);
+CREATE INDEX idx_mv_problematic_organizations_vendor
+    ON mv_problematic_organizations USING GIN(vendor_names_array);
