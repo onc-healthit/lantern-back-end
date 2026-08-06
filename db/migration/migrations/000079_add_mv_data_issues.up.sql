@@ -380,18 +380,26 @@ CREATE INDEX idx_mv_developer_bundle_issues_list_source
 -- Single-row MV — refreshed on the same schedule as other developer MVs.
 -- ========================================
 CREATE MATERIALIZED VIEW mv_chpl_coverage_summary AS
+WITH bundle_status AS (
+    SELECT
+        sls.developer_name,
+        sls.list_source,
+        sls.updated_at,
+        EXISTS (
+            SELECT 1
+            FROM fhir_endpoints fe
+            WHERE fe.list_source = sls.list_source
+        ) AS processed
+    FROM shared_list_sources sls
+)
 SELECT
     1                                                                                     AS mv_id,
-    MAX(sls.updated_at)                                                                   AS last_updated,
-    COUNT(DISTINCT sls.developer_name)                                                    AS chpl_dev_count,
-    COUNT(DISTINCT sls.list_source)                                                       AS chpl_bundle_count,
-    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND fe.list_source IS NOT NULL THEN fe.list_source END) AS lantern_chpl_bundle_count,
-    COUNT(DISTINCT CASE WHEN lsi.is_chpl = 'CHPL' AND v.name IS NOT NULL THEN v.name END) AS lantern_chpl_dev_count
-FROM shared_list_sources sls
-LEFT JOIN list_source_info lsi    ON sls.list_source = lsi.list_source
-LEFT JOIN fhir_endpoints fe       ON lsi.list_source = fe.list_source
-LEFT JOIN fhir_endpoints_info fei ON fe.url = fei.url AND fei.requested_fhir_version = 'None'
-LEFT JOIN vendors v               ON fei.vendor_id = v.id;
+    MAX(updated_at)                                                                       AS last_updated,
+    COUNT(DISTINCT developer_name)                                                        AS chpl_dev_count,
+    COUNT(DISTINCT list_source)                                                           AS chpl_bundle_count,
+    COUNT(DISTINCT list_source) FILTER (WHERE processed)                                  AS lantern_chpl_bundle_count,
+    COUNT(DISTINCT developer_name) FILTER (WHERE processed)                               AS lantern_chpl_dev_count
+FROM bundle_status;
 
 -- Unique index on the materialized column enables REFRESH CONCURRENTLY for this single-row MV
 CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique
