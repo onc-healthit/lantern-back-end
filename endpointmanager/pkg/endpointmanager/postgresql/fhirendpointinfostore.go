@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/lib/pq"
@@ -170,19 +171,20 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		}
 	}
 
-	if metadataIDNullable.Valid {
-		endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
-			ID:                   int(metadataIDNullable.Int64),
-			URL:                  metaURL.String,
-			HTTPResponse:         int(metaHTTPResponse.Int64),
-			Availability:         metaAvailability.Float64,
-			Errors:               metaErrors.String,
-			ResponseTime:         metaResponseTime.Float64,
-			SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
-			RequestedFhirVersion: metaRequestedFhirVersion.String,
-			UpdatedAt:            metaUpdatedAt.Time,
-			CreatedAt:            metaCreatedAt.Time,
-		}
+	if !metadataIDNullable.Valid {
+		return nil, fmt.Errorf("metadata not found for endpoint id %d", id)
+	}
+	endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+		ID:                   int(metadataIDNullable.Int64),
+		URL:                  metaURL.String,
+		HTTPResponse:         int(metaHTTPResponse.Int64),
+		Availability:         metaAvailability.Float64,
+		Errors:               metaErrors.String,
+		ResponseTime:         metaResponseTime.Float64,
+		SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+		RequestedFhirVersion: metaRequestedFhirVersion.String,
+		UpdatedAt:            metaUpdatedAt.Time,
+		CreatedAt:            metaCreatedAt.Time,
 	}
 
 	return &endpointInfo, err
@@ -320,19 +322,20 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			}
 		}
 
-		if metadataIDNullable.Valid {
-			endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
-				ID:                   int(metadataIDNullable.Int64),
-				URL:                  metaURL.String,
-				HTTPResponse:         int(metaHTTPResponse.Int64),
-				Availability:         metaAvailability.Float64,
-				Errors:               metaErrors.String,
-				ResponseTime:         metaResponseTime.Float64,
-				SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
-				RequestedFhirVersion: metaRequestedFhirVersion.String,
-				UpdatedAt:            metaUpdatedAt.Time,
-				CreatedAt:            metaCreatedAt.Time,
-			}
+		if !metadataIDNullable.Valid {
+			return nil, fmt.Errorf("metadata not found for endpoint url %s", url)
+		}
+		endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+			ID:                   int(metadataIDNullable.Int64),
+			URL:                  metaURL.String,
+			HTTPResponse:         int(metaHTTPResponse.Int64),
+			Availability:         metaAvailability.Float64,
+			Errors:               metaErrors.String,
+			ResponseTime:         metaResponseTime.Float64,
+			SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+			RequestedFhirVersion: metaRequestedFhirVersion.String,
+			UpdatedAt:            metaUpdatedAt.Time,
+			CreatedAt:            metaCreatedAt.Time,
 		}
 
 		endpointInfos = append(endpointInfos, &endpointInfo)
@@ -469,19 +472,20 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		}
 	}
 
-	if metadataIDNullable.Valid {
-		endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
-			ID:                   int(metadataIDNullable.Int64),
-			URL:                  metaURL.String,
-			HTTPResponse:         int(metaHTTPResponse.Int64),
-			Availability:         metaAvailability.Float64,
-			Errors:               metaErrors.String,
-			ResponseTime:         metaResponseTime.Float64,
-			SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
-			RequestedFhirVersion: metaRequestedFhirVersion.String,
-			UpdatedAt:            metaUpdatedAt.Time,
-			CreatedAt:            metaCreatedAt.Time,
-		}
+	if !metadataIDNullable.Valid {
+		return nil, fmt.Errorf("metadata not found for endpoint url %s and requested_fhir_version %s", url, requestedVersion)
+	}
+	endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+		ID:                   int(metadataIDNullable.Int64),
+		URL:                  metaURL.String,
+		HTTPResponse:         int(metaHTTPResponse.Int64),
+		Availability:         metaAvailability.Float64,
+		Errors:               metaErrors.String,
+		ResponseTime:         metaResponseTime.Float64,
+		SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+		RequestedFhirVersion: metaRequestedFhirVersion.String,
+		UpdatedAt:            metaUpdatedAt.Time,
+		CreatedAt:            metaCreatedAt.Time,
 	}
 
 	return &endpointInfo, err
@@ -758,19 +762,20 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			}
 		}
 
-		if metadataIDNullable.Valid {
-			endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
-				ID:                   int(metadataIDNullable.Int64),
-				URL:                  metaURL.String,
-				HTTPResponse:         int(metaHTTPResponse.Int64),
-				Availability:         metaAvailability.Float64,
-				Errors:               metaErrors.String,
-				ResponseTime:         metaResponseTime.Float64,
-				SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
-				RequestedFhirVersion: metaRequestedFhirVersion.String,
-				UpdatedAt:            metaUpdatedAt.Time,
-				CreatedAt:            metaCreatedAt.Time,
-			}
+		if !metadataIDNullable.Valid {
+			return nil, fmt.Errorf("metadata not found for endpoint url %s", url)
+		}
+		endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+			ID:                   int(metadataIDNullable.Int64),
+			URL:                  metaURL.String,
+			HTTPResponse:         int(metaHTTPResponse.Int64),
+			Availability:         metaAvailability.Float64,
+			Errors:               metaErrors.String,
+			ResponseTime:         metaResponseTime.Float64,
+			SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+			RequestedFhirVersion: metaRequestedFhirVersion.String,
+			UpdatedAt:            metaUpdatedAt.Time,
+			CreatedAt:            metaCreatedAt.Time,
 		}
 
 		endpointInfos = append(endpointInfos, &endpointInfo)

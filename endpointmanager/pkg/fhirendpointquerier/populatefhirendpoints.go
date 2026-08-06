@@ -256,7 +256,7 @@ func RemoveOldEndpointOrganizations(ctx context.Context, store *postgresql.Store
 }
 
 func isValidURL(url string) bool {
-	urlregex := regexp.MustCompile(`^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$`)
+	urlregex := regexp.MustCompile(`^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'’\(\)\*\+,;=.]+$`)
 	urlmatched := urlregex.MatchString(strings.ToLower(url))
 
 	return urlmatched
