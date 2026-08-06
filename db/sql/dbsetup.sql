@@ -4200,6 +4200,7 @@ CREATE INDEX idx_mv_developer_bundle_issues_list_source
 DROP MATERIALIZED VIEW IF EXISTS mv_chpl_coverage_summary CASCADE;
 CREATE MATERIALIZED VIEW mv_chpl_coverage_summary AS
 SELECT
+    1                                                                                     AS mv_id,
     MAX(sls.updated_at)                                                                   AS last_updated,
     COUNT(DISTINCT sls.developer_name)                                                    AS chpl_dev_count,
     COUNT(DISTINCT sls.list_source)                                                       AS chpl_bundle_count,
@@ -4211,9 +4212,9 @@ LEFT JOIN fhir_endpoints fe       ON lsi.list_source = fe.list_source
 LEFT JOIN fhir_endpoints_info fei ON fe.url = fei.url AND fei.requested_fhir_version = 'None'
 LEFT JOIN vendors v               ON fei.vendor_id = v.id;
 
--- Unique index on constant expression enables REFRESH CONCURRENTLY for this single-row MV
+-- Unique index on the materialized column enables REFRESH CONCURRENTLY for this single-row MV
 CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique
-    ON mv_chpl_coverage_summary((1));
+    ON mv_chpl_coverage_summary(mv_id);
 
 -- ========================================
 -- MATERIALIZED VIEW: mv_problematic_organizations

@@ -264,7 +264,7 @@ ORDER BY
     av.vendor_name;
 
 -- Create indexes for faster queries
-CREATE INDEX idx_mv_developer_data_issues_vendor ON mv_developer_data_issues(vendor_name);
+CREATE UNIQUE INDEX idx_mv_developer_data_issues_vendor ON mv_developer_data_issues(vendor_name);
 CREATE INDEX idx_mv_developer_data_issues_no_org_data ON mv_developer_data_issues(no_org_data_endpoints);
 
 -- ========================================
@@ -381,6 +381,7 @@ CREATE INDEX idx_mv_developer_bundle_issues_list_source
 -- ========================================
 CREATE MATERIALIZED VIEW mv_chpl_coverage_summary AS
 SELECT
+    1                                                                                     AS mv_id,
     MAX(sls.updated_at)                                                                   AS last_updated,
     COUNT(DISTINCT sls.developer_name)                                                    AS chpl_dev_count,
     COUNT(DISTINCT sls.list_source)                                                       AS chpl_bundle_count,
@@ -392,9 +393,9 @@ LEFT JOIN fhir_endpoints fe       ON lsi.list_source = fe.list_source
 LEFT JOIN fhir_endpoints_info fei ON fe.url = fei.url AND fei.requested_fhir_version = 'None'
 LEFT JOIN vendors v               ON fei.vendor_id = v.id;
 
--- Unique index on constant expression enables REFRESH CONCURRENTLY for this single-row MV
+-- Unique index on the materialized column enables REFRESH CONCURRENTLY for this single-row MV
 CREATE UNIQUE INDEX idx_mv_chpl_coverage_summary_unique
-    ON mv_chpl_coverage_summary((1));
+    ON mv_chpl_coverage_summary(mv_id);
 
 -- ========================================
 -- MATERIALIZED VIEW: mv_problematic_organizations
