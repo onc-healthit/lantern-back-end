@@ -57,28 +57,48 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
 	var operResourceJSON []byte
-	var metadataID int
+	var metadataIDNullable sql.NullInt64
+	var metaURL sql.NullString
+	var metaHTTPResponse sql.NullInt64
+	var metaAvailability sql.NullFloat64
+	var metaErrors sql.NullString
+	var metaResponseTime sql.NullFloat64
+	var metaSMARTHTTPResponse sql.NullInt64
+	var metaRequestedFhirVersion sql.NullString
+	var metaUpdatedAt sql.NullTime
+	var metaCreatedAt sql.NullTime
 
 	sqlStatementInfo := `
 	SELECT
-		id,
-		url,
-		healthit_mapping_id,
-		vendor_id,
-		tls_version,
-		mime_types,
-		capability_statement,
-		created_at,
-		updated_at,
-		smart_response,
-		included_fields,
-		operation_resource,
-		supported_profiles,
-		validation_result_id,
-		metadata_id,
-		requested_fhir_version,
-		capability_fhir_version
-	FROM fhir_endpoints_info WHERE id=$1`
+		i.id,
+		i.url,
+		i.healthit_mapping_id,
+		i.vendor_id,
+		i.tls_version,
+		i.mime_types,
+		i.capability_statement,
+		i.created_at,
+		i.updated_at,
+		i.smart_response,
+		i.included_fields,
+		i.operation_resource,
+		i.supported_profiles,
+		i.validation_result_id,
+		i.metadata_id,
+		i.requested_fhir_version,
+		i.capability_fhir_version,
+		m.url,
+		m.http_response,
+		m.availability,
+		m.errors,
+		m.response_time_seconds,
+		m.smart_http_response,
+		m.requested_fhir_version,
+		m.updated_at,
+		m.created_at
+	FROM fhir_endpoints_info i
+	LEFT JOIN fhir_endpoints_metadata m ON m.id = i.metadata_id
+	WHERE i.id=$1`
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, id)
 
 	err := row.Scan(
@@ -96,9 +116,18 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		&operResourceJSON,
 		&supportedProfilesJSON,
 		&validationResultIDNullable,
-		&metadataID,
+		&metadataIDNullable,
 		&endpointInfo.RequestedFhirVersion,
-		&endpointInfo.CapabilityFhirVersion)
+		&endpointInfo.CapabilityFhirVersion,
+		&metaURL,
+		&metaHTTPResponse,
+		&metaAvailability,
+		&metaErrors,
+		&metaResponseTime,
+		&metaSMARTHTTPResponse,
+		&metaRequestedFhirVersion,
+		&metaUpdatedAt,
+		&metaCreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -141,11 +170,20 @@ func (s *Store) GetFHIREndpointInfo(ctx context.Context, id int) (*endpointmanag
 		}
 	}
 
-	endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
-	if err != nil {
-		return nil, err
+	if metadataIDNullable.Valid {
+		endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+			ID:                   int(metadataIDNullable.Int64),
+			URL:                  metaURL.String,
+			HTTPResponse:         int(metaHTTPResponse.Int64),
+			Availability:         metaAvailability.Float64,
+			Errors:               metaErrors.String,
+			ResponseTime:         metaResponseTime.Float64,
+			SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+			RequestedFhirVersion: metaRequestedFhirVersion.String,
+			UpdatedAt:            metaUpdatedAt.Time,
+			CreatedAt:            metaCreatedAt.Time,
+		}
 	}
-	endpointInfo.Metadata = endpointMetadata
 
 	return &endpointInfo, err
 }
@@ -156,24 +194,35 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 	var operResourceJSON []byte
 	sqlStatementInfo := `
 	SELECT
-		id,
-		url,
-		healthit_mapping_id,
-		vendor_id,
-		tls_version,
-		mime_types,
-		capability_statement,
-		validation_result_id,
-		created_at,
-		updated_at,
-		smart_response,
-		included_fields,
-		operation_resource,
-		supported_profiles,
-		metadata_id,
-		requested_fhir_version,
-		capability_fhir_version
-	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1`
+		i.id,
+		i.url,
+		i.healthit_mapping_id,
+		i.vendor_id,
+		i.tls_version,
+		i.mime_types,
+		i.capability_statement,
+		i.validation_result_id,
+		i.created_at,
+		i.updated_at,
+		i.smart_response,
+		i.included_fields,
+		i.operation_resource,
+		i.supported_profiles,
+		i.metadata_id,
+		i.requested_fhir_version,
+		i.capability_fhir_version,
+		m.url,
+		m.http_response,
+		m.availability,
+		m.errors,
+		m.response_time_seconds,
+		m.smart_http_response,
+		m.requested_fhir_version,
+		m.updated_at,
+		m.created_at
+	FROM fhir_endpoints_info i
+	LEFT JOIN fhir_endpoints_metadata m ON m.id = i.metadata_id
+	WHERE i.url = $1`
 
 	rows, err := s.DB.QueryContext(ctx, sqlStatementInfo, url)
 	if err != nil {
@@ -189,7 +238,16 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 		var validationResultIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
 		var smartResponseJSON []byte
-		var metadataID int
+		var metadataIDNullable sql.NullInt64
+		var metaURL sql.NullString
+		var metaHTTPResponse sql.NullInt64
+		var metaAvailability sql.NullFloat64
+		var metaErrors sql.NullString
+		var metaResponseTime sql.NullFloat64
+		var metaSMARTHTTPResponse sql.NullInt64
+		var metaRequestedFhirVersion sql.NullString
+		var metaUpdatedAt sql.NullTime
+		var metaCreatedAt sql.NullTime
 
 		err := rows.Scan(
 			&endpointInfo.ID,
@@ -206,9 +264,18 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			&includedFieldsJSON,
 			&operResourceJSON,
 			&supportedProfilesJSON,
-			&metadataID,
+			&metadataIDNullable,
 			&endpointInfo.RequestedFhirVersion,
-			&endpointInfo.CapabilityFhirVersion)
+			&endpointInfo.CapabilityFhirVersion,
+			&metaURL,
+			&metaHTTPResponse,
+			&metaAvailability,
+			&metaErrors,
+			&metaResponseTime,
+			&metaSMARTHTTPResponse,
+			&metaRequestedFhirVersion,
+			&metaUpdatedAt,
+			&metaCreatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -253,11 +320,20 @@ func (s *Store) GetFHIREndpointInfosUsingURL(ctx context.Context, url string) ([
 			}
 		}
 
-		endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
-		if err != nil {
-			return nil, err
+		if metadataIDNullable.Valid {
+			endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+				ID:                   int(metadataIDNullable.Int64),
+				URL:                  metaURL.String,
+				HTTPResponse:         int(metaHTTPResponse.Int64),
+				Availability:         metaAvailability.Float64,
+				Errors:               metaErrors.String,
+				ResponseTime:         metaResponseTime.Float64,
+				SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+				RequestedFhirVersion: metaRequestedFhirVersion.String,
+				UpdatedAt:            metaUpdatedAt.Time,
+				CreatedAt:            metaCreatedAt.Time,
+			}
 		}
-		endpointInfo.Metadata = endpointMetadata
 
 		endpointInfos = append(endpointInfos, &endpointInfo)
 
@@ -277,28 +353,48 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 	var vendorIDNullable sql.NullInt64
 	var smartResponseJSON []byte
 	var operResourceJSON []byte
-	var metadataID int
+	var metadataIDNullable sql.NullInt64
+	var metaURL sql.NullString
+	var metaHTTPResponse sql.NullInt64
+	var metaAvailability sql.NullFloat64
+	var metaErrors sql.NullString
+	var metaResponseTime sql.NullFloat64
+	var metaSMARTHTTPResponse sql.NullInt64
+	var metaRequestedFhirVersion sql.NullString
+	var metaUpdatedAt sql.NullTime
+	var metaCreatedAt sql.NullTime
 
 	sqlStatementInfo := `
 	SELECT
-		id,
-		url,
-		healthit_mapping_id,
-		vendor_id,
-		tls_version,
-		mime_types,
-		capability_statement,
-		created_at,
-		updated_at,
-		smart_response,
-		included_fields,
-		operation_resource,
-		supported_profiles,
-		validation_result_id,
-		metadata_id,
-		requested_fhir_version,
-		capability_fhir_version
-	FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND fhir_endpoints_info.requested_fhir_version = $2 LIMIT 1`
+		i.id,
+		i.url,
+		i.healthit_mapping_id,
+		i.vendor_id,
+		i.tls_version,
+		i.mime_types,
+		i.capability_statement,
+		i.created_at,
+		i.updated_at,
+		i.smart_response,
+		i.included_fields,
+		i.operation_resource,
+		i.supported_profiles,
+		i.validation_result_id,
+		i.metadata_id,
+		i.requested_fhir_version,
+		i.capability_fhir_version,
+		m.url,
+		m.http_response,
+		m.availability,
+		m.errors,
+		m.response_time_seconds,
+		m.smart_http_response,
+		m.requested_fhir_version,
+		m.updated_at,
+		m.created_at
+	FROM fhir_endpoints_info i
+	LEFT JOIN fhir_endpoints_metadata m ON m.id = i.metadata_id
+	WHERE i.url = $1 AND i.requested_fhir_version = $2 LIMIT 1`
 
 	row := s.DB.QueryRowContext(ctx, sqlStatementInfo, url, requestedVersion)
 
@@ -317,9 +413,18 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		&operResourceJSON,
 		&supportedProfilesJSON,
 		&validationResultIDNullable,
-		&metadataID,
+		&metadataIDNullable,
 		&endpointInfo.RequestedFhirVersion,
-		&endpointInfo.CapabilityFhirVersion)
+		&endpointInfo.CapabilityFhirVersion,
+		&metaURL,
+		&metaHTTPResponse,
+		&metaAvailability,
+		&metaErrors,
+		&metaResponseTime,
+		&metaSMARTHTTPResponse,
+		&metaRequestedFhirVersion,
+		&metaUpdatedAt,
+		&metaCreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -364,11 +469,20 @@ func (s *Store) GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx context.Conte
 		}
 	}
 
-	endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
-	if err != nil {
-		return nil, err
+	if metadataIDNullable.Valid {
+		endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+			ID:                   int(metadataIDNullable.Int64),
+			URL:                  metaURL.String,
+			HTTPResponse:         int(metaHTTPResponse.Int64),
+			Availability:         metaAvailability.Float64,
+			Errors:               metaErrors.String,
+			ResponseTime:         metaResponseTime.Float64,
+			SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+			RequestedFhirVersion: metaRequestedFhirVersion.String,
+			UpdatedAt:            metaUpdatedAt.Time,
+			CreatedAt:            metaCreatedAt.Time,
+		}
 	}
-	endpointInfo.Metadata = endpointMetadata
 
 	return &endpointInfo, err
 }
@@ -562,7 +676,16 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 		var validationResultIDNullable sql.NullInt64
 		var vendorIDNullable sql.NullInt64
 		var smartResponseJSON []byte
-		var metadataID int
+		var metadataIDNullable sql.NullInt64
+		var metaURL sql.NullString
+		var metaHTTPResponse sql.NullInt64
+		var metaAvailability sql.NullFloat64
+		var metaErrors sql.NullString
+		var metaResponseTime sql.NullFloat64
+		var metaSMARTHTTPResponse sql.NullInt64
+		var metaRequestedFhirVersion sql.NullString
+		var metaUpdatedAt sql.NullTime
+		var metaCreatedAt sql.NullTime
 
 		err := rows.Scan(
 			&endpointInfo.ID,
@@ -579,9 +702,18 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			&includedFieldsJSON,
 			&operResourceJSON,
 			&supportedProfilesJSON,
-			&metadataID,
+			&metadataIDNullable,
 			&endpointInfo.RequestedFhirVersion,
-			&endpointInfo.CapabilityFhirVersion)
+			&endpointInfo.CapabilityFhirVersion,
+			&metaURL,
+			&metaHTTPResponse,
+			&metaAvailability,
+			&metaErrors,
+			&metaResponseTime,
+			&metaSMARTHTTPResponse,
+			&metaRequestedFhirVersion,
+			&metaUpdatedAt,
+			&metaCreatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -605,6 +737,13 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			}
 		}
 
+		if operResourceJSON != nil {
+			err = json.Unmarshal(operResourceJSON, &endpointInfo.OperationResource)
+			if err != nil {
+				return nil, err
+			}
+		}
+
 		if supportedProfilesJSON != nil {
 			err = json.Unmarshal(supportedProfilesJSON, &endpointInfo.SupportedProfiles)
 			if err != nil {
@@ -619,11 +758,20 @@ func (s *Store) GetFHIREndpointInfosByURLWithDifferentRequestedVersion(ctx conte
 			}
 		}
 
-		endpointMetadata, err := s.GetFHIREndpointMetadata(ctx, metadataID)
-		if err != nil {
-			return nil, err
+		if metadataIDNullable.Valid {
+			endpointInfo.Metadata = &endpointmanager.FHIREndpointMetadata{
+				ID:                   int(metadataIDNullable.Int64),
+				URL:                  metaURL.String,
+				HTTPResponse:         int(metaHTTPResponse.Int64),
+				Availability:         metaAvailability.Float64,
+				Errors:               metaErrors.String,
+				ResponseTime:         metaResponseTime.Float64,
+				SMARTHTTPResponse:    int(metaSMARTHTTPResponse.Int64),
+				RequestedFhirVersion: metaRequestedFhirVersion.String,
+				UpdatedAt:            metaUpdatedAt.Time,
+				CreatedAt:            metaCreatedAt.Time,
+			}
 		}
-		endpointInfo.Metadata = endpointMetadata
 
 		endpointInfos = append(endpointInfos, &endpointInfo)
 
@@ -698,24 +846,35 @@ func prepareFHIREndpointInfoStatements(s *Store) error {
 	}
 	getFHIREndpointsByURLAndDifferentRequestedVersion, err = s.DB.Prepare(`
 		SELECT
-		id,
-		url,
-		healthit_mapping_id,
-		vendor_id,
-		tls_version,
-		mime_types,
-		capability_statement,
-		validation_result_id,
-		created_at,
-		updated_at,
-		smart_response,
-		included_fields,
-		operation_resource,
-		supported_profiles,
-		metadata_id,
-		requested_fhir_version,
-		capability_fhir_version
-		FROM fhir_endpoints_info WHERE fhir_endpoints_info.url = $1 AND NOT (fhir_endpoints_info.requested_fhir_version = ANY (string_to_array($2,',','')))`)
+		i.id,
+		i.url,
+		i.healthit_mapping_id,
+		i.vendor_id,
+		i.tls_version,
+		i.mime_types,
+		i.capability_statement,
+		i.validation_result_id,
+		i.created_at,
+		i.updated_at,
+		i.smart_response,
+		i.included_fields,
+		i.operation_resource,
+		i.supported_profiles,
+		i.metadata_id,
+		i.requested_fhir_version,
+		i.capability_fhir_version,
+		m.url,
+		m.http_response,
+		m.availability,
+		m.errors,
+		m.response_time_seconds,
+		m.smart_http_response,
+		m.requested_fhir_version,
+		m.updated_at,
+		m.created_at
+		FROM fhir_endpoints_info i
+		LEFT JOIN fhir_endpoints_metadata m ON m.id = i.metadata_id
+		WHERE i.url = $1 AND NOT (i.requested_fhir_version = ANY (string_to_array($2,',','')))`)
 	if err != nil {
 		return err
 	}
