@@ -1437,20 +1437,6 @@ docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_m
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_org_identifier_summary_complete_vendor." >> $log_file
 }
 
-# Refresh and reindex mv_latest_endpoint_metadata
-# Must run before mv_developer_data_issues which depends on it
-docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_latest_endpoint_metadata;" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_latest_endpoint_metadata." >> $log_file
-}
-
-docker exec -t lantern-back-end-postgres-1 psql -t -c "DROP INDEX IF EXISTS idx_mv_latest_endpoint_metadata_url_version;" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to drop idx_mv_latest_endpoint_metadata_url_version." >> $log_file
-}
-
-docker exec -t lantern-back-end-postgres-1 psql -t -c "CREATE UNIQUE INDEX idx_mv_latest_endpoint_metadata_url_version ON mv_latest_endpoint_metadata(url, requested_fhir_version);" -U lantern -d lantern || {
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to create idx_mv_latest_endpoint_metadata_url_version." >> $log_file
-}
-
 # Refresh and reindex mv_developer_data_issues
 docker exec -t lantern-back-end-postgres-1 psql -t -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_developer_data_issues;" -U lantern -d lantern || {
     echo "$(date +"%Y-%m-%d %H:%M:%S") - Lantern failed to refresh mv_developer_data_issues." >> $log_file

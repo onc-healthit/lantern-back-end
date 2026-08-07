@@ -7,7 +7,6 @@ BEGIN;
 -- Tracks:
 --   1. Developers with endpoints that have no organization data
 --   2. Endpoints sharing list_source URLs
---   3. List_source URL accessibility issues
 -- ========================================
 
 -- Drop existing views if they exist (order matters due to dependencies)
@@ -15,26 +14,6 @@ DROP MATERIALIZED VIEW IF EXISTS mv_chpl_coverage_summary CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_developer_bundle_issues CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_developer_data_issues CASCADE;
 DROP MATERIALIZED VIEW IF EXISTS mv_latest_endpoint_metadata CASCADE;
-
--- ========================================
--- MATERIALIZED VIEW: mv_latest_endpoint_metadata
--- ========================================
--- Purpose: Pre-compute the most recent metadata check result per endpoint.
--- This is built as a standalone MV (not an inline CTE) so that
--- mv_developer_data_issues can reference it
--- without re-scanning fhir_endpoints_metadata twice, reducing build time.
--- ========================================
-
-CREATE MATERIALIZED VIEW mv_latest_endpoint_metadata AS
-SELECT DISTINCT ON (url, requested_fhir_version)
-    url,
-    requested_fhir_version,
-    http_response
-FROM fhir_endpoints_metadata
-ORDER BY url, requested_fhir_version, updated_at DESC;
-
-CREATE UNIQUE INDEX idx_mv_latest_endpoint_metadata_url_version
-    ON mv_latest_endpoint_metadata(url, requested_fhir_version);
 
 -- ========================================
 -- MATERIALIZED VIEW: mv_developer_data_issues
@@ -122,36 +101,6 @@ vendor_no_org_data AS (
         AND sfem.requested_fhir_version = 'None'
     GROUP BY v.name
 ),
--- Accessible endpoints per vendor
--- Uses mv_latest_endpoint_metadata to get current state per endpoint (avoids double-counting)
-vendor_accessible_endpoints AS (
-    SELECT
-        COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT lm.url) as accessible_endpoints
-    FROM mv_latest_endpoint_metadata lm
-    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
-    LEFT JOIN vendors v ON fei.vendor_id = v.id
-    WHERE
-        lm.http_response = 200
-        AND lm.requested_fhir_version = 'None'
-    GROUP BY v.name
-),
--- Inaccessible endpoints per vendor
--- Uses mv_latest_endpoint_metadata; counts http_response >= 400 AND http_response = 0
--- http_response = 0 means connection failed (no HTTP response received from server)
-vendor_inaccessible_endpoints AS (
-    SELECT
-        COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT lm.url) as inaccessible_endpoints
-    FROM mv_latest_endpoint_metadata lm
-    INNER JOIN fhir_endpoints_info fei ON lm.url = fei.url AND lm.requested_fhir_version = fei.requested_fhir_version
-    LEFT JOIN vendors v ON fei.vendor_id = v.id
-    WHERE
-        lm.http_response IS NOT NULL
-        AND (lm.http_response >= 400 OR lm.http_response = 0)
-        AND lm.requested_fhir_version = 'None'
-    GROUP BY v.name
-),
 -- Organization count per vendor from fhir_endpoint_organizations
 vendor_organizations AS (
     SELECT
@@ -218,8 +167,6 @@ SELECT
     COALESCE(ve.total_endpoints, 0) as total_endpoints,
     COALESCE(vewd.endpoints_with_data, 0) as endpoints_with_org_data,
     COALESCE(vnod.no_org_data_endpoints, 0) as no_org_data_endpoints,
-    COALESCE(vae.accessible_endpoints, 0) as accessible_endpoints,
-    COALESCE(vie.inaccessible_endpoints, 0) as inaccessible_endpoints,
     COALESCE(vo.organization_count, 0) as organization_count,
     CASE
         WHEN COALESCE(ve.total_endpoints, 0) = 0 THEN 0
@@ -245,8 +192,6 @@ FROM all_vendors av
 LEFT JOIN vendor_endpoints ve ON av.vendor_name = ve.vendor_name
 LEFT JOIN vendor_endpoints_with_data vewd ON av.vendor_name = vewd.vendor_name
 LEFT JOIN vendor_no_org_data vnod ON av.vendor_name = vnod.vendor_name
-LEFT JOIN vendor_accessible_endpoints vae ON av.vendor_name = vae.vendor_name
-LEFT JOIN vendor_inaccessible_endpoints vie ON av.vendor_name = vie.vendor_name
 LEFT JOIN vendor_organizations vo ON av.vendor_name = vo.vendor_name
 LEFT JOIN developers_empty_bundles deb ON av.vendor_name = deb.vendor_name
 LEFT JOIN vendors_sharing_list_sources vsls ON av.vendor_name = vsls.vendor_name
