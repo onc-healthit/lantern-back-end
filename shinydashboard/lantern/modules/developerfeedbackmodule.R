@@ -295,7 +295,7 @@ developerfeedbackmodule_UI <- function(id) {
           font-weight: 600;
         }
         
-        /* Disabled card state - used for CHPL-only cards when Others filter is selected */
+        /* Disabled card state - used for CHPL-only cards when Non-CHPL is selected */
         .card-disabled {
           opacity: 0.45;
           pointer-events: none;
@@ -319,7 +319,7 @@ developerfeedbackmodule_UI <- function(id) {
 
       # ── TAB 1: Service Base URL Quality (CHPL / Developer level) ─────────
       tabPanel(
-        title = "Certified API Developers",
+        title = "API Developers",
         value = "tier1",
 
         fluidRow(style = "margin-top: 20px;",
@@ -329,10 +329,10 @@ developerfeedbackmodule_UI <- function(id) {
                          border-left: 4px solid #1B5A7F;",
               p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
                 tags$strong("About this tab:"),
-                " This tab summarizes how FHIR Bundle URLs registered by Certified API Developers in CHPL are processed by Lantern — including whether bundles are accessible and return endpoint and organization data.",
+                " This tab summarizes how FHIR Bundle URLs registered by Certified API Developers in CHPL are processed by Lantern — including whether bundles are accessible and return endpoint and organization data. Similarly, it displays data of API developers that are not registered with CHPL when the Source filter is set to \"Non-CHPL API Developers\".",
                 HTML("<br><br>"),
                 tags$strong("Note:"),
-                " The FHIR endpoints and organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the Certified API Developers - Processing Details table."
+                " The FHIR endpoints and organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the API Developers - Processing Details table."
               )
             )
           )
@@ -344,7 +344,7 @@ developerfeedbackmodule_UI <- function(id) {
             div(class = "modern-card",
               h3(class = "section-header",
                  tags$i(class = "fa fa-database", style = "margin-right: 8px;"),
-                 "Certified API Developers — Processing Summary"),
+                 "API Developers — Processing Summary"),
 
               # Timestamp status bar
               div(style = "background: #e8f4f8; border-left: 4px solid #17a2b8; padding: 8px 14px;
@@ -460,7 +460,7 @@ developerfeedbackmodule_UI <- function(id) {
               div(style = "margin-top: 20px;",
                 h4(class = "subsection-header",
                    tags$i(class = "fa fa-table", style = "margin-right: 5px;"),
-                   "Certified API Developers — Processing Details"),
+                   "API Developers — Processing Details"),
                 p(style = "color: #5a6c7d; font-size: 0.9em; margin-bottom: 10px;",
                   "Complete list of all developers showing endpoints, organizations extracted, and data completeness."
                 ),
@@ -469,7 +469,10 @@ developerfeedbackmodule_UI <- function(id) {
                     selectInput(
                       inputId = ns("source_filter"),
                       label = "Source:",
-                      choices = c("CHPL Certified API Developers", "Others"),
+                      choices = c(
+                        "CHPL Certified API Developers" = "CHPL Certified API Developers",
+                        "Non-CHPL API Developers" = "Others"
+                      ),
                       selected = "CHPL Certified API Developers"
                     )
                   ),
@@ -509,10 +512,10 @@ developerfeedbackmodule_UI <- function(id) {
                          border-left: 4px solid #1B5A7F;",
               p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
                 tags$strong("About this tab:"),
-                " This tab summarizes the organization details extracted from FHIR bundles published by Certified API Developers — including organization name, address, and facility-level identifiers as described in § 170.404(b)(2).",
+                " This tab summarizes the organization details extracted from FHIR bundles published by Certified API Developers — including organization name, address, and facility-level identifiers as described in § 170.404(b)(2). Similarly, it displays data of API developers that are not registered with CHPL when the Source filter is set to \"Non-CHPL API Developers\".",
                 HTML("<br><br>"),
                 tags$strong("Note:"),
-                " The organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the Certified API Developers - Processing Details table."
+                " The organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the API Developers - Processing Details table."
               )
             )
           )
@@ -639,7 +642,11 @@ developerfeedbackmodule_UI <- function(id) {
               selectInput(
                 inputId = ns("org_source_filter"),
                 label = "Source:",
-                choices = c("All", "CHPL Certified API Developers", "Non-CHPL"),
+                choices = c(
+                  "All" = "All",
+                  "CHPL Certified API Developers" = "CHPL Certified API Developers",
+                  "Non-CHPL API Developers" = "Non-CHPL"
+                ),
                 selected = "All"
               ),
               selectInput(
@@ -756,6 +763,7 @@ developerfeedbackmodule <- function(
 
   # Handle click on Developers w/ No Org Data card — toggle filter
   observeEvent(input$no_org_data_card_click, {
+    if (isTRUE(input$source_filter == "Others")) return()
     if (identical(table_filter(), "no_org_data")) {
       table_filter(NULL)  # toggle off
       session$sendCustomMessage("toggleCardActive", list(cardId = ns("no_org_data_card"), active = FALSE))
@@ -769,19 +777,20 @@ developerfeedbackmodule <- function(
     }
   })
 
-  # Reset filter button — clears all card filters and resets source filter to "CHPL Developers"
-  # When "Others" is selected, disable the 3 CHPL-only cards (FHIR bundle data is CHPL-only).
-  # When "CHPL Developers" is selected, re-enable them.
+  # All four issue cards show CHPL-only counts. Disable them when Non-CHPL is selected.
   observeEvent(input$source_filter, {
     is_others <- isTRUE(input$source_filter == "Others")
-    chpl_only_ids <- c(ns("empty_bundles_card"), ns("shared_sources_card"), ns("shared_endpoints_card"))
+    chpl_only_ids <- c(
+      ns("empty_bundles_card"),
+      ns("shared_sources_card"),
+      ns("shared_endpoints_card"),
+      ns("no_org_data_card")
+    )
     for (card_id in chpl_only_ids) {
       session$sendCustomMessage("toggleCardDisabled", list(cardId = card_id, disabled = is_others))
     }
-    session$sendCustomMessage("toggleCardDisabled", list(cardId = ns("no_org_data_card"), disabled = FALSE))
-    # If a CHPL-only card filter was active, clear it
-    if (is_others && !is.null(table_filter()) &&
-        table_filter() %in% c("has_empty_bundle", "shares_list_source", "shares_fhir_endpoints")) {
+    # Clear any active CHPL-only card filter when switching to Non-CHPL.
+    if (is_others && !is.null(table_filter())) {
       table_filter(NULL)
       for (card_id in chpl_only_ids) {
         session$sendCustomMessage("toggleCardActive", list(cardId = card_id, active = FALSE))
@@ -1116,7 +1125,20 @@ developerfeedbackmodule <- function(
   output$prob_orgs_summary <- renderUI({
     data   <- problematic_orgs()
     vendor <- input$vendor_filter
-    label  <- if (is.null(vendor) || vendor == "All Developers") "All Developers" else vendor
+    source <- input$org_source_filter
+    developer_label <- if (is.null(vendor) || vendor == "All Developers") "All Developers" else vendor
+    source_label <- if (!is.null(source) && source == "CHPL Certified API Developers") {
+      "CHPL"
+    } else if (!is.null(source) && source == "Non-CHPL") {
+      "Non-CHPL"
+    } else {
+      NULL
+    }
+    label <- if (is.null(source_label)) {
+      developer_label
+    } else {
+      paste(source_label, developer_label, sep = " - ")
+    }
     count  <- nrow(data)
     tags$p(
       style = "color: #5a6c7d; font-size: 0.9em; margin: 4px 0 10px 0;",
@@ -1130,7 +1152,7 @@ developerfeedbackmodule <- function(
     filename = function() {
       vendor <- input$vendor_filter
       label  <- if (is.null(vendor) || vendor == "All Developers") "all" else gsub("[^a-zA-Z0-9]", "_", tolower(vendor))
-      paste0("problematic_organizations_", label, "_", Sys.Date(), ".csv")
+      paste0("organizations_needing_review_", label, "_", Sys.Date(), ".csv")
     },
     content = function(file) {
       write.csv(problematic_orgs(), file, row.names = FALSE)
@@ -1154,7 +1176,7 @@ developerfeedbackmodule <- function(
       style = "background: #f0f7ff; border: 2px solid #1B5A7F; height: 100%; box-sizing: border-box;",
       div(class = "metric-title",
         tags$i(class = "fa fa-info-circle", style = "margin-right: 5px; color: #1B5A7F;"),
-        tags$strong(style = "color: #1B5A7F;", "Coverage Overview")
+        tags$strong(style = "color: #1B5A7F;", "CHPL Data Coverage Overview")
       ),
       tags$table(style = "width: 100%; font-size: 0.88em; margin-top: 8px; border-collapse: collapse;",
         tags$tr(
@@ -1222,17 +1244,11 @@ developerfeedbackmodule <- function(
     bind_rows(chpl_rows, non_chpl_rows)
   })
 
-  # Filtered card counts — sourced from combined CHPL+non-CHPL data, deduplicated to developer level
-  # Cards always show developer counts (not bundle URL counts)
+  # Card counts are always CHPL-only and do not change with the Source filter.
+  # Cards always show developer counts (not bundle URL counts).
   filtered_data_issues_counts <- reactive({
     dev_data <- all_data_issues()
-    source_filter_val <- input$source_filter
-
-    if (!is.null(source_filter_val) && source_filter_val == "CHPL Certified API Developers") {
-      dev_data <- dev_data[dev_data$is_chpl_developer == TRUE, ]
-    } else if (!is.null(source_filter_val) && source_filter_val == "Others") {
-      dev_data <- dev_data[dev_data$is_chpl_developer == FALSE, ]
-    }
+    dev_data <- dev_data[dev_data$is_chpl_developer == TRUE, ]
 
     # Deduplicate to developer level for card counts
     unique_devs <- dev_data[!duplicated(dev_data$developer_name), ]
@@ -1682,8 +1698,7 @@ developerfeedbackmodule <- function(
     )
   })
   
-  # Data Issues outputs — sourced from filtered_data_issues_counts() so cards
-  # reflect the currently selected Source filter
+  # Data Issues outputs — always sourced from CHPL data.
   output$developers_no_org_data_count <- renderText({
     format(filtered_data_issues_counts()$developers_with_no_org_data_count, big.mark = ",")
   })
@@ -1815,7 +1830,7 @@ developerfeedbackmodule <- function(
       defaultSorted = list(group_key = "asc", developer_name = "asc"),
       columns = list(
         developer_name = colDef(
-          name = "Certified API Developer",
+          name = "API Developer Name",
           minWidth = 180,
           style = list(fontWeight = 600, color = "#2c3e50")
         ),
@@ -1833,13 +1848,13 @@ developerfeedbackmodule <- function(
         ),
         total_endpoints = colDef(
           name = "Total Endpoints",
-          width = 100,
+          width = 120,
           format = colFormat(separators = TRUE),
           align = "center"
         ),
         endpoints_with_org_data = colDef(
-          name = "With Org Data",
-          width = 100,
+          name = "Endpoints linked to Organizations",
+          width = 145,
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
@@ -1848,8 +1863,8 @@ developerfeedbackmodule <- function(
           }
         ),
         no_org_data_endpoints = colDef(
-          name = "Endpoints Without Org Data",
-          width = 100,
+          name = "Endpoints not linked to Organizations",
+          width = 145,
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
@@ -1858,8 +1873,8 @@ developerfeedbackmodule <- function(
           }
         ),
         organization_count = colDef(
-          name = "Organizations",
-          width = 105,
+          name = "Total Organizations",
+          width = 125,
           format = colFormat(separators = TRUE),
           align = "center",
           style = function(value) {
@@ -1869,7 +1884,7 @@ developerfeedbackmodule <- function(
         ),
         has_empty_bundle = colDef(
           name = "FHIR Bundle Issues",
-          width = 110,
+          width = 130,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
@@ -1889,7 +1904,7 @@ developerfeedbackmodule <- function(
         ),
         shares_list_source = colDef(
           name = "Shared FHIR Bundles",
-          width = 145,
+          width = 130,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
@@ -1909,7 +1924,7 @@ developerfeedbackmodule <- function(
         ),
         shares_fhir_endpoints = colDef(
           name = "Shared FHIR Endpoints",
-          width = 150,
+          width = 130,
           align = "center",
           cell = function(value) {
             if (isTRUE(value)) {
@@ -1928,7 +1943,7 @@ developerfeedbackmodule <- function(
           }
         ),
         has_missing_org_data = colDef(
-          name = "Missing Org Data",
+          name = "Missing Organization Data",
           width = 130,
           align = "center",
           cell = function(value) {
@@ -2122,24 +2137,24 @@ developerfeedbackmodule <- function(
   format_for_csv <- function(data) {
     data %>%
       transmute(
-        `Certified API Developer`    = developer_name,
-        `FHIR Bundle URL`            = list_source,
-        `Total Endpoints`            = total_endpoints,
-        `With Org Data`              = endpoints_with_org_data,
-        `Endpoints Without Org Data` = no_org_data_endpoints,
-        `Organizations`              = organization_count,
-        `Missing Org Data`           = ifelse(!is.na(no_org_data_endpoints) & no_org_data_endpoints > 0, "Yes", "No"),
-        `FHIR Bundle Issues`         = ifelse(has_empty_bundle, "Yes", "No"),
-        `Shared FHIR Bundles`        = ifelse(shares_list_source, "Yes", "No"),
-        `Shared FHIR Endpoints`      = ifelse(shares_fhir_endpoints, "Yes", "No"),
-        `Comments`                   = error_message
+        `API Developer Name`                  = developer_name,
+        `FHIR Bundle URL`                     = list_source,
+        `Total Endpoints`                     = total_endpoints,
+        `Endpoints linked to Organizations`   = endpoints_with_org_data,
+        `Endpoints not linked to Organizations` = no_org_data_endpoints,
+        `Total Organizations`                 = organization_count,
+        `Missing Organization Data`           = ifelse(!is.na(no_org_data_endpoints) & no_org_data_endpoints > 0, "Yes", "No"),
+        `FHIR Bundle Issues`                  = ifelse(has_empty_bundle, "Yes", "No"),
+        `Shared FHIR Bundles`                 = ifelse(shares_list_source, "Yes", "No"),
+        `Shared FHIR Endpoints`               = ifelse(shares_fhir_endpoints, "Yes", "No"),
+        `Comments`                            = error_message
       )
   }
 
   # Tier 1 download handler: highlighted developers (empty bundles OR sharing FHIR bundle URL)
   output$download_highlighted_report <- downloadHandler(
     filename = function() {
-      paste0("highlighted_developers_", Sys.Date(), ".csv")
+      paste0("developers_needing_review_", Sys.Date(), ".csv")
     },
     content = function(file) {
       data <- apply_source_filter(all_data_issues())
@@ -2155,7 +2170,7 @@ developerfeedbackmodule <- function(
   # Tier 1 download handler: all developers
   output$download_tier1_report <- downloadHandler(
     filename = function() {
-      paste0("chpl_developer_service_base_url_report_", Sys.Date(), ".csv")
+      paste0("developers_data_quality_report_", Sys.Date(), ".csv")
     },
     content = function(file) {
       data <- apply_source_filter(all_data_issues())
@@ -2181,7 +2196,7 @@ developerfeedbackmodule <- function(
   # Tier 2 (Organization) download handler
   output$download_feedback_report <- downloadHandler(
     filename = function() {
-      paste0("service_base_url_data_quality_report_", Sys.Date(), ".csv")
+      paste0("organizations_data_quality_report_", Sys.Date(), ".csv")
     },
     content = function(file) {
       data <- filtered_org_data()
