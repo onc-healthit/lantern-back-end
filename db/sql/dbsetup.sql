@@ -4036,9 +4036,19 @@ ORDER BY
 CREATE UNIQUE INDEX idx_mv_developer_data_issues_vendor ON mv_developer_data_issues(vendor_name);
 CREATE INDEX idx_mv_developer_data_issues_no_org_data ON mv_developer_data_issues(no_org_data_endpoints);
 
-DROP TABLE IF EXISTS endpoint_query_errors;
+DROP TABLE IF EXISTS endpoint_query_errors CASCADE;
 
 CREATE TABLE IF NOT EXISTS endpoint_query_errors (
+    id              SERIAL PRIMARY KEY,
+    list_source     VARCHAR(500),
+    error_message   TEXT,
+    queried_at      TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+DROP TABLE IF EXISTS endpoint_query_errors_history;
+
+CREATE TABLE IF NOT EXISTS endpoint_query_errors_history (
     id              SERIAL PRIMARY KEY,
     list_source     VARCHAR(500),
     error_message   TEXT,

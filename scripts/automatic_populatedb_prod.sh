@@ -39,6 +39,12 @@ fi
 echo "$(date +"%Y-%m-%d %H:%M:%S") - Populating db with endpoint information..." >> $log_file
 
 if docker exec lantern-back-end-endpoint_manager-1 /etc/lantern/populatedb.sh; then
+  echo "$(date +"%Y-%m-%d %H:%M:%S") - Inserting old CHPL query errors into its history table..." >> $log_file
+
+  docker exec lantern-back-end-postgres-1 psql -U lantern -d lantern -c "INSERT INTO endpoint_query_errors_history(list_source, error_message, queried_at, created_at) SELECT list_source, error_message, queried_at, created_at FROM endpoint_query_errors WHERE created_at < '$population_job_start_datetime';" >> $log_file 2>&1 || {
+    echo "$(date +"%Y-%m-%d %H:%M:%S") - Failed to insert old CHPL query errors into its history table." >> $log_file
+  }
+  
   echo "$(date +"%Y-%m-%d %H:%M:%S") - Deleting old CHPL query errors..." >> $log_file
 
   docker exec lantern-back-end-postgres-1 psql -U lantern -d lantern -c "DELETE FROM endpoint_query_errors WHERE created_at < '$population_job_start_datetime';" >> $log_file 2>&1 || {
