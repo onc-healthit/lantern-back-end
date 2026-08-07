@@ -183,6 +183,8 @@ function(input, output, session) { #nolint
                 5. The validation rules and US-core references are mentioned along with a summary of insights + suggestions for the overall organization data assessment.<br/>
                 6. CSV file downloads for the above-mentioned organization data insights.<br/><br/>
 
+                <b>Note</b>: The FHIR endpoints and organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the Certified API Developers - Processing Details table.<br/><br/>
+
                 <p> To view the previous release notes, please have a look at <a href="https://github.com/onc-healthit/lantern-back-end/releases">Lantern releases</a>.</p>')),
       easyClose = TRUE
     ))

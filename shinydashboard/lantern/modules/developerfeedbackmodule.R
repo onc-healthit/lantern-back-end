@@ -319,7 +319,7 @@ developerfeedbackmodule_UI <- function(id) {
 
       # ── TAB 1: Service Base URL Quality (CHPL / Developer level) ─────────
       tabPanel(
-        title = "Certified API Developer",
+        title = "Certified API Developers",
         value = "tier1",
 
         fluidRow(style = "margin-top: 20px;",
@@ -329,7 +329,10 @@ developerfeedbackmodule_UI <- function(id) {
                          border-left: 4px solid #1B5A7F;",
               p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
                 tags$strong("About this tab:"),
-                " This tab summarizes how FHIR Bundle URLs registered by Certified API Developers in CHPL are processed by Lantern — including whether bundles are accessible and return endpoint and organization data."
+                " This tab summarizes how FHIR Bundle URLs registered by Certified API Developers in CHPL are processed by Lantern — including whether bundles are accessible and return endpoint and organization data.",
+                HTML("<br><br>"),
+                tags$strong("Note:"),
+                " The FHIR endpoints and organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the Certified API Developers - Processing Details table."
               )
             )
           )
@@ -341,7 +344,7 @@ developerfeedbackmodule_UI <- function(id) {
             div(class = "modern-card",
               h3(class = "section-header",
                  tags$i(class = "fa fa-database", style = "margin-right: 8px;"),
-                 "Certified API Developer — Processing Summary"),
+                 "Certified API Developers — Processing Summary"),
 
               # Timestamp status bar
               div(style = "background: #e8f4f8; border-left: 4px solid #17a2b8; padding: 8px 14px;
@@ -457,7 +460,7 @@ developerfeedbackmodule_UI <- function(id) {
               div(style = "margin-top: 20px;",
                 h4(class = "subsection-header",
                    tags$i(class = "fa fa-table", style = "margin-right: 5px;"),
-                   "All Developers with Data Issues"),
+                   "Certified API Developers — Processing Details"),
                 p(style = "color: #5a6c7d; font-size: 0.9em; margin-bottom: 10px;",
                   "Complete list of all developers showing endpoints, organizations extracted, and data completeness."
                 ),
@@ -506,7 +509,10 @@ developerfeedbackmodule_UI <- function(id) {
                          border-left: 4px solid #1B5A7F;",
               p(style = "margin: 0; color: #5a6c7d; line-height: 1.6;",
                 tags$strong("About this tab:"),
-                " This tab summarizes the organization details extracted from FHIR bundles published by Certified API Developers — including organization name, address, and facility-level identifiers as described in § 170.404(b)(2)."
+                " This tab summarizes the organization details extracted from FHIR bundles published by Certified API Developers — including organization name, address, and facility-level identifiers as described in § 170.404(b)(2).",
+                HTML("<br><br>"),
+                tags$strong("Note:"),
+                " The organizations counts and data that are visible on this tab are rendered using the data populated in Lantern. For any discrepancies present between the above data and the contents of FHIR bundles, the justification is provided in the Comments column of the Certified API Developers - Processing Details table."
               )
             )
           )
