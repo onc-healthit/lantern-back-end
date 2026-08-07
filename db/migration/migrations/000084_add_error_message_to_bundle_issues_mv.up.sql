@@ -9,7 +9,7 @@ BEGIN;
 --   sharing_group_id: Assign the same integer to all developers whose resolved FHIR endpoint
 --     URL sets are identical, enabling visual peer-grouping in the UI without adding visible
 --     columns. Developers with no sharing peer get NULL.
--- Depends on: mv_developer_data_issues (migration 000079),
+-- Depends on: mv_developer_data_issues (migration 000081),
 --             endpoint_query_errors (migration 000083)
 -- ========================================
 

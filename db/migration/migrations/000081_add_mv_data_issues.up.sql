@@ -1,7 +1,7 @@
 BEGIN;
 
 -- ========================================
--- Migration 000079: Add Data Issues Materialized Views
+-- Migration 000081: Add Data Issues Materialized Views
 -- ========================================
 -- Purpose: Create materialized views to track data quality issues for developers
 -- Tracks:

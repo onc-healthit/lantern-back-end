@@ -1,6 +1,6 @@
 BEGIN;
 
--- Restore mv_developer_bundle_issues to its migration 000079 state (no error_message column)
+-- Restore mv_developer_bundle_issues to its migration 000081 state (no error_message column)
 
 DROP MATERIALIZED VIEW IF EXISTS mv_developer_bundle_issues;
 
