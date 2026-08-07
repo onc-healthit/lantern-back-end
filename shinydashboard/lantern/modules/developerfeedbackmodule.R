@@ -959,7 +959,12 @@ developerfeedbackmodule <- function(
     where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause))
     where_str   <- if (length(where_parts) > 0) paste("WHERE", paste(where_parts, collapse = " AND ")) else ""
     data_query  <- glue::glue_sql(
-      paste("SELECT * FROM mv_organization_quality", where_str),
+      paste(
+        "SELECT *,",
+        "COALESCE(NULLIF(array_to_string(vendor_names_array, CHR(10)), ''), 'Unknown') AS developer_names",
+        "FROM mv_organization_quality",
+        where_str
+      ),
       .con = db_connection
     )
 
@@ -2184,16 +2189,12 @@ developerfeedbackmodule <- function(
       if (nrow(data) > 0) {
         report_data <- data %>%
           mutate(
-            developer_names = sapply(vendor_names_array, function(x) {
-              if (is.null(x) || length(x) == 0) return("Unknown")
-              paste(x, collapse = "; ")
-            }),
             identifier_issues = ifelse(!has_valid_identifiers, "Missing or incomplete identifier data", "Valid"),
             name_issues = ifelse(!has_valid_name, "Placeholder name or too short", "Valid"),
             address_issues = ifelse(!has_valid_address, "Incomplete address information", "Valid"),
             quality_score = paste0(overall_quality_score, "/3"),
-            conformance_summary = paste0(conformant_identifier_count, "/", total_identifier_count, " (", identifier_conformance_rate, "%)"),
-            us_core_compliant = case_when(
+            conformant_identifiers_percent = paste0(conformant_identifier_count, "/", total_identifier_count, " (", identifier_conformance_rate, "%)"),
+            identifiers_us_core_compliance_check = case_when(
               identifier_conformance_rate == 100 ~ "Fully Compliant",
               identifier_conformance_rate > 0 ~ "Partially Compliant",
               TRUE ~ "Non-Compliant"
@@ -2224,8 +2225,8 @@ developerfeedbackmodule <- function(
             name_issues,
             address_issues,
             quality_score,
-            conformance_summary,
-            us_core_compliant,
+            conformant_identifiers_percent,
+            identifiers_us_core_compliance_check,
             clean_identifier_types,
             clean_identifier_values,
             identifier_status_description
