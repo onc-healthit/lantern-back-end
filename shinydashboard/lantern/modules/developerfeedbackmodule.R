@@ -487,7 +487,7 @@ developerfeedbackmodule_UI <- function(id) {
                   column(width = 3, style = "padding-top: 25px;",
                     downloadButton(
                       outputId = ns("download_tier1_report"),
-                      label = "Download All Developers (CSV)",
+                      label = "Download Developers Data Quality Report (CSV)",
                       class = "btn btn-info btn-sm",
                       icon = icon("download")
                     )
@@ -624,7 +624,7 @@ developerfeedbackmodule_UI <- function(id) {
               uiOutput(ns("prob_orgs_summary")),
               downloadButton(
                 outputId = ns("download_prob_orgs"),
-                label = "Download CSV",
+                label = "Download Organizations Needing Review (CSV)",
                 class = "btn-download btn-sm",
                 icon = icon("download"),
                 style = "font-size: 0.8em; padding: 4px 10px;"
@@ -672,7 +672,7 @@ developerfeedbackmodule_UI <- function(id) {
           column(width = 12, style = "padding-top: 10px; text-align: center;",
             downloadButton(
               outputId = ns("download_feedback_report"),
-              label = "Download Organization Details Report (CSV)",
+              label = "Download Organizations Data Quality Report (CSV)",
               class = "btn-download",
               icon = icon("download")
             )
@@ -1238,7 +1238,7 @@ developerfeedbackmodule <- function(
         shares_list_source  = shares_list_source,
         shares_fhir_endpoints = shares_fhir_endpoints,
         is_chpl_developer   = FALSE,
-        error_message       = NA_character_
+        error_message       = "N/A"
       )
 
     bind_rows(chpl_rows, non_chpl_rows)
