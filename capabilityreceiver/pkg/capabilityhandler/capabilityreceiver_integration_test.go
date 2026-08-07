@@ -12,6 +12,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/capabilityreceiver/pkg/chplmapper"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/config"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager"
 	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/endpointmanager/postgresql"
@@ -262,12 +263,15 @@ func Test_saveMsgInDB(t *testing.T) {
 	defer ctStmt.Close()
 	ctx := context.Background()
 
+	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile("../../testdata/test_chpl_products_info.json")
+	th.Assert(t, err == nil, err)
+
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:                    store,
-		ctx:                      ctx,
-		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
-		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
+		store:           store,
+		ctx:             ctx,
+		chplMatchFile:   "../../testdata/test_chpl_product_mapping.json",
+		softwareListMap: softwareListMap,
 	}
 
 	// populate vendors
@@ -295,10 +299,10 @@ func Test_saveMsgInDB(t *testing.T) {
 	// check that nothing is stored and that saveMsgInDB throws an error if the context is canceled
 	testCtx, cancel := context.WithCancel(context.Background())
 	args["queryArgs"] = capStatQueryArgs{
-		store:                    store,
-		ctx:                      testCtx,
-		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
-		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
+		store:           store,
+		ctx:             testCtx,
+		chplMatchFile:   "../../testdata/test_chpl_product_mapping.json",
+		softwareListMap: softwareListMap,
 	}
 	cancel()
 	err = saveMsgInDB(queueMsg, &args)
@@ -310,10 +314,10 @@ func Test_saveMsgInDB(t *testing.T) {
 
 	// reset context
 	args["queryArgs"] = capStatQueryArgs{
-		store:                    store,
-		ctx:                      context.Background(),
-		chplMatchFile:            "../../testdata/test_chpl_product_mapping.json",
-		chplEndpointListInfoFile: "../../testdata/test_chpl_products_info.json",
+		store:           store,
+		ctx:             context.Background(),
+		chplMatchFile:   "../../testdata/test_chpl_product_mapping.json",
+		softwareListMap: softwareListMap,
 	}
 	// check that new item is stored
 	err = saveMsgInDB(queueMsg, &args)

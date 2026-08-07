@@ -47,7 +47,10 @@ func AppendQueryError(errorFilePath, listSource, errorMsg string) {
 	defer f.Close()
 
 	if !fileExists {
-		f.WriteString("queried_at,list_source,error_message\n")
+		if _, err := f.WriteString("queried_at,list_source,error_message\n"); err != nil {
+			log.Warnf("Failed to write to error file: %v", err)
+			return
+		}
 	}
 
 	escapedMsg := strings.ReplaceAll(errorMsg, "\"", "\"\"")
@@ -56,7 +59,9 @@ func AppendQueryError(errorFilePath, listSource, errorMsg string) {
 		time.Now().UTC().Format(time.RFC3339),
 		escapedSource,
 		escapedMsg)
-	f.WriteString(line)
+	if _, err := f.WriteString(line); err != nil {
+		log.Warnf("Failed to write to error file: %v", err)
+	}
 }
 
 // State Payer list
@@ -210,15 +215,6 @@ var maximusURL = "https://documents.maximus.care"
 var tenzingURL = "https://tenzing.docs.apiary.io/#introduction/fhir-endpoints"
 var inpracsysURL = "https://inpracsys.com/fhir/"
 
-var ontadaURL = "https://g2fhir-int.mckesson.com/docs/index.html"
-var mdlandURL = "https://api-fhir-proxy-2.mdland.net/"
-var abeoURL = "https://www.crystalpm.com/FHIRServiceURLs.csv"
-var nextechURL2 = "https://www.nextech.com/developers-portal"
-var icareURL = "https://www.icare.com/endpoints.csv"
-var ezemrxURL = "https://www.ezemrx.com/fhir"
-var smilecdrURL = "https://smilecdr.com/docs/javascript_execution_environment/fhir_rest.html"
-var capellaEHRURL = "https://fhir-g10.capellaehr.com/fhir/r4/endpoints"
-
 var meldrxURL = "https://app.meldrx.com/api/Directories/fhir/endpoints"
 var emr4MDURL = "https://appstudio.interopengine.com/partner/fhirR4endpoints-mednetmedical.json"
 var smartCareURL = "https://dhfhirpresentation.smartcarenet.com/"
@@ -234,18 +230,6 @@ var myeyecarerecordsURL = "https://smartonfhir.myeyecarerecords.com/fhir/Endpoin
 var nextgenAPIURL = "https://www.nextgen.com/patient-access-api"
 var sabiamedURL = "https://www.sabiamed.com/api-endpoints"
 var zoommdURL = "https://www.zoommd.com/zoommd-file-api-endpoints"
-var footholdURL = "https://fhir.footholdtechnology.com/demodb/endpoints"
-var pointclickURL = "https://fhir.pointclickcare.com/"
-var nextgenPracticeURL = "https://www.nextgen.com/api/practice-search"
-var aspmdURL = "https://fhirapi.asp.md:3030/aspmd/fhirserver/fhir_aspmd.asp"
-var axeiumURL = "https://apifhir.axeium.net:8443/reference-server/"
-var curemdURL = "https://www.curemd.com/developer/base-fhir-urls/"
-var emdscloudURL = "https://identity.emdscloud.com/api/api-resource/fhir"
-var betaAfoundriaURL = "https://beta.afoundria.com/api/fhir/urls"
-var ehealthlineURL = "http://ehealthline.com/dev/pdf/FHIR%20API%20Endpoints.htm"
-var interopURL = "https://interop.ehnote.com/fhir"
-var chntechURL = "https://onc.chntechsolutions.com/ic-ehr-fhir-api/"
-var zoobooksystemsURL = "https://zoobooksystems.com/api-documentation/"
 
 func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath string) {
 
@@ -278,7 +262,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if URLsEqual(chplURL, cernerSoarianR4URL) {
 		chplURL = strings.ReplaceAll(chplURL, "github.com", "raw.githubusercontent.com")
 		chplURL = strings.Replace(chplURL, "/blob", "", 1)
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, cernerGitHubURL) {
 		CernerBundleParser(chplURL, fileToWriteTo)
 		// } else if URLsEqual(chplURL, techCareURL) {
@@ -286,7 +270,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if URLsEqual(chplURL, carefluenceURL) {
 		CarefluenceWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, bizmaticsURL) {
-		BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://prognocis.com/fhir/FHIR_FILES/fhirtest.json", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, assureCareURL) {
 		CSVParser("https://ipatientcare.com/wp-content/uploads/2022/10/fhir-base-urls.csv", fileToWriteTo, "./fhir-base-urls.csv", 1, 2, true, 1, -1)
 	} else if URLsEqual(chplURL, practiceSuiteURL) {
@@ -338,7 +322,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if chplURL == varianmedicalURL {
 		VarianMedicalWebscraper(chplURL+"dhit/basepractice/r4/Home/ApiDocumentation", fileToWriteTo)
 	} else if chplURL == caretrackerURL {
-		BundleQuerierParser("https://hag-fhir.amazingcharts.com/ac/endpoints/r4", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://hag-fhir.amazingcharts.com/ac/endpoints/r4", fileToWriteTo, errorFilePath, chplURL)
 	} else if chplURL == zhhealthcareURL {
 		ZHHealthcareWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == medinfoengineeringURL {
@@ -346,21 +330,21 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if chplURL == emedpracticeURL {
 		eMedPracticeWebscraper(chplURL, fileToWriteTo)
 	} else if chplURL == doc_torURL {
-		BundleQuerierParser(chplURL+"/r4", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL+"/r4", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, azaleahealthURL) {
-		BundleQuerierParser(chplURL+"?_format=application/json", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL+"?_format=application/json", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, cloudcraftURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, darenasolutionsURL) {
-		BundleQuerierParser(darenasolutionsURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(darenasolutionsURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, glenwoodsystemsURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, practicefusionURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, universalEHRURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, welligentURL) {
-		BundleQuerierParser("https://fhir.qa.welligent.com/fhir/r4/endpoints", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://fhir.qa.welligent.com/fhir/r4/endpoints", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, astronautURL) {
 		CSVParser("https://astronautehr.com/wp-content/uploads/2022/12/Astronaut-fhir-base-urls.csv", fileToWriteTo, "./astronaut_fhir_base_urls.csv", 1, 2, true, 1, -1)
 	} else if URLsEqual(chplURL, bestpracticesacademyURL) {
@@ -424,7 +408,7 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if URLsEqual(chplURL, landmarkhealthURL) {
 		LandmarkHealthCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, nthtechnologyURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, netsmartURL) {
 		NetsmartCSVParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, omnimdURL) {
@@ -434,17 +418,17 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if URLsEqual(chplURL, medicsdaextURL) {
 		MedicsDAExtAPIWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, azaleahealthr4URL) {
-		BundleQuerierParser("https://app.azaleahealth.com/fhir/R4/Endpoint?_format=application/json", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://app.azaleahealth.com/fhir/R4/Endpoint?_format=application/json", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, dssincURL) {
 		DssIncWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, kodjinURL) {
 		KodjinWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, firelyURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, azurewebsitesURL) {
 		AzureWebsitesURLWebscraper(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, viewmymedURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, imedemrURL) {
 		ImedemrWebscraper("https://icom.imedemr.com/icom50/html/emr/mvc/pages/fhir_endpoints.php", fileToWriteTo)
 	} else if URLsEqual(chplURL, imedemrURL2) {
@@ -464,31 +448,31 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 	} else if URLsEqual(chplURL, healthieURL) {
 		CustomBundleQuerierParser(chplURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, medConnectURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, citiusTechURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, enableHealthcareURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, drchronoURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, visionWebURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, streamlineURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, procentiveURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, tenElevenURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, henryScheinURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, iSALUSURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, healthInnovationURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, CarepathsURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, greenwayURL) {
-		BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(chplURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, mPNSoftwareURL) {
 		CSVParser("https://mpnproxyfhirstore.blob.core.windows.net/serviceurl/ServiceBaseURLs.csv", fileToWriteTo, "./ServiceBaseURLs.csv", 1, 0, true, 3, 2)
 	} else if URLsEqual(chplURL, NexusURL) {
@@ -508,43 +492,43 @@ func QueryCHPLEndpointList(chplURL string, fileToWriteTo string, errorFilePath s
 		// } else if URLsEqual(chplURL, aidboxURL) {
 		// 	AidboxQuerierParser(aidboxURL, fileToWriteTo)
 	} else if URLsEqual(chplURL, dss2URL) {
-		BundleQuerierParser(dss2URL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(dss2URL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, cozevaURL) {
-		BundleQuerierParser("https://fhir.cozeva.com/r4Endpoints.json", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://fhir.cozeva.com/r4Endpoints.json", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, medicaURL) {
-		BundleQuerierParser("https://code.medicasoft.us/fhir_r4_endpoints.json", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://code.medicasoft.us/fhir_r4_endpoints.json", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, hcsincURL) {
-		BundleQuerierParser(hcsincURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(hcsincURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, fhirjunoURL) {
-		BundleQuerierParser(fhirjunoURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(fhirjunoURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, veradigmURL) {
-		BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4?endpointFilter=All", fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser("https://open.platform.veradigm.com/fhirendpoints/download/R4?endpointFilter=All", fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, meldrxURL) {
-		BundleQuerierParser(meldrxURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(meldrxURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, emr4MDURL) {
-		BundleQuerierParser(emr4MDURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(emr4MDURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, smartCareURL) {
-		BundleQuerierParser(smartCareURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(smartCareURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, dssEmergencyURL) {
-		BundleQuerierParser(dssEmergencyURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(dssEmergencyURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, e11URL) {
-		BundleQuerierParser(e11URL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(e11URL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, practicegatewayURL) {
-		BundleQuerierParser(practicegatewayURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(practicegatewayURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, procentiveFhirURL) {
-		BundleQuerierParser(procentiveFhirURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(procentiveFhirURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, fhirDssjunoURL) {
-		BundleQuerierParser(fhirDssjunoURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(fhirDssjunoURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, officeallyURL) {
-		BundleQuerierParser(officeallyURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(officeallyURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, epicURL) {
-		BundleQuerierParser(epicURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(epicURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, myeyecarerecordsURL) {
-		BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, sabiamedURL) {
-		BundleQuerierParser(sabiamedURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(sabiamedURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, myeyecarerecordsURL) {
-		BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo, errorFilePath, chplURL)
+		err = BundleQuerierParser(myeyecarerecordsURL, fileToWriteTo, errorFilePath, chplURL)
 	} else if URLsEqual(chplURL, zoommdURL) {
 		ZoomMDCSVParser("https://www.zoommd.com/FHIRServerURLs_ZoomMD.csv", fileToWriteTo)
 	} else if URLsEqual(chplURL, qualifactsURL) {
