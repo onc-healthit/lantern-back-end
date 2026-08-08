@@ -1,7 +1,6 @@
 package chplendpointquerier
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -83,13 +82,22 @@ func queryAndParseBundle(CHPLURL string, errorFilePath string, listSource string
 		return nil, false
 	}
 
-	endpoints = BundleToLanternFormat(respBody, CHPLURL)
+	var unpopulatedOrgs []string
+	var inactiveOrgCount int
+	endpoints, unpopulatedOrgs, inactiveOrgCount = BundleToLanternFormat(respBody, CHPLURL)
+	if len(unpopulatedOrgs) > 0 {
+		msg := fmt.Sprintf("%d organization(s) parsed from the FHIR bundle were not populated due to missing/invalid Endpoint resource reference.",
+			len(unpopulatedOrgs))
+		log.Warn(msg)
+		AppendQueryError(errorFilePath, listSource, msg)
+	}
+
 	if len(endpoints) > 0 {
 		return endpoints, false
 	}
 
-	if bytes.Contains(respBody, []byte(`"active":false`)) || bytes.Contains(respBody, []byte(`"active": false`)) {
-		emptyErr := fmt.Errorf("FHIR bundle has entries but all organizations have active=false")
+	if inactiveOrgCount > 0 {
+		emptyErr := fmt.Errorf("%d organization(s) parsed from the FHIR bundle were not populated due to active=false (i.e. inactive organizations).", inactiveOrgCount)
 		log.Warn(emptyErr)
 		AppendQueryError(errorFilePath, listSource, emptyErr.Error())
 		return nil, false
