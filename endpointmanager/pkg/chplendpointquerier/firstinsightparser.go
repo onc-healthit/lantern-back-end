@@ -23,7 +23,7 @@ func FirstInsightBundleParser(CHPLURL string, fileToWriteTo string) {
 	}
 
 	// convert bundle data to lantern format
-	EHRLanternFormat, _, _ := BundleToLanternFormat(respBodyEHR, CHPLURL)
+	EHRLanternFormat, _, _, _ := BundleToLanternFormat(respBodyEHR, CHPLURL)
 
 	respBodyCOM, err := helpers.QueryAndReadFile(maximEyesCOMURL, comFilePath)
 	if err != nil {
@@ -31,7 +31,7 @@ func FirstInsightBundleParser(CHPLURL string, fileToWriteTo string) {
 	}
 
 	// convert bundle data to lantern format
-	COMLanternFormat, _, _ := BundleToLanternFormat(respBodyCOM, CHPLURL)
+	COMLanternFormat, _, _, _ := BundleToLanternFormat(respBodyCOM, CHPLURL)
 
 	endpointEntryList.Endpoints = append(EHRLanternFormat, COMLanternFormat...)
 

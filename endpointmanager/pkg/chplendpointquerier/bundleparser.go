@@ -66,7 +66,7 @@ func containsKey(s []int, i int) bool {
 	return false
 }
 
-func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []string, int) {
+func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []string, int, bool) {
 	var lanternEntryList []LanternEntry
 
 	var endpointOrgMap = make(map[string][]int)
@@ -250,6 +250,14 @@ func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []str
 
 	totalOrgCount := keyCount
 
+	// --- No Organization resources found in the bundle at all ---
+	noOrganizationsFound := totalOrgCount == 0
+	if noOrganizationsFound {
+		log.Warnf("Parsed FHIR bundle contains no Organization resources. URL=%s Size=%d bytes",
+			chplURL, len(bundle),
+		)
+	}
+
 	for _, bundleEntry := range structBundle.Entries {
 		var entry LanternEntry
 
@@ -358,5 +366,5 @@ func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []str
 		unpopulatedOrgs = append(unpopulatedOrgs, name)
 	}
 
-	return lanternEntryList, unpopulatedOrgs, inactiveOrgCount
+	return lanternEntryList, unpopulatedOrgs, inactiveOrgCount, noOrganizationsFound
 }

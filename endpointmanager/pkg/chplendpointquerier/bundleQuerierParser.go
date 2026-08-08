@@ -84,7 +84,14 @@ func queryAndParseBundle(CHPLURL string, errorFilePath string, listSource string
 
 	var unpopulatedOrgs []string
 	var inactiveOrgCount int
-	endpoints, unpopulatedOrgs, inactiveOrgCount = BundleToLanternFormat(respBody, CHPLURL)
+	var noOrganizationsFound bool
+	endpoints, unpopulatedOrgs, inactiveOrgCount, noOrganizationsFound = BundleToLanternFormat(respBody, CHPLURL)
+	if noOrganizationsFound {
+		msg := "No Organization resource(s) found in the FHIR bundle."
+		log.Warn(msg)
+		AppendQueryError(errorFilePath, listSource, msg)
+	}
+
 	if len(unpopulatedOrgs) > 0 {
 		msg := fmt.Sprintf("%d organization(s) parsed from the FHIR bundle were not populated due to missing/invalid Endpoint resource reference.",
 			len(unpopulatedOrgs))

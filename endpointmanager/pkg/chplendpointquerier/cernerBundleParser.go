@@ -18,7 +18,7 @@ func CernerBundleParser(CHPLURL string, fileToWriteTo string) {
 	}
 
 	// convert bundle data to lantern format
-	milleniumR4Entries, _, _ := BundleToLanternFormat(respBody, CHPLURL)
+	milleniumR4Entries, _, _, _ := BundleToLanternFormat(respBody, CHPLURL)
 	endpointEntryList.Endpoints = milleniumR4Entries
 
 	respBody, err = helpers.QueryEndpointList(milleniumDSTU2URL)
@@ -26,7 +26,7 @@ func CernerBundleParser(CHPLURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	milleniumDSTU2Entries, _, _ := BundleToLanternFormat(respBody, CHPLURL)
+	milleniumDSTU2Entries, _, _, _ := BundleToLanternFormat(respBody, CHPLURL)
 	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, milleniumDSTU2Entries...)
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)

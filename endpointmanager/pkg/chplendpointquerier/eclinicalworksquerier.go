@@ -18,7 +18,7 @@ func eClinicalWorksBundleParser(CHPLURL string, fileToWriteTo string) {
 	}
 
 	// convert bundle data to lantern format
-	bundleLanternFormat, _, _ := BundleToLanternFormat(respBodyJSON, CHPLURL)
+	bundleLanternFormat, _, _, _ := BundleToLanternFormat(respBodyJSON, CHPLURL)
 
 	endpointEntryList.Endpoints = bundleLanternFormat
 
