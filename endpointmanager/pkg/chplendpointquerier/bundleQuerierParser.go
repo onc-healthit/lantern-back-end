@@ -99,15 +99,14 @@ func queryAndParseBundle(CHPLURL string, errorFilePath string, listSource string
 		AppendQueryError(errorFilePath, listSource, msg)
 	}
 
-	if len(endpoints) > 0 {
-		return endpoints, false
+	if inactiveOrgCount > 0 {
+		msg := fmt.Sprintf("%d organization(s) parsed from the FHIR bundle were not populated due to active=false (i.e. inactive organizations).", inactiveOrgCount)
+		log.Warn(msg)
+		AppendQueryError(errorFilePath, listSource, msg)
 	}
 
-	if inactiveOrgCount > 0 {
-		emptyErr := fmt.Errorf("%d organization(s) parsed from the FHIR bundle were not populated due to active=false (i.e. inactive organizations).", inactiveOrgCount)
-		log.Warn(emptyErr)
-		AppendQueryError(errorFilePath, listSource, emptyErr.Error())
-		return nil, false
+	if len(endpoints) > 0 {
+		return endpoints, false
 	}
 
 	return nil, true
