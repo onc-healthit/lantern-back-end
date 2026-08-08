@@ -19,5 +19,10 @@ func main() {
 		log.Fatalf("ERROR: Missing command-line arguments")
 	}
 
-	chplendpointquerier.QueryCHPLEndpointList(chplURL, fileToWriteTo)
+	errorFilePath := os.Getenv("CHPL_ERROR_FILE")
+	if errorFilePath == "" {
+		errorFilePath = "/etc/lantern/logs/chpl_query_errors.csv"
+	}
+
+	chplendpointquerier.QueryCHPLEndpointList(chplURL, fileToWriteTo, errorFilePath)
 }

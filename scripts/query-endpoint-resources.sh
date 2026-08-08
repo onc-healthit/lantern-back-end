@@ -87,7 +87,7 @@ jq -c '.[]' CHPLEndpointResourcesList.json | while read endpoint; do
    URL=$(echo $endpoint | jq -c -r '.URL')
 
    if [ -n "$URL" ];
-   then 
+   then
       cd ../../endpointmanager/cmd/chplendpointquerier
       echo "$current_datetime - Downloading $NAME Endpoint Sources..." >> $log_file
       go run main.go $URL $FILENAME 2>&1 | tee -a $log_file
@@ -95,3 +95,22 @@ jq -c '.[]' CHPLEndpointResourcesList.json | while read endpoint; do
       echo "$current_datetime - done" >> $log_file
    fi
 done
+
+# Load CHPL query errors into DB
+# The CSV is written by chplendpointquerier (above) on the host.
+# Copy it into the postgres container for a server-side COPY, then clean up.
+ERROR_FILE="${CHPL_ERROR_FILE:-/etc/lantern/logs/chpl_query_errors.csv}"
+if [ -f "$ERROR_FILE" ]; then
+    echo "$current_datetime - Loading CHPL query errors from $ERROR_FILE into DB..." >> $log_file
+    docker cp "$ERROR_FILE" lantern-back-end-postgres-1:/tmp/chpl_query_errors.csv
+    if docker exec lantern-back-end-postgres-1 psql -U lantern -d lantern -c "COPY endpoint_query_errors (queried_at, list_source, error_message) FROM '/tmp/chpl_query_errors.csv' WITH CSV HEADER" >> $log_file 2>&1; then
+        echo "$current_datetime - CHPL query errors loaded successfully" >> $log_file
+        docker exec lantern-back-end-postgres-1 rm -f /tmp/chpl_query_errors.csv
+        rm -f "$ERROR_FILE"
+    else
+        echo "$current_datetime - WARNING: Failed to load CHPL query errors" >> $log_file
+        docker exec lantern-back-end-postgres-1 rm -f /tmp/chpl_query_errors.csv
+    fi
+else
+    echo "$current_datetime - No CHPL query errors file found at $ERROR_FILE" >> $log_file
+fi

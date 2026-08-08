@@ -6,21 +6,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type Entry struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	LogoURL string `json:"logoUrl,omitempty"`
-	URL     string `json:"url"`
-}
-
-type Bundle struct {
-	ResourceType string  `json:"resourceType"`
-	Type         string  `json:"type"`
-	Total        int     `json:"total"`
-	Entry        []Entry `json:"entry"`
-	ID           string  `json:"id"`
-}
-
 func WillowQuerierParser(willowURL string, fileToWriteTo string) {
 
 	var lanternEntryList []LanternEntry
