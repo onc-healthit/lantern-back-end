@@ -447,7 +447,7 @@ developerfeedbackmodule_UI <- function(id) {
                       uiOutput(ns("no_org_data_denom"), inline = TRUE)
                     ),
                     div(style = "margin-top: 8px; font-size: 0.82em; color: #7f8c8d;",
-                      "Developers whose FHIR bundles are missing organization data such as name, address or identifier",
+                      "Developers whose FHIR bundles have missing/inactive organizations or missing/invalid Organization-to-Endpoint reference(s)",
                       tags$br(),
                       tags$span(style = "color: #1B5A7F; font-size: 0.9em; font-style: italic;",
                         tags$i(class = "fa fa-filter", style = "margin-right: 3px;"),
