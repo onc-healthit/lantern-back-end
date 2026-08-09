@@ -251,7 +251,9 @@ func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []str
 	totalOrgCount := keyCount
 
 	// --- No Organization resources found in the bundle at all ---
-	noOrganizationsFound := totalOrgCount == 0
+	// Only flag this when the bundle actually has entries; an empty bundle
+	// is already reported separately (see "0 entries" warning above).
+	noOrganizationsFound := totalOrgCount == 0 && len(structBundle.Entries) > 0
 	if noOrganizationsFound {
 		log.Warnf("Parsed FHIR bundle contains no Organization resources. URL=%s Size=%d bytes",
 			chplURL, len(bundle),
