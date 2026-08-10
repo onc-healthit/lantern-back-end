@@ -101,6 +101,7 @@ done
 # Copy it into the postgres container for a server-side COPY, then clean up.
 ERROR_FILE="${CHPL_ERROR_FILE:-/etc/lantern/logs/chpl_query_errors.csv}"
 if [ -f "$ERROR_FILE" ]; then
+    chmod 644 "$ERROR_FILE"
     echo "$current_datetime - Loading CHPL query errors from $ERROR_FILE into DB..." >> $log_file
     docker cp "$ERROR_FILE" lantern-back-end-postgres-1:/tmp/chpl_query_errors.csv
     if docker exec lantern-back-end-postgres-1 psql -U lantern -d lantern -c "COPY endpoint_query_errors (queried_at, list_source, error_message) FROM '/tmp/chpl_query_errors.csv' WITH CSV HEADER" >> $log_file 2>&1; then

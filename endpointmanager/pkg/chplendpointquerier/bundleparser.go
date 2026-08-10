@@ -66,7 +66,7 @@ func containsKey(s []int, i int) bool {
 	return false
 }
 
-func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
+func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []string, int, bool) {
 	var lanternEntryList []LanternEntry
 
 	var endpointOrgMap = make(map[string][]int)
@@ -122,6 +122,8 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 			chplURL, len(bundle),
 		)
 	}
+
+	usedOrgKeys := make(map[int]bool)
 
 	for _, bundleEntry := range structBundle.Entries {
 		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
@@ -246,6 +248,18 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 		}
 	}
 
+	totalOrgCount := keyCount
+
+	// --- No Organization resources found in the bundle at all ---
+	// Only flag this when the bundle actually has entries; an empty bundle
+	// is already reported separately (see "0 entries" warning above).
+	noOrganizationsFound := totalOrgCount == 0 && len(structBundle.Entries) > 0
+	if noOrganizationsFound {
+		log.Warnf("Parsed FHIR bundle contains no Organization resources. URL=%s Size=%d bytes",
+			chplURL, len(bundle),
+		)
+	}
+
 	for _, bundleEntry := range structBundle.Entries {
 		var entry LanternEntry
 
@@ -276,14 +290,22 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 				hadAnyMapped := len(endpointOrgMap[endpointId]) > 0
 
 				for _, keyCount := range endpointOrgMap[endpointId] {
-					// If active present and false -> skip this org
-					if status, ok := organizationActive[keyCount]; ok && status == "false" {
-						continue
-					}
-
+					var entry LanternEntry
 					isPersisted = true
+					usedOrgKeys[keyCount] = true
 
 					entry.URL = strings.TrimSpace(entryURL)
+
+					active, ok := organizationActive[keyCount]
+					if ok {
+						entry.OrganizationActive = active
+					}
+
+					// If active present and false -> skip this org
+					if ok && active == "false" {
+						lanternEntryList = append(lanternEntryList, entry)
+						continue
+					}
 
 					orgName, ok := organizationName[keyCount]
 					if ok {
@@ -310,11 +332,6 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 						entry.NPIID = strings.TrimSpace(npiID)
 					}
 
-					active, ok := organizationActive[keyCount]
-					if ok {
-						entry.OrganizationActive = active
-					}
-
 					postalCode, ok := organizationZip[keyCount]
 					if ok {
 						entry.OrganizationZipCode = strings.TrimSpace(postalCode)
@@ -334,5 +351,22 @@ func BundleToLanternFormat(bundle []byte, chplURL string) []LanternEntry {
 		}
 	}
 
-	return lanternEntryList
+	var unpopulatedOrgs []string
+	inactiveOrgCount := 0
+	for i := 0; i < totalOrgCount; i++ {
+		if organizationActive[i] == "false" {
+			inactiveOrgCount++
+		}
+
+		if usedOrgKeys[i] {
+			continue
+		}
+		name := strings.TrimSpace(organizationName[i])
+		if name == "" {
+			name = fmt.Sprintf("organization #%d", i)
+		}
+		unpopulatedOrgs = append(unpopulatedOrgs, name)
+	}
+
+	return lanternEntryList, unpopulatedOrgs, inactiveOrgCount, noOrganizationsFound
 }

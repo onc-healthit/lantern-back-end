@@ -19,14 +19,16 @@ func EpicQuerier(epicURL string, fileToWriteTo string) {
 		log.Fatal(err)
 	}
 
-	endpointEntryList.Endpoints = BundleToLanternFormat(respBody, epicURL)
+	dstu2Entries, _, _, _ := BundleToLanternFormat(respBody, epicURL)
+	endpointEntryList.Endpoints = dstu2Entries
 
 	respBody, err = helpers.QueryEndpointList(R4URL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, BundleToLanternFormat(respBody, epicURL)...)
+	r4Entries, _, _, _ := BundleToLanternFormat(respBody, epicURL)
+	endpointEntryList.Endpoints = append(endpointEntryList.Endpoints, r4Entries...)
 
 	err = WriteCHPLFile(endpointEntryList, fileToWriteTo)
 	if err != nil {
