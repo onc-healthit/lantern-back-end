@@ -1349,7 +1349,7 @@ developerfeedbackmodule <- function(
     summary <- quality_summary()
     
     chart_data <- data.frame(
-      Category = c("Identifier", "Organization Name", "Address"),
+      Category = c("Identifier (min. 1)", "Organization Name", "Address"),
       Complete = c(
         as.numeric(summary$valid_identifier_count),
         as.numeric(summary$valid_name_count),
@@ -1402,9 +1402,9 @@ developerfeedbackmodule <- function(
     id_summary <- identifier_type_summary()
     
     status_data <- data.frame(
-      Status = c("Conformant Identifiers",
+      Status = c("Conformant Identifiers (min. 1 if multiple)",
                  "No Identifier Published",
-                 "Non-Conformant Identifiers"),
+                 "Non-Conformant Identifiers (min. 1 if multiple)"),
       Count = c(
         as.numeric(id_summary$orgs_with_valid),
         as.numeric(id_summary$orgs_with_no_identifiers),
@@ -1425,9 +1425,9 @@ developerfeedbackmodule <- function(
       )
     }
     
-    colors <- c("Conformant Identifiers" = "#28a745",
+    colors <- c("Conformant Identifiers (min. 1 if multiple)" = "#28a745",
                 "No Identifier Published" = "#6c757d",
-                "Non-Conformant Identifiers" = "#D4970A")
+                "Non-Conformant Identifiers (min. 1 if multiple)" = "#D4970A")
     
     ggplot(status_data, aes(x = reorder(Status, Count), y = Count, fill = Status)) +
       geom_col(width = 0.6) +
