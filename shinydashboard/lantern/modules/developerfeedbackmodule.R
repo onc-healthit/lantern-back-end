@@ -932,7 +932,7 @@ developerfeedbackmodule <- function(
   })
   
   # Get individual organization data for detailed views and downloads
-  filtered_org_data <- reactive({
+  get_filtered_org_data <- function(issues_only = FALSE) {
     current_vendor <- input$vendor_filter
     if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
 
@@ -965,7 +965,13 @@ developerfeedbackmodule <- function(
       ""
     }
 
-    where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause))
+    issue_clause <- if (issues_only) {
+      "(NOT has_valid_identifiers OR NOT has_valid_name OR NOT has_valid_address)"
+    } else {
+      ""
+    }
+
+    where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause, issue_clause))
     where_str   <- if (length(where_parts) > 0) paste("WHERE", paste(where_parts, collapse = " AND ")) else ""
     data_query  <- glue::glue_sql(
       paste(
@@ -978,37 +984,64 @@ developerfeedbackmodule <- function(
     )
 
     tbl(db_connection, sql(data_query)) %>% collect()
+  }
+
+  filtered_org_data <- reactive({
+    get_filtered_org_data()
   })
 
   problematic_orgs <- reactive({
-    current_vendor <- input$vendor_filter
-    if (is.null(current_vendor) || current_vendor == "") current_vendor <- "All Developers"
-
-    source_val <- input$org_source_filter
-
-    vendor_clause <- if (current_vendor == "All Developers") {
-      ""
-    } else {
-      glue::glue_sql("vendor_names_array && ARRAY[{vendor}]", vendor = current_vendor, .con = db_connection)
-    }
-
-    source_clause <- if (!is.null(source_val) && source_val == "CHPL Certified API Developers") {
-      "is_chpl_org = TRUE"
-    } else if (!is.null(source_val) && source_val == "Non-CHPL") {
-      "is_chpl_org = FALSE"
-    } else {
-      ""
-    }
-
-    where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause))
-    where_str   <- if (length(where_parts) > 0) paste("WHERE", paste(where_parts, collapse = " AND ")) else ""
-    data_query  <- glue::glue_sql(
-      paste("SELECT organization_name, developer_names, issues FROM mv_problematic_organizations", where_str),
-      .con = db_connection
-    )
-
-    tbl(db_connection, sql(data_query)) %>% collect()
+    get_filtered_org_data(issues_only = TRUE)
   })
+
+  format_org_data_for_csv <- function(data) {
+    data %>%
+      mutate(
+        addresses = str_replace_all(coalesce(addresses_html, ""), "<br/?>", "\n"),
+        identifier_issues = ifelse(!has_valid_identifiers, "Missing or incomplete identifier data", "Valid"),
+        name_issues = ifelse(!has_valid_name, "Placeholder name or too short", "Valid"),
+        address_issues = ifelse(!has_valid_address, "Incomplete address information", "Valid"),
+        quality_score = paste0(overall_quality_score, "/3"),
+        conformant_identifiers_percent = paste0(conformant_identifier_count, "/", total_identifier_count, " (", identifier_conformance_rate, "%)"),
+        identifiers_us_core_compliance_check = case_when(
+          identifier_conformance_rate == 100 ~ "Fully Compliant",
+          identifier_conformance_rate > 0 ~ "Partially Compliant",
+          TRUE ~ "Non-Compliant"
+        ),
+        clean_identifier_types = str_replace_all(identifier_types_html, "<br/>", "; "),
+        clean_identifier_values = str_replace_all(identifier_values_html, "<br/>", "; "),
+        identifier_status_description = case_when(
+          identifier_status == "no_identifiers" ~ "No identifier data provided",
+          identifier_status == "invalid_only" ~ "Has identifiers but all are invalid",
+          identifier_status == "all_valid" ~ "All identifiers are valid",
+          identifier_status == "mixed_valid_invalid" ~ "Mix of valid and invalid identifiers",
+          TRUE ~ "Unknown status"
+        )
+      ) %>%
+      select(
+        organization_name,
+        developer_names,
+        addresses,
+        has_valid_identifiers,
+        has_valid_name,
+        has_valid_address,
+        overall_quality_score,
+        conformant_identifier_count,
+        total_identifier_count,
+        identifier_conformance_rate,
+        identifier_conformance_category,
+        identifier_status,
+        identifier_issues,
+        name_issues,
+        address_issues,
+        quality_score,
+        conformant_identifiers_percent,
+        identifiers_us_core_compliance_check,
+        clean_identifier_types,
+        clean_identifier_values,
+        identifier_status_description
+      )
+  }
 
   # Summary statistics using materialized view data
   quality_summary <- reactive({
@@ -1155,7 +1188,7 @@ developerfeedbackmodule <- function(
       paste0("organizations_needing_review_", label, "_", Sys.Date(), ".csv")
     },
     content = function(file) {
-      write.csv(problematic_orgs(), file, row.names = FALSE)
+      write.csv(format_org_data_for_csv(problematic_orgs()), file, row.names = FALSE)
     }
   )
 
@@ -2200,62 +2233,7 @@ developerfeedbackmodule <- function(
     },
     content = function(file) {
       data <- filtered_org_data()
-
-      if (nrow(data) > 0) {
-        report_data <- data %>%
-          mutate(
-            identifier_issues = ifelse(!has_valid_identifiers, "Missing or incomplete identifier data", "Valid"),
-            name_issues = ifelse(!has_valid_name, "Placeholder name or too short", "Valid"),
-            address_issues = ifelse(!has_valid_address, "Incomplete address information", "Valid"),
-            quality_score = paste0(overall_quality_score, "/3"),
-            conformant_identifiers_percent = paste0(conformant_identifier_count, "/", total_identifier_count, " (", identifier_conformance_rate, "%)"),
-            identifiers_us_core_compliance_check = case_when(
-              identifier_conformance_rate == 100 ~ "Fully Compliant",
-              identifier_conformance_rate > 0 ~ "Partially Compliant",
-              TRUE ~ "Non-Compliant"
-            ),
-            clean_identifier_types = str_replace_all(identifier_types_html, "<br/>", "; "),
-            clean_identifier_values = str_replace_all(identifier_values_html, "<br/>", "; "),
-            identifier_status_description = case_when(
-              identifier_status == "no_identifiers" ~ "No identifier data provided",
-              identifier_status == "invalid_only" ~ "Has identifiers but all are invalid",
-              identifier_status == "all_valid" ~ "All identifiers are valid",
-              identifier_status == "mixed_valid_invalid" ~ "Mix of valid and invalid identifiers",
-              TRUE ~ "Unknown status"
-            )
-          ) %>%
-          select(
-            organization_name,
-            developer_names,
-            has_valid_identifiers,
-            has_valid_name,
-            has_valid_address,
-            overall_quality_score,
-            conformant_identifier_count,
-            total_identifier_count,
-            identifier_conformance_rate,
-            identifier_conformance_category,
-            identifier_status,
-            identifier_issues,
-            name_issues,
-            address_issues,
-            quality_score,
-            conformant_identifiers_percent,
-            identifiers_us_core_compliance_check,
-            clean_identifier_types,
-            clean_identifier_values,
-            identifier_status_description
-          )
-        
-        write.csv(report_data, file, row.names = FALSE)
-      } else {
-        empty_data <- data.frame(
-          organization_name = character(0),
-          has_valid_identifiers = logical(0),
-          message = "No data available for selected vendor"
-        )
-        write.csv(empty_data, file, row.names = FALSE)
-      }
+      write.csv(format_org_data_for_csv(data), file, row.names = FALSE)
     }
   )
 }
