@@ -1404,7 +1404,7 @@ developerfeedbackmodule <- function(
     status_data <- data.frame(
       Status = c("Conformant Identifiers",
                  "No Identifier Published",
-                 "Identifier Format Not Recognized"),
+                 "Non-Conformant Identifiers"),
       Count = c(
         as.numeric(id_summary$orgs_with_valid),
         as.numeric(id_summary$orgs_with_no_identifiers),
@@ -1427,7 +1427,7 @@ developerfeedbackmodule <- function(
     
     colors <- c("Conformant Identifiers" = "#28a745",
                 "No Identifier Published" = "#6c757d",
-                "Identifier Format Not Recognized" = "#D4970A")
+                "Non-Conformant Identifiers" = "#D4970A")
     
     ggplot(status_data, aes(x = reorder(Status, Count), y = Count, fill = Status)) +
       geom_col(width = 0.6) +
