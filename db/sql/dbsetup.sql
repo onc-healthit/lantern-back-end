@@ -3865,7 +3865,7 @@ vendor_no_org_data AS (
 vendor_organizations AS (
     SELECT
         COALESCE(v.name, 'Unknown') as vendor_name,
-        COUNT(DISTINCT feo.organization_name) as organization_count
+        COUNT(DISTINCT feo.id) as organization_count
     FROM fhir_endpoint_organizations feo
     INNER JOIN fhir_endpoint_organizations_map feom ON feo.id = feom.org_database_id
     INNER JOIN fhir_endpoints fe ON feom.id = fe.id
@@ -4045,7 +4045,7 @@ bundle_no_org_data AS (
 bundle_organizations AS (
     SELECT
         fe.list_source,
-        COUNT(DISTINCT feo.organization_name) AS organization_count
+        COUNT(DISTINCT feo.id) AS organization_count
     FROM fhir_endpoint_organizations feo
     INNER JOIN fhir_endpoint_organizations_map feom ON feo.id = feom.org_database_id
     INNER JOIN fhir_endpoints fe ON feom.id = fe.id
