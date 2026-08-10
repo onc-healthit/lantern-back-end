@@ -1404,7 +1404,7 @@ developerfeedbackmodule <- function(
     status_data <- data.frame(
       Status = c("Conformant Identifiers (min. 1 if multiple)",
                  "No Identifier Published",
-                 "Non-Conformant Identifiers (min. 1 if multiple)"),
+                 "Non-Conformant Identifiers (all if multiple)"),
       Count = c(
         as.numeric(id_summary$orgs_with_valid),
         as.numeric(id_summary$orgs_with_no_identifiers),
@@ -1427,7 +1427,7 @@ developerfeedbackmodule <- function(
     
     colors <- c("Conformant Identifiers (min. 1 if multiple)" = "#28a745",
                 "No Identifier Published" = "#6c757d",
-                "Non-Conformant Identifiers (min. 1 if multiple)" = "#D4970A")
+                "Non-Conformant Identifiers (all if multiple)" = "#D4970A")
     
     ggplot(status_data, aes(x = reorder(Status, Count), y = Count, fill = Status)) +
       geom_col(width = 0.6) +
