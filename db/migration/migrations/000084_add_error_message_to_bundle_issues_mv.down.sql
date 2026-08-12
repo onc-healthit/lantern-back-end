@@ -38,20 +38,36 @@ bundle_no_org_data AS (
         AND sfem.requested_fhir_version = 'None'
     GROUP BY sfem.list_source
 ),
--- Organization count per bundle URL
+-- Preserve each raw organization's bundle relationship, then consolidate using the
+-- same organization-detail fields as mv_organizations_final.
+bundle_organization_groups AS (
+    SELECT DISTINCT
+        fe.list_source,
+        moa.organization_name,
+        moa.identifier_types_html,
+        moa.identifier_values_html,
+        moa.addresses_html,
+        moa.org_urls_html,
+        moa.fhir_versions_html,
+        moa.vendor_names_html,
+        moa.is_chpl_html,
+        moa.identifier_types_csv,
+        moa.identifier_values_csv,
+        moa.addresses_csv,
+        moa.org_urls_csv,
+        moa.fhir_versions_csv,
+        moa.vendor_names_csv,
+        moa.is_chpl_csv
+    FROM mv_organizations_aggregated moa
+    INNER JOIN fhir_endpoint_organizations_map feom ON moa.org_id = feom.org_database_id
+    INNER JOIN fhir_endpoints fe ON feom.id = fe.id
+),
 bundle_organizations AS (
     SELECT
-        fe.list_source,
-        COUNT(DISTINCT feo.id) AS organization_count
-    FROM fhir_endpoint_organizations feo
-    INNER JOIN fhir_endpoint_organizations_map feom ON feo.id = feom.org_database_id
-    INNER JOIN fhir_endpoints fe ON feom.id = fe.id
-    INNER JOIN fhir_endpoints_info fei ON fe.url = fei.url
-    WHERE
-        feo.organization_name IS NOT NULL
-        AND feo.organization_name != ''
-        AND fei.requested_fhir_version = 'None'
-    GROUP BY fe.list_source
+        list_source,
+        COUNT(*) AS organization_count
+    FROM bundle_organization_groups
+    GROUP BY list_source
 ),
 -- Bundle URLs shared by more than one developer
 shared_urls AS (
