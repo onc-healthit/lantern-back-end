@@ -43,7 +43,8 @@ valuesmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_capstat_values
+  sel_capstat_values,
+  is_active
 ) {
 
   ns <- session$ns
@@ -186,7 +187,7 @@ valuesmodule <- function(
   })
 
   get_base_values_sql <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
@@ -221,7 +222,7 @@ valuesmodule <- function(
 
   # Main data query - WITH RACE CONDITION PROTECTION
   paged_capstat_values <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1
@@ -270,7 +271,7 @@ valuesmodule <- function(
 
   # Gets the total number of endpoints that are using the currently selected field
   capstat_value_usage_summary <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()

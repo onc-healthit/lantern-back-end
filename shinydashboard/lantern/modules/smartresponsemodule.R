@@ -273,7 +273,8 @@ smartresponsemodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  is_active
 ) {
 
   ns <- session$ns
@@ -386,7 +387,7 @@ smartresponsemodule <- function(
 
   get_filtered_data <- function(table_val) {
   res <- table_val
-  req(sel_fhir_version(), sel_vendor())
+  req(sel_fhir_version(), sel_vendor(), is_active())
   res <- res %>% filter(fhir_version %in% sel_fhir_version())
   if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
     res <- res %>% filter(vendor_name == sel_vendor())
@@ -434,7 +435,7 @@ smartresponsemodule <- function(
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
     
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, is_active())
     
     # Get the count directly from the materialized view with SQL filtering
     count <- get_selected_smart_count_total(
@@ -541,7 +542,7 @@ smartresponsemodule <- function(
   selected_endpoints <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1
@@ -601,7 +602,7 @@ smartresponsemodule <- function(
   selected_endpoints_without_limit <- reactive({
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, is_active())
     
     # Same query as main but without LIMIT OFFSET
     query_str <- "SELECT url, condensed_organization_names, vendor_name, capability_fhir_version FROM mv_selected_endpoints WHERE 1=1"

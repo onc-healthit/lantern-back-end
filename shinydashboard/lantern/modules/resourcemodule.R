@@ -51,7 +51,8 @@ resourcemodule <- function(  #nolint
   sel_fhir_version,
   sel_vendor,
   sel_resources,
-  sel_operations
+  sel_operations,
+  is_active
 ) {
 
   ns <- session$ns
@@ -64,7 +65,7 @@ resourcemodule <- function(  #nolint
 
   # Compute total pages based on filtered data
   res_total_pages <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_resources())
+    req(sel_fhir_version(), sel_vendor(), sel_resources(), is_active())
 
     count_query <- get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), page_size = -1, offset = -1, search_query = input$res_search_query)
     total <- nrow(count_query)
@@ -164,13 +165,13 @@ resourcemodule <- function(  #nolint
 
   # Original select_operations function unchanged (for plots)
   select_operations <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_resources())
+    req(sel_fhir_version(), sel_vendor(), sel_resources(), is_active())
     get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()))
   })
 
   # Paginated select_operations function for the table - WITH RACE CONDITION PROTECTION
   paginated_select_operations <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_resources())
+    req(sel_fhir_version(), sel_vendor(), sel_resources(), is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1
@@ -295,6 +296,6 @@ resourcemodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), get_endpoint_last_updated(db_tables))
     })
 }

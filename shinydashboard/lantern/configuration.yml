@@ -2,6 +2,7 @@ libraries:
   - "shiny"
   - "shinydashboard"
   - "DBI"
+  - "pool"
   - "readr"
   - "dplyr"
   - "RPostgres"

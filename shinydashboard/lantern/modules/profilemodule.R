@@ -38,7 +38,8 @@ profilemodule <- function(
   sel_fhir_version,
   sel_vendor,
   sel_resource,
-  sel_profile
+  sel_profile,
+  is_active
 ) {
   ns <- session$ns
 
@@ -50,7 +51,7 @@ profilemodule <- function(
 
   # FAST COUNT: Get total count without loading all data
   profile_total_count <- reactive({
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), is_active())
     
     # Count query - much faster than loading all data
     count_query <- "SELECT COUNT(*) as total FROM mv_profiles_paginated WHERE 1=1"
@@ -190,7 +191,7 @@ profilemodule <- function(
 
   # FAST PAGINATION: Only load the 10 rows needed for current page - WITH RACE CONDITION PROTECTION
   selected_fhir_endpoint_profiles <- reactive({
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1

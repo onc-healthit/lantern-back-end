@@ -6,22 +6,12 @@ library(lubridate)
 
 library(glue)
 
-time_until_next_run <- function() {
-  current_time <- Sys.time()
-  message("current_time ", current_time)
-  current_hour <- as.numeric(format(current_time, "%H"))
-  current_minute <- as.numeric(format(current_time, "%M"))
-
-  hours_until_2am <- ifelse(current_hour >= 6, 24 - current_hour + 6, 6 - current_hour)
-  time_until_next_run <- (hours_until_2am * 60 * 60) - (current_minute * 60)
-  message("time_until_next_run: ", time_until_next_run)
-  return(time_until_next_run)
-}
-
-time_duration <- time_until_next_run()
-timer <- reactiveTimer(time_duration * 1000)
-
 # Get the Endpoint export table and clean up for UI
+# Note: the app-wide refresh cadence (time_until_next_run() / the "updater" reactiveTimer) lives
+# in global.R -- it used to be duplicated here as a second, independently-scoped reactiveTimer
+# that fired on a different (non-daily) cadence, which was dead/confusing and risked triggering
+# app_fetcher() outside the intended nightly schedule. That copy has been removed; global.R's
+# updater is the single source of the refresh trigger.
 get_endpoint_export_tbl <- function(db_tables) {
   endpoint_export_tbl <- db_tables$endpoint_export_mv %>%
     collect()
@@ -33,8 +23,8 @@ get_endpoint_organization_list <- function(endpoint) {
     endpoint_name <- splitString[1]
     vendor_name <- splitString[2]
   
-  res <- tbl(db_connection,
-  sql(paste0("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = '", endpoint_name, "' AND vendor_name = '", vendor_name, "' ORDER BY endpoint_names_list"))) %>%
+  query <- glue_sql("SELECT url, UNNEST(endpoint_names) as endpoint_names_list FROM endpoint_export WHERE url = {endpoint_name} AND vendor_name = {vendor_name} ORDER BY endpoint_names_list", endpoint_name = endpoint_name, vendor_name = vendor_name, .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
   collect() %>%
   group_by(url) %>%
   summarise(endpoint_names_list = list(endpoint_names_list)) %>%
@@ -301,38 +291,24 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
   res
 }
 
-get_endpoint_resource_by_op <- function(db_connection, endpointURL, requestedFhirVersion, vendorName, field) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
-      jsonb_array_elements_text(f.operation_resource->'", field, "') as type
-      from fhir_endpoints_info f, vendors v
-      WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-      AND v.name = '", vendorName, "' AND f.vendor_id = v.id"))) %>%
-    collect()
-  res
-}
-
+# Expands operation_resource (a JSONB map of operation -> array of resource types) into
+# Operation/Resource rows in a single query, using jsonb_each() to get the operation keys joined
+# with jsonb_array_elements_text() to expand each key's resource array -- instead of one query to
+# list the operation keys followed by a separate round trip per operation (N+1) to expand each
+# one's resources.
 get_endpoint_resources <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT jsonb_object_keys(f.operation_resource::jsonb) as operations
-         FROM fhir_endpoints_info f, vendors v WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-         AND v.name = '", vendorName, "' AND v.id = f.vendor_id"
-    ))
-  ) %>%
+  query <- glue_sql("SELECT kv.key AS \"Operation\", elem AS \"Resource\"
+         FROM fhir_endpoints_info f, vendors v,
+              jsonb_each(f.operation_resource::jsonb) AS kv(key, value),
+              jsonb_array_elements_text(kv.value) AS elem
+         WHERE f.url = {endpointURL} AND f.requested_fhir_version = {requestedFhirVersion}
+         AND v.name = {vendorName} AND v.id = f.vendor_id",
+    endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, vendorName = vendorName,
+    .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
   collect()
 
-  op_list <- as.list(res$operations)
-  table <- data.frame(matrix(ncol = 2, nrow = 0))
-  colnames(table) <- c("Operation", "Resource")
-
-  if (length(op_list) > 0) {
-    for (op in op_list) {
-      resources <- isolate(get_endpoint_resource_by_op(db_connection, endpointURL, requestedFhirVersion, vendorName, op))
-      newTable <- data.frame("Operation" = c(op), "Resource" = c(resources$type))
-      table <- rbind(table, newTable)
-    }
-  }
-  table
+  res
 }
 
 get_capstat_fields <- function(db_connection) {
@@ -341,21 +317,23 @@ get_capstat_fields <- function(db_connection) {
   return(res)
 }
 
-get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, vendorName, extensionBool) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
+# Returns both required/optional fields and extensions in one query (the "extension" column
+# distinguishes them) -- callers that need just one or the other should filter this result in R
+# rather than calling this function twice, since the underlying query is identical either way and
+# the split was previously happening only after collect() anyway.
+get_endpoint_capstat_fields <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
+  query <- glue_sql("SELECT
       f.url,
       json_array_elements(f.included_fields::json) ->> 'Field' as field,
       json_array_elements(f.included_fields::json) ->> 'Exists' as exist,
       json_array_elements(f.included_fields::json) ->> 'Extension' as extension
       from fhir_endpoints_info f, vendors v
-      WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-      AND v.name = '", vendorName, "' AND f.vendor_id = v.id AND included_fields::text <> 'null'"
-    ))
-  ) %>%
-    collect() %>%
-    filter(extension == extensionBool) %>%
-    select(field, exist)
+      WHERE f.url = {endpointURL} AND f.requested_fhir_version = {requestedFhirVersion}
+      AND v.name = {vendorName} AND f.vendor_id = v.id AND included_fields::text <> 'null'",
+    endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, vendorName = vendorName,
+    .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
+    collect()
 }
 
 get_supported_profiles <- function(db_connection) {
@@ -363,23 +341,26 @@ get_supported_profiles <- function(db_connection) {
 }
 
 get_endpoint_supported_profiles <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
-    res <- tbl(db_connection,
-    sql(paste0("SELECT
+    query <- glue_sql("SELECT
       json_array_elements(f.supported_profiles::json) ->> 'ProfileURL' as profileurl,
       json_array_elements(f.supported_profiles::json) ->> 'ProfileName' as profilename,
       json_array_elements(f.supported_profiles::json) ->> 'Resource' as resource
       from fhir_endpoints_info f, vendors v
-      WHERE f.supported_profiles != 'null' AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-      AND v.name = '", vendorName, "' AND f.vendor_id = v.id"))) %>%
+      WHERE f.supported_profiles != 'null' AND f.url = {endpointURL} AND f.requested_fhir_version = {requestedFhirVersion}
+      AND v.name = {vendorName} AND f.vendor_id = v.id",
+      endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, vendorName = vendorName,
+      .con = db_connection)
+    res <- tbl(db_connection, sql(query)) %>%
     collect()
 
     res
 }
 
-get_org_active_information <- function(db_connection) {
+get_org_active_information <- function(db_connection, org_id) {
 
   res <- tbl(db_connection,
     sql("SELECT org_id, active FROM fhir_endpoint_organization_active")) %>%
+    filter(org_id == !!org_id) %>%
     collect()
 
     res
@@ -394,18 +375,20 @@ get_org_url_information <- function(db_connection) {
     res
 }
 
-get_org_identifiers_information <- function(db_connection) {
+get_org_identifiers_information <- function(db_connection, org_id) {
 
   res <- tbl(db_connection,"fhir_endpoint_organization_identifiers") %>%
+    filter(org_id == !!org_id) %>%
     collect()
 
     res
 }
 
-get_org_addresses_information <- function(db_connection) {
+get_org_addresses_information <- function(db_connection, org_id) {
 
   res <- tbl(db_connection,
     sql("SELECT org_id, address FROM fhir_endpoint_organization_addresses")) %>%
+    filter(org_id == !!org_id) %>%
     collect()
 
     res
@@ -431,11 +414,17 @@ get_avg_response_time <- function(db_connection, date) {
 get_endpoint_response_time <- function(db_connection, date, endpointURL, requestedFhirVersion) {
   # get time series of response time metrics for all endpoints
   # groups response time averages by 23 hour intervals and shows data for a range of 30 days
+  # `date` is a trusted, app-generated SQL fragment (either a numeric offset or the literal
+  # expression "maxdate.maximum" -- see get_range()), so it is interpolated as-is like
+  # qry_interval_seconds; endpointURL/requestedFhirVersion come from client-controlled input
+  # (current_endpoint()) and are safely quoted rather than pasted directly into the query string.
+  url_q <- DBI::dbQuoteString(db_connection, endpointURL)
+  version_q <- DBI::dbQuoteString(db_connection, requestedFhirVersion)
   all_endpoints_response_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT date.datetime AS time, response_time_seconds as response
-                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, response_time_seconds FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as date,
-                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
+                    FROM (SELECT floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, " AS datetime, response_time_seconds FROM fhir_endpoints_metadata WHERE response_time_seconds > 0 AND url = ", url_q, " AND requested_fhir_version = ", version_q, ") as date,
+                    (SELECT max(floor(extract(epoch from updated_at)/", qry_interval_seconds, ")*", qry_interval_seconds, ") AS maximum FROM fhir_endpoints_metadata WHERE url = ", url_q, " AND requested_fhir_version = ", version_q, ") as maxdate
                     WHERE date.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     ORDER BY time"))
         )
@@ -446,11 +435,13 @@ get_endpoint_response_time <- function(db_connection, date, endpointURL, request
 
 
 get_endpoint_http_over_time <- function(db_connection, date, endpointURL, requestedFhirVersion) {
+  url_q <- DBI::dbQuoteString(db_connection, endpointURL)
+  version_q <- DBI::dbQuoteString(db_connection, requestedFhirVersion)
   endpoint_http_over_time <- as_tibble(
     tbl(db_connection,
         sql(paste0("SELECT http_responses.http_response AS http_response, http_responses.datetime AS time
-                    FROM (SELECT http_response, floor(extract(epoch from updated_at)) AS datetime FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as http_responses,
-                    (SELECT max(floor(extract(epoch from updated_at))) AS maximum FROM fhir_endpoints_metadata WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "') as maxdate
+                    FROM (SELECT http_response, floor(extract(epoch from updated_at)) AS datetime FROM fhir_endpoints_metadata WHERE url = ", url_q, " AND requested_fhir_version = ", version_q, ") as http_responses,
+                    (SELECT max(floor(extract(epoch from updated_at))) AS maximum FROM fhir_endpoints_metadata WHERE url = ", url_q, " AND requested_fhir_version = ", version_q, ") as maxdate
                     WHERE http_responses.datetime between (maxdate.maximum-", date, ") AND maxdate.maximum
                     ORDER BY time"))
         )
@@ -468,26 +459,30 @@ get_security_endpoints <- function(db_connection) {
 }
 
 get_endpoint_smart_response_capabilities <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
+  query <- glue_sql("SELECT
       json_array_elements_text((f.smart_response->'capabilities')::json) as capability
     FROM fhir_endpoints_info f
     LEFT JOIN fhir_endpoints_metadata m on f.metadata_id = m.id
     LEFT JOIN vendors v on f.vendor_id = v.id
-    WHERE f.metadata_id = m.id AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-    AND m.smart_http_response=200 AND v.name = '", vendorName, "'"))) %>%
+    WHERE f.metadata_id = m.id AND f.url = {endpointURL} AND f.requested_fhir_version = {requestedFhirVersion}
+    AND m.smart_http_response=200 AND v.name = {vendorName}",
+    endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, vendorName = vendorName,
+    .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
     collect()
   res
 }
 
 get_endpoint_products <- function(db_connection, endpointURL, requestedFhirVersion, vendor_name) {
   message("Inside get_endpoint_products")
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
+  query <- glue_sql("SELECT
         f.url, h.name, h.version, h.api_url, h.certification_status, h.certification_date, h.certification_edition,
         h.chpl_id, h.last_modified_in_chpl  FROM fhir_endpoints_info f, healthit_products h, healthit_products_map hm, vendors v WHERE f.healthit_mapping_id = hm.id AND
-        hm.healthit_product_id = h.id AND f.healthit_mapping_id IS NOT NULL AND f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'",
-        "AND f.vendor_id = v.id AND v.name = '", vendor_name, "'"))) %>%
+        hm.healthit_product_id = h.id AND f.healthit_mapping_id IS NOT NULL AND f.url = {endpointURL} AND f.requested_fhir_version = {requestedFhirVersion}
+        AND f.vendor_id = v.id AND v.name = {vendor_name}",
+    endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, vendor_name = vendor_name,
+    .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
         collect() %>%
     select(name, version, chpl_id, api_url, certification_status, certification_edition, certification_date, last_modified_in_chpl)
   res
@@ -526,12 +521,14 @@ get_response_tally_list <- function(db_tables) {
 
 
 get_endpoint_implementation_guide <- function(db_connection, endpointURL, requestedFhirVersion, vendorName) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT
-          json_array_elements(f.capability_statement::json#>'{implementationGuide}') as implementation_guide
+  query <- glue_sql("SELECT
+          json_array_elements(f.capability_statement::json#>'{{implementationGuide}}') as implementation_guide
           FROM fhir_endpoints_info f, vendors v
-          WHERE f.url = '", endpointURL, "' AND f.requested_fhir_version = '", requestedFhirVersion, "'
-          AND v.name = '", vendorName, "' AND f.vendor_id = v.id"))) %>%
+          WHERE f.url = {endpointURL} AND f.requested_fhir_version = {requestedFhirVersion}
+          AND v.name = {vendorName} AND f.vendor_id = v.id",
+    endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, vendorName = vendorName,
+    .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
     collect()
 
   res
@@ -561,10 +558,10 @@ get_endpoint_list_matches <- function(db_connection, fhir_version = NULL, vendor
 
 
 get_capability_and_smart_response <- function(db_connection, endpointURL, requestedFhirVersion) {
-  res <- tbl(db_connection,
-    sql(paste0("SELECT capability_statement, smart_response FROM fhir_endpoints_info WHERE
-          url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "' LIMIT 1"))
-   ) %>%
+  query <- glue_sql("SELECT capability_statement, smart_response FROM fhir_endpoints_info WHERE
+          url = {endpointURL} AND requested_fhir_version = {requestedFhirVersion} LIMIT 1",
+    endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, .con = db_connection)
+  res <- tbl(db_connection, sql(query)) %>%
     collect()
   res
 
@@ -602,18 +599,20 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, vendorName,
           filter(vendor_name == vendorName) %>%
           distinct(list_source)
 
-    resSecurity <-  tbl(db_connection,
-        sql(paste0("SELECT
-            json_array_elements(json_array_elements(capability_statement::json#>'{rest,0,security,service}')->'coding')::json->>'code' as security
+    security_query <- glue_sql("SELECT
+            json_array_elements(json_array_elements(capability_statement::json#>'{{rest,0,security,service}}')->'coding')::json->>'code' as security
             FROM fhir_endpoints_info
-            WHERE url = '", endpointURL, "' AND requested_fhir_version = '", requestedFhirVersion, "' LIMIT 1"))) %>%
+            WHERE url = {endpointURL} AND requested_fhir_version = {requestedFhirVersion} LIMIT 1",
+      endpointURL = endpointURL, requestedFhirVersion = requestedFhirVersion, .con = db_connection)
+    resSecurity <-  tbl(db_connection, sql(security_query)) %>%
     collect()
 
-    resSupportedVersions <- tbl(db_connection,
-        sql(paste0("SELECT
+    supported_versions_query <- glue_sql("SELECT
             DISTINCT versions_response->'Response'->>'versions' as supported_versions, versions_response->'Response'->>'default' as default_version
             FROM fhir_endpoints
-            WHERE url = '", endpointURL, "'"))) %>%
+            WHERE url = {endpointURL}",
+      endpointURL = endpointURL, .con = db_connection)
+    resSupportedVersions <- tbl(db_connection, sql(supported_versions_query)) %>%
     collect() %>%
     mutate(supported_versions = gsub("\\[\"|\"\\]", "", as.character(supported_versions))) %>%
     mutate(default_version = gsub("\"|\"", "", as.character(default_version)))
@@ -654,8 +653,11 @@ safe_execute <- function(name, expr) {
 }
 
 
-app_fetcher <- reactive({
-  timer()
+# A plain function rather than a reactive() -- it's always invoked imperatively (app_fetcher())
+# from within an observeEvent, never read as a reactive dependency, so wrapping it in reactive()
+# only added a side-effecting reactive (database_fetch(0) below) with none of reactive()'s actual
+# caching/dependency-tracking benefit.
+app_fetcher <- function() {
   message("app_fetcher ***************************************")
   start_time <- Sys.time()
   safe_execute("app$endpoint_export_tbl", app$endpoint_export_tbl(get_endpoint_export_tbl(db_tables)))
@@ -669,8 +671,11 @@ app_fetcher <- reactive({
     mutate(code_chr = as.character(code))
   ))
   safe_execute("app$zip_to_zcta", app$zip_to_zcta(read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c"))))
+  safe_execute("app$security_code_list", app$security_code_list(
+    tbl(db_connection, "mv_get_security_endpoints") %>% distinct(code) %>% collect() %>% pull(code)
+  ))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message("app_fetcher execution time: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", time_difference, "seconds\n")
   database_fetch(0)
-})
+}

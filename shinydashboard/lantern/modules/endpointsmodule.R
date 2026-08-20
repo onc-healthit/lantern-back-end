@@ -55,7 +55,8 @@ endpointsmodule <- function(
   sel_fhir_version,
   sel_vendor,
   sel_availability,
-  sel_is_chpl
+  sel_is_chpl,
+  is_active
 ) {
   ns <- session$ns
 
@@ -179,7 +180,7 @@ endpointsmodule <- function(
 
   # Main data query with LIMIT OFFSET pagination - WITH RACE CONDITION PROTECTION
   selected_fhir_endpoints <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
+    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl(), is_active())
     
     # Generate unique request ID
     request_id <- isolate(current_request_id()) + 1
@@ -242,7 +243,7 @@ endpointsmodule <- function(
 
   # Query without limit for total count and download
   selected_fhir_endpoints_without_limit <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
+    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl(), is_active())
     
     query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
     params <- list(vals = sel_fhir_version())

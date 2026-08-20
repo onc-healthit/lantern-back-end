@@ -46,7 +46,8 @@ contactsmodule <- function(
     session,
     sel_fhir_version,
     sel_vendor,
-    sel_has_contact
+    sel_has_contact,
+    is_active
 ) {
     ns <- session$ns
 
@@ -155,7 +156,7 @@ contactsmodule <- function(
 
     # Main data query for pagination and filtering - WITH RACE CONDITION PROTECTION
     selected_contacts <- reactive({
-        req(sel_fhir_version(), sel_vendor(), sel_has_contact())
+        req(sel_fhir_version(), sel_vendor(), sel_has_contact(), is_active())
         
         # Generate unique request ID 
         request_id <- isolate(current_request_id()) + 1
@@ -226,7 +227,7 @@ contactsmodule <- function(
 
     # Query without limit for total count calculation
     selected_contacts_without_limit <- reactive({
-        req(sel_fhir_version(), sel_vendor(), sel_has_contact())
+        req(sel_fhir_version(), sel_vendor(), sel_has_contact(), is_active())
         
         # Same query as main but without LIMIT OFFSET
         query_str <- "
