@@ -56,13 +56,14 @@ fieldsmodule <- function(
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  is_active
 ) {
 
   ns <- session$ns
 
   get_capstat_values_mv <- function(extension) {
-    req(sel_fhir_version())
+    req(sel_fhir_version(), is_active())
 
     if (extension) {
       mv <- "mv_capstat_values_extension"
@@ -161,23 +162,6 @@ output$capstat_extension_text <- renderUI({
     divElem <- div(ulElem, class = "extension-list")
     tagList(HTML("Lantern checks for the following extensions: "), divElem)
 })
-
-  selected_fhir_endpoints <- reactive({
-    # Get current filter values
-    current_fhir <- sel_fhir_version()
-    current_vendor <- sel_vendor()
-
-    req(current_fhir, current_vendor)
-
-    # Get filtered data from the materialized view function
-    res <- get_capstat_fields_mv(
-      db_connection,
-      fhir_version = current_fhir,
-      vendor = current_vendor
-    )
-
-    res
-  })
 
   capstat_field_count <- reactive({
     get_capstat_fields_count(sel_fhir_version(), sel_vendor(), "false")
@@ -302,7 +286,7 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
     }
   )
   output$fields_bar_empty_plot <- renderPlot({
@@ -347,7 +331,7 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
     }
   )
   output$extensions_bar_empty_plot <- renderPlot({

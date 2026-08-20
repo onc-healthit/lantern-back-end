@@ -1,12 +1,5 @@
 # Security Module - Performance Optimized while maintaining exact data accuracy
 
-log_duration <- function(label, expr) {
-  start_time <- Sys.time()
-  result <- expr
-  duration <- Sys.time() - start_time
-  result
-}
-
 securitymodule_UI <- function(id) {
 
   ns <- NS(id)
@@ -57,7 +50,8 @@ securitymodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_auth_type_code
+  sel_auth_type_code,
+  is_active
 ) {
 
   ns <- session$ns
@@ -159,17 +153,20 @@ securitymodule <- function(
     security_page_state(1)
   })
 
-  output$auth_type_count_table <- renderTable(
-    isolate(get_auth_type_count(db_connection)),
-    align = "llrr"
-  )
-  output$endpoint_summary_table <- renderTable(
-    isolate(get_endpoint_security_counts(db_connection))
-  )
+  # Take a real reactive dependency on the nightly refresh (instead of isolate()-ing the DB read
+  # with no dependency at all) so these tables reflect a later app_fetcher() refresh rather than
+  # freezing at whatever they showed on first render.
+  output$auth_type_count_table <- renderTable({
+    app$endpoint_export_tbl()
+    get_auth_type_count(db_connection)
+  }, align = "llrr")
+  output$endpoint_summary_table <- renderTable({
+    app$endpoint_export_tbl()
+    get_endpoint_security_counts(db_connection)
+  })
 
   security_base_sql <- reactive({
-    log_duration("security_base_sql", {
-    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
+    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code(), is_active())
 
     versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
     vendor_filter <- if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -188,35 +185,31 @@ securitymodule <- function(
                                   tls_version ILIKE '%", q, "%')")
     }
 
-    paste0("FROM security_endpoints_distinct_mv 
-            WHERE capability_fhir_version IN (", versions, ") 
+    paste0("FROM security_endpoints_distinct_mv
+            WHERE capability_fhir_version IN (", versions, ")
               AND code = '", sel_auth_type_code(), "' ",
               vendor_filter, " ",
               search_filter)
-    })
   })
 
   security_total_pages <- reactive({
     # PERFORMANCE OPTIMIZATION: Use a CTE with DISTINCT to leverage index better
     # This approach maintains exact data accuracy while being faster than DISTINCT on final results
-    log_duration("security_total_pages", {
     count_query <- paste0("SELECT COUNT(*) as count ",
                            security_base_sql())
-    
+
     count <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
     max(1, ceiling(count / security_page_size))
-    })
   })
 
   # Main data query - WITH RACE CONDITION PROTECTION
   selected_endpoints <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
+    req(sel_fhir_version(), sel_vendor(), sel_auth_type_code(), is_active())
 
     # Generate unique request ID
     request_id <- isolate(current_request_id()) + 1
     current_request_id(request_id)
 
-    log_duration("selected_endpoints", {
     limit <- security_page_size
     offset <- (security_page_state() - 1) * security_page_size
 
@@ -237,11 +230,9 @@ securitymodule <- function(
       # This request was superseded, return empty to avoid flicker
       return(data.frame())
     }
-    })
   })
 
   output$security_endpoints <-  reactable::renderReactable({
-    log_duration("renderReactable_security_endpoints", {
     reactable(selected_endpoints(),
                 columns = list(
                   url = colDef(name = "URL", html = TRUE),
@@ -254,7 +245,6 @@ securitymodule <- function(
                 sortable = TRUE,
                 showSortIcon = TRUE
     )
-  })
   })
 
 }

@@ -55,7 +55,8 @@ organizationsmodule <- function(
   sel_fhir_version,
   sel_vendor,
   sel_confidence,
-  sel_is_chpl
+  sel_is_chpl,
+  is_active
 ) {
   ns <- session$ns
 
@@ -89,7 +90,7 @@ organizationsmodule <- function(
     vendor <- sel_vendor()
     is_chpl <- sel_is_chpl()
 
-    req(sel_fhir_version(), sel_vendor(), sel_is_chpl())
+    req(sel_fhir_version(), sel_vendor(), sel_is_chpl(), is_active())
 
     count_query_str <- "
       WITH base_data AS (

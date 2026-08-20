@@ -43,7 +43,8 @@ valuesmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_capstat_values
+  sel_capstat_values,
+  is_active
 ) {
 
   ns <- session$ns
@@ -175,10 +176,10 @@ valuesmodule <- function(
   valid_field_versions <- reactive({
     req(sel_capstat_values())
 
-    res <- tbl(db_connection, 
-        sql(paste0("SELECT unnest(fhir_versions) AS version 
-                    FROM get_value_versions_mv 
-                    WHERE field = '", sel_capstat_values(), "'"))) %>%
+    query <- glue_sql("SELECT unnest(fhir_versions) AS version
+                    FROM get_value_versions_mv
+                    WHERE field = {field}", field = sel_capstat_values(), .con = db_connection)
+    res <- tbl(db_connection, sql(query)) %>%
       collect() %>%
       pull(version)
 
@@ -186,7 +187,7 @@ valuesmodule <- function(
   })
 
   get_base_values_sql <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
@@ -221,7 +222,7 @@ valuesmodule <- function(
 
   # Main data query - WITH RACE CONDITION PROTECTION
   paged_capstat_values <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1
@@ -270,7 +271,7 @@ valuesmodule <- function(
 
   # Gets the total number of endpoints that are using the currently selected field
   capstat_value_usage_summary <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()

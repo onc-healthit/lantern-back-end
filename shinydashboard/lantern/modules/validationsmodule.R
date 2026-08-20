@@ -73,7 +73,8 @@ validationsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_validation_group
+  sel_validation_group,
+  is_active
 ) {
   ns <- session$ns
   validations_page_size <- 10
@@ -84,7 +85,7 @@ validationsmodule <- function(
 
   # Get total using COUNT
   validation_total_pages <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
 
     selected_rule <- if (!is.null(getReactableState("validation_details_table")$selected)) {
       deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
@@ -222,7 +223,7 @@ validationsmodule <- function(
 
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     
     # Build filtering conditions for the SQL query
     fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
@@ -304,7 +305,7 @@ validationsmodule <- function(
     query <- paste0("SELECT * FROM mv_validation_results_plot")
     res <- dbGetQuery(db_connection, query)
     
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     res <- res %>% filter(fhir_version %in% sel_fhir_version())
     if (sel_validation_group() != "All Groups") {
       res <- res %>% filter(reference %in% validation_group_list[[sel_validation_group()]])
@@ -319,7 +320,7 @@ validationsmodule <- function(
 
   # Creates table containing the filtered validation's rule name, if its valid, and it's count
   select_validation_results <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     
     # Build query with filters
     fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
@@ -357,7 +358,7 @@ validationsmodule <- function(
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
   # Paginated using SQL LIMIT OFFSET - WITH RACE CONDITION PROTECTION
   paged_failed_validation_results <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     
     # Generate unique request ID - THIS IS THE KEY FIX!
     request_id <- isolate(current_request_id()) + 1
@@ -471,7 +472,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), get_endpoint_last_updated(db_tables))
     })
 
   # Renders an empty validation result count chart when no data available

@@ -26,6 +26,12 @@ version_number <- strsplit(version_string, "=")[[1]][2]
 version_title <- paste("Version ", version_number)
 devbanner <- Sys.getenv("LANTERN_BANNER_TEXT")
 qry_interval_seconds <- (strtoi(Sys.getenv("LANTERN_CAPQUERY_QRYINTVL")) * 60)
+
+# Process-wide (NOT per-session) signal that triggers app_fetcher() to refresh the shared,
+# global app$* data caches. Because this is a singleton shared by every connected session, it
+# must only be used to drive the one-time, app-wide data refresh in server.R -- it must never be
+# used to gate per-session setup (e.g. module registration), since that would re-run that setup
+# in every open session simultaneously each time this flips.
 database_fetch <- reactiveVal(0)
 
 validation_group_list <- fromJSON(here(root, "validation_groups.json"))
@@ -87,7 +93,8 @@ app <<- list(
   vendor_list            = reactiveVal(NULL),
   http_response_code_tbl = reactiveVal(NULL),
   zip_to_zcta = reactiveVal(NULL),
-  endpoint_export_tbl = reactiveVal(NULL)
+  endpoint_export_tbl = reactiveVal(NULL),
+  security_code_list = reactiveVal(NULL)
 )
 
 
