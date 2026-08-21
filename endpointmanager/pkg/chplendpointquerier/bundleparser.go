@@ -261,6 +261,18 @@ func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []str
 
 	usedOrgKeys := make(map[int]bool)
 
+	// Contained Organizations (embedded in an Endpoint's "contained" field) are only
+	// parsed when the bundle has no separate top-level Organization resources at all.
+	// If separate Organization entries are present, they are the authoritative source
+	// and contained Organizations are ignored.
+	hasSeparateOrganizations := false
+	for _, bundleEntry := range structBundle.Entries {
+		if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Organization") {
+			hasSeparateOrganizations = true
+			break
+		}
+	}
+
 	maps := orgMaps{
 		zip:         organizationZip,
 		name:        organizationName,
@@ -295,7 +307,7 @@ func BundleToLanternFormat(bundle []byte, chplURL string) ([]LanternEntry, []str
 			}
 
 			keyCount++
-		} else if strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Endpoint") && len(bundleEntry.Resource.Orgs) > 0 {
+		} else if !hasSeparateOrganizations && strings.EqualFold(strings.TrimSpace(bundleEntry.Resource.ResourceType), "Endpoint") && len(bundleEntry.Resource.Orgs) > 0 {
 			containedOrg := bundleEntry.Resource.Orgs[0]
 
 			extractOrganizationFields(maps, keyCount, containedOrg.Name,
