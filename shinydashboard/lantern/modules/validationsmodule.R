@@ -83,15 +83,29 @@ validationsmodule <- function(
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
 
+  # Return the selected rule only when it still points at an available row.
+  # Filter changes can temporarily leave reactable's selection out of range.
+  selected_validation_rule <- reactive({
+    rules <- validation_rules()
+    if (nrow(rules) == 0) {
+      return(NULL)
+    }
+
+    selected <- getReactableState("validation_details_table", "selected")
+    if (is.null(selected) || length(selected) != 1 ||
+        is.na(selected) || selected < 1 || selected > nrow(rules)) {
+      return(rules$rule_name[[1]])
+    }
+
+    rules$rule_name[[selected]]
+  })
+
   # Get total using COUNT
   validation_total_pages <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
 
-    selected_rule <- if (!is.null(getReactableState("validation_details_table")$selected)) {
-      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
-    } else {
-      "NO_RULES"
-    }
+    selected_rule <- selected_validation_rule()
+    if (is.null(selected_rule)) return(1)
 
     fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
     vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) paste0("AND vendor_name = '", sel_vendor(), "'") else ""
@@ -364,11 +378,14 @@ validationsmodule <- function(
     request_id <- isolate(current_request_id()) + 1
     current_request_id(request_id)
     
-    # Get the selected rule if available
-    selected_rule <- if (!is.null(getReactableState("validation_details_table")) && !is.null(getReactableState("validation_details_table")$selected)) {
-      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
-    } else {
-      "NO_RULES"  # Default when no rule is selected
+    # Get the selected rule if available. Avoid a database round trip when the
+    # active filters have no validation rules.
+    selected_rule <- selected_validation_rule()
+    if (is.null(selected_rule)) {
+      return(data.frame(
+        fhir_version = character(), url = character(), expected = character(),
+        actual = character(), vendor_name = character()
+      ))
     }
     
     # Build filtering conditions
@@ -420,13 +437,14 @@ validationsmodule <- function(
   })
 
   output$validation_details_table <-  reactable::renderReactable({
-    reactable(validation_details() %>% select(entry),
+    details <- validation_details() %>% select(entry)
+    reactable(details,
               columns = list(
                 entry = colDef(name = "Validation Rules", html = TRUE)
               ),
               selection = "single",
               onClick = "select",
-              defaultSelected = c(1),
+              defaultSelected = if (nrow(details) > 0) 1 else NULL,
               pagination = FALSE,
               height = 500
     )
@@ -494,7 +512,12 @@ validationsmodule <- function(
   }
 
   output$failure_table_subtitle <- renderUI({
-    p(paste("Rule: ", deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])))
+    selected_rule <- selected_validation_rule()
+    if (is.null(selected_rule)) {
+      p("No validation rules match the selected filters.")
+    } else {
+      p(paste("Rule:", selected_rule))
+    }
   })
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were
