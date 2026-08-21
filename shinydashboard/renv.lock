@@ -611,6 +611,11 @@
       "Repository": "CRAN",
       "Hash": "03b7076c234cb3331288919983326c55"
     },
+    "pool": {
+      "Package": "pool",
+      "Version": "1.0.1",
+      "Source": "Repository"
+    },
     "prettyunits": {
       "Package": "prettyunits",
       "Version": "1.1.1",
@@ -725,10 +730,8 @@
     },
     "rlang": {
       "Package": "rlang",
-      "Version": "0.4.11",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "515f341d3affe0de9e4a7f762efb0456"
+      "Version": "1.0.2",
+      "Source": "Repository"
     },
     "rmarkdown": {
       "Package": "rmarkdown",
