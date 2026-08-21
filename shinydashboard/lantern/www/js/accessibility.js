@@ -223,16 +223,14 @@ $(document).ready(function() {
   
       // Sets the aria label of the validation table to explain how to use and navigate the validation table to filter the validation failure table
       if (mutation.target.id === "validations_page-validation_details_table") {
-        let reactTable = mutation.target.getElementsByClassName("ReactTable");
-        let rtTable = reactTable[0].getElementsByClassName("rt-table");
-        let rtTHead = rtTable[0].getElementsByClassName("rt-thead");
-        let rtTr = rtTHead[0].getElementsByClassName("rt-tr");
-        
-        let rtTh = rtTr[0].getElementsByClassName("rt-align-left -cursor-pointer rt-th");
-        let rtSortHeader = rtTh[0].getElementsByClassName("rt-sort-header");
-        let rtThContent = rtSortHeader[0].getElementsByClassName("rt-th-content");
-  
-        rtThContent[0].setAttribute("aria-label", "You are currently on a table whose entries serve as a filter for the validation failure table. To enter the table, press the tab key. Then, use the up and down arrow keys to move through the filter options. The filter option you are currently focused on will be automatically selected to filter the validation failure table. To exit the filter table, press the tab key again");
+        let rtThContent = mutation.target.querySelector(
+          ".ReactTable .rt-table .rt-thead .rt-tr .rt-align-left.-cursor-pointer.rt-th .rt-sort-header .rt-th-content"
+        );
+
+        // Empty validation results do not render the full reactable structure.
+        if (rtThContent) {
+          rtThContent.setAttribute("aria-label", "You are currently on a table whose entries serve as a filter for the validation failure table. To enter the table, press the tab key. Then, use the up and down arrow keys to move through the filter options. The filter option you are currently focused on will be automatically selected to filter the validation failure table. To exit the filter table, press the tab key again");
+        }
       }
   
       // Sets the aria label of the FHIR operations input filter box on the Resource tab to explain how to use and navigate the filter box
