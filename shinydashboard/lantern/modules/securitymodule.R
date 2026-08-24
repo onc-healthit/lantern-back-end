@@ -57,92 +57,19 @@ securitymodule <- function(
   ns <- session$ns
 
   security_page_size <- 10
-  security_page_state <- reactiveVal(1)
 
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
 
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- security_page_state()
-    current_selector <- input$security_page_selector
-
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) ||
-        is.na(current_selector) ||
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-
-      isolate({  # This is the key fix to break feedback loops
-        updateNumericInput(session, "security_page_selector",
-                          max = security_total_pages(),
-                          value = new_page)
-      })
-    }
-  })
-
-  # Handle page selector input
-  observeEvent(input$security_page_selector, {
-    # Get current input value
-    current_input <- input$security_page_selector
-
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) &&
-        !is.na(current_input) &&
-        is.numeric(current_input) &&
-        current_input > 0) {
-
-      new_page <- max(1, min(current_input, security_total_pages()))
-
-      # Only update page state if it's actually different
-      if (new_page != security_page_state()) {
-        security_page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "security_page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "security_page_selector", value = security_page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent firing on initialization
-
-  # Handle next page button
-  observeEvent(input$security_next_page, {
-    if (security_page_state() < security_total_pages()) {
-      new_page <- security_page_state() + 1
-      security_page_state(new_page)
-    }
-  })
-
-  # Handle previous page button
-  observeEvent(input$security_prev_page, {
-    if (security_page_state() > 1) {
-      new_page <- security_page_state() - 1
-      security_page_state(new_page)
-    }
-  })
-
-  output$security_prev_button_ui <- renderUI({
-    if (security_page_state() > 1) {
-      actionButton(ns("security_prev_page"), "Previous", icon = icon("arrow-left"))
-    } else {
-      NULL
-    }
-  })
-
-  output$security_next_button_ui <- renderUI({
-    if (security_page_state() < security_total_pages()) {
-      actionButton(ns("security_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL
-    }
-  })
+  security_page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "security_page_selector",
+    prev_button_id = "security_prev_page",
+    next_button_id = "security_next_page",
+    prev_output_id = "security_prev_button_ui",
+    next_output_id = "security_next_button_ui",
+    total_pages = security_total_pages
+  )
 
   output$current_security_page_info <- renderText({
     paste("of", security_total_pages())

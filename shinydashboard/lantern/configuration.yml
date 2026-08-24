@@ -24,6 +24,7 @@ function_files:
   - "functions/endpoints.R"
   - "functions/graphing.R"
   - "functions/ui_functions.R"
+  - "functions/pagination.R"
   
 module_files:
   - "modules/resourcemodule.R"

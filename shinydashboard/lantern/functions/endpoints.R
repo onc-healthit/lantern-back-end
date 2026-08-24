@@ -52,9 +52,11 @@ vendor_short_names <- data.frame(
 # - indexed endpoints that have been queried
 # - non-indexed endpoints yet to be queried
 get_endpoint_totals_list <- function(db_tables) {
+  # head(1) %>% collect() pushes the row limit down to SQL (LIMIT 1) instead of materializing the
+  # whole mv_endpoint_totals view into R via as.data.frame() before keeping only the first row.
   totals_data <- db_tables$mv_endpoint_totals %>%
-    as.data.frame() %>%
-    slice(1)
+    head(1) %>%
+    collect()
   
   fhir_endpoint_totals <- list(
     "all_endpoints"     = totals_data$all_endpoints,
@@ -83,8 +85,8 @@ get_fhir_endpoints_tbl <- function() {
 
 get_endpoint_last_updated <- function(db_tables) {
   last_updated <- db_tables$mv_endpoint_totals %>%
-    as.data.frame() %>%
-    slice(1) %>%
+    head(1) %>%
+    collect() %>%
     pull(last_updated)
   
   as.character.Date(last_updated)
@@ -253,31 +255,43 @@ get_vendor_list <- function(endpoint_export_tbl) {
   vendor_list <- c(vendor_list, vl)
 }
 
-# Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
-get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name, page_size = -1, offset = -1, search_query = NULL) {
-  # Create the base query string
-  query_str <- "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n 
-            FROM mv_resource_interactions
-            WHERE fhir_version IN ({fhir_versions_vec*})
+# Shared WHERE-clause text builder for get_fhir_resource_by_op() and get_fhir_resource_by_op_count()
+# below -- both filter mv_resource_interactions identically, differing only in whether they return
+# the grouped (resource_type, fhir_version) rows or a count of them.
+build_fhir_resource_by_op_where_clause <- function(operations_vec, search_query) {
+  clause <- "WHERE fhir_version IN ({fhir_versions_vec*})
             AND resource_type IN ({resource_types_vec*})"
 
   # Add a filter for operations if they are selected
-  if(length(operations_vec) >= 1){
-    query_str <- paste0(query_str, " AND operations @> ARRAY[{operations_vec*}]") 
+  if (length(operations_vec) >= 1) {
+    clause <- paste0(clause, " AND operations @> ARRAY[{operations_vec*}]")
   }
 
   # Add a filter for vendor name if a specific vendor is selected
-  query_str <- paste0(query_str, " AND vendor_name = {vendor_name}")
-  
+  clause <- paste0(clause, " AND vendor_name = {vendor_name}")
+
   # Add search filter if present
   if (!is.null(search_query) && search_query != "") {
-    pattern <- paste0("%", search_query, "%")
-    query_str <- paste0(query_str, 
-      " AND (resource_type ILIKE {pattern} OR fhir_version ILIKE {pattern})")
+    clause <- paste0(clause, " AND (resource_type ILIKE {pattern} OR fhir_version ILIKE {pattern})")
   }
-  
-  query_str <- paste0(query_str, " GROUP BY (resource_type, fhir_version)
-            ORDER BY resource_type")
+
+  clause
+}
+
+# Return the endpoint counts for selected FHIR resources, operations, fhir version and vendor name
+get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name, page_size = -1, offset = -1, search_query = NULL) {
+  # pattern is referenced (via NSE) by build_fhir_resource_by_op_where_clause()'s {pattern}
+  # placeholder when glue_sql() below evaluates it in this function's frame.
+  pattern <- if (!is.null(search_query) && search_query != "") paste0("%", search_query, "%") else NULL
+
+  query_str <- paste0(
+    "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n
+            FROM mv_resource_interactions
+            ",
+    build_fhir_resource_by_op_where_clause(operations_vec, search_query),
+    " GROUP BY (resource_type, fhir_version)
+            ORDER BY resource_type"
+  )
 
   if (page_size > -1 && offset > -1) {
     query_str <- paste0(query_str, " LIMIT ", page_size, " OFFSET ", offset)
@@ -289,6 +303,23 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
   collect()
 
   res
+}
+
+# Count of the grouped (resource_type, fhir_version) rows get_fhir_resource_by_op() above would
+# return for the same filters, used for the resource tab's total_pages calculation instead of
+# materializing the full grouped result (via page_size = -1, offset = -1) and nrow()-ing it.
+get_fhir_resource_by_op_count <- function(db_connection, operations_vec, fhir_versions_vec, resource_types_vec, vendor_name, search_query = NULL) {
+  pattern <- if (!is.null(search_query) && search_query != "") paste0("%", search_query, "%") else NULL
+
+  query_str <- paste0(
+    "SELECT COUNT(*) as count FROM (SELECT resource_type, fhir_version FROM mv_resource_interactions ",
+    build_fhir_resource_by_op_where_clause(operations_vec, search_query),
+    " GROUP BY (resource_type, fhir_version)) grouped"
+  )
+
+  query <- glue_sql(query_str, .con = db_connection)
+
+  tbl(db_connection, sql(query)) %>% collect() %>% pull(count)
 }
 
 # Expands operation_resource (a JSONB map of operation -> array of resource types) into
@@ -513,8 +544,8 @@ get_endpoint_security_counts <- function(db_connection) {
 
 get_response_tally_list <- function(db_tables) {
   response_tally <- db_tables$mv_response_tally %>%
-                    as.data.frame() %>%
-                    slice(1)
+                    head(1) %>%
+                    collect()
   
   return(response_tally)
 }

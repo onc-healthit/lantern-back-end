@@ -60,7 +60,6 @@ organizationsmodule <- function(
 ) {
   ns <- session$ns
 
-  org_page_state <- reactiveVal(1)
   org_page_size <- 10
 
   # Add request tracking to prevent race conditions
@@ -206,77 +205,20 @@ organizationsmodule <- function(
     max(1, ceiling(count / org_page_size))
   })
 
-  # Handle next page button
-  observeEvent(input$org_next_page, {
-    if (org_page_state() < org_total_pages()) {
-      new_page <- org_page_state() + 1
-      org_page_state(new_page)
-    }
-  })
+  org_page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "org_page_selector",
+    prev_button_id = "org_prev_page",
+    next_button_id = "org_next_page",
+    prev_output_id = "org_prev_button_ui",
+    next_output_id = "org_next_button_ui",
+    total_pages = org_total_pages
+  )
 
-  # Handle previous page button
-  observeEvent(input$org_prev_page, {
-    if (org_page_state() > 1) {
-      new_page <- org_page_state() - 1
-      org_page_state(new_page)
-    }
-  })
-
-  # Reset to first page on any filter/search change 
+  # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_confidence(), sel_is_chpl(), input$org_search_query), {
     org_page_state(1)
-    updateNumericInput(session, "org_page_selector", value = 1)
   })
-
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- org_page_state()
-    current_selector <- input$org_page_selector
-
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) ||
-        is.na(current_selector) ||
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-
-      isolate({  # This is the key fix to break feedback loops!
-        updateNumericInput(session, "org_page_selector",
-                          max = org_total_pages(),
-                          value = new_page)
-      })
-    }
-  })
-
-  # Manual page input
-  observeEvent(input$org_page_selector, {
-    # Get current input value
-    current_input <- input$org_page_selector
-
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) &&
-        !is.na(current_input) &&
-        is.numeric(current_input) &&
-        current_input > 0) {
-
-      new_page <- max(1, min(current_input, org_total_pages()))
-
-      # Only update page state if it's actually different
-      if (new_page != org_page_state()) {
-        org_page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "org_page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "org_page_selector", value = org_page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent observer from firing on initialization or first load
 
   # Data fetching with race condition protection
   paged_endpoint_list_orgs <- reactive({
@@ -630,22 +572,6 @@ organizationsmodule <- function(
    })
 
   # Button UI outputs
-  output$org_prev_button_ui <- renderUI({
-    if (org_page_state() > 1) {
-      actionButton(ns("org_prev_page"), "Previous", icon = icon("arrow-left"))
-    } else {
-      NULL  # Hide the button
-    }
-  })
-
-  output$org_next_button_ui <- renderUI({
-    if (org_page_state() < org_total_pages()) {
-      actionButton(ns("org_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL  # Hide the button
-    }
-  })
-
   output$org_page_info <- renderText({
     paste("of", org_total_pages())
   })
