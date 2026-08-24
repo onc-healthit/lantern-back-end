@@ -51,10 +51,7 @@ ui <- dashboardPage(
       menuItem("Organizations", tabName = "organizations_tab", icon = tags$i(class = "fa fa-hospital", "aria-hidden" = "true", role = "presentation", "aria-label" = "hospital icon")),
       menuItem("Resources", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "resource_tab"),
       menuItem("Implementation Guides", tabName = "implementation_tab", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon")),
-      menuItem("CapabilityStatement / Conformance Fields", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "fields_tab"),
-      menuItem("CapabilityStatement / Conformance Field Values", icon = tags$i(class = "fa fa-table", "aria-hidden" = "true", role = "presentation", "aria-label" = "table icon"), tabName = "values_tab"),
-      menuItem("CapabilityStatement / Conformance Profiles", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "profile_tab"),
-      menuItem("CapabilityStatement / Conformance Size", icon = tags$i(class = "fa fa-hdd-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "hdd-o icon"), tabName = "capabilitystatementsize_tab"),
+      menuItem("Capability Statement / Conformance", icon = tags$i(class = "fa fa-list-alt", "aria-hidden" = "true", role = "presentation", "aria-label" = "list-alt icon"), tabName = "capstat_tab"),
       menuItem("Validations", icon = tags$i(class = "fa fa-clipboard-check", "aria-hidden" = "true", role = "presentation", "aria-label" = "clipboard-check icon"), tabName = "validations_tab"),
       menuItem("Developer & Org Data Review", tabName = "developerfeedback_tab", icon = icon("chart-line")),
       menuItem("Security", icon = tags$i(class = "fa fa-id-card-o", "aria-hidden" = "true", role = "presentation", "aria-label" = "id-card-o icon"), tabName = "security_tab"),
@@ -85,8 +82,9 @@ ui <- dashboardPage(
       tags$style(HTML("
         /* Critical styles needed for initial render */
         .content-wrapper, .right-side { background-color: #F6F7F8; }
-        .skin-blue .main-header .navbar { background-color: #1B5A7F; }
-        .skin-blue .main-header .logo { background-color: #1B5A7F; }
+        .skin-blue .main-header .navbar { background-color: #1a4480; }
+        .skin-blue .main-header .logo { background-color: #1a4480; }
+        .skin-blue .main-sidebar, .skin-blue .left-side { background-color: #3d6ea5; }
         .show-on-focus { position: absolute; top: -10em; background: #fff; color: #112e51; display: block; font-weight: 600; }
         .show-on-focus:focus { top: 5px; position: absolute; background: #fff; color: #112e51; display: block; font-weight: 600; font-size: 20px; }
         .small-box { color: black !important; position: relative; display: block; margin-bottom: 20px; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
@@ -176,7 +174,12 @@ ui <- dashboardPage(
     
     development_banner(devbanner),
     uiOutput("resource_tab_popup"),
-    h1(textOutput("page_title")),
+    div(class = "lantern-page-title-row",
+      h1(textOutput("page_title")),
+      uiOutput("page_last_queried")
+    ),
+    p(class = "lantern-page-description", textOutput("page_description")),
+    uiOutput("show_clear_all_filters"),
     uiOutput("show_filters"),
     uiOutput("show_value_filters"),
     uiOutput("show_resource_operation_checkboxes"),
@@ -196,23 +199,19 @@ ui <- dashboardPage(
       tabItem("organizations_tab",
               organizationsmodule_UI("organizations_page")
       ),
-      tabItem("capabilitystatementsize_tab",
-              capabilitystatementsize_UI("capabilitystatementsize_page")
-      ),
       tabItem("resource_tab",
               resourcemodule_UI("resource_page")
       ),
       tabItem("implementation_tab",
               implementationmodule_UI("implementation_page")
       ),
-      tabItem("fields_tab",
-              fieldsmodule_UI("fields_page")
-      ),
-        tabItem("profile_tab",
-              profilemodule_UI("profile_page")
-      ),
-      tabItem("values_tab",
-              valuesmodule_UI("values_page")
+      tabItem("capstat_tab",
+              tabsetPanel(id = "capstat_tabset", type = "tabs",
+                tabPanel("Fields", fieldsmodule_UI("fields_page")),
+                tabPanel("Field Values", valuesmodule_UI("values_page")),
+                tabPanel("Profiles", profilemodule_UI("profile_page")),
+                tabPanel("Size", capabilitystatementsize_UI("capabilitystatementsize_page"))
+              )
       ),
       tabItem("validations_tab",
               validationsmodule_UI("validations_page")

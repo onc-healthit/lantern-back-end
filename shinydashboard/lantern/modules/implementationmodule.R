@@ -5,7 +5,8 @@ implementationmodule_UI <- function(id) {
 
   tagList(
     h2("FHIR Implementation Guides"),
-    p("This is the list of FHIR implementation guides reported by the CapabilityStatement / Conformance Resources from the endpoints."),
+    p("An implementation guide is a published specification that adds rules, profiles, and extensions on top of the base FHIR standard for a specific use case (for example, US Core). This page shows which implementation guides the queried endpoints report supporting, based on the CapabilityStatement / Conformance Resource each endpoint returns."),
+    p("Counts below reflect only the endpoints that match the FHIR Version and Developer filters currently selected above; endpoints that are unreachable or do not return a CapabilityStatement / Conformance Resource are not included.", style = "font-style: italic;"),
     fluidRow(
       column(width = 12,
              h3("Implementation Guide Count"),

@@ -8,11 +8,34 @@ library(dygraphs)
 # Define server function
 function(input, output, session) { #nolint
 
+  # The four Capability Statement / Conformance pages are now sub-tabs of a single
+  # "capstat_tab" sidebar entry (see ui.R's capstat_tabset). This map lets the rest of
+  # the server code keep treating them as distinct logical tabs (for filter visibility,
+  # page titles, and module activation) without a large rewrite.
+  capstat_tabset_map <- list(
+    "Fields" = "fields_tab",
+    "Field Values" = "values_tab",
+    "Profiles" = "profile_tab",
+    "Size" = "capabilitystatementsize_tab"
+  )
+
+  active_tab <- reactive({
+    if (identical(input$side_menu, "capstat_tab")) {
+      sub_tab <- input$capstat_tabset
+      if (is.null(sub_tab) || !(sub_tab %in% names(capstat_tabset_map))) {
+        sub_tab <- "Fields"
+      }
+      capstat_tabset_map[[sub_tab]]
+    } else {
+      input$side_menu
+    }
+  })
+
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
     message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
     query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab"))) {
+    if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "capstat_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab"))) {
       current_tab <- toString(query[["tab"]])
       updateTabItems(session, "side_menu", selected = current_tab)
     } else {
@@ -39,13 +62,14 @@ function(input, output, session) { #nolint
     updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
   }, ignoreInit = TRUE)
 
-  # Reset search query inputs when navigating between tabs
-  observeEvent(input$side_menu, {
-      
+  # Reset search query inputs when navigating between tabs (including between the
+  # Capability Statement / Conformance sub-tabs)
+  observeEvent(list(input$side_menu, input$capstat_tabset), {
+
       # Map of tab to search input ID
       search_inputs <- list(
         "endpoints_tab" = "endpoints_page-search_query",
-        "organizations_tab" = "organizations_page-org_search_query", 
+        "organizations_tab" = "organizations_page-org_search_query",
         "resource_tab" = "resource_page-res_search_query",
         "values_tab" = "values_page-values_search_query",
         "profile_tab" = "profile_page-profile_search_query",
@@ -53,10 +77,11 @@ function(input, output, session) { #nolint
         "smartresponse_tab" = "smartresponse_page-smartres_search_query",
         "contacts_tab" = "contacts_page-contacts_search_query"
       )
-      
+
       # Reset search input for current tab
-      if (input$side_menu %in% names(search_inputs)) {
-        updateTextInput(session, search_inputs[[input$side_menu]], value = "")
+      current_tab <- active_tab()
+      if (current_tab %in% names(search_inputs)) {
+        updateTextInput(session, search_inputs[[current_tab]], value = "")
       }
   }, ignoreInit = TRUE)
 
@@ -80,7 +105,8 @@ function(input, output, session) { #nolint
   # modules' own reactives already depend on the app$* reactiveVals that app_fetcher() populates,
   # so registering them once, before the first fetch completes, is safe -- they will simply
   # re-compute once that data becomes available.
-  active_tab <- reactive(input$side_menu)
+  # (active_tab is defined once near the top of this file, above, so it's available to
+  # every observer/output that needs it, not just the module registrations below.)
 
   callModule(
     endpointsmodule,
@@ -212,22 +238,43 @@ function(input, output, session) { #nolint
   show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
 
   page_name_list <- list(
-     "dashboard_tab" = "Current Endpoint Metrics",
+     "dashboard_tab" = "Endpoint Query & Response Summary",
      "endpoints_tab" = "List of Endpoints",
      "downloads_tab" = "Downloads / API Page",
      "organizations_tab" = "Organizations Page",
      "resource_tab" = "Resource Page",
      "implementation_tab" = "Implementation Page",
-     "fields_tab" = "Fields Page",
-     "profile_tab" = "Profile Page",
-     "values_tab" = "Values Page",
+     "fields_tab" = "Capability Statement / Conformance: Fields",
+     "profile_tab" = "Capability Statement / Conformance: Profiles",
+     "values_tab" = "Capability Statement / Conformance: Field Values",
      "contacts_tab" = "Contact Information Page",
      "about_tab" = "About Lantern",
      "security_tab" = "Security Authorization Types",
      "smartresponse_tab" = "SMART Core Capabilities Well Known Endpoint Response",
-     "capabilitystatementsize_tab" = "CapabilityStatement / Conformance Size",
+     "capabilitystatementsize_tab" = "Capability Statement / Conformance: Size",
      "validations_tab" = "Validations Page",
      "developerfeedback_tab" = "Service Base URL Publication — Data Quality"
+  )
+
+  # One-sentence description shown under the page title in the header, so context stays
+  # visible even though the header itself doesn't change when navigating between tabs.
+  page_description_list <- list(
+     "dashboard_tab" = "A snapshot of the total and indexed FHIR endpoints Lantern tracks, and the HTTP responses received during Lantern's most recent query of those endpoints.",
+     "endpoints_tab" = "The full list of FHIR endpoints Lantern has discovered, with their FHIR version, developer, and availability.",
+     "downloads_tab" = "Download Lantern's underlying data as CSV files, or access it through the API.",
+     "organizations_tab" = "Organizations associated with the discovered FHIR endpoints, including their identifying and address information.",
+     "resource_tab" = "Counts of FHIR resource types supported across the endpoints that match the selected filters.",
+     "implementation_tab" = "FHIR implementation guides reported by endpoints' CapabilityStatement / Conformance Resources.",
+     "fields_tab" = "Which optional CapabilityStatement / Conformance Resource fields endpoints report, for the selected developer and FHIR version.",
+     "profile_tab" = "FHIR profiles referenced in endpoints' CapabilityStatement / Conformance Resources, for the selected developer and FHIR version.",
+     "values_tab" = "Values reported for a selected CapabilityStatement / Conformance Resource field, across endpoints for the selected developer and FHIR version.",
+     "contacts_tab" = "Contact information reported by endpoints' CapabilityStatement / Conformance Resources.",
+     "about_tab" = "Background on the Lantern project, its data sources, and its source code.",
+     "security_tab" = "Authorization types (e.g. SMART on FHIR) reported as supported by each endpoint.",
+     "smartresponse_tab" = "Responses from endpoints' SMART Core Capabilities well-known endpoint.",
+     "capabilitystatementsize_tab" = "The size of the CapabilityStatement / Conformance Resource returned by each endpoint.",
+     "validations_tab" = "Results of validating endpoints' CapabilityStatement / Conformance Resources against selected validation rules.",
+     "developerfeedback_tab" = "Data quality insights on Service Base URL publications, by developer and organization."
   )
 
   output$resource_tab_popup <- renderUI({
@@ -249,7 +296,7 @@ function(input, output, session) { #nolint
 
 
   show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
+    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "capstat_tab", "security_tab", "smartresponse_tab", "validations_tab", "contacts_tab")
   )
 
   fhir_version_no_capstat <- reactive(
@@ -272,20 +319,24 @@ function(input, output, session) { #nolint
 
   show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
-  show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
+  show_profiles_filters <- reactive(active_tab() == "profile_tab")
 
   show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
 
   show_resource_tab_popup <- reactive(input$side_menu %in% c("resource_tab"))
 
-  show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
+  show_value_filter <- reactive(active_tab() == "values_tab")
 
   show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
 
   show_confidence_filter <- reactive(FALSE)
 
   page_name <- reactive({
-    page_name_list[[input$side_menu]]
+    page_name_list[[active_tab()]]
+  })
+
+  page_description <- reactive({
+    page_description_list[[active_tab()]]
   })
 
   output$htmlFooter <- renderUI({
@@ -301,7 +352,17 @@ function(input, output, session) { #nolint
   })
 
   output$page_title <- renderText(page_name())
+  output$page_description <- renderText(page_description())
   output$version <- renderText(version_title)
+
+  # Shows the "Endpoints Last Queried" timestamp inline with the header on the dashboard
+  # page, rather than as its own metric box (see dashboardmodule.R).
+  output$page_last_queried <- renderUI({
+    if (identical(input$side_menu, "dashboard_tab")) {
+      app$endpoint_export_tbl()
+      tags$span(class = "lantern-last-queried", paste0("Endpoints last queried: ", get_endpoint_last_updated(db_tables)))
+    }
+  })
 
   observeEvent(input$fhirversion_selectall, {
     if (input$fhirversion_selectall == 0) {
@@ -333,6 +394,39 @@ function(input, output, session) { #nolint
     }
   }
 
+  output$show_clear_all_filters <- renderUI({
+    if (show_filter()) {
+      div(class = "pull-right",
+        actionButton("clear_all_filters", "Clear All Filters", icon = tags$i(class = "fa fa-times-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "clear icon"))
+      )
+    }
+  })
+
+  # Resets every filter control back to its default, regardless of which ones are
+  # currently visible on the active tab. update*Input calls are no-ops for inputs that
+  # aren't currently rendered, so it's safe to reset them all unconditionally here.
+  observeEvent(input$clear_all_filters, {
+    if (fhir_version_no_capstat()) {
+      updatePickerInput(session, inputId = "fhir_version", choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()))
+    } else {
+      updatePickerInput(session, inputId = "fhir_version", choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()))
+    }
+    updateSelectInput(session, inputId = "vendor", selected = ui_special_values$ALL_DEVELOPERS)
+    updateSelectInput(session, inputId = "availability", selected = "0-100")
+    updateSelectInput(session, inputId = "validation_group", selected = "All Groups")
+    updateSelectInput(session, inputId = "match_confidence", selected = "97-100")
+    updateSelectInput(session, inputId = "has_contact", selected = "Any")
+    updateSelectInput(session, inputId = "is_chpl", selected = "All")
+    updateSelectInput(session, inputId = "field", selected = "url")
+    updateSelectInput(session, inputId = "auth_type_code", selected = "SMART-on-FHIR")
+    updateSelectInput(session, inputId = "profiles", selected = ui_special_values$ALL_PROFILES)
+    updateSelectInput(session, inputId = "profile_resource", selected = ui_special_values$ALL_RESOURCES)
+    updateSelectInput(session, inputId = "date", selected = "All time")
+    updateSelectInput(session, inputId = "http_date", selected = "All time")
+    updateMultiInput(session, inputId = "resources", choices = checkbox_resources_no_filter(), selected = checkbox_resources_no_filter())
+    updateSelectizeInput(session, inputId = "operations", selected = c("read"))
+  }, ignoreInit = TRUE)
+
   output$show_filters <- renderUI({
     if (show_filter()) {
       if (fhir_version_no_capstat()) {
@@ -347,7 +441,7 @@ function(input, output, session) { #nolint
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = preserve_or_default(isolate(input$fhir_version), isolate(app$fhir_version_list_no_capstat()), isolate(app$distinct_fhir_version_list_no_capstat())), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for specific tabs
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab", "values_tab")) {
+      if (identical(input$side_menu, "capstat_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]

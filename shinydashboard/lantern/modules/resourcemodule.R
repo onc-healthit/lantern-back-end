@@ -6,34 +6,26 @@ resourcemodule_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    fluidRow(
-      h3("Resource Count", style = "margin-left:5px"),
-      column(width = 12, style = "margin-right: 5px; margin-left: 5px;",
-        tabsetPanel(id = "resource_tabset", type = "tabs",
-              tabPanel("Bar Graph", uiOutput(ns("resource_full_plot"))),
-              tabPanel("Table", 
-                tagList(
-                  textInput(ns("res_search_query"), "Search:", value = ""),
-                  reactable::reactableOutput(ns("resource_op_table")),
-                  fluidRow(
-                    column(3, 
-                      div(style = "display: flex; justify-content: ;", uiOutput(ns("resource_prev_button_ui"))
+    div(class = "lantern-resource-panel",
+      h3("Resource Count", style = "margin: 0 0 8px 0;"),
+      tabsetPanel(id = "resource_tabset", type = "tabs",
+            tabPanel("Bar Graph", uiOutput(ns("resource_full_plot"))),
+            tabPanel("Table",
+              tagList(
+                fluidRow(class = "lantern-resource-pager-row",
+                  column(width = 4, textInput(ns("res_search_query"), "Search:", value = "")),
+                  column(width = 4, offset = 4,
+                    div(style = "display: flex; justify-content: flex-end; align-items: center; gap: 8px;",
+                          uiOutput(ns("resource_prev_button_ui")),
+                          numericInput(ns("res_page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "70px"),
+                          textOutput(ns("res_page_info"), inline = TRUE),
+                          uiOutput(ns("resource_next_button_ui"))
                       )
-                    ),
-                    column(6, 
-                      div(style = "display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 8px;",
-                            numericInput(ns("res_page_selector"), label = NULL, value = 1, min = 1, max = 1, step = 1, width = "80px"),
-                            textOutput(ns("res_page_info"), inline = TRUE)
-                        )
-                    ),
-                    column(3, 
-                      div(style = "display: flex; justify-content: flex-end;", uiOutput(ns("resource_next_button_ui"))
-                      )
-                    )
                   )
-                )
+                ),
+                reactable::reactableOutput(ns("resource_op_table"))
               )
-        )
+            )
       )
     )
   )

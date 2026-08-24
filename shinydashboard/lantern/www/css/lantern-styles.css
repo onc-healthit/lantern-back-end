@@ -1,5 +1,13 @@
+/* Harmonized USWDS-aligned blue palette used across header, sidebar, links, and buttons */
+:root {
+  --lantern-primary-darker: #162e51;
+  --lantern-primary-dark: #1a4480;
+  --lantern-primary: #3d6ea5;
+  --lantern-primary-light: #005ea2;
+}
+
 /* Hides the Skip To Content button when it is not focused on */
-.show-on-focus {     
+.show-on-focus {
     position: absolute;
     top: -10em;
     background: #fff;
@@ -48,12 +56,31 @@
   
   /* Changes the color of the Lantern header, navbar, and borders */
   .skin-blue .main-header .navbar {
-    background-color: #1B5A7F;
+    background-color: var(--lantern-primary-dark);
   }
-  
+
   /* Changes the color of the Lantern main header logo */
   .skin-blue .main-header .logo {
-    background-color: #1B5A7F;
+    background-color: var(--lantern-primary-dark);
+  }
+
+  /* Softer sidebar background so contrast with the light content area is less harsh
+     than shinydashboard's default near-black skin-blue sidebar */
+  .skin-blue .main-sidebar,
+  .skin-blue .left-side {
+    background-color: var(--lantern-primary);
+  }
+
+  .skin-blue .sidebar-menu > li > a {
+    color: #f0f4f8;
+    border-left: 3px solid transparent;
+  }
+
+  .skin-blue .sidebar-menu > li > a:hover,
+  .skin-blue .sidebar-menu > li.active > a {
+    background-color: var(--lantern-primary-dark);
+    color: #ffffff;
+    border-left: 3px solid #ffffff;
   }
   
   /* Changes the text color of the Current Endpoint Responses info boxes on the dashboard page */
@@ -100,22 +127,22 @@
   
   /* Changes the text color of the navbar tabs on the Organization page */
   #organization_tabset li a {
-    color: #024A96;
+    color: var(--lantern-primary-light);
   }
   
   /* Changes the text color of the navbar tabs on the Resource page */
   #resource_tabset li a {
-    color: #024A96;
+    color: var(--lantern-primary-light);
   }
   
   /* Changes the text color of the navbar tabs on the Profile page */
   #profile_resource_tab li a {
-    color: #024A96;
+    color: var(--lantern-primary-light);
   }
   
   /* Changes the text color of the navbar tabs on the Endpoint modal popup */
   #endpoint_modal_tabset li a {
-    color: #024A96;
+    color: var(--lantern-primary-light);
   }
   
   /* Change the text color of the active navbar tab on the Organization page, Resource page, Profile page, and Endpoint Modal */
@@ -125,7 +152,7 @@
   
   /* Change color of the selected links in the resources checkbox */
   .multi-wrapper .selected-wrapper .item.selected  {
-    color: #024A96;
+    color: var(--lantern-primary-light);
   }
   
   /* Change color of the non selected links in the resources checkbox */
@@ -243,7 +270,7 @@
   
   /* Change the styling for download buttons */
   a.btn {
-    background-color: #1B5A7F!important;
+    background-color: var(--lantern-primary-dark)!important;
     border: 1px solid black!important;
     color: white;
   }
@@ -264,7 +291,7 @@
   
   /* Change the styling for the buttons on the Lantern page */
   .action-button {
-    background-color: #1B5A7F!important;
+    background-color: var(--lantern-primary-dark)!important;
     border: 1px solid black!important;
     color: white!important;
   }
@@ -281,4 +308,88 @@
     border: 2px solid black!important;
     font-weight: bold!important;
     color: white!important;
+  }
+
+  /* Puts the "Endpoints last queried" timestamp on the same line as the page title
+     (dashboard page only), instead of buried in its own metric box */
+  .lantern-page-title-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .lantern-page-title-row h1 {
+    margin-bottom: 0;
+  }
+
+  /* Subtitle line shown under the page title. Rendered against the light content
+     background (not the dark header bar), so this uses a muted dark-gray rather than
+     a light color. */
+  .lantern-page-description {
+    color: #5b6472;
+    font-size: 15px;
+    margin: 0 0 15px 0;
+  }
+
+  .lantern-last-queried {
+    color: #5b6472;
+    font-size: 14px;
+    font-style: italic;
+  }
+
+  /* Card wrapper that visually groups the key metric boxes on the dashboard page
+     into a single component */
+  .lantern-metrics-panel {
+    background-color: #ffffff;
+    border: 1px solid #d9dee3;
+    border-radius: 4px;
+    padding: 15px 15px 0 15px;
+    margin-bottom: 15px;
+  }
+
+  /* Compact stat tiles (total / indexed endpoints) so the two numbers take up
+     less vertical space than a full-size infoBox */
+  .lantern-stat-tile .info-box {
+    min-height: 70px;
+    margin-bottom: 10px;
+  }
+
+  .lantern-stat-tile .info-box-icon {
+    height: 70px;
+    line-height: 70px;
+    font-size: 30px;
+  }
+
+  .lantern-stat-tile .info-box-content {
+    padding: 8px 10px;
+  }
+
+  .lantern-stat-tile .info-box-number {
+    font-size: 22px!important;
+  }
+
+  .lantern-stat-tile .info-box-text {
+    font-size: 13px!important;
+  }
+
+  /* Subtle section divider between the metrics panel and the charts that follow it */
+  hr.lantern-divider {
+    border: none;
+    border-top: 1px solid #d9dee3;
+    margin: 25px 0;
+  }
+
+  /* Tab-link color for the consolidated Capability Statement / Conformance secondary navigation */
+  #capstat_tabset li a {
+    color: var(--lantern-primary-light);
+  }
+
+  /* Tighten spacing around the Resource page's table/graph tabset and pagination controls */
+  .lantern-resource-panel {
+    margin: 0 5px;
+  }
+
+  .lantern-resource-pager-row {
+    margin-top: 10px;
   }

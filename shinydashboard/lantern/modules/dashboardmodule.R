@@ -26,19 +26,23 @@ dashboard_UI <- function(id) {
   ns <- NS(id)
 
   tagList(
-    fluidRow(
-      infoBoxOutput(ns("updated_time_box"), width = 4),
-      infoBoxOutput(ns("total_endpoints_box"), width = 4),
-      infoBoxOutput(ns("indexed_endpoints_box"), width = 4)
+    div(class = "lantern-metrics-panel",
+      div(class = "lantern-stat-tile",
+        fluidRow(
+          infoBoxOutput(ns("total_endpoints_box"), width = 6),
+          infoBoxOutput(ns("indexed_endpoints_box"), width = 6)
+        )
+      ),
+      h2("HTTP Response Codes from Most Recent Query"),
+      fluidRow(
+        valueBoxOutput(ns("http_200_box")),
+        valueBoxOutput(ns("http_404_box")),
+        valueBoxOutput(ns("http_503_box"))
+      ),
+      actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon"))
     ),
-    h2("Current endpoint responses:"),
-    fluidRow(
-      valueBoxOutput(ns("http_200_box")),
-      valueBoxOutput(ns("http_404_box")),
-      valueBoxOutput(ns("http_503_box"))
-    ),
-    actionButton(ns("show_info"), "Info", icon = tags$i(class = "fa fa-question-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "question-circle icon")),
-    h2("Endpoint Counts by Developer and FHIR Version"),
+    hr(class = "lantern-divider"),
+    h2("Endpoints by Developer and FHIR Version (Table & Chart)"),
     fluidRow(
       custom_column_small(
             reactable::reactableOutput((ns("fhir_vendor_table")))
@@ -48,7 +52,8 @@ dashboard_UI <- function(id) {
              htmlOutput(ns("note_text"))
       )
     ),
-    h3("All Endpoint Responses"),
+    hr(class = "lantern-divider"),
+    h3("Historical HTTP Response Codes (All Endpoints, All Time)"),
     uiOutput("show_http_vendor_filters"),
     fluidRow(
       custom_column_small(
@@ -169,14 +174,6 @@ dashboard <- function(
   # create a summary table to show the response codes received along with
   # the description for each code
 
-  output$updated_time_box <- renderInfoBox({
-    app$endpoint_export_tbl()
-    infoBox(
-      "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
-      color = "purple"
-    )
-  })
-
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
       "Total Endpoints", endpoint_totals_r()$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
@@ -271,7 +268,7 @@ dashboard <- function(
       ) +
       theme(text = element_text(size = 15)) +
       labs(fill = "Code",
-         title = "HTTP Response Codes Received from Endpoints During Most Recent Query",
+         title = "Historical HTTP Response Codes (All Endpoints, All Time)",
          x = "HTTP Response Received",
          y = "Count of endpoints")
   }, sizePolicy = sizeGrowthRatio(width = 400,
