@@ -57,106 +57,33 @@ resourcemodule <- function(  #nolint
 
   ns <- session$ns
 
-  res_page_state <- reactiveVal(1)
   res_page_size <- 50
 
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
 
-  # Compute total pages based on filtered data
+  # Compute total pages via a real COUNT of the grouped rows instead of materializing the full
+  # grouped result (page_size = -1, offset = -1) and nrow()-ing it.
   res_total_pages <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_resources(), is_active())
 
-    count_query <- get_fhir_resource_by_op(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), page_size = -1, offset = -1, search_query = input$res_search_query)
-    total <- nrow(count_query)
+    total <- get_fhir_resource_by_op_count(db_connection, as.list(sel_operations()), as.list(sel_fhir_version()), as.list(sel_resources()), as.list(sel_vendor()), search_query = input$res_search_query)
     max(1, ceiling(total / res_page_size))
   })
 
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- res_page_state()
-    current_selector <- input$res_page_selector
-    
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) || 
-        is.na(current_selector) || 
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-      
-      isolate({  # This is the key fix to break feedback loops!
-        updateNumericInput(session, "res_page_selector", 
-                          max = res_total_pages(),
-                          value = new_page)
-      })
-    }
-  })
+  res_page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "res_page_selector",
+    prev_button_id = "res_prev_page",
+    next_button_id = "res_next_page",
+    prev_output_id = "resource_prev_button_ui",
+    next_output_id = "resource_next_button_ui",
+    total_pages = res_total_pages
+  )
 
-  # Handle page selector input
-  observeEvent(input$res_page_selector, {
-    # Get current input value
-    current_input <- input$res_page_selector
-    
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) && 
-        !is.na(current_input) && 
-        is.numeric(current_input) &&
-        current_input > 0) {
-      
-      new_page <- max(1, min(current_input, res_total_pages()))
-      
-      # Only update page state if it's actually different
-      if (new_page != res_page_state()) {
-        res_page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "res_page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "res_page_selector", value = res_page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent firing on initialization
-
-  # Handle next page button 
-  observeEvent(input$res_next_page, {
-    if (res_page_state() < res_total_pages()) {
-      new_page <- res_page_state() + 1
-      res_page_state(new_page)
-    }
-  })
-
-  # Handle previous page button
-  observeEvent(input$res_prev_page, {
-    if (res_page_state() > 1) {
-      new_page <- res_page_state() - 1
-      res_page_state(new_page)
-    }
-  })
-
-  # Reset to first page on any filter/search change 
+  # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), input$res_search_query), {
     res_page_state(1)
-  })
-
-  output$resource_prev_button_ui <- renderUI({
-    if (res_page_state() > 1) {
-      actionButton(ns("res_prev_page"), "Previous", icon = icon("arrow-left"))
-    } else {
-      NULL  # Hide the button
-    }
-  })
-
-  output$resource_next_button_ui <- renderUI({
-    if (res_page_state() < res_total_pages()) {
-      actionButton(ns("res_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL
-    }
   })
 
   output$res_page_info <- renderText({

@@ -10,27 +10,9 @@ custom_column_small <- function(...) {
     )
 }
 
-get_endpoint_totals_list <- function(db_tables) {
-  totals_data <- db_tables$mv_endpoint_totals %>%
-    as.data.frame() %>%
-    slice(1)
-  
-  fhir_endpoint_totals <- list(
-    "all_endpoints"     = totals_data$all_endpoints,
-    "indexed_endpoints" = totals_data$indexed_endpoints,
-    "nonindexed_endpoints" = totals_data$nonindexed_endpoints
-  )
-  
-  return(fhir_endpoint_totals)
-}
-
-get_response_tally_list <- function(db_tables) {
-  response_tally <- db_tables$mv_response_tally %>%
-                    as.data.frame() %>%
-                    slice(1)
-  
-  return(response_tally)
-}
+# get_endpoint_totals_list() and get_response_tally_list() are defined once in
+# functions/endpoints.R (sourced before this module file per configuration.yml) -- this file used
+# to shadow them with an identical duplicate copy.
 
 custom_column_large <- function(...) {
     tags$div(
