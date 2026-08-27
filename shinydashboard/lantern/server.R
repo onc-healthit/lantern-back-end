@@ -319,11 +319,11 @@ function(input, output, session) { #nolint
     }
   })
 
-  # Preserve the user's current selection across a filter-bar re-render (e.g. a tab switch) when
-  # it's still a valid choice, instead of always resetting to a hardcoded default. Recreating these
-  # inputs with a forced default on every tab switch was what fanned a single tab click out into a
-  # real value change on shared inputs like vendor/fhir_version, invalidating every registered
-  # module's reactives at once -- see the header-cycling fix in the callModule registration above.
+  # Preserve compatible non-developer selections across a filter-bar re-render. The Developer
+  # dropdown intentionally keeps its original per-tab behavior below: normal tabs reset to
+  # "All Developers", while tabs that do not offer that choice select their first developer.
+  # Active-tab guards on the modules prevent those expected input resets from running queries for
+  # inactive tabs.
   preserve_or_default <- function(current, choices, default) {
     valid_choices <- as.character(unlist(choices, use.names = FALSE))
     if (!is.null(current) && length(current) > 0 && all(as.character(current) %in% valid_choices)) {
@@ -354,13 +354,11 @@ function(input, output, session) { #nolint
 
         # Set default to first actual developer
         default_vendor <- if(length(vendor_choices_filtered) > 0) vendor_choices_filtered[[1]] else ui_special_values$ALL_DEVELOPERS
-        vendor_selected <- preserve_or_default(isolate(input$vendor), vendor_choices_filtered, default_vendor)
 
-        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = vendor_choices_filtered, selected = vendor_selected, size = 1, selectize = FALSE)
+        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = vendor_choices_filtered, selected = default_vendor, size = 1, selectize = FALSE)
       } else {
         # Normal behavior for other tabs
-        vendor_selected <- preserve_or_default(isolate(input$vendor), app$vendor_list(), ui_special_values$ALL_DEVELOPERS)
-        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = vendor_selected, size = 1, selectize = FALSE)
+        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       }
       availability_choices <- list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100")
       availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = availability_choices, selected = preserve_or_default(isolate(input$availability), availability_choices, "0-100"), size = 1, selectize = FALSE)
