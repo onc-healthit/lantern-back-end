@@ -71,7 +71,7 @@ endpointsmodule <- function(
     filt <- endpoint_filter_query()
 
     count_query_str <- paste0(
-      "SELECT COUNT(*) as count FROM (SELECT DISTINCT urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl FROM (",
+      "SELECT COUNT(*) as count FROM (SELECT DISTINCT base.\"urlModal\", base.condensed_endpoint_names, base.endpoint_names, base.vendor_name, base.capability_fhir_version, base.format, base.cap_stat_exists, base.status, base.availability, base.is_chpl FROM (",
       filt$query_str, ") base) counted"
     )
 
