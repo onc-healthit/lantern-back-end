@@ -284,9 +284,13 @@ function(input, output, session) { #nolint
 
   show_confidence_filter <- reactive(FALSE)
 
-  page_name <- reactive({
-    page_name_list[[input$side_menu]]
-  })
+  # Coalesce rapid sidebar changes so the heading does not render every intermediate tab title.
+  # This is intentionally limited to the heading: the selected tab and its content still update
+  # immediately, while the title publishes once the short burst of clicks has settled.
+  page_name <- debounce(
+    reactive(page_name_list[[input$side_menu]]),
+    millis = 200
+  )
 
   output$htmlFooter <- renderUI({
     if (input$side_menu %in% c("about_tab")) {
