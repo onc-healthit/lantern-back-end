@@ -6,6 +6,8 @@ COPY ${cert_dir}/ /etc/ssl/certs
 RUN update-ca-certificates
 COPY . .
 
+RUN apt-get update && apt-get install -y --only-upgrade ca-certificates && rm -rf /var/lib/apt/lists/*
+
 ENV GO111MODULE=on
 
 RUN go install ./...
