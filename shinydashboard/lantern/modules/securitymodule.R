@@ -143,7 +143,7 @@ securitymodule <- function(
     query <- paste0(
       "SELECT * ",
       security_base_sql(),
-      " ORDER BY url LIMIT ", limit, " OFFSET ", offset
+      " ORDER BY url, condensed_organization_names, vendor_name, capability_fhir_version, tls_version, code LIMIT ", limit, " OFFSET ", offset
     )
 
     result <- tbl(db_connection, sql(query)) %>% collect()

@@ -164,10 +164,12 @@ output$capstat_extension_text <- renderUI({
 })
 
   capstat_field_count <- reactive({
+    req(sel_fhir_version(), is_active())
     get_capstat_fields_count(sel_fhir_version(), sel_vendor(), "false")
   })
 
   capstat_extension_count <- reactive({
+    req(sel_fhir_version(), is_active())
     get_capstat_fields_count(sel_fhir_version(), sel_vendor(), "true")
   })
 
@@ -286,7 +288,7 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
+      list(sel_fhir_version(), sel_vendor(), app$last_updated())
     }
   )
   output$fields_bar_empty_plot <- renderPlot({
@@ -331,7 +333,7 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
+      list(sel_fhir_version(), sel_vendor(), app$last_updated())
     }
   )
   output$extensions_bar_empty_plot <- renderPlot({

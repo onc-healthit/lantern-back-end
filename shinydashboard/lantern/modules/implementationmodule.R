@@ -95,7 +95,7 @@ implementationmodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
+      list(sel_fhir_version(), sel_vendor(), app$last_updated())
     })
 
   output$implementation_guide_empty_plot <- renderPlot({

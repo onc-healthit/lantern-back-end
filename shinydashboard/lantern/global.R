@@ -94,26 +94,47 @@ app <<- list(
   http_response_code_tbl = reactiveVal(NULL),
   zip_to_zcta = reactiveVal(NULL),
   endpoint_export_tbl = reactiveVal(NULL),
-  security_code_list = reactiveVal(NULL)
+  security_code_list = reactiveVal(NULL),
+  last_updated = reactiveVal(NULL)
 )
 
 
-time_until_next_run <- function() {
-  current_time <- Sys.time()
-  message("current_time ", current_time)
-  current_hour <- as.numeric(format(current_time, "%H"))
-  current_minute <- as.numeric(format(current_time, "%M"))
+# The materialized views are refreshed at 6:00 AM US Central time. The refresh time is expressed in
+# that timezone (rather than a fixed UTC hour) so it stays correct across daylight saving changes:
+# it is 12:00 UTC in winter (CST) and 11:00 UTC in summer (CDT), regardless of the server's own TZ.
+app_refresh_tz <- "America/Chicago"
+app_refresh_hour <- 6
 
-  hours_until_2am <- ifelse(current_hour >= 6, 24 - current_hour + 6, 6 - current_hour)
-  time_until_next_run <- (hours_until_2am * 60 * 60) - (current_minute * 60)
+# Seconds until the next app_refresh_hour:00 in app_refresh_tz. A target within the next minute is
+# treated as already reached so a timer firing marginally early cannot schedule a second run.
+time_until_next_run <- function() {
+  now_central <- lubridate::with_tz(Sys.time(), app_refresh_tz)
+  target <- lubridate::update(now_central, hour = app_refresh_hour, minute = 0, second = 0)
+  if (target <= now_central + 60) {
+    target <- target + lubridate::days(1)
+  }
+  time_until_next_run <- as.numeric(difftime(target, now_central, units = "secs"))
   message("time_until_next_run: ", time_until_next_run)
   return(time_until_next_run)
 }
 
+# The first run only flags the initial load (database_fetch(1)), which the first session to connect
+# performs behind its loading spinner. Every later run is the scheduled daily refresh: it calls
+# app_fetcher() once, process-wide, so the shared app$* data (and app$last_updated, which the plot
+# and count caches are keyed on) update at the refresh time without depending on a new session
+# starting.
+updater_state <- new.env()
+updater_state$initial_run <- TRUE
 updater <- observe({
-  time_until_next_run_value <- time_until_next_run()
-  invalidateLater(time_until_next_run_value * 1000)
-  database_fetch(1)
+  invalidateLater(time_until_next_run() * 1000)
+  if (updater_state$initial_run) {
+    updater_state$initial_run <- FALSE
+    database_fetch(1)
+  } else {
+    # isolate(): app_fetcher() reads the app$* reactiveVals it also sets, which would otherwise
+    # make this observer depend on them and re-trigger itself in a loop.
+    isolate(app_fetcher())
+  }
 })
 
 onStop(function() {

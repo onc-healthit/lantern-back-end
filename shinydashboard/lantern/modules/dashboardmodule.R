@@ -154,16 +154,16 @@ dashboard <- function(
     fhirVendorTableSize(page)
   })
 
+  # Depends on app$last_updated() (set by app_fetcher()) so the table/plot re-query after the
+  # nightly refresh instead of staying frozen at their first-render values.
   selected_http_summary <- reactive({
-    res <- isolate(get_http_response_tbl_all())
+    app$last_updated()
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- isolate(get_http_response_tbl(sel_vendor()))
+      get_http_response_tbl(sel_vendor())
     } else {
-      res <- isolate(get_http_response_tbl_all())
+      get_http_response_tbl_all()
     }
-
-    res
   })
 
   # create a summary table to show the response codes received along with
@@ -259,7 +259,7 @@ dashboard <- function(
                                 height = 400,
                                 growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    get_endpoint_last_updated(db_tables)
+    app$last_updated()
   }
 )
   
@@ -278,7 +278,7 @@ dashboard <- function(
                                   height = 400,
                                   growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    list(get_endpoint_last_updated(db_tables), sel_vendor())
+    list(app$last_updated(), sel_vendor())
   })
 
   observeEvent(input$show_info, {
