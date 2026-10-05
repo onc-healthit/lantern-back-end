@@ -65,19 +65,34 @@ endpointsmodule <- function(
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
 
-  # Calculate total pages via a real COUNT(*) of the distinct rows the table displays, instead of
-  # pulling the entire filtered dataset into R just to nrow() it.
+  # One query returns both the number of distinct table rows (for the page count) and the number
+  # of distinct (url, fhir_version) endpoints (for the "Matching Endpoints" text). The filtered
+  # rows are materialized once in a narrow CTE and both aggregates read from it, so the view is
+  # scanned once and neither number needs the full result set pulled into R. The result is cached
+  # per filter combination and invalidated when app_fetcher() records a new last_updated value.
+  endpoint_counts <- bindCache(
+    reactive({
+      filt <- endpoint_filter_query()
+
+      counts_query_str <- paste0(
+        "WITH filtered AS (SELECT base.\"urlModal\", base.condensed_endpoint_names, base.endpoint_names, base.vendor_name, base.capability_fhir_version, base.format, base.cap_stat_exists, base.status, base.availability, base.is_chpl, base.url, base.fhir_version FROM (",
+        filt$query_str, ") base) ",
+        "SELECT ",
+        "(SELECT COUNT(*) FROM (SELECT DISTINCT \"urlModal\", condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl FROM filtered) table_rows) AS table_rows, ",
+        "(SELECT COUNT(*) FROM (SELECT DISTINCT url, fhir_version FROM filtered) endpoint_rows) AS endpoints"
+      )
+
+      counts_query <- do.call(glue_sql, c(list(counts_query_str, .con = db_connection), filt$params))
+      res <- dbGetQuery(db_connection, counts_query)
+      list(table_rows = as.numeric(res$table_rows), endpoints = as.numeric(res$endpoints))
+    }),
+    endpoint_filter_query()$query_str,
+    endpoint_filter_query()$params,
+    app$last_updated()
+  )
+
   total_pages <- reactive({
-    filt <- endpoint_filter_query()
-
-    count_query_str <- paste0(
-      "SELECT COUNT(*) as count FROM (SELECT DISTINCT base.\"urlModal\", base.condensed_endpoint_names, base.endpoint_names, base.vendor_name, base.capability_fhir_version, base.format, base.cap_stat_exists, base.status, base.availability, base.is_chpl FROM (",
-      filt$query_str, ") base) counted"
-    )
-
-    count_query <- do.call(glue_sql, c(list(count_query_str, .con = db_connection), filt$params))
-    total_records <- tbl(db_connection, sql(count_query)) %>% collect() %>% pull(count)
-    max(1, ceiling(total_records / page_size))
+    max(1, ceiling(endpoint_counts()$table_rows / page_size))
   })
 
   page_state <- create_pager(
@@ -105,7 +120,7 @@ endpointsmodule <- function(
 
   # MATCHING ENDPOINTS: Count unique (url, fhir_version) combinations - the actual endpoints
   output$endpoint_count <- renderText({
-    unique_endpoints <- nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version))
+    unique_endpoints <- endpoint_counts()$endpoints
     paste("Matching Endpoints:", unique_endpoints)
   })
 
@@ -162,7 +177,7 @@ endpointsmodule <- function(
 
     offset <- (page_state() - 1) * page_size
 
-    query_str <- paste0(filt$query_str, " ORDER BY vendor_name, list_source, url, requested_fhir_version LIMIT {limit} OFFSET {offset}")
+    query_str <- paste0(filt$query_str, " ORDER BY id, url, requested_fhir_version LIMIT {limit} OFFSET {offset}")
     params <- c(filt$params, list(limit = page_size, offset = offset))
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
@@ -183,7 +198,7 @@ endpointsmodule <- function(
   selected_fhir_endpoints_without_limit <- reactive({
     filt <- endpoint_filter_query()
 
-    query_str <- paste0(filt$query_str, " ORDER BY vendor_name, list_source, url, requested_fhir_version")
+    query_str <- paste0(filt$query_str, " ORDER BY id, url, requested_fhir_version")
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), filt$params))
     res <- tbl(db_connection, sql(query)) %>% collect()

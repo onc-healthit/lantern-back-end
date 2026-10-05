@@ -155,13 +155,6 @@ validationsmodule <- function(
     validation_page_state(1)
   })
 
-  # Function to directly query validation results plot data from materialized view
-  get_validation_plot_data <- function() {
-    # Direct query to the materialized view
-    tbl(db_connection, sql("SELECT * FROM mv_validation_results_plot")) %>%
-      collect()
-  }
-
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
@@ -202,7 +195,7 @@ validationsmodule <- function(
     res <- validation_rules()
     
     fhir_version_filter <- FALSE
-    req(sel_fhir_version())
+    req(sel_fhir_version(), is_active())
     if (length(sel_fhir_version()) != 1 || sel_fhir_version() == "Unknown") {
       # Get version information directly from the materialized view
       query <- paste0("
@@ -238,25 +231,6 @@ validationsmodule <- function(
     }
     
     res
-  })
-
-  # Create table containing all the validations that match current selected filtering criteria
-  selected_validations <- reactive({
-    # Get validation data directly from the validation_tbl function
-    query <- paste0("SELECT * FROM mv_validation_results_plot")
-    res <- dbGetQuery(db_connection, query)
-    
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    if (sel_validation_group() != "All Groups") {
-      res <- res %>% filter(reference %in% validation_group_list[[sel_validation_group()]])
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-
-    res <- res %>%
-      mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
   })
 
   # Creates table containing the filtered validation's rule name, if its valid, and it's count
@@ -341,7 +315,7 @@ validationsmodule <- function(
       AND fhir_version IN (", fhir_versions, ") ",
       vendor_filter, " ", 
       validation_group_filter, " ",
-      "ORDER BY url LIMIT ", limit, " OFFSET ", offset
+      "ORDER BY url, fhir_version, vendor_name, rule_name LIMIT ", limit, " OFFSET ", offset
     )
     
     # Execute query
@@ -417,7 +391,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), get_endpoint_last_updated(db_tables))
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), app$last_updated())
     })
 
   # Renders an empty validation result count chart when no data available

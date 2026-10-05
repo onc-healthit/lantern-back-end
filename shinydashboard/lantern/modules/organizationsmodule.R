@@ -94,6 +94,7 @@ organizationsmodule <- function(
     count_query_str <- "
       WITH base_data AS (
         SELECT
+          org_id,
           organization_name,
           identifier_types_html as identifier_type,
           identifier_values_html as identifier_value,
@@ -191,7 +192,7 @@ organizationsmodule <- function(
 
     # Add GROUP BY to match the data query exactly
     count_query_str <- paste0(count_query_str, "
-      GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
+      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, org_url, url
     ) counted_results")
 
     # Execute count query
@@ -226,7 +227,7 @@ organizationsmodule <- function(
     current_vendor <- sel_vendor()
     current_is_chpl <- sel_is_chpl()
 
-    req(current_fhir, current_vendor, current_is_chpl)
+    req(current_fhir, current_vendor, current_is_chpl, is_active())
 
     # Generate unique request ID
     request_id <- isolate(current_request_id()) + 1
@@ -247,6 +248,7 @@ organizationsmodule <- function(
     query_str <- "
       WITH base_data AS (
         SELECT
+          org_id,
           organization_name,
           identifier_types_html as identifier_type,
           identifier_values_html as identifier_value,
@@ -343,9 +345,8 @@ organizationsmodule <- function(
 
     # Add GROUP BY, ordering and pagination
     query_str <- paste0(query_str, "
-      GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
-      ORDER BY (organization_name ~ '[A-Za-z]') DESC,  -- Prioritize orgs with letters
-      organization_name ASC
+      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, org_url, url
+      ORDER BY org_id
       LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
     params$offset <- offset
@@ -401,12 +402,13 @@ organizationsmodule <- function(
     current_vendor <- sel_vendor()
     current_is_chpl <- sel_is_chpl()
 
-    req(current_fhir, current_vendor, current_is_chpl)
+    req(current_fhir, current_vendor, current_is_chpl, is_active())
 
     # Build query for CSV export using the same filtering logic
     query_str <- "
       WITH base_data AS (
         SELECT
+          org_id,
           organization_name,
           identifier_types_csv as identifier_type,
           identifier_values_csv as identifier_value,
@@ -510,8 +512,8 @@ organizationsmodule <- function(
 
     # Add GROUP BY and ordering
     query_str <- paste0(query_str, "
-      GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
-      ORDER BY organization_name")
+      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
+      ORDER BY org_id")
 
     # Execute query
     if (length(params) > 0) {

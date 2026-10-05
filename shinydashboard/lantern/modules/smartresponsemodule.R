@@ -331,7 +331,7 @@ smartresponsemodule <- function(
   current_fhir <- sel_fhir_version()
   current_vendor <- sel_vendor()
   
-  req(current_fhir, current_vendor)
+  req(current_fhir, current_vendor, is_active())
   
   # Retrieve aggregated capabilities directly from the materialized view via SQL
   res <- get_smart_response_capability_count(
@@ -349,7 +349,7 @@ smartresponsemodule <- function(
   current_fhir <- sel_fhir_version()
   current_vendor <- sel_vendor()
   
-  req(current_fhir, current_vendor)
+  req(current_fhir, current_vendor, is_active())
   
   # Retrieve the aggregated vendor table from SQL
   res <- get_smart_vendor_table(
@@ -383,7 +383,7 @@ smartresponsemodule <- function(
   current_fhir <- sel_fhir_version()
   current_vendor <- sel_vendor()
   
-  req(current_fhir, current_vendor)
+  req(current_fhir, current_vendor, is_active())
   
   # Retrieve the count directly from the materialized view with all SQL filtering
   count <- get_selected_smart_count_200(
@@ -400,7 +400,7 @@ smartresponsemodule <- function(
   current_fhir <- sel_fhir_version()
   current_vendor <- sel_vendor()
   
-  req(current_fhir, current_vendor)
+  req(current_fhir, current_vendor, is_active())
   
   # Retrieve the count directly from the materialized view with all SQL filtering applied
   count <- get_selected_well_known_endpoints_count(
@@ -417,7 +417,7 @@ smartresponsemodule <- function(
   current_fhir <- sel_fhir_version()
   current_vendor <- sel_vendor()
   
-  req(current_fhir, current_vendor)
+  req(current_fhir, current_vendor, is_active())
   
   # Retrieve the count directly from the materialized view with SQL filtering
   count <- get_selected_well_known_count_doc(
@@ -434,7 +434,7 @@ smartresponsemodule <- function(
   current_fhir <- sel_fhir_version()
   current_vendor <- sel_vendor()
   
-  req(current_fhir, current_vendor)
+  req(current_fhir, current_vendor, is_active())
   
   # Retrieve the count directly from the materialized view with SQL filtering
   count <- get_selected_well_known_count_no_doc(
@@ -513,7 +513,7 @@ smartresponsemodule <- function(
 
     smartres_offset <- (smartres_page_state() - 1) * smartres_page_size
 
-    query_str <- paste0(filt$query_str, " LIMIT {limit} OFFSET {offset}")
+    query_str <- paste0(filt$query_str, " ORDER BY mv_id LIMIT {limit} OFFSET {offset}")
     params <- c(filt$params, list(limit = smartres_page_size, offset = smartres_offset))
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))

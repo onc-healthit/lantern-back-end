@@ -290,7 +290,7 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
             ",
     build_fhir_resource_by_op_where_clause(operations_vec, search_query),
     " GROUP BY (resource_type, fhir_version)
-            ORDER BY resource_type"
+            ORDER BY resource_type, fhir_version"
   )
 
   if (page_size > -1 && offset > -1) {
@@ -705,6 +705,7 @@ app_fetcher <- function() {
   safe_execute("app$security_code_list", app$security_code_list(
     tbl(db_connection, "mv_get_security_endpoints") %>% distinct(code) %>% collect() %>% pull(code)
   ))
+  safe_execute("app$last_updated", app$last_updated(get_endpoint_last_updated(db_tables)))
   end_time <- Sys.time()
   time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
   message("app_fetcher execution time: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", time_difference, "seconds\n")

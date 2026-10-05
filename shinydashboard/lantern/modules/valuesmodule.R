@@ -78,7 +78,7 @@ valuesmodule <- function(
   })
 
   get_value_table_header <- reactive({
-    req(sel_capstat_values(), sel_fhir_version())
+    req(sel_capstat_values(), sel_fhir_version(), is_active())
 
     valid_versions <- valid_field_versions()
       header <- ""
@@ -100,7 +100,7 @@ valuesmodule <- function(
     header
 })
   valid_field_versions <- reactive({
-    req(sel_capstat_values())
+    req(sel_capstat_values(), is_active())
 
     query <- glue_sql("SELECT unnest(fhir_versions) AS version
                     FROM get_value_versions_mv
@@ -160,7 +160,7 @@ valuesmodule <- function(
     query_str <- paste0(
       "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
       get_base_values_sql(),
-      " ORDER BY \"Endpoints\" DESC LIMIT ", limit, " OFFSET ", offset
+      " ORDER BY \"Developer\", \"FHIR Version\", field, field_value LIMIT ", limit, " OFFSET ", offset
     )
 
     result <- tbl(db_connection, sql(query_str))

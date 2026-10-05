@@ -117,15 +117,6 @@ resourcemodule <- function(  #nolint
     }
   })
 
-  number_resources <- reactive({
-    # Query the MV directly for counting distinct resource types
-    res <- tbl(db_connection, "mv_endpoint_resource_types") %>% 
-      distinct(type) %>% 
-      count() %>%
-      collect()
-    res
-  })
-
   pageSizeNum <- reactiveVal(NULL)
 
   observe({
@@ -223,6 +214,6 @@ resourcemodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), get_endpoint_last_updated(db_tables))
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), app$last_updated())
     })
 }

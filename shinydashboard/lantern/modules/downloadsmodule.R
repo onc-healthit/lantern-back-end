@@ -115,7 +115,7 @@ downloadsmodule <- function(
   csv_format <- reactive({
     res <- tbl(db_connection,
       sql("SELECT * FROM selected_fhir_endpoints_mv
-           ORDER BY vendor_name, list_source, url, requested_fhir_version")) %>%
+           ORDER BY id, url, requested_fhir_version")) %>%
       collect() %>%
       select(-id, -status, -availability, -fhir_version, -urlModal, -condensed_endpoint_names) %>%
       rowwise() %>%
@@ -152,6 +152,7 @@ downloadsmodule <- function(
     query_str <- "
       WITH base_data AS (
         SELECT
+          org_id,
           organization_name,
           identifier_types_csv as identifier_type,
           identifier_values_csv as identifier_value,
@@ -185,8 +186,8 @@ downloadsmodule <- function(
       CROSS JOIN LATERAL unnest(bd.fhir_versions_array) AS fhir_version
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
       CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
-      GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
-      ORDER BY organization_name"
+      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
+      ORDER BY org_id"
 
     data_query <- glue_sql(query_str, .con = db_connection)
     res <- tbl(db_connection, sql(data_query)) %>% collect()

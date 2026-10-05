@@ -134,7 +134,7 @@ contactsmodule <- function(
         contacts_offset <- (contacts_page_state() - 1) * contacts_page_size
 
         query_str <- paste0(filt$query_str, "
-        ORDER BY url, vendor_name, contact_preference DESC
+        ORDER BY url, vendor_name
         LIMIT {limit} OFFSET {offset}")
         params <- c(filt$params, list(limit = contacts_page_size, offset = contacts_offset))
 
