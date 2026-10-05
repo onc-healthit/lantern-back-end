@@ -109,7 +109,8 @@ app_refresh_hour <- 6
 # treated as already reached so a timer firing marginally early cannot schedule a second run.
 time_until_next_run <- function() {
   now_central <- lubridate::with_tz(Sys.time(), app_refresh_tz)
-  target <- lubridate::update(now_central, hour = app_refresh_hour, minute = 0, second = 0)
+  target <- lubridate::floor_date(now_central, unit = "day") +
+    lubridate::hours(app_refresh_hour)
   if (target <= now_central + 60) {
     target <- target + lubridate::days(1)
   }
