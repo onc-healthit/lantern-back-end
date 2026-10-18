@@ -214,6 +214,6 @@ resourcemodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), app$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), get_endpoint_last_updated(db_tables))
     })
 }

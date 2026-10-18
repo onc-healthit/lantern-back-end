@@ -397,7 +397,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), app$last_updated())
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), get_endpoint_last_updated(db_tables))
     })
 
   # Renders an empty validation result count chart when no data available

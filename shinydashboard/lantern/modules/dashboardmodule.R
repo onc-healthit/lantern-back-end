@@ -259,7 +259,7 @@ dashboard <- function(
                                 height = 400,
                                 growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    app$last_updated()
+    get_endpoint_last_updated(db_tables)
   }
 )
   
@@ -278,7 +278,7 @@ dashboard <- function(
                                   height = 400,
                                   growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    list(app$last_updated(), sel_vendor())
+    list(get_endpoint_last_updated(db_tables), sel_vendor())
   })
 
   observeEvent(input$show_info, {
