@@ -258,7 +258,7 @@ get_vendor_list <- function(endpoint_export_tbl) {
 # Shared WHERE-clause text builder for get_fhir_resource_by_op() and get_fhir_resource_by_op_count()
 # below -- both filter mv_resource_interactions identically, differing only in whether they return
 # the grouped (resource_type, fhir_version) rows or a count of them.
-build_fhir_resource_by_op_where_clause <- function(operations_vec, search_query) {
+build_fhir_resource_by_op_where_clause <- function(operations_vec, vendor_name, search_query) {
   clause <- "WHERE fhir_version IN ({fhir_versions_vec*})
             AND resource_type IN ({resource_types_vec*})"
 
@@ -267,8 +267,13 @@ build_fhir_resource_by_op_where_clause <- function(operations_vec, search_query)
     clause <- paste0(clause, " AND operations @> ARRAY[{operations_vec*}]")
   }
 
-  # Add a filter for vendor name if a specific vendor is selected
-  clause <- paste0(clause, " AND vendor_name = {vendor_name}")
+  # "All Developers" is a UI sentinel, not a value stored in this materialized view.
+  # Only constrain vendor_name when the user selected a specific developer.
+  if (length(vendor_name) == 1 &&
+      !is.na(vendor_name[[1]]) &&
+      vendor_name[[1]] != ui_special_values$ALL_DEVELOPERS) {
+    clause <- paste0(clause, " AND vendor_name = {vendor_name}")
+  }
 
   # Add search filter if present
   if (!is.null(search_query) && search_query != "") {
@@ -288,7 +293,7 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
     "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n
             FROM mv_resource_interactions
             ",
-    build_fhir_resource_by_op_where_clause(operations_vec, search_query),
+    build_fhir_resource_by_op_where_clause(operations_vec, vendor_name, search_query),
     " GROUP BY (resource_type, fhir_version)
             ORDER BY resource_type, fhir_version"
   )
@@ -313,7 +318,7 @@ get_fhir_resource_by_op_count <- function(db_connection, operations_vec, fhir_ve
 
   query_str <- paste0(
     "SELECT COUNT(*) as count FROM (SELECT resource_type, fhir_version FROM mv_resource_interactions ",
-    build_fhir_resource_by_op_where_clause(operations_vec, search_query),
+    build_fhir_resource_by_op_where_clause(operations_vec, vendor_name, search_query),
     " GROUP BY (resource_type, fhir_version)) grouped"
   )
 
