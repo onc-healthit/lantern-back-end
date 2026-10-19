@@ -3,13 +3,13 @@ package chplquerier
 import (
 	"context"
 	"fmt"
-	"io"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -89,7 +89,7 @@ func getJSON(ctx context.Context, client *http.Client, chplURL *url.URL, userAge
 		return nil, errors.New("CHPL request responded with status: " + resp.Status)
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	body, err := helpers.ReadAllLimited(resp.Body)
 	if err != nil {
 		log.Errorf("CHPL READ ERROR: Could not read response body for URL=%s | Error=%v", chplURL.String(), err)
 		return nil, errors.Wrap(err, "reading the CHPL response body failed")

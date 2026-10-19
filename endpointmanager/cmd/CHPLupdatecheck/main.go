@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	http "net/http"
 	"os"
 	"path/filepath"
@@ -48,7 +47,7 @@ func main() {
 	}
 	defer res.Body.Close()
 
-	respBody, err := io.ReadAll(res.Body)
+	respBody, err := helpers.ReadAllLimited(res.Body)
 	if err != nil {
 		log.Fatal(err)
 	}

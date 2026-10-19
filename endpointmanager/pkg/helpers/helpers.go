@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -15,6 +16,22 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/chromedp/chromedp"
 )
+
+// MaxResponseBytes is the maximum size of an HTTP response body that will be read.
+const MaxResponseBytes = 250 * 1024 * 1024
+
+// ReadAllLimited reads r until EOF like io.ReadAll, but returns an error if more than
+// MaxResponseBytes are available instead of reading them into memory.
+func ReadAllLimited(r io.Reader) ([]byte, error) {
+	b, err := io.ReadAll(io.LimitReader(r, MaxResponseBytes+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(b) > MaxResponseBytes {
+		return nil, fmt.Errorf("response body exceeds the %d byte limit", int64(MaxResponseBytes))
+	}
+	return b, nil
+}
 
 // StringArrayContains checks if the string array contains the provided string.
 func StringArrayContains(l []string, s string) bool {
@@ -131,11 +148,10 @@ func ChromedpQueryEndpointList(endpointListURL string, waitVisibleElement string
 func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	client := &http.Client{Timeout: time.Minute}
 	req, err := http.NewRequest("GET", endpointListURL, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid endpoint list URL %q: %w", endpointListURL, err)
 	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -143,7 +159,7 @@ func QueryEndpointList(endpointListURL string) ([]byte, error) {
 	}
 	defer res.Body.Close()
 
-	respBody, err := io.ReadAll(res.Body)
+	respBody, err := ReadAllLimited(res.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -158,11 +174,10 @@ func QueryEndpointListWithTLSOption(endpointListURL string, skipTLSVerify bool) 
 	client := &http.Client{Transport: tr}
 
 	req, err := http.NewRequest("GET", endpointListURL, nil)
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid endpoint list URL %q: %w", endpointListURL, err)
 	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36")
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -170,7 +185,7 @@ func QueryEndpointListWithTLSOption(endpointListURL string, skipTLSVerify bool) 
 	}
 	defer res.Body.Close()
 
-	respBody, err := io.ReadAll(res.Body)
+	respBody, err := ReadAllLimited(res.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +252,14 @@ func downloadFile(filepath string, url string) error {
 	}
 	defer out.Close()
 
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
-	return err
+	// Write the body to file, refusing anything larger than MaxResponseBytes
+	n, err := io.Copy(out, io.LimitReader(resp.Body, MaxResponseBytes+1))
+	if err != nil {
+		return err
+	}
+	if n > MaxResponseBytes {
+		os.Remove(filepath)
+		return fmt.Errorf("response from %s exceeds the %d byte limit", url, int64(MaxResponseBytes))
+	}
+	return nil
 }

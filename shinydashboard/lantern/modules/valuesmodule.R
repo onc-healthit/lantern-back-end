@@ -175,10 +175,10 @@ valuesmodule <- function(
   valid_field_versions <- reactive({
     req(sel_capstat_values())
 
-    res <- tbl(db_connection, 
-        sql(paste0("SELECT unnest(fhir_versions) AS version 
-                    FROM get_value_versions_mv 
-                    WHERE field = '", sel_capstat_values(), "'"))) %>%
+    res <- tbl(db_connection,
+        sql(paste0("SELECT unnest(fhir_versions) AS version
+                    FROM get_value_versions_mv
+                    WHERE field = ", quote_sql_literal(sel_capstat_values())))) %>%
       collect() %>%
       pull(version)
 
@@ -192,28 +192,28 @@ valuesmodule <- function(
     vendor <- sel_vendor()
     field_name <- sel_capstat_values()
 
-    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+    fhir_versions_sql <- quote_sql_in_list(fhir_versions)
     valid_versions <- valid_field_versions()
 
-    valid_versions_sql <- paste0("('", paste(valid_versions, collapse = "', '"), "')")
+    valid_versions_sql <- quote_sql_in_list(valid_versions)
 
     search_filter <- ""
     if (!is.null(input$values_search_query) && input$values_search_query != "") {
-      q <- gsub("'", "''", input$values_search_query)
-      search_filter <- paste0("AND (\"Developer\" ILIKE '%", q, "%' OR 
-                                    \"FHIR Version\" ILIKE '%", q, "%' OR 
-                                    field_value ILIKE '%", q, "%')")
+      search_term <- quote_sql_literal(paste0("%", input$values_search_query, "%"))
+      search_filter <- paste0("AND (\"Developer\" ILIKE ", search_term, " OR
+                                    \"FHIR Version\" ILIKE ", search_term, " OR
+                                    field_value ILIKE ", search_term, ")")
     }
 
     sql_base <- paste0("
       FROM selected_fhir_endpoints_values_mv
-      WHERE field = '", field_name, "'
+      WHERE field = ", quote_sql_literal(field_name), "
         AND \"FHIR Version\" IN ", fhir_versions_sql, "
-        AND \"FHIR Version\" IN ", valid_versions_sql, 
+        AND \"FHIR Version\" IN ", valid_versions_sql,
         search_filter)
 
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
-      sql_base <- paste0(sql_base, " AND \"Developer\" = '", vendor, "'")
+      sql_base <- paste0(sql_base, " AND \"Developer\" = ", quote_sql_literal(vendor))
     }
 
     return(sql_base)
@@ -276,16 +276,16 @@ valuesmodule <- function(
     vendor <- sel_vendor()
     field_name <- sel_capstat_values()
 
-    fhir_versions_sql <- paste0("('", paste(fhir_versions, collapse = "', '"), "')")
+    fhir_versions_sql <- quote_sql_in_list(fhir_versions)
 
     summary_query <- paste0("
       SELECT is_used AS used, SUM(count) AS count
       FROM capstat_usage_summary_mv
-      WHERE field = '", field_name, "'
+      WHERE field = ", quote_sql_literal(field_name), "
         AND \"FHIR Version\" IN ", fhir_versions_sql)
 
     if (vendor != ui_special_values$ALL_DEVELOPERS) {
-      summary_query <- paste0(summary_query, " AND \"Developer\" = '", vendor, "'")
+      summary_query <- paste0(summary_query, " AND \"Developer\" = ", quote_sql_literal(vendor))
     }
 
     summary_query <- paste0(summary_query, " GROUP BY is_used")

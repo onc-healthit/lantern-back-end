@@ -1,4 +1,4 @@
-FROM golang:1.16
+FROM golang:1.26.9-trixie
 ARG cert_dir
 
 WORKDIR /go/src/github.com/onc-healthit/lantern-back-end/e2e
