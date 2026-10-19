@@ -346,7 +346,9 @@ organizationsmodule <- function(
     # Add GROUP BY, ordering and pagination
     query_str <- paste0(query_str, "
       GROUP BY org_id, organization_name, identifier_type, identifier_value, address, org_url, url
-      ORDER BY org_id
+      ORDER BY (organization_name ~ '[A-Za-z]') DESC,
+      organization_name ASC,
+      org_id
       LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
     params$offset <- offset
@@ -513,7 +515,7 @@ organizationsmodule <- function(
     # Add GROUP BY and ordering
     query_str <- paste0(query_str, "
       GROUP BY org_id, organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
-      ORDER BY org_id")
+      ORDER BY organization_name, org_id")
 
     # Execute query
     if (length(params) > 0) {

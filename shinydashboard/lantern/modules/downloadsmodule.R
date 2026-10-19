@@ -187,7 +187,7 @@ downloadsmodule <- function(
       CROSS JOIN LATERAL unnest(bd.vendor_names_array) AS vendor_name
       CROSS JOIN LATERAL unnest(bd.is_chpl_array) AS chpl_value
       GROUP BY org_id, organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
-      ORDER BY org_id"
+      ORDER BY organization_name, org_id"
 
     data_query <- glue_sql(query_str, .con = db_connection)
     res <- tbl(db_connection, sql(data_query)) %>% collect()
