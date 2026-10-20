@@ -86,17 +86,18 @@ validationsmodule <- function(
   validation_total_pages <- reactive({
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
 
-    selected_rule <- if (!is.null(getReactableState("validation_details_table")$selected)) {
-      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
+    selected <- getReactableState("validation_details_table")$selected
+    selected_rule <- if (!is.null(selected) && selected <= nrow(validation_rules())) {
+      deframe(validation_rules()[selected, "rule_name"])
     } else {
       "NO_RULES"
     }
 
-    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
-    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) paste0("AND vendor_name = '", sel_vendor(), "'") else ""
+    fhir_versions <- quote_sql_list(sel_fhir_version())
+    vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) paste0("AND vendor_name = ", quote_sql_literal(sel_vendor())) else ""
     validation_group_filter <- if(sel_validation_group() != "All Groups") {
-      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
-      paste0("AND reference IN (", references, ")")
+      references <- quote_sql_in_list(validation_group_list[[sel_validation_group()]])
+      paste0("AND reference IN ", references)
     } else {
       ""
 
@@ -104,7 +105,7 @@ validationsmodule <- function(
 
     query <- paste0(
       "SELECT COUNT(*) as count FROM mv_validation_failures ",
-      "WHERE rule_name = '", selected_rule, "' ",
+      "WHERE rule_name = ", quote_sql_literal(selected_rule), " ",
       "AND fhir_version IN (", fhir_versions, ") ",
       vendor_filter, " ",
       validation_group_filter
@@ -225,20 +226,20 @@ validationsmodule <- function(
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     
     # Build filtering conditions for the SQL query
-    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    fhir_versions <- quote_sql_list(sel_fhir_version())
     vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      paste0("AND vendor_name = '", sel_vendor(), "'")
+      paste0("AND vendor_name = ", quote_sql_literal(sel_vendor()))
     } else {
       ""
     }
-    
+
     validation_group_filter <- if(sel_validation_group() != "All Groups") {
-      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
-      paste0("AND reference IN (", references, ")")
+      references <- quote_sql_in_list(validation_group_list[[sel_validation_group()]])
+      paste0("AND reference IN ", references)
     } else {
       ""
     }
-    
+
     # Query to get rule names based on filters
     query <- paste0("
       SELECT DISTINCT rule_name
@@ -266,7 +267,7 @@ validationsmodule <- function(
       query <- paste0("
         SELECT rule_name, fhir_version_names
         FROM mv_validation_details
-        WHERE rule_name IN ('", paste(res$rule_name, collapse = "','"), "')
+        WHERE rule_name IN ", quote_sql_in_list(res$rule_name), "
       ")
       
       versions <- dbGetQuery(db_connection, query)
@@ -322,20 +323,20 @@ validationsmodule <- function(
     req(sel_fhir_version(), sel_vendor(), sel_validation_group())
     
     # Build query with filters
-    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    fhir_versions <- quote_sql_list(sel_fhir_version())
     vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      paste0("AND vendor_name = '", sel_vendor(), "'")
+      paste0("AND vendor_name = ", quote_sql_literal(sel_vendor()))
     } else {
       ""
     }
-    
+
     validation_group_filter <- if(sel_validation_group() != "All Groups") {
-      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
-      paste0("AND reference IN (", references, ")")
+      references <- quote_sql_in_list(validation_group_list[[sel_validation_group()]])
+      paste0("AND reference IN ", references)
     } else {
       ""
     }
-    
+
     # Execute the filtered query
     query <- paste0("
       SELECT rule_name, valid, COUNT(*) as count
@@ -364,37 +365,38 @@ validationsmodule <- function(
     current_request_id(request_id)
     
     # Get the selected rule if available
-    selected_rule <- if (!is.null(getReactableState("validation_details_table")) && !is.null(getReactableState("validation_details_table")$selected)) {
-      deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])
+    selected <- getReactableState("validation_details_table")$selected
+    selected_rule <- if (!is.null(selected) && selected <= nrow(validation_rules())) {
+      deframe(validation_rules()[selected, "rule_name"])
     } else {
       "NO_RULES"  # Default when no rule is selected
     }
     
     # Build filtering conditions
-    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    fhir_versions <- quote_sql_list(sel_fhir_version())
     vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      paste0("AND vendor_name = '", sel_vendor(), "'")
+      paste0("AND vendor_name = ", quote_sql_literal(sel_vendor()))
     } else {
       ""
     }
-    
+
     validation_group_filter <- if(sel_validation_group() != "All Groups") {
-      references <- paste0("'", paste(validation_group_list[[sel_validation_group()]], collapse = "','"), "'")
-      paste0("AND reference IN (", references, ")")
+      references <- quote_sql_in_list(validation_group_list[[sel_validation_group()]])
+      paste0("AND reference IN ", references)
     } else {
       ""
     }
 
     limit <- validations_page_size
     offset <- (validation_page_state() - 1) * validations_page_size
-    
+
     # Query to get failed validations for the selected rule
     query <- paste0("
       SELECT fhir_version, url, expected, actual, vendor_name
       FROM mv_validation_failures
-      WHERE rule_name = '", selected_rule, "'
+      WHERE rule_name = ", quote_sql_literal(selected_rule), "
       AND fhir_version IN (", fhir_versions, ") ",
-      vendor_filter, " ", 
+      vendor_filter, " ",
       validation_group_filter, " ",
       "ORDER BY url LIMIT ", limit, " OFFSET ", offset
     )
@@ -419,13 +421,23 @@ validationsmodule <- function(
   })
 
   output$validation_details_table <-  reactable::renderReactable({
-    reactable(validation_details() %>% select(entry),
+    details <- validation_details() %>% select(entry)
+
+    # Only default-select row 1 when there is a row 1 to select. With no
+    # matching validation rules for the current filters (e.g. a vendor with
+    # zero failures for the selected FHIR version/group), defaultSelected
+    # would otherwise point at a non-existent row and reactable() errors with
+    # "defaultSelected row indices must be within range", which then breaks
+    # every downstream reactive that reads the table's selection state.
+    default_selected <- if (nrow(details) > 0) c(1) else NULL
+
+    reactable(details,
               columns = list(
                 entry = colDef(name = "Validation Rules", html = TRUE)
               ),
               selection = "single",
               onClick = "select",
-              defaultSelected = c(1),
+              defaultSelected = default_selected,
               pagination = FALSE,
               height = 500
     )
@@ -493,7 +505,19 @@ validationsmodule <- function(
   }
 
   output$failure_table_subtitle <- renderUI({
-    p(paste("Rule: ", deframe(validation_rules()[getReactableState("validation_details_table")$selected, "rule_name"])))
+    selected <- getReactableState("validation_details_table")$selected
+
+    # Mirror the "NO_RULES" fallback used elsewhere: with no matching
+    # validation rules for the current filters, nothing is selected, and
+    # indexing validation_rules() with a NULL/out-of-range selection would
+    # drop to a bare vector (not a data frame), which deframe() rejects.
+    rule_name <- if (!is.null(selected) && selected <= nrow(validation_rules())) {
+      deframe(validation_rules()[selected, "rule_name"])
+    } else {
+      "NO_RULES"
+    }
+
+    p(paste("Rule: ", rule_name))
   })
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were

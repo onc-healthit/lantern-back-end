@@ -125,3 +125,21 @@ func Test_StringArraysEqual(t *testing.T) {
 	th.Assert(t, areEqual, "expected arrays with same content and different order to be equal")
 
 }
+
+func Test_QueryEndpointList_MalformedURL(t *testing.T) {
+	badURLs := []string{
+		"https://example.com/fhir\n",
+		"https://exa mple.com/fhir",
+		"https://example.com/%zz",
+	}
+
+	for _, u := range badURLs {
+		body, err := QueryEndpointList(u)
+		th.Assert(t, err != nil, "expected an error for malformed URL "+u)
+		th.Assert(t, body == nil, "expected no body for malformed URL "+u)
+
+		body, err = QueryEndpointListWithTLSOption(u, false)
+		th.Assert(t, err != nil, "expected an error for malformed URL "+u)
+		th.Assert(t, body == nil, "expected no body for malformed URL "+u)
+	}
+}

@@ -37,10 +37,10 @@ type versionsQueryArgs struct {
 // capStatQueryArgs is a struct to hold the args that will be consumed by the
 // saveMsgInDB function
 type capStatQueryArgs struct {
-	store           *postgresql.Store
-	ctx             context.Context
-	chplMatchFile   string
-	softwareListMap map[string]chplmapper.ChplMapResults
+	store                *postgresql.Store
+	ctx                  context.Context
+	chplMatchFile        string
+	chplProductsInfoFile string
 }
 
 func formatMessage(message []byte) (*endpointmanager.FHIREndpointInfo, *endpointmanager.Validation, error) {
@@ -232,7 +232,11 @@ func saveMsgInDB(message []byte, args *map[string]interface{}) error {
 
 	log.Infof("[saveMsgInDB] Processing URL=%s RequestedVersion=%s", fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
 
-	softwareListMap := qa.softwareListMap
+	// Read the file on every message so changes to it are picked up without a restart.
+	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile(qa.chplProductsInfoFile)
+	if err != nil {
+		return fmt.Errorf("opening CHPL endpoint list info file failed: %s", err)
+	}
 
 	// Try to find existing row
 	existingEndpt, err = store.GetFHIREndpointInfoUsingURLAndRequestedVersion(ctx, fhirEndpoint.URL, fhirEndpoint.RequestedFhirVersion)
@@ -755,17 +759,12 @@ func ReceiveCapabilityStatements(ctx context.Context,
 	channelID lanternmq.ChannelID,
 	qName string) error {
 
-	softwareListMap, err := chplmapper.OpenCHPLEndpointListInfoFile("/etc/lantern/resources/CHPLProductsInfo.json")
-	if err != nil {
-		return fmt.Errorf("opening CHPL endpoint list info file failed: %s", err)
-	}
-
 	args := make(map[string]interface{})
 	args["queryArgs"] = capStatQueryArgs{
-		store:           store,
-		ctx:             ctx,
-		chplMatchFile:   "/etc/lantern/resources/CHPLProductMapping.json",
-		softwareListMap: softwareListMap,
+		store:                store,
+		ctx:                  ctx,
+		chplMatchFile:        "/etc/lantern/resources/CHPLProductMapping.json",
+		chplProductsInfoFile: "/etc/lantern/resources/CHPLProductsInfo.json",
 	}
 
 	messages, err := messageQueue.ConsumeFromQueue(channelID, qName)

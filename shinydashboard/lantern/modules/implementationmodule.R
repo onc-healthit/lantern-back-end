@@ -18,9 +18,9 @@ implementationmodule_UI <- function(id) {
 # Summarize count of implementation guides by implementation_guide, fhir_version
 get_implementation_guide_count <- function(sel_fhir_version, sel_vendor) {
   # Build filtering conditions for the SQL query
-  fhir_versions <- paste0("'", paste(sel_fhir_version, collapse = "','"), "'")
+  fhir_versions <- quote_sql_list(sel_fhir_version)
   vendor_filter <- if(!is.null(sel_vendor) && sel_vendor != ui_special_values$ALL_DEVELOPERS) {
-    paste0("AND vendor_name = '", sel_vendor, "'")
+    paste0("AND vendor_name = ", quote_sql_literal(sel_vendor))
   } else {
     ""
   }

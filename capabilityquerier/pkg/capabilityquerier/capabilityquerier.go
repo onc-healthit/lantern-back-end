@@ -427,7 +427,7 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 		defer resp.Body.Close()
 		mimeMatches = true
 
-		capStat, err = io.ReadAll(resp.Body)
+		capStat, err = readAllLimited(resp.Body)
 		if err != nil {
 			return -1, "", false, nil, -1, errors.Wrapf(err, "reading the response from %s failed", req.URL.String())
 		}
@@ -436,4 +436,20 @@ func requestWithMimeType(req *http.Request, mimeType string, client *http.Client
 	tlsVersion = getTLSVersion(resp)
 
 	return httpResponseCode, tlsVersion, mimeMatches, capStat, responseTime, nil
+}
+
+// maxResponseBytes is the maximum size of a response body that will be read.
+const maxResponseBytes = 250 * 1024 * 1024
+
+// readAllLimited reads r until EOF like io.ReadAll, but returns an error if more than
+// maxResponseBytes are available instead of reading them into memory.
+func readAllLimited(r io.Reader) ([]byte, error) {
+	b, err := io.ReadAll(io.LimitReader(r, maxResponseBytes+1))
+	if err != nil {
+		return nil, err
+	}
+	if len(b) > maxResponseBytes {
+		return nil, fmt.Errorf("response body exceeds the %d byte limit", int64(maxResponseBytes))
+	}
+	return b, nil
 }

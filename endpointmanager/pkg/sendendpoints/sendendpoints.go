@@ -32,7 +32,7 @@ func GetEnptsAndSend(
 		now := time.Now()
 		log.Info("Current Time: ", now)
 
-		targetTime := time.Date(now.Year(), now.Month(), now.Day(), 23, 0, 0, 0, now.Location())
+		targetTime := time.Date(now.Year(), now.Month(), now.Day(), 19, 0, 0, 0, now.Location())
 
 		// If the current time is after the target time, set the target time to the next day
 		if now.After(targetTime) {

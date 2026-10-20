@@ -254,11 +254,13 @@ set_csv_headers <- function(res, filename) {
   res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
 }
 
+# Builds the CSV in memory and returns it as the response body. Nothing is written
+# to disk, so there are no cached files to collide, go stale or accumulate.
 write_and_stream_csv <- function(res, filename, data) {
-  if (!file.exists(filename)) {
-    write.csv(data, file = filename, row.names = FALSE)
-  }
-  include_file(filename, res, content_type = "text/csv")
+  res$setHeader("Content-Type", "text/csv")
+  res$setHeader("Content-Disposition", paste0("attachment; filename=", filename))
+  res$body <- readr::format_csv(data)
+  res
 }
 
 block_unknown_query_params <- function(req, res, allowed_params) {

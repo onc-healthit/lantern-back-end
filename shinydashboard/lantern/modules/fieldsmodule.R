@@ -71,7 +71,7 @@ fieldsmodule <- function(
     }
 
     # Build filtering conditions for the SQL query
-    fhir_versions <- paste0("'", paste(sel_fhir_version(), collapse = "','"), "'")
+    fhir_versions <- quote_sql_list(sel_fhir_version())
 
     # Direct query to the required materialized view
     query <- paste0("
@@ -113,21 +113,21 @@ get_capstat_fields_mv <- function(db_connection, fhir_version = NULL, vendor = N
 
 get_capstat_fields_count <- function(sel_fhir_version, sel_vendor, extensionBool) {
   # Build filtering conditions for the SQL query
-  fhir_versions <- paste0("'", paste(sel_fhir_version, collapse = "','"), "'")
+  fhir_versions <- quote_sql_list(sel_fhir_version)
   vendor_filter <- if(!is.null(sel_vendor) && sel_vendor != ui_special_values$ALL_DEVELOPERS) {
-    paste0("AND vendor_name = '", sel_vendor, "'")
+    paste0("AND vendor_name = ", quote_sql_literal(sel_vendor))
   } else {
     ""
   }
-  
+
   # Direct query to the materialized view
   query <- paste0("
       SELECT field as \"Fields\", fhir_version, COUNT(*) as \"Endpoints\"
       FROM mv_capstat_fields
       WHERE fhir_version IN (", fhir_versions, ")
       ", vendor_filter, "
-      ", "AND exist = 'true'", 
-      " AND extension = '", extensionBool, "'",
+      ", "AND exist = 'true'",
+      " AND extension = ", quote_sql_literal(extensionBool),
       "
       GROUP BY field, fhir_version
       ORDER BY field, fhir_version

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"io"
 	http "net/http"
 	"os"
 	"regexp"
@@ -11,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -271,7 +271,7 @@ func getEndpointListJSON(chplURL string, pageSize int, pageNumber int, ctx conte
 	}
 	defer res.Body.Close()
 
-	respBody, err := io.ReadAll(res.Body)
+	respBody, err := helpers.ReadAllLimited(res.Body)
 	if err != nil {
 		return nil, err
 	}

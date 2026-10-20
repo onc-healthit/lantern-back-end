@@ -2,9 +2,9 @@ package chplendpointquerier
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 
+	"github.com/onc-healthit/lantern-back-end/endpointmanager/pkg/helpers"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -29,7 +29,7 @@ func EmdsCloudWebscraper(CHPLURL string, fileToWriteTo string) {
 	}
 	defer res.Body.Close()
 
-	body, err := io.ReadAll(res.Body)
+	body, err := helpers.ReadAllLimited(res.Body)
 	if err != nil {
 		log.Fatalf("Error reading response body: %v", err)
 		return

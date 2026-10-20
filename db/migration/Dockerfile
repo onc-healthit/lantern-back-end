@@ -1,4 +1,4 @@
-FROM golang:1.16
+FROM golang:1.26.9-trixie
 ARG cert_dir
 ARG force_version
 ARG direction

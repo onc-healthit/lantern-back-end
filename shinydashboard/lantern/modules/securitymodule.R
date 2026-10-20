@@ -171,26 +171,26 @@ securitymodule <- function(
     log_duration("security_base_sql", {
     req(sel_fhir_version(), sel_vendor(), sel_auth_type_code())
 
-    versions <- paste0("'", sel_fhir_version(), "'", collapse = ", ")
+    versions <- quote_sql_list(sel_fhir_version())
     vendor_filter <- if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      paste0("AND vendor_name = '", sel_vendor(), "'")
+      paste0("AND vendor_name = ", quote_sql_literal(sel_vendor()))
     } else {
       ""
     }
-    
+
     search_filter <- ""
     if (!is.null(input$security_search_query) && input$security_search_query != "") {
-      q <- gsub("'", "''", input$security_search_query)
-      search_filter <- paste0("AND (url ILIKE '%", q, "%' OR
-                                  condensed_organization_names ILIKE '%", q, "%' OR 
-                                  vendor_name ILIKE '%", q, "%' OR 
-                                  capability_fhir_version ILIKE '%", q, "%' OR 
-                                  tls_version ILIKE '%", q, "%')")
+      search_term <- quote_sql_literal(paste0("%", input$security_search_query, "%"))
+      search_filter <- paste0("AND (url ILIKE ", search_term, " OR
+                                  condensed_organization_names ILIKE ", search_term, " OR
+                                  vendor_name ILIKE ", search_term, " OR
+                                  capability_fhir_version ILIKE ", search_term, " OR
+                                  tls_version ILIKE ", search_term, ")")
     }
 
-    paste0("FROM security_endpoints_distinct_mv 
-            WHERE capability_fhir_version IN (", versions, ") 
-              AND code = '", sel_auth_type_code(), "' ",
+    paste0("FROM security_endpoints_distinct_mv
+            WHERE capability_fhir_version IN (", versions, ")
+              AND code = ", quote_sql_literal(sel_auth_type_code()), " ",
               vendor_filter, " ",
               search_filter)
     })
