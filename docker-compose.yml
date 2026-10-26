@@ -122,6 +122,8 @@ services:
         LANTERN_DBSSLMODE: ${LANTERN_DBSSLMODE}
         LANTERN_CAPQUERY_QRYINTVL: "${LANTERN_CAPQUERY_QRYINTVL}"
         LANTERN_BANNER_TEXT: ""     
+        LANTERN_RECAPTCHA_SITE_KEY: ${LANTERN_RECAPTCHA_SITE_KEY}
+        LANTERN_RECAPTCHA_SECRET: ${LANTERN_RECAPTCHA_SECRET}
     image: lantern_shinydashboard:current
     depends_on:
       - postgres
