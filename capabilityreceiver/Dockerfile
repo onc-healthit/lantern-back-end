@@ -1,4 +1,4 @@
-FROM golang:1.26.9-trixie
+FROM golang:1.26.10-trixie
 ARG cert_dir
 
 WORKDIR /go/src/app
