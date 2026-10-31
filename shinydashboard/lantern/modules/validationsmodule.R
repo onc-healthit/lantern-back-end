@@ -73,25 +73,38 @@ validationsmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_validation_group
+  sel_validation_group,
+  is_active
 ) {
   ns <- session$ns
   validations_page_size <- 10
-  validation_page_state <- reactiveVal(1)
 
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
 
+  # Return the selected rule only when it still points at an available row.
+  # Filter changes can temporarily leave reactable's selection out of range.
+  selected_validation_rule <- reactive({
+    rules <- validation_rules()
+    if (nrow(rules) == 0) {
+      return(NULL)
+    }
+
+    selected <- getReactableState("validation_details_table", "selected")
+    if (is.null(selected) || length(selected) != 1 ||
+        is.na(selected) || selected < 1 || selected > nrow(rules)) {
+      return(rules$rule_name[[1]])
+    }
+
+    rules$rule_name[[selected]]
+  })
+
   # Get total using COUNT
   validation_total_pages <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
 
-    selected <- getReactableState("validation_details_table")$selected
-    selected_rule <- if (!is.null(selected) && selected <= nrow(validation_rules())) {
-      deframe(validation_rules()[selected, "rule_name"])
-    } else {
-      "NO_RULES"
-    }
+    selected_rule <- selected_validation_rule()
+    if (is.null(selected_rule)) return(1)
 
     fhir_versions <- quote_sql_list(sel_fhir_version())
     vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) paste0("AND vendor_name = ", quote_sql_literal(sel_vendor())) else ""
@@ -115,88 +128,16 @@ validationsmodule <- function(
     max(1, ceiling(count / validations_page_size))
   })
 
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- validation_page_state()
-    current_selector <- input$validation_page_selector
-    
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) || 
-        is.na(current_selector) || 
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-      
-      isolate({  # This is the key fix to break feedback loops
-        updateNumericInput(session, "validation_page_selector", 
-                          max = validation_total_pages(),
-                          value = new_page)
-      })
-    }
-  })
+  validation_page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "validation_page_selector",
+    prev_button_id = "validation_prev_page",
+    next_button_id = "validation_next_page",
+    prev_output_id = "validation_prev_page_ui",
+    next_output_id = "validation_next_page_ui",
+    total_pages = validation_total_pages
+  )
 
-  # Handle page selector input
-  observeEvent(input$validation_page_selector, {
-    # Get current input value
-    current_input <- input$validation_page_selector
-    
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) && 
-        !is.na(current_input) && 
-        is.numeric(current_input) &&
-        current_input > 0) {
-      
-      new_page <- max(1, min(current_input, validation_total_pages()))
-      
-      # Only update page state if it's actually different
-      if (new_page != validation_page_state()) {
-        validation_page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "validation_page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "validation_page_selector", value = validation_page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent firing on initialization
-
-  output$validation_prev_page_ui <- renderUI({
-    if (validation_page_state() > 1) {
-      actionButton(ns("validation_prev_page"), "Previous", icon = icon("arrow-left"))
-    } else {
-      NULL
-    }
-  })
-
-  output$validation_next_page_ui <- renderUI({
-    if (validation_page_state() < validation_total_pages()) {
-      actionButton(ns("validation_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL
-    }
-  })
-
-  # Handle next page button
-  observeEvent(input$validation_next_page, {
-    if (validation_page_state() < validation_total_pages()) {
-      new_page <- validation_page_state() + 1
-      validation_page_state(new_page)
-    }
-  })
-
-  # Handle previous page button 
-  observeEvent(input$validation_prev_page, {
-    if (validation_page_state() > 1) {
-      new_page <- validation_page_state() - 1
-      validation_page_state(new_page)
-    }
-  })
-  
   output$validations_current_page_info <- renderText({
     paste("of", validation_total_pages())
   })
@@ -214,16 +155,9 @@ validationsmodule <- function(
     validation_page_state(1)
   })
 
-  # Function to directly query validation results plot data from materialized view
-  get_validation_plot_data <- function() {
-    # Direct query to the materialized view
-    tbl(db_connection, sql("SELECT * FROM mv_validation_results_plot")) %>%
-      collect()
-  }
-
   # Create table with all the distinct validation rule names
   validation_rules <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     
     # Build filtering conditions for the SQL query
     fhir_versions <- quote_sql_list(sel_fhir_version())
@@ -261,7 +195,7 @@ validationsmodule <- function(
     res <- validation_rules()
     
     fhir_version_filter <- FALSE
-    req(sel_fhir_version())
+    req(sel_fhir_version(), is_active())
     if (length(sel_fhir_version()) != 1 || sel_fhir_version() == "Unknown") {
       # Get version information directly from the materialized view
       query <- paste0("
@@ -299,28 +233,9 @@ validationsmodule <- function(
     res
   })
 
-  # Create table containing all the validations that match current selected filtering criteria
-  selected_validations <- reactive({
-    # Get validation data directly from the validation_tbl function
-    query <- paste0("SELECT * FROM mv_validation_results_plot")
-    res <- dbGetQuery(db_connection, query)
-    
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
-    res <- res %>% filter(fhir_version %in% sel_fhir_version())
-    if (sel_validation_group() != "All Groups") {
-      res <- res %>% filter(reference %in% validation_group_list[[sel_validation_group()]])
-    }
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == sel_vendor())
-    }
-
-    res <- res %>%
-      mutate(linkURL = paste0("<a class=\"lantern-url\" tabindex=\"0\" aria-label=\"Press enter to open pop up modal containing additional information for this endpoint.\" onkeydown = \"javascript:(function(event) { if (event.keyCode === 13){event.target.click()}})(event)\" onclick=\"Shiny.setInputValue(\'endpoint_popup\',&quot;", url, "&&", "None", "&quot,{priority: \'event\'});\">", url, "</a>"))
-  })
-
   # Creates table containing the filtered validation's rule name, if its valid, and it's count
   select_validation_results <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     
     # Build query with filters
     fhir_versions <- quote_sql_list(sel_fhir_version())
@@ -358,20 +273,22 @@ validationsmodule <- function(
   # Creates a table of all the failed filtered validations, further filtering by the selected rule from the validation details table
   # Paginated using SQL LIMIT OFFSET - WITH RACE CONDITION PROTECTION
   paged_failed_validation_results <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_validation_group())
+    req(sel_fhir_version(), sel_vendor(), sel_validation_group(), is_active())
     
     # Generate unique request ID - THIS IS THE KEY FIX!
     request_id <- isolate(current_request_id()) + 1
     current_request_id(request_id)
     
-    # Get the selected rule if available
-    selected <- getReactableState("validation_details_table")$selected
-    selected_rule <- if (!is.null(selected) && selected <= nrow(validation_rules())) {
-      deframe(validation_rules()[selected, "rule_name"])
-    } else {
-      "NO_RULES"  # Default when no rule is selected
+    # Get the selected rule if available. Avoid a database round trip when the
+    # active filters have no validation rules.
+    selected_rule <- selected_validation_rule()
+    if (is.null(selected_rule)) {
+      return(data.frame(
+        fhir_version = character(), url = character(), expected = character(),
+        actual = character(), vendor_name = character()
+      ))
     }
-    
+
     # Build filtering conditions
     fhir_versions <- quote_sql_list(sel_fhir_version())
     vendor_filter <- if(sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
@@ -398,7 +315,7 @@ validationsmodule <- function(
       AND fhir_version IN (", fhir_versions, ") ",
       vendor_filter, " ",
       validation_group_filter, " ",
-      "ORDER BY url LIMIT ", limit, " OFFSET ", offset
+      "ORDER BY url, fhir_version, vendor_name, rule_name LIMIT ", limit, " OFFSET ", offset
     )
     
     # Execute query
@@ -427,17 +344,14 @@ validationsmodule <- function(
     # matching validation rules for the current filters (e.g. a vendor with
     # zero failures for the selected FHIR version/group), defaultSelected
     # would otherwise point at a non-existent row and reactable() errors with
-    # "defaultSelected row indices must be within range", which then breaks
-    # every downstream reactive that reads the table's selection state.
-    default_selected <- if (nrow(details) > 0) c(1) else NULL
-
+    # "defaultSelected row indices must be within range".
     reactable(details,
               columns = list(
                 entry = colDef(name = "Validation Rules", html = TRUE)
               ),
               selection = "single",
               onClick = "select",
-              defaultSelected = default_selected,
+              defaultSelected = if (nrow(details) > 0) 1 else NULL,
               pagination = FALSE,
               height = 500
     )
@@ -483,7 +397,7 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), get_endpoint_last_updated(db_tables))
     })
 
   # Renders an empty validation result count chart when no data available
@@ -505,19 +419,12 @@ validationsmodule <- function(
   }
 
   output$failure_table_subtitle <- renderUI({
-    selected <- getReactableState("validation_details_table")$selected
-
-    # Mirror the "NO_RULES" fallback used elsewhere: with no matching
-    # validation rules for the current filters, nothing is selected, and
-    # indexing validation_rules() with a NULL/out-of-range selection would
-    # drop to a bare vector (not a data frame), which deframe() rejects.
-    rule_name <- if (!is.null(selected) && selected <= nrow(validation_rules())) {
-      deframe(validation_rules()[selected, "rule_name"])
+    selected_rule <- selected_validation_rule()
+    if (is.null(selected_rule)) {
+      p("No validation rules match the selected filters.")
     } else {
-      "NO_RULES"
+      p(paste("Rule:", selected_rule))
     }
-
-    p(paste("Rule: ", rule_name))
   })
 
   # Renders the validation failure data table which contains the endpoints that failed validation tests and what the expected and actual values were

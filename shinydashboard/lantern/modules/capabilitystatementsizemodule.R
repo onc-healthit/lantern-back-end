@@ -25,7 +25,8 @@ capabilitystatementsizemodule <- function(
     output,
     session,
     sel_fhir_version,
-    sel_vendor
+    sel_vendor,
+    is_active
 ) {
   ns <- session$ns
 
@@ -34,7 +35,7 @@ capabilitystatementsizemodule <- function(
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
 
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, is_active())
 
     # Get filtered data from the materialized view function
     res <- get_cap_stat_sizes(
@@ -83,7 +84,7 @@ capabilitystatementsizemodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
     })
 
   output$notes_text <- renderUI({

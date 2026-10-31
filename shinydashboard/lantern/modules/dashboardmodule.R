@@ -10,27 +10,9 @@ custom_column_small <- function(...) {
     )
 }
 
-get_endpoint_totals_list <- function(db_tables) {
-  totals_data <- db_tables$mv_endpoint_totals %>%
-    as.data.frame() %>%
-    slice(1)
-  
-  fhir_endpoint_totals <- list(
-    "all_endpoints"     = totals_data$all_endpoints,
-    "indexed_endpoints" = totals_data$indexed_endpoints,
-    "nonindexed_endpoints" = totals_data$nonindexed_endpoints
-  )
-  
-  return(fhir_endpoint_totals)
-}
-
-get_response_tally_list <- function(db_tables) {
-  response_tally <- db_tables$mv_response_tally %>%
-                    as.data.frame() %>%
-                    slice(1)
-  
-  return(response_tally)
-}
+# get_endpoint_totals_list() and get_response_tally_list() are defined once in
+# functions/endpoints.R (sourced before this module file per configuration.yml) -- this file used
+# to shadow them with an identical duplicate copy.
 
 custom_column_large <- function(...) {
     tags$div(
@@ -122,8 +104,29 @@ dashboard <- function(
     return(fhir_data)
   }
 
+  # Shared reactives so each underlying DB query runs once per invalidation instead of being
+  # re-issued independently by every output that needs a piece of the same result.
+  # These read app$endpoint_export_tbl() purely to pick up a real reactive dependency on the
+  # nightly refresh (app_fetcher() sets it once the refresh completes) -- without reading any
+  # reactive value at all, these would only ever compute once per session and would silently
+  # freeze at session-start values instead of reflecting a later refresh.
+  vendor_table_data_r <- reactive({
+    app$endpoint_export_tbl()
+    prepare_vendor_data(db_tables)
+  })
+
+  endpoint_totals_r <- reactive({
+    app$endpoint_export_tbl()
+    get_endpoint_totals_list(db_tables)
+  })
+
+  response_tally_r <- reactive({
+    app$endpoint_export_tbl()
+    get_response_tally_list(db_tables)
+  })
+
   output$fhir_vendor_table <-  reactable::renderReactable({
-    vendor_table_data <- prepare_vendor_data(db_tables)
+    vendor_table_data <- vendor_table_data_r()
     if (is.null(fhirVendorTableSize())) {
       fhirVendorTableSize(ceiling(nrow(vendor_table_data) / 2))
     }
@@ -151,22 +154,23 @@ dashboard <- function(
     fhirVendorTableSize(page)
   })
 
+  # Depends on app$last_updated() (set by app_fetcher()) so the table/plot re-query after the
+  # nightly refresh instead of staying frozen at their first-render values.
   selected_http_summary <- reactive({
-    res <- isolate(get_http_response_tbl_all())
+    app$last_updated()
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      res <- isolate(get_http_response_tbl(sel_vendor()))
+      get_http_response_tbl(sel_vendor())
     } else {
-      res <- isolate(get_http_response_tbl_all())
+      get_http_response_tbl_all()
     }
-
-    res
   })
 
   # create a summary table to show the response codes received along with
   # the description for each code
 
   output$updated_time_box <- renderInfoBox({
+    app$endpoint_export_tbl()
     infoBox(
       "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
       color = "purple"
@@ -175,7 +179,7 @@ dashboard <- function(
 
   output$total_endpoints_box <- renderInfoBox({
     infoBox(
-      "Total Endpoints", get_endpoint_totals_list(db_tables)$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
+      "Total Endpoints", endpoint_totals_r()$all_endpoints, icon = tags$i(class = "glyphicon glyphicon-fire", "aria-hidden" = "true", role = "presentation", "aria-label" = "fire icon"),
       color = "blue"
     )
   })
@@ -183,7 +187,7 @@ dashboard <- function(
   output$indexed_endpoints_box <- renderInfoBox({
     infoBox(
       "Indexed Endpoints*",
-      get_endpoint_totals_list(db_tables)$indexed_endpoints,
+      endpoint_totals_r()$indexed_endpoints,
       icon =  tags$i(class = "glyphicon glyphicon-flash", "aria-hidden" = "true", role = "presentation", "aria-label" = "flash icon"),
       color = "teal"
     )
@@ -191,21 +195,21 @@ dashboard <- function(
 
   output$http_200_box <- renderValueBox({
     valueBox(
-      get_response_tally_list(db_tables) %>% pull(http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
+      response_tally_r() %>% pull(http_200), "200 (Success)", icon = tags$i(class = "glyphicon glyphicon-thumbs-up", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-up icon"),
       color = "green"
     )
   })
 
   output$http_404_box <- renderValueBox({
     valueBox(
-      get_response_tally_list(db_tables) %>% pull(http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
+      response_tally_r() %>% pull(http_404), "404 (Not found)", icon = tags$i(class = "glyphicon glyphicon-thumbs-down", "aria-hidden" = "true", role = "presentation", "aria-label" = "thumbs-down icon"),
       color = "yellow"
     )
   })
 
   output$http_503_box <- renderValueBox({
     valueBox(
-      get_response_tally_list(db_tables) %>% pull(http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
+      response_tally_r() %>% pull(http_503), "503 (Unavailable)", icon = tags$i(class = "glyphicon glyphicon-ban-circle", "aria-hidden" = "true", role = "presentation", "aria-label" = "ban-circle icon"),
       color = "orange"
     )
   })
@@ -224,7 +228,7 @@ dashboard <- function(
   })
 
   output$vendor_share_plot <- renderCachedPlot({
-  vendor_plot_data <- prepare_vendor_data(db_tables) %>%
+  vendor_plot_data <- vendor_table_data_r() %>%
     filter(n > 0)  # Filter out zero counts
   
   # Create ordered factor levels based on sort_order
@@ -255,7 +259,7 @@ dashboard <- function(
                                 height = 400,
                                 growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    now("UTC")
+    get_endpoint_last_updated(db_tables)
   }
 )
   
@@ -274,7 +278,7 @@ dashboard <- function(
                                   height = 400,
                                   growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
-    list(now("UTC"), sel_vendor())
+    list(get_endpoint_last_updated(db_tables), sel_vendor())
   })
 
   observeEvent(input$show_info, {

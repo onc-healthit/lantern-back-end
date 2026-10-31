@@ -71,102 +71,121 @@ function(input, output, session) { #nolint
     expand_fhir_versions_for_db(input$fhir_version)
   })
 
-  observeEvent(database_fetch, {
-    if (database_fetch() == 0) {
-      callModule(
-        endpointsmodule,
-        "endpoints_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$availability),
-        reactive(input$is_chpl))
+  # Each page module is registered exactly once per session, immediately, rather than being
+  # re-registered on every database_fetch toggle. Re-running callModule() on a repeatable event
+  # (as this used to do) stacks a brand-new set of observers/outputs for every module on top of
+  # the previous set each time it fires, since Shiny never tears down the old ones -- across a
+  # long-running session (nightly refreshes) this causes duplicate observers to pile up, which is
+  # what produced the "header cycles through past tabs" symptom when switching tabs quickly. The
+  # modules' own reactives already depend on the app$* reactiveVals that app_fetcher() populates,
+  # so registering them once, before the first fetch completes, is safe -- they will simply
+  # re-compute once that data becomes available.
+  active_tab <- reactive(input$side_menu)
 
-      callModule(
-        downloadsmodule,
-        "downloads_page")
+  callModule(
+    endpointsmodule,
+    "endpoints_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$availability),
+    reactive(input$is_chpl),
+    reactive(active_tab() == "endpoints_tab"))
 
-      callModule(
-        organizationsmodule,
-        "organizations_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$match_confidence),
-        reactive(input$is_chpl))
+  callModule(
+    downloadsmodule,
+    "downloads_page")
 
-      callModule(
-        capabilitystatementsizemodule,
-        "capabilitystatementsize_page",
-        expanded_fhir_version,
-        reactive(input$vendor))
+  callModule(
+    organizationsmodule,
+    "organizations_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$match_confidence),
+    reactive(input$is_chpl),
+    reactive(active_tab() == "organizations_tab"))
 
-      callModule(
-        securitymodule,
-        "security_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$auth_type_code))
+  callModule(
+    capabilitystatementsizemodule,
+    "capabilitystatementsize_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(active_tab() == "capabilitystatementsize_tab"))
 
-      callModule(
-        smartresponsemodule,
-        "smartresponse_page",
-        expanded_fhir_version,
-        reactive(input$vendor))
+  callModule(
+    securitymodule,
+    "security_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$auth_type_code),
+    reactive(active_tab() == "security_tab"))
 
-      callModule(
-        resourcemodule,
-        "resource_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$resources),
-        reactive(input$operations))
+  callModule(
+    smartresponsemodule,
+    "smartresponse_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(active_tab() == "smartresponse_tab"))
 
-      callModule(
-        implementationmodule,
-        "implementation_page",
-        expanded_fhir_version,
-        reactive(input$vendor))
+  callModule(
+    resourcemodule,
+    "resource_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$resources),
+    reactive(input$operations),
+    reactive(active_tab() == "resource_tab"))
 
-      callModule(
-        fieldsmodule,
-        "fields_page",
-        expanded_fhir_version,
-        reactive(input$vendor))
+  callModule(
+    implementationmodule,
+    "implementation_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(active_tab() == "implementation_tab"))
 
-      callModule(
-        profilemodule,
-        "profile_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$profile_resource),
-        reactive(input$profiles))
+  callModule(
+    fieldsmodule,
+    "fields_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(active_tab() == "fields_tab"))
 
-      callModule(
-        valuesmodule,
-        "values_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$field))
+  callModule(
+    profilemodule,
+    "profile_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$profile_resource),
+    reactive(input$profiles),
+    reactive(active_tab() == "profile_tab"))
 
-      callModule(
-        contactsmodule,
-        "contacts_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$has_contact)
-      )
+  callModule(
+    valuesmodule,
+    "values_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$field),
+    reactive(active_tab() == "values_tab"))
 
-      callModule(
-        validationsmodule,
-        "validations_page",
-        expanded_fhir_version,
-        reactive(input$vendor),
-        reactive(input$validation_group))
+  callModule(
+    contactsmodule,
+    "contacts_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$has_contact),
+    reactive(active_tab() == "contacts_tab")
+  )
 
-      callModule(
-        developerfeedbackmodule,
-        "developerfeedback_page")  
-    }
-  })
+  callModule(
+    validationsmodule,
+    "validations_page",
+    expanded_fhir_version,
+    reactive(input$vendor),
+    reactive(input$validation_group),
+    reactive(active_tab() == "validations_tab"))
+
+  callModule(
+    developerfeedbackmodule,
+    "developerfeedback_page")
 
   observeEvent(input$show_release_notes, {
     showModal(modalDialog(
@@ -265,9 +284,13 @@ function(input, output, session) { #nolint
 
   show_confidence_filter <- reactive(FALSE)
 
-  page_name <- reactive({
-    page_name_list[[input$side_menu]]
-  })
+  # Coalesce rapid sidebar changes so the heading does not render every intermediate tab title.
+  # This is intentionally limited to the heading: the selected tab and its content still update
+  # immediately, while the title publishes once the short burst of clicks has settled.
+  page_name <- debounce(
+    reactive(page_name_list[[input$side_menu]]),
+    millis = 200
+  )
 
   output$htmlFooter <- renderUI({
     if (input$side_menu %in% c("about_tab")) {
@@ -300,34 +323,57 @@ function(input, output, session) { #nolint
     }
   })
 
+  # Preserve compatible non-developer selections across a filter-bar re-render. The Developer
+  # dropdown intentionally keeps its original per-tab behavior below: normal tabs reset to
+  # "All Developers", while tabs that do not offer that choice select their first developer.
+  # Active-tab guards on the modules prevent those expected input resets from running queries for
+  # inactive tabs.
+  preserve_or_default <- function(current, choices, default) {
+    valid_choices <- as.character(unlist(choices, use.names = FALSE))
+    if (!is.null(current) && length(current) > 0 && all(as.character(current) %in% valid_choices)) {
+      current
+    } else {
+      default
+    }
+  }
+
   output$show_filters <- renderUI({
     if (show_filter()) {
       if (fhir_version_no_capstat()) {
-        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
-        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
+        fhir_choices <- isolate(app$fhir_version_list_no_capstat())
+        fhir_selected <- preserve_or_default(isolate(input$fhir_version), fhir_choices, isolate(app$distinct_fhir_version_list_no_capstat()))
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = fhir_choices, selected = fhir_selected, options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = fhir_choices, selected = fhir_selected, options = list(`multiple-separator` = " | ", size = 5))
       } else {
-        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = isolate(app$fhir_version_list()), selected = isolate(app$distinct_fhir_version_list()), options = list(`multiple-separator` = " | ", size = 5))
-        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()), options = list(`multiple-separator` = " | ", size = 5))
+        fhir_choices <- isolate(app$fhir_version_list())
+        fhir_selected <- preserve_or_default(isolate(input$fhir_version), fhir_choices, isolate(app$distinct_fhir_version_list()))
+        fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = fhir_choices, selected = fhir_selected, options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = preserve_or_default(isolate(input$fhir_version), isolate(app$fhir_version_list_no_capstat()), isolate(app$distinct_fhir_version_list_no_capstat())), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for specific tabs
       if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab", "values_tab")) {
         # Get vendor list without "All Developers"
         vendor_choices <- app$vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
-        
+
         # Set default to first actual developer
         default_vendor <- if(length(vendor_choices_filtered) > 0) vendor_choices_filtered[[1]] else ui_special_values$ALL_DEVELOPERS
-        
+
         developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = vendor_choices_filtered, selected = default_vendor, size = 1, selectize = FALSE)
       } else {
         # Normal behavior for other tabs
         developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       }
-      availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100"), selected = "0-100", size = 1, selectize = FALSE)
-      validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = c("All Groups", validation_group_names), selected = "All Groups", size = 1, selectize = FALSE)
-      confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = c("97-100", "98-100", "99-100", "100"), selected = "97-100", size = 1, selectize = FALSE)
-      contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = c("True", "False", "Any"), selected = "Any", size = 1, selectize = FALSE)
-      chplDropdown <- selectInput(inputId = "is_chpl", label = "Source:", choices = c("CHPL", "State Medicaid", "Payer", "Other", "All"), selected = "All", size = 1, selectize = FALSE)
+      availability_choices <- list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100")
+      availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = availability_choices, selected = preserve_or_default(isolate(input$availability), availability_choices, "0-100"), size = 1, selectize = FALSE)
+      validation_choices <- c("All Groups", validation_group_names)
+      validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = validation_choices, selected = preserve_or_default(isolate(input$validation_group), validation_choices, "All Groups"), size = 1, selectize = FALSE)
+      confidence_choices <- c("97-100", "98-100", "99-100", "100")
+      confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = confidence_choices, selected = preserve_or_default(isolate(input$match_confidence), confidence_choices, "97-100"), size = 1, selectize = FALSE)
+      contact_choices <- c("True", "False", "Any")
+      contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = contact_choices, selected = preserve_or_default(isolate(input$has_contact), contact_choices, "Any"), size = 1, selectize = FALSE)
+      chpl_choices <- c("CHPL", "State Medicaid", "Payer", "Other", "All")
+      chplDropdown <- selectInput(inputId = "is_chpl", label = "Source:", choices = chpl_choices, selected = preserve_or_default(isolate(input$is_chpl), chpl_choices, "All"), size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 3,
@@ -481,12 +527,10 @@ function(input, output, session) { #nolint
 
   output$show_security_filter <- renderUI({
     if (show_security_filter()) {
-      # Get the list of security codes directly from the existing materialized view
-      security_codes <- tbl(db_connection, "mv_get_security_endpoints") %>%
-      distinct(code) %>%
-      collect() %>%
-      pull(code) 
-      
+      # Cached at refresh time in app$security_code_list (see app_fetcher()) instead of
+      # re-querying mv_get_security_endpoints inline on every renderUI cycle this output fires.
+      security_codes <- app$security_code_list()
+
       fluidRow(
         column(width = 4,
           selectInput(
@@ -528,24 +572,26 @@ function(input, output, session) { #nolint
   })
 
   resource_options <- reactive({
-    res <- get_supported_profiles(db_connection)
     req(input$fhir_version, input$vendor)
 
-    res <- res %>%
-    filter(fhir_version %in% expanded_fhir_version()) %>%
-    filter(resource != "")
+    # Filter and de-duplicate in SQL instead of collecting all of endpoint_supported_profiles_mv
+    # (via get_supported_profiles()) and filtering it in R.
+    query <- tbl(db_connection, "endpoint_supported_profiles_mv") %>%
+      filter(fhir_version %in% !!expanded_fhir_version()) %>%
+      filter(resource != "")
 
     if (input$vendor != ui_special_values$ALL_DEVELOPERS) {
-      res <- res %>% filter(vendor_name == input$vendor)
+      query <- query %>% filter(vendor_name == !!input$vendor)
     }
 
     resource_list <- list(
         "All Resources" = ui_special_values$ALL_RESOURCES
     )
 
-    res <- res %>%
+    res <- query %>%
     distinct(resource) %>%
     arrange(resource) %>%
+    collect() %>%
     split(.$resource) %>%
     purrr::map(~ .$resource)
     return(c(resource_list, res))
@@ -715,7 +761,7 @@ function(input, output, session) { #nolint
             selected = ui_special_values$ALL_RESOURCES,
             selectize = FALSE,
             size = 1,
-            width = paste0(max(nchar(profile_options())) * 8, "px")
+            width = "fit-content"
           )
         )
       ),
@@ -734,7 +780,7 @@ function(input, output, session) { #nolint
             selected = ui_special_values$ALL_PROFILES,
             selectize = FALSE,
             size = 1,
-            width = paste0(max(nchar(profile_options())) * 8, "px")
+            width = "fit-content"
           )
         )
       )
@@ -777,25 +823,25 @@ function(input, output, session) { #nolint
   })
 
   observeEvent(input$show_contact_modal, {
-  # Get contact data directly from the materialized view
-  contact_data <- tbl(db_connection, "mv_contacts_info") %>% collect()
-  
+  # Get contact data for just this URL, pushed down to SQL instead of pulling the whole
+  # materialized view over the wire and filtering it in R on every popup click.
+  contact_data <- tbl(db_connection, "mv_contacts_info") %>%
+    filter(url == !!input$show_contact_modal) %>%
+    collect()
+
   showModal(modalDialog(
     title = "All Contacts",
     p(input$show_contact_modal),
     p(ifelse(is.na(
       contact_data %>%
-        filter(url == input$show_contact_modal) %>%
         distinct(endpoint_names) %>%
         select(endpoint_names))
         ||
         contact_data %>%
-        filter(url == input$show_contact_modal) %>%
         distinct(endpoint_names) %>%
         select(endpoint_names) == "",
       "-",
       contact_data %>%
-      filter(url == input$show_contact_modal) %>%
       mutate(endpoint_names = strsplit(endpoint_names, ";")[[1]][1]) %>%
       distinct(endpoint_names) %>%
       select(endpoint_names)
@@ -804,7 +850,6 @@ function(input, output, session) { #nolint
       reactable(
         contact_data %>%
         mutate(contact_name = ifelse(is.na(contact_name), "N/A", contact_name)) %>%
-        filter(url == input$show_contact_modal) %>%
         arrange(contact_preference) %>%
         mutate(contact_name = ifelse(is.na(contact_name), "-", contact_name)) %>%
         select(contact_name, contact_type, contact_value) %>%
@@ -831,8 +876,7 @@ observeEvent(input$show_organization_modal, {
     p(HTML(paste("<b>Organization Active Status:</b><br/>",
       paste(
         {
-          active_vals <- get_org_active_information(db_connection) %>%
-            filter(org_id == input$show_organization_modal) %>%
+          active_vals <- get_org_active_information(db_connection, input$show_organization_modal) %>%
             pull(active)
           if (length(active_vals) == 0 || all(is.na(active_vals))) {
             "N/A"
@@ -847,8 +891,7 @@ observeEvent(input$show_organization_modal, {
     p(HTML(paste("<b>Organization Identifiers:</b><br/>",
       paste(
         {
-          identifier_vals <- get_org_identifiers_information(db_connection) %>%
-          filter(org_id == input$show_organization_modal) %>%
+          identifier_vals <- get_org_identifiers_information(db_connection, input$show_organization_modal) %>%
           pull(identifier)
           if (length(identifier_vals) == 0 || all(is.na(identifier_vals))) {
             "N/A"
@@ -863,8 +906,7 @@ observeEvent(input$show_organization_modal, {
     p(HTML(paste("<b>Organization Addresses:</b><br/>",
       paste(
         {
-          address_vals <- get_org_addresses_information(db_connection) %>%
-          filter(org_id == input$show_organization_modal) %>%
+          address_vals <- get_org_addresses_information(db_connection, input$show_organization_modal) %>%
           pull(address)
           if (length(address_vals) == 0 || all(is.na(address_vals))) {
             "N/A"
@@ -880,6 +922,23 @@ observeEvent(input$show_organization_modal, {
   ))
 })
 
+
+# Sub-tabs of the endpoint modal whose data has been requested. Only the Details tab (visible on
+# open) is loaded eagerly; the data reactives for every other sub-tab call modal_tab_loaded() so
+# their queries only run once the user actually opens that sub-tab. Reset on every popup so a
+# newly opened endpoint never shows (or computes) another endpoint's sub-tab data.
+loaded_modal_tabs <- reactiveVal("Details")
+
+modal_tab_loaded <- function(tab) {
+  req(tab %in% loaded_modal_tabs())
+}
+
+observeEvent(input$endpoint_modal_tabset, {
+  loaded <- loaded_modal_tabs()
+  if (!(input$endpoint_modal_tabset %in% loaded)) {
+    loaded_modal_tabs(c(loaded, input$endpoint_modal_tabset))
+  }
+})
 
 # Current Endpoint that is selected to view in Modal
 current_endpoint <- reactive({
@@ -936,6 +995,7 @@ current_endpoint <- reactive({
 
 ### CHPL Products Modal Page ###
 endpoint_products <- reactive({
+  modal_tab_loaded("Products")
   endpoint <- current_endpoint()
   res <- get_endpoint_products(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
   res
@@ -962,6 +1022,7 @@ endpoint_products_page <- function() {
 ### IGs and Profiles Modal Page ###
 
 endpoint_implementation_guides <- reactive({
+  modal_tab_loaded("Implementation Guides & Profiles")
   endpoint <- current_endpoint()
 
   implementation_guides <- get_endpoint_implementation_guide(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
@@ -969,6 +1030,7 @@ endpoint_implementation_guides <- reactive({
 })
 
 endpoint_profiles <- reactive({
+  modal_tab_loaded("Implementation Guides & Profiles")
   endpoint <- current_endpoint()
 
   profiles <- get_endpoint_supported_profiles(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
@@ -1007,21 +1069,28 @@ implementation_guide_profiles_page <- function() {
 # Required Capability Statement fields that we are tracking
 required_fields <- c("status", "kind", "fhirVersion", "format", "date")
 
-endpoint_fields <- reactive({
+# Shared base so the (identical, expensive) json_array_elements query underlying both
+# endpoint_fields and endpoint_extensions only runs once per endpoint instead of twice.
+endpoint_capstat_fields_raw <- reactive({
+  modal_tab_loaded("Capabilities")
   endpoint <- current_endpoint()
+  get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
+})
 
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "false")
-  res
+endpoint_fields <- reactive({
+  endpoint_capstat_fields_raw() %>%
+    filter(extension == "false") %>%
+    select(field, exist)
 })
 
 endpoint_extensions <- reactive({
-  endpoint <- current_endpoint()
-
-  res <- get_endpoint_capstat_fields(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name, "true")
-  res
+  endpoint_capstat_fields_raw() %>%
+    filter(extension == "true") %>%
+    select(field, exist)
 })
 
 endpoint_resources <- reactive({
+  modal_tab_loaded("Capabilities")
   endpoint <- current_endpoint()
 
   res <- get_endpoint_resources(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
@@ -1030,6 +1099,7 @@ endpoint_resources <- reactive({
 })
 
 endpoint_smart_capabilities <- reactive({
+  modal_tab_loaded("Capabilities")
   endpoint <- current_endpoint()
 
   res <- get_endpoint_smart_response_capabilities(db_connection, endpoint$url, endpoint$requested_fhir_version, endpoint$vendor_name)
@@ -1095,6 +1165,7 @@ output$smart_capabilities_table <- DT::renderDataTable({
 })
 
 get_capability_statement_json <- reactive({
+  modal_tab_loaded("Capabilities")
   endpoint <- current_endpoint()
 
   res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
@@ -1110,6 +1181,7 @@ get_capability_statement_json <- reactive({
 
 
 get_smart_response_json <- reactive({
+  modal_tab_loaded("Capabilities")
   endpoint <- current_endpoint()
 
   res <- get_capability_and_smart_response(db_connection, endpoint$url, endpoint$requested_fhir_version)
@@ -1155,6 +1227,7 @@ endpoint_capabilities_page <- function() {
 ### Organizations Modal Page ###
 
  get_endpoint_list_orgs <- reactive({
+    modal_tab_loaded("Organizations")
     endpoint <- current_endpoint()
 
     # Use vendor_name for filtering; fall back to NULL (no filter) if unknown
@@ -1163,16 +1236,16 @@ endpoint_capabilities_page <- function() {
                      else
                        NULL
 
+    # Query once and derive the cap_fhir_version from the same result instead of re-running the
+    # identical query to filter on it.
+    url_matches <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter) %>%
+      filter(url == endpoint$url)
+
     # Get the actual cap_fhir_version using the url (and vendor filter)
-    cap_fhir_ver <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter) %>%
-      filter(url == endpoint$url) %>%
-      pull(fhir_version) %>%
-      unique()
+    cap_fhir_ver <- unique(url_matches$fhir_version)
 
     # Now use cap_fhir_ver to filter
-    res <- get_endpoint_list_matches(db_connection, fhir_version = NULL, vendor = vendor_filter)
-    res <- res %>%
-      filter(url == endpoint$url) %>%
+    res <- url_matches %>%
       filter(fhir_version == cap_fhir_ver) %>%
       mutate(organization_name = if_else(organization_name == "Unknown", "Not Available", organization_name))
 
@@ -1249,10 +1322,16 @@ output$plot_note_text <- renderUI({
   HTML(res)
 })
 
-endpoint_http_responses <- reactive({
+# Shared base for the three reactives below, which all used to independently re-run the exact
+# same get_endpoint_http_over_time() query every time the HTTP-response modal section rendered.
+endpoint_http_over_time_raw <- reactive({
   endpoint <- current_endpoint()
   range <- get_range(input$http_date)
-  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version) %>%
+  get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+})
+
+endpoint_http_responses <- reactive({
+  res <- endpoint_http_over_time_raw() %>%
   left_join(app$http_response_code_tbl(), by = c("http_response" = "code")) %>%
   mutate(http_response = paste(http_response, "-", label)) %>%
   select(date, http_response)
@@ -1260,10 +1339,7 @@ endpoint_http_responses <- reactive({
 })
 
 endpoint_http_codes_table <- reactive({
-  endpoint <- current_endpoint()
-
-  range <- get_range(input$http_date)
-  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+  res <- endpoint_http_over_time_raw()
 
   http_code_table <- app$http_response_code_tbl() %>%
   inner_join(res, by = c("code" = "http_response")) %>%
@@ -1273,10 +1349,7 @@ endpoint_http_codes_table <- reactive({
 })
 
 endpoint_http_responses_mapping <- reactive({
-  endpoint <- current_endpoint()
-
-  range <- get_range(input$http_date)
-  res <- get_endpoint_http_over_time(db_connection, range, endpoint$url, endpoint$requested_fhir_version)
+  res <- endpoint_http_over_time_raw()
 
   http_code_table <- endpoint_http_codes_table()
 
@@ -1420,6 +1493,8 @@ output$endpoint_http_response_table <- reactable::renderReactable({
 
   ### Endpoint Popup Modal ###
   observeEvent(input$endpoint_popup, {
+    # Start every popup with only the Details tab loaded (see loaded_modal_tabs above).
+    loaded_modal_tabs("Details")
     endpoint <- current_endpoint()
     showModal(modalDialog(
       title = "Endpoint Details",

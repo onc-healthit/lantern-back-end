@@ -38,11 +38,11 @@ profilemodule <- function(
   sel_fhir_version,
   sel_vendor,
   sel_resource,
-  sel_profile
+  sel_profile,
+  is_active
 ) {
   ns <- session$ns
 
-  profile_page_state <- reactiveVal(1)
   profile_page_size <- 10
 
   # Add request tracking to prevent race conditions
@@ -50,7 +50,7 @@ profilemodule <- function(
 
   # FAST COUNT: Get total count without loading all data
   profile_total_count <- reactive({
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), is_active())
     
     # Count query - much faster than loading all data
     count_query <- "SELECT COUNT(*) as total FROM mv_profiles_paginated WHERE 1=1"
@@ -96,92 +96,19 @@ profilemodule <- function(
     max(1, ceiling(total_count / profile_page_size))
   })
 
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- profile_page_state()
-    current_selector <- input$profile_page_selector
-    
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) || 
-        is.na(current_selector) || 
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-      
-      isolate({  # This is the key fix to break feedback loops
-        updateNumericInput(session, "profile_page_selector", 
-                          max = profile_total_pages(),
-                          value = new_page)
-      })
-    }
-  })
+  profile_page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "profile_page_selector",
+    prev_button_id = "profile_prev_page",
+    next_button_id = "profile_next_page",
+    prev_output_id = "profile_prev_button_ui",
+    next_output_id = "profile_next_button_ui",
+    total_pages = profile_total_pages
+  )
 
-  # Handle page selector input
-  observeEvent(input$profile_page_selector, {
-    # Get current input value
-    current_input <- input$profile_page_selector
-    
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) && 
-        !is.na(current_input) && 
-        is.numeric(current_input) &&
-        current_input > 0) {
-      
-      new_page <- max(1, min(current_input, profile_total_pages()))
-      
-      # Only update page state if it's actually different
-      if (new_page != profile_page_state()) {
-        profile_page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "profile_page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "profile_page_selector", value = profile_page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent firing on initialization
-
-  # Handle next page button
-  observeEvent(input$profile_next_page, {
-    if (profile_page_state() < profile_total_pages()) {
-      new_page <- profile_page_state() + 1
-      profile_page_state(new_page)
-    }
-  })
-
-  # Handle previous page button
-  observeEvent(input$profile_prev_page, {
-    if (profile_page_state() > 1) {
-      new_page <- profile_page_state() - 1
-      profile_page_state(new_page)
-    }
-  })
-
-  # Reset to first page on any filter/search change 
+  # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_resource(), sel_profile(), input$profile_search_query), {
     profile_page_state(1)
-  })
-
-  # Boundary condition handling using count 
-  output$profile_prev_button_ui <- renderUI({
-    if (profile_page_state() > 1) {
-      actionButton(ns("profile_prev_page"), "Previous", icon = icon("arrow-left"))
-    } else {
-      NULL
-    }
-  })
-
-  output$profile_next_button_ui <- renderUI({
-    if (profile_page_state() < profile_total_pages()) {
-      actionButton(ns("profile_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL
-    }
   })
 
   output$profile_page_info <- renderText({
@@ -190,7 +117,7 @@ profilemodule <- function(
 
   # FAST PAGINATION: Only load the 10 rows needed for current page - WITH RACE CONDITION PROTECTION
   selected_fhir_endpoint_profiles <- reactive({
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1

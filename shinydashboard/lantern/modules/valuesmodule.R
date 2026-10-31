@@ -43,12 +43,12 @@ valuesmodule <- function(
   session,
   sel_fhir_version,
   sel_vendor,
-  sel_capstat_values
+  sel_capstat_values,
+  is_active
 ) {
 
   ns <- session$ns
   values_page_size <- 10
-  values_page_state <- reactiveVal(1)
 
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
@@ -58,92 +58,19 @@ valuesmodule <- function(
     max(1, ceiling(total / values_page_size))
   })
 
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- values_page_state()
-    current_selector <- input$values_page_selector
-    
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) || 
-        is.na(current_selector) || 
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-      
-      isolate({  # This is the key fix to break feedback loops!
-        updateNumericInput(session, "values_page_selector", 
-                          max = values_total_pages(),
-                          value = new_page)
-      })
-    }
-  })
-
-  # Handle page selector input
-  observeEvent(input$values_page_selector, {
-    # Get current input value
-    current_input <- input$values_page_selector
-    
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) && 
-        !is.na(current_input) && 
-        is.numeric(current_input) &&
-        current_input > 0) {
-      
-      new_page <- max(1, min(current_input, values_total_pages()))
-      
-      # Only update page state if it's actually different
-      if (new_page != values_page_state()) {
-        values_page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "values_page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "values_page_selector", value = values_page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent firing on initialization
+  values_page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "values_page_selector",
+    prev_button_id = "values_prev_page",
+    next_button_id = "values_next_page",
+    prev_output_id = "values_prev_button_ui",
+    next_output_id = "values_next_button_ui",
+    total_pages = values_total_pages
+  )
 
   # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_capstat_values(), input$values_search_query), {
     values_page_state(1)
-  })
-
-  # Page navigation buttons
-  output$values_prev_button_ui <- renderUI({
-  if (values_page_state() > 1) {
-    actionButton(ns("values_prev_page"), "Previous", icon = icon("arrow-left"))
-  } else {
-    NULL
-  }
-  })
-
-  output$values_next_button_ui <- renderUI({
-    if (values_page_state() < values_total_pages()) {
-      actionButton(ns("values_next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL
-    }
-  })
-
-  # Handle next page button 
-  observeEvent(input$values_next_page, {
-    if (values_page_state() < values_total_pages()) {
-      new_page <- values_page_state() + 1
-      values_page_state(new_page)
-    }
-  })
-
-  # Handle previous page button
-  observeEvent(input$values_prev_page, {
-    if (values_page_state() > 1) {
-      new_page <- values_page_state() - 1
-      values_page_state(new_page)
-    }
   })
 
   output$values_page_info <- renderText({
@@ -151,7 +78,7 @@ valuesmodule <- function(
   })
 
   get_value_table_header <- reactive({
-    req(sel_capstat_values(), sel_fhir_version())
+    req(sel_capstat_values(), sel_fhir_version(), is_active())
 
     valid_versions <- valid_field_versions()
       header <- ""
@@ -173,7 +100,7 @@ valuesmodule <- function(
     header
 })
   valid_field_versions <- reactive({
-    req(sel_capstat_values())
+    req(sel_capstat_values(), is_active())
 
     res <- tbl(db_connection,
         sql(paste0("SELECT unnest(fhir_versions) AS version
@@ -186,7 +113,7 @@ valuesmodule <- function(
   })
 
   get_base_values_sql <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()
@@ -221,7 +148,7 @@ valuesmodule <- function(
 
   # Main data query - WITH RACE CONDITION PROTECTION
   paged_capstat_values <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
     
     # Generate unique request ID 
     request_id <- isolate(current_request_id()) + 1
@@ -233,7 +160,7 @@ valuesmodule <- function(
     query_str <- paste0(
       "SELECT \"Developer\", \"FHIR Version\", field_value, \"Endpoints\" ",
       get_base_values_sql(),
-      " ORDER BY \"Endpoints\" DESC LIMIT ", limit, " OFFSET ", offset
+      " ORDER BY \"Developer\", \"FHIR Version\", field, field_value LIMIT ", limit, " OFFSET ", offset
     )
 
     result <- tbl(db_connection, sql(query_str))
@@ -270,7 +197,7 @@ valuesmodule <- function(
 
   # Gets the total number of endpoints that are using the currently selected field
   capstat_value_usage_summary <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+    req(sel_fhir_version(), sel_vendor(), sel_capstat_values(), is_active())
 
     fhir_versions <- sel_fhir_version()
     vendor <- sel_vendor()

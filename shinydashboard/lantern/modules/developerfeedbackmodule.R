@@ -990,8 +990,12 @@ developerfeedbackmodule <- function(
     get_filtered_org_data()
   })
 
+  # Derived from filtered_org_data() in R instead of re-issuing the same query against
+  # mv_organization_quality a second time with an extra WHERE clause -- the issue flags are
+  # already present in the "SELECT *" result above.
   problematic_orgs <- reactive({
-    get_filtered_org_data(issues_only = TRUE)
+    filtered_org_data() %>%
+      filter(!has_valid_identifiers | !has_valid_name | !has_valid_address)
   })
 
   format_org_data_for_csv <- function(data) {

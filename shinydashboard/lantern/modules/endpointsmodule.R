@@ -55,112 +55,59 @@ endpointsmodule <- function(
   sel_fhir_version,
   sel_vendor,
   sel_availability,
-  sel_is_chpl
+  sel_is_chpl,
+  is_active
 ) {
   ns <- session$ns
 
-  page_state <- reactiveVal(1)
   page_size <- 10
 
   # Add request tracking to prevent race conditions
   current_request_id <- reactiveVal(0)
 
-  # Calculate total pages based on ACTUAL TABLE ROWS (after distinct operation)
+  # One query returns both the number of distinct table rows (for the page count) and the number
+  # of distinct (url, fhir_version) endpoints (for the "Matching Endpoints" text). The filtered
+  # rows are materialized once in a narrow CTE and both aggregates read from it, so the view is
+  # scanned once and neither number needs the full result set pulled into R. The result is cached
+  # per filter combination and invalidated when app_fetcher() records a new last_updated value.
+  endpoint_counts <- bindCache(
+    reactive({
+      filt <- endpoint_filter_query()
+
+      counts_query_str <- paste0(
+        "WITH filtered AS (SELECT base.\"urlModal\", base.condensed_endpoint_names, base.endpoint_names, base.vendor_name, base.capability_fhir_version, base.format, base.cap_stat_exists, base.status, base.availability, base.is_chpl, base.url, base.fhir_version FROM (",
+        filt$query_str, ") base) ",
+        "SELECT ",
+        "(SELECT COUNT(*) FROM (SELECT DISTINCT \"urlModal\", condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl FROM filtered) table_rows) AS table_rows, ",
+        "(SELECT COUNT(*) FROM (SELECT DISTINCT url, fhir_version FROM filtered) endpoint_rows) AS endpoints"
+      )
+
+      counts_query <- do.call(glue_sql, c(list(counts_query_str, .con = db_connection), filt$params))
+      res <- dbGetQuery(db_connection, counts_query)
+      list(table_rows = as.numeric(res$table_rows), endpoints = as.numeric(res$endpoints))
+    }),
+    endpoint_filter_query()$query_str,
+    endpoint_filter_query()$params,
+    app$last_updated()
+  )
+
   total_pages <- reactive({
-    # Count the actual distinct rows that will be displayed in the table
-    table_data <- selected_fhir_endpoints_without_limit() %>% 
-      select(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl) %>% 
-      distinct(urlModal, condensed_endpoint_names, endpoint_names, vendor_name, capability_fhir_version, format, cap_stat_exists, status, availability, is_chpl)
-    
-    total_records <- nrow(table_data)
-    max(1, ceiling(total_records / page_size))
+    max(1, ceiling(endpoint_counts()$table_rows / page_size))
   })
 
-  # Break the feedback loop with isolate()
-  observe({
-    new_page <- page_state()
-    current_selector <- input$page_selector
-    
-    # Only update if different (prevents infinite loop)
-    # Add safety check for current_selector to prevent crashes
-    if (is.null(current_selector) || 
-        is.na(current_selector) || 
-        !is.numeric(current_selector) ||
-        current_selector != new_page) {
-      
-      isolate({  # This is the key fix to break feedback loops
-        updateNumericInput(session, "page_selector", 
-                          max = total_pages(),
-                          value = new_page)
-      })
-    }
-  })
+  page_state <- create_pager(
+    input, output, session,
+    page_selector_id = "page_selector",
+    prev_button_id = "prev_page",
+    next_button_id = "next_page",
+    prev_output_id = "prev_button_ui",
+    next_output_id = "next_button_ui",
+    total_pages = total_pages
+  )
 
-  # Handle page selector input
-  observeEvent(input$page_selector, {
-    # Get current input value
-    current_input <- input$page_selector
-    
-    # Check if input is valid (not NULL, not NA, and is a number)
-    if (!is.null(current_input) && 
-        !is.na(current_input) && 
-        is.numeric(current_input) &&
-        current_input > 0) {
-      
-      new_page <- max(1, min(current_input, total_pages()))
-      
-      # Only update page state if it's actually different
-      if (new_page != page_state()) {
-        page_state(new_page)
-      }
-
-      # Correct the input field if the user entered an invalid page number
-      if (new_page != current_input) {
-        updateNumericInput(session, "page_selector", value = new_page)
-      }
-    } else {
-      # If input is invalid (empty, NA, or <= 0), reset to current page
-      # Use a small delay to prevent immediate feedback loop
-      invalidateLater(100)
-      updateNumericInput(session, "page_selector", value = page_state())
-    }
-  }, ignoreInit = TRUE)  # Prevent firing on initialization
-
-  # Handle next page button 
-  observeEvent(input$next_page, {
-    if (page_state() < total_pages()) {
-      new_page <- page_state() + 1
-      page_state(new_page)
-    }
-  })
-
-  # Handle previous page button 
-  observeEvent(input$prev_page, {
-    if (page_state() > 1) {
-      new_page <- page_state() - 1
-      page_state(new_page)
-    }
-  })
-
-  # Reset to first page on any filter/search change 
+  # Reset to first page on any filter/search change
   observeEvent(list(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl(), input$search_query), {
     page_state(1)
-  })
-
-  output$prev_button_ui <- renderUI({
-    if (page_state() > 1) {
-      actionButton(ns("prev_page"), "Previous", icon = icon("arrow-left"))
-    } else {
-      NULL  # Hide the button
-    }
-  })
-
-  output$next_button_ui <- renderUI({
-    if (page_state() < total_pages()) {
-      actionButton(ns("next_page"), "Next", icon = icon("arrow-right"))
-    } else {
-      NULL  # Hide the button
-    }
   })
 
   output$page_info <- renderText({
@@ -173,19 +120,15 @@ endpointsmodule <- function(
 
   # MATCHING ENDPOINTS: Count unique (url, fhir_version) combinations - the actual endpoints
   output$endpoint_count <- renderText({
-    unique_endpoints <- nrow(selected_fhir_endpoints_without_limit() %>% distinct(url, fhir_version))
+    unique_endpoints <- endpoint_counts()$endpoints
     paste("Matching Endpoints:", unique_endpoints)
   })
 
-  # Main data query with LIMIT OFFSET pagination - WITH RACE CONDITION PROTECTION
-  selected_fhir_endpoints <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
-    
-    # Generate unique request ID
-    request_id <- isolate(current_request_id()) + 1
-    current_request_id(request_id)
-    
-    offset <- (page_state() - 1) * page_size
+  # Shared WHERE-clause builder reused by the paginated fetch, the unlimited fetch (used for CSV
+  # export and the endpoint-count text), and the total_pages count query below -- previously
+  # duplicated verbatim across those reactives.
+  endpoint_filter_query <- reactive({
+    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl(), is_active())
 
     query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
     params <- list(vals = sel_fhir_version())
@@ -221,14 +164,25 @@ endpointsmodule <- function(
       params$search <- paste0("%", keyword, "%")
     }
 
-    # Add LIMIT OFFSET for pagination
-    query_str <- paste0(query_str, " LIMIT {limit} OFFSET {offset}")
-    params$limit <- page_size
-    params$offset <- offset
+    list(query_str = query_str, params = params)
+  })
+
+  # Main data query with LIMIT OFFSET pagination - WITH RACE CONDITION PROTECTION
+  selected_fhir_endpoints <- reactive({
+    filt <- endpoint_filter_query()
+
+    # Generate unique request ID
+    request_id <- isolate(current_request_id()) + 1
+    current_request_id(request_id)
+
+    offset <- (page_state() - 1) * page_size
+
+    query_str <- paste0(filt$query_str, " ORDER BY id, url, requested_fhir_version LIMIT {limit} OFFSET {offset}")
+    params <- c(filt$params, list(limit = page_size, offset = offset))
 
     query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
     result <- tbl(db_connection, sql(query)) %>% collect()
-    
+
     # Only return results if this is still the latest request
     # Use isolate() to check without creating reactive dependency
     if (request_id == isolate(current_request_id())) {
@@ -242,46 +196,11 @@ endpointsmodule <- function(
 
   # Query without limit for total count and download
   selected_fhir_endpoints_without_limit <- reactive({
-    req(sel_fhir_version(), sel_vendor(), sel_availability(), sel_is_chpl())
-    
-    query_str <- "SELECT * FROM selected_fhir_endpoints_mv WHERE fhir_version IN ({vals*})"
-    params <- list(vals = sel_fhir_version())
+    filt <- endpoint_filter_query()
 
-    if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
-      query_str <- paste0(query_str, " AND vendor_name = {vendor}")
-      params$vendor <- sel_vendor()
-    }
+    query_str <- paste0(filt$query_str, " ORDER BY id, url, requested_fhir_version")
 
-    if (sel_is_chpl() != "All") {
-      query_str <- paste0(query_str, " AND is_chpl = {chpl}")
-      params$chpl <- sel_is_chpl()
-    }
-
-    if (sel_availability() != "0-100") {
-      if (sel_availability() == "0" || sel_availability() == "100") {
-        query_str <- paste0(query_str, " AND availability = {availability}")
-        params$availability <- as.numeric(sel_availability())
-      } else {
-        availability_range <- strsplit(sel_availability(), "-")[[1]]
-        query_str <- paste0(query_str, " AND availability BETWEEN {low} AND {high}")
-        params$low <- as.numeric(availability_range[1])
-        params$high <- as.numeric(availability_range[2])
-      }
-    }
-
-    # Apply external search filter (including is_chpl)
-    if (trimws(input$search_query) != "") {
-      keyword <- tolower(trimws(input$search_query))
-      query_str <- paste0(query_str, " AND (LOWER(url) LIKE {search} OR LOWER(condensed_endpoint_names) LIKE {search} OR LOWER(vendor_name) LIKE {search}")
-      query_str <- paste0(query_str, " OR LOWER(capability_fhir_version) LIKE {search} OR LOWER(format) LIKE {search} OR LOWER(cap_stat_exists) LIKE {search}")
-      query_str <- paste0(query_str, " OR LOWER(status) LIKE {search} OR LOWER(availability::TEXT) LIKE {search} OR LOWER(is_chpl) LIKE {search})")
-      params$search <- paste0("%", keyword, "%")
-    }
-
-    # Add ordering by vendor name
-    query_str <- paste0(query_str, " ORDER BY vendor_name, list_source, url, requested_fhir_version")
-
-    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), params))
+    query <- do.call(glue_sql, c(list(query_str, .con = db_connection), filt$params))
     res <- tbl(db_connection, sql(query)) %>% collect()
     res
   })

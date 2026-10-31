@@ -46,13 +46,14 @@ implementationmodule <- function(  #nolint
   output,
   session,
   sel_fhir_version,
-  sel_vendor
+  sel_vendor,
+  is_active
 ) {
 
   ns <- session$ns
 
   implementation_count <- reactive({
-    req(sel_fhir_version(), sel_vendor())
+    req(sel_fhir_version(), sel_vendor(), is_active())
     get_implementation_guide_count(sel_fhir_version(), sel_vendor())
   })
 
@@ -94,7 +95,7 @@ implementationmodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), now("UTC"))
+      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
     })
 
   output$implementation_guide_empty_plot <- renderPlot({
