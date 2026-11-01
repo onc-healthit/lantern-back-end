@@ -67,7 +67,8 @@ dashboard <- function(
     input,
     output,
     session,
-    sel_vendor
+    sel_vendor,
+    is_active
 ) {
   ns <- session$ns
 
@@ -106,22 +107,21 @@ dashboard <- function(
 
   # Shared reactives so each underlying DB query runs once per invalidation instead of being
   # re-issued independently by every output that needs a piece of the same result.
-  # These read app$endpoint_export_tbl() purely to pick up a real reactive dependency on the
-  # nightly refresh (app_fetcher() sets it once the refresh completes) -- without reading any
-  # reactive value at all, these would only ever compute once per session and would silently
-  # freeze at session-start values instead of reflecting a later refresh.
+  # is_active() holds all data work back until the staged tab switch has rendered the heading and
+  # filters (see active_tab in server.R). It is reset on every tab switch, so these re-query the
+  # database each time the Dashboard is opened and reflect a data refresh without any other trigger.
   vendor_table_data_r <- reactive({
-    app$endpoint_export_tbl()
+    req(is_active())
     prepare_vendor_data(db_tables)
   })
 
   endpoint_totals_r <- reactive({
-    app$endpoint_export_tbl()
+    req(is_active())
     get_endpoint_totals_list(db_tables)
   })
 
   response_tally_r <- reactive({
-    app$endpoint_export_tbl()
+    req(is_active())
     get_response_tally_list(db_tables)
   })
 
@@ -154,10 +154,10 @@ dashboard <- function(
     fhirVendorTableSize(page)
   })
 
-  # Depends on app$last_updated() (set by app_fetcher()) so the table/plot re-query after the
-  # nightly refresh instead of staying frozen at their first-render values.
+  # Gated on is_active() like the reactives above, so the table/plot re-query each time the
+  # Dashboard is opened instead of staying frozen at their first-render values.
   selected_http_summary <- reactive({
-    app$last_updated()
+    req(is_active())
     req(sel_vendor())
     if (sel_vendor() != ui_special_values$ALL_DEVELOPERS) {
       get_http_response_tbl(sel_vendor())
@@ -170,7 +170,7 @@ dashboard <- function(
   # the description for each code
 
   output$updated_time_box <- renderInfoBox({
-    app$endpoint_export_tbl()
+    req(is_active())
     infoBox(
       "Endpoints Last Queried:", get_endpoint_last_updated(db_tables), icon = tags$i(class = "fa fa-clock", "aria-hidden" = "true", role = "presentation", "aria-label" = "clock icon"),
       color = "purple"
@@ -259,6 +259,7 @@ dashboard <- function(
                                 height = 400,
                                 growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
+    req(is_active())
     get_endpoint_last_updated(db_tables)
   }
 )
@@ -278,6 +279,7 @@ dashboard <- function(
                                   height = 400,
                                   growthRate = 1.2),
   res = 72, cache = "app", cacheKeyExpr = {
+    req(is_active())
     list(get_endpoint_last_updated(db_tables), sel_vendor())
   })
 

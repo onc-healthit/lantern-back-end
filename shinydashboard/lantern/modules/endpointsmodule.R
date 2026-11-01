@@ -69,7 +69,7 @@ endpointsmodule <- function(
   # of distinct (url, fhir_version) endpoints (for the "Matching Endpoints" text). The filtered
   # rows are materialized once in a narrow CTE and both aggregates read from it, so the view is
   # scanned once and neither number needs the full result set pulled into R. The result is cached
-  # per filter combination and invalidated when app_fetcher() records a new last_updated value.
+  # per filter combination and keyed on the data refresh time (get_endpoint_last_updated), so a refresh gets a fresh count.
   endpoint_counts <- bindCache(
     reactive({
       filt <- endpoint_filter_query()
@@ -88,7 +88,7 @@ endpointsmodule <- function(
     }),
     endpoint_filter_query()$query_str,
     endpoint_filter_query()$params,
-    app$last_updated()
+    get_endpoint_last_updated(db_tables)
   )
 
   total_pages <- reactive({

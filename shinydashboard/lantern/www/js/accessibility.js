@@ -93,12 +93,123 @@ $(document).ready(function() {
     attributeFilter: ["data-collapsed"]
   });
   
+  /*
+    // Alter the navigation tabs on the Organization, Resource, and Profile pages to have the same structure, classes, and attributes as the navigation bars on the rest of the Lantern pages
+    // Idempotent. It runs when the page title changes and again whenever nav tabs are inserted into the page, because the staged tab render
+    // can add the nav tabs after the page title has already changed
+  */
+  function applyNavTabAria(pageTitleText) {
+    if (pageTitleText !== "Organizations Page" && pageTitleText !== "Resource Page" && pageTitleText !== "Profile Page") {
+      return;
+    }
+          let navBarTabs = document.getElementsByClassName("nav nav-tabs");
+  
+          
+          let tabbable = document.getElementsByClassName("tabbable");
+          let tabContents = tabbable.length > 0 ? tabbable[0].getElementsByClassName("tab-content") : [];
+          
+  
+          for (let navTab of navBarTabs) {
+            
+            // Add the tablist role to the main navbar containing element
+            navTab.setAttribute("role", "tablist");
+            
+            let navTabID = navTab.getAttribute("data-tabsetid");
+            
+            // Add the shiny-tab-input and shiny-bound-input classes to the main navbar containing element
+            navTab.classList.add("shiny-tab-input", "shiny-bound-input");
+  
+            let liElements = navTab.getElementsByTagName("li");
+            for (let liElem of liElements) {
+              
+              // Add the presentation role to each of the navigation bar tabs
+              liElem.setAttribute("role", "presentation");
+              
+              // Add the tab index observer to each of the navigation bar tab links to remove the tabindex attribute whenever it is set or altered
+              let aElements = liElem.getElementsByTagName("a");                 
+              if (aElements.length > 0) {
+                tabIndexObserver.observe(aElements[0], {
+                  attributes: true,
+                  attributeFilter: ["tabindex"]
+                });
+                  
+                /*
+                  // Set the role of each tab element link to tab
+                  // Set aria-selected to true
+                  // Set the aria-control attribute equal to the id of the main navbar containing element
+                  // Set aria-expanded to true
+                  // Set the aria label of the link to explain you can click on the current tab 
+                */
+                for (let aElem of aElements) {
+                  aElem.setAttribute("role", "tab");
+                  aElem.setAttribute("aria-selected", "true");
+                  aElem.setAttribute("aria-controls", "tab-" + navTabID + "-1");
+                  aElem.setAttribute("aria-expanded", "true");
+                  aElem.setAttribute("aria-label", "Press enter to select the " + aElem.textContent +" tab and show this tab's content below");
+                }
+              }
+            }
+          }
+  
+          /*
+            // Set the tabindex observer on each of the tab pages within the navigation tabs on the Organization, Resource, or Profile page
+            // Which will remove the tab index attribute whenever it is set or altered 
+          */
+          for (let tabContent of tabContents) {
+            let tabPanes = tabContent.getElementsByClassName("tab-pane");
+            for (let tabPane of tabPanes) {
+              tabIndexObserver.observe(tabPane, {
+                  attributes: true,
+                  attributeFilter: ["tabindex"]
+                });
+            }
+          }            
+  }
+
+  /*
+    // Set the aria labels for all the select HTML elements with class shiny-bound-input on the Lantern website
+    // This sets the aria label of all of the dropdowns on Lantern to explain you can use the arrow keys to navigate the filter dropdown
+  */
+  function applySelectAriaLabels() {
+        let selectInputButtons = document.querySelectorAll("select.shiny-bound-input");
+        for (let selectInput of selectInputButtons) {
+          selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.');
+        }
+  }
+
+  // Re-applies the page-level aria attributes above once the elements they target exist
+  let pageAriaTimer = null;
+  function schedulePageAria() {
+    if (pageAriaTimer !== null) {
+      return;
+    }
+    pageAriaTimer = setTimeout(function() {
+      pageAriaTimer = null;
+      let pageTitle = document.getElementById("page_title");
+      if (pageTitle) {
+        applyNavTabAria(pageTitle.textContent);
+      }
+      applySelectAriaLabels();
+    }, 50);
+  }
+
+  // Whether a newly added node is, or contains, a navigation tab bar or a select input
+  function addsPageAriaTargets(node) {
+    return node.nodeType === 1 && (node.matches(".nav-tabs, select") || node.querySelector(".nav-tabs, select") !== null);
+  }
+
+
   // Create an observer that watches for when any new nodes are created or any existing elements are altered
   let newNodesObserver = new MutationObserver(function(mutations) {   
     for (let mutation of mutations) {
       if (mutation.addedNodes.length > 0) {
         for (let newNode of mutation.addedNodes) {
-          
+
+          // Nav tabs and selects can be inserted after the page title changed (staged tab render), so re-apply their aria attributes
+          if (addsPageAriaTargets(newNode)) {
+            schedulePageAria();
+          }
+
           /*
             // If the mutated node is the response time date filter within the endpoint modal popup and a new node was added to it which was a row element, this means the row containing the date filter dropdown was added
             // Adds a new aria label to the date filter dropdown that explains you can use the arrow keys to navigate the filter dropdown
@@ -243,75 +354,8 @@ $(document).ready(function() {
       if (mutation.target.id === "page_title") {
         
         let pageTitleText = mutation.target.textContent;
-        /*
-          // Checks if the current page is the Organization, Resource, or Profile page
-          // Alter navigation tabs on these pages to have the same structure, classes, and attributes as the navigation bars on the rest of the Lantern pages
-        */
-        if (pageTitleText === "Organizations Page" || pageTitleText === "Resource Page" || pageTitleText === "Profile Page") {
-          
-          let navBarTabs = document.getElementsByClassName("nav nav-tabs");
-  
-          
-          let tabbable = document.getElementsByClassName("tabbable");
-          let tabContents = tabbable[0].getElementsByClassName("tab-content");
-          
-  
-          for (let navTab of navBarTabs) {
-            
-            // Add the tablist role to the main navbar containing element
-            navTab.setAttribute("role", "tablist");
-            
-            let navTabID = navTab.getAttribute("data-tabsetid");
-            
-            // Add the shiny-tab-input and shiny-bound-input classes to the main navbar containing element
-            navTab.classList.add("shiny-tab-input", "shiny-bound-input");
-  
-            let liElements = navTab.getElementsByTagName("li");
-            for (let liElem of liElements) {
-              
-              // Add the presentation role to each of the navigation bar tabs
-              liElem.setAttribute("role", "presentation");
-              
-              // Add the tab index observer to each of the navigation bar tab links to remove the tabindex attribute whenever it is set or altered
-              let aElements = liElem.getElementsByTagName("a");                 
-              if (aElements.length > 0) {
-                tabIndexObserver.observe(aElements[0], {
-                  attributes: true,
-                  attributeFilter: ["tabindex"]
-                });
-                  
-                /*
-                  // Set the role of each tab element link to tab
-                  // Set aria-selected to true
-                  // Set the aria-control attribute equal to the id of the main navbar containing element
-                  // Set aria-expanded to true
-                  // Set the aria label of the link to explain you can click on the current tab 
-                */
-                for (let aElem of aElements) {
-                  aElem.setAttribute("role", "tab");
-                  aElem.setAttribute("aria-selected", "true");
-                  aElem.setAttribute("aria-controls", "tab-" + navTabID + "-1");
-                  aElem.setAttribute("aria-expanded", "true");
-                  aElem.setAttribute("aria-label", "Press enter to select the " + aElem.textContent +" tab and show this tab's content below");
-                }
-              }
-            }
-          }
-  
-          /*
-            // Set the tabindex observer on each of the tab pages within the navigation tabs on the Organization, Resource, or Profile page
-            // Which will remove the tab index attribute whenever it is set or altered 
-          */
-          for (let tabContent of tabContents) {
-            let tabPanes = tabContent.getElementsByClassName("tab-pane");
-            for (let tabPane of tabPanes) {
-              tabIndexObserver.observe(tabPane, {
-                  attributes: true,
-                  attributeFilter: ["tabindex"]
-                });
-            }
-          }            
-        }
+        // Alter the Organization, Resource and Profile navigation tabs (see applyNavTabAria)
+        applyNavTabAria(pageTitleText);
   
         if (pageTitleText === "List of Endpoints") {
           let downloads_tab_link = document.getElementById("downloads_page_link");
@@ -328,14 +372,7 @@ $(document).ready(function() {
           });
         }
         
-        /*
-          // Set the aria labels for all the select HTML elements with class shiny-bound-input on the Lantern website
-          // This sets the aria label of all of the dropdowns on Lantern to explain you can use the arrow keys to navigate the filter dropdown
-        */
-        let selectInputButtons = document.querySelectorAll("select.shiny-bound-input");
-        for (let selectInput of selectInputButtons) {
-          selectInput.setAttribute('aria-label', 'Use the arrow keys to navigate the filter menu.');
-        }
+        applySelectAriaLabels();
         
       }
       

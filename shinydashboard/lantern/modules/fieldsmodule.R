@@ -273,6 +273,7 @@ output$capstat_extension_text <- renderUI({
     }
   })
   output$fields_bar_plot <- renderCachedPlot({
+    req(nrow(capstat_field_count()) > 0)
     ggplot(capstat_field_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
@@ -288,7 +289,8 @@ output$capstat_extension_text <- renderUI({
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), get_endpoint_last_updated(db_tables))
+      req(is_active(), sel_fhir_version(), sel_vendor())
+      list(sort(sel_fhir_version()), sel_vendor(), get_endpoint_last_updated(db_tables))
     }
   )
   output$fields_bar_empty_plot <- renderPlot({
@@ -302,7 +304,7 @@ output$capstat_extension_text <- renderUI({
       axis.text.y = element_blank(), axis.ticks = element_blank()) +
       scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip() +
-      annotate("text", label = "There are no FHIR CapabilityStatement / Conformance fields supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+      annotate("text", label = "There are no FHIR CapabilityStatement / Conformance fields supported by the endpoints\nthat pass the selected filtering criteria", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 
   output$extensions_plot <- renderUI({
@@ -318,6 +320,7 @@ output$capstat_extension_text <- renderUI({
   })
 
   output$extensions_bar_plot <- renderCachedPlot({
+    req(nrow(capstat_extension_count()) > 0)
     ggplot(capstat_extension_count(), aes(x = fct_rev(as.factor(Fields)), y = Endpoints, fill = fhir_version)) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
@@ -347,6 +350,6 @@ output$capstat_extension_text <- renderUI({
       axis.text.y = element_blank(), axis.ticks = element_blank()) +
       scale_y_continuous(sec.axis = sec_axis(~., name = "Number of Endpoints")) +
       coord_flip() +
-      annotate("text", label = "There are no FHIR Capability Extensions supported by the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+      annotate("text", label = "There are no FHIR Capability Extensions supported by the endpoints\nthat pass the selected filtering criteria", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 }

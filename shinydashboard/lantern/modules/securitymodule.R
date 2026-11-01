@@ -80,15 +80,15 @@ securitymodule <- function(
     security_page_state(1)
   })
 
-  # Take a real reactive dependency on the nightly refresh (instead of isolate()-ing the DB read
-  # with no dependency at all) so these tables reflect a later app_fetcher() refresh rather than
-  # freezing at whatever they showed on first render.
+  # Depend on is_active() (reset on every tab switch, see active_tab in server.R) so these tables
+  # re-query each time the tab is opened and reflect a data refresh, instead of freezing at
+  # whatever they showed on first render.
   output$auth_type_count_table <- renderTable({
-    app$endpoint_export_tbl()
+    req(is_active())
     get_auth_type_count(db_connection)
   }, align = "llrr")
   output$endpoint_summary_table <- renderTable({
-    app$endpoint_export_tbl()
+    req(is_active())
     get_endpoint_security_counts(db_connection)
   })
 

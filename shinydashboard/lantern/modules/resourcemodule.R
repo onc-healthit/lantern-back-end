@@ -187,6 +187,10 @@ resourcemodule <- function(  #nolint
       tagList(
         plotOutput(ns("resource_bar_plot"), height = plot_height())
       )
+    } else {
+      tagList(
+        plotOutput(ns("resource_bar_empty_plot"), height = plot_height())
+      )
     }
   })
 
@@ -199,6 +203,7 @@ resourcemodule <- function(  #nolint
   }
 
   output$resource_bar_plot <- renderCachedPlot({
+    req(nrow(select_operations_count()) > 0)
     ggplot(select_operations_count(), aes(x = fct_rev(as.factor(Resource)), y = Endpoints, fill = as.factor(fhir_version))) +
       geom_col(width = 0.8) +
       geom_text(aes(label = after_stat(y)), position = position_stack(vjust = 0.5)) +
@@ -214,6 +219,16 @@ resourcemodule <- function(  #nolint
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_resources(), sel_operations(), get_endpoint_last_updated(db_tables))
+      req(is_active(), sel_fhir_version(), sel_vendor(), sel_resources())
+      list(sort(sel_fhir_version()), sel_vendor(), sel_resources(), sel_operations(), get_endpoint_last_updated(db_tables))
     })
+
+  output$resource_bar_empty_plot <- renderPlot({
+    ggplot() +
+      labs(x = "", y = "Number of Endpoints", title = vendor()) +
+      theme(text = element_text(size = 14)) +
+      theme(axis.text.x = element_blank(),
+            axis.text.y = element_blank(), axis.ticks = element_blank()) +
+      annotate("text", label = "There are no FHIR Resources supported by the endpoints\nthat pass the selected filtering criteria", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+  })
 }

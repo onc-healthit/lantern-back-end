@@ -377,6 +377,7 @@ validationsmodule <- function(
 
   # Renders the validation result count chart which displays the number of endpoints that failed or passed each validation test
   output$validation_bar_plot <- renderCachedPlot({
+    req(nrow(select_validation_results()) > 0)
     ggplot(select_validation_results(), aes(x = fct_rev(as.factor(rule_name)), y = count, fill = valid)) +
       geom_col(width = 0.8) +
       geom_text(aes(label = stat(y)), position = position_stack(vjust = 0.5)) +
@@ -397,7 +398,8 @@ validationsmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_validation_group(), get_endpoint_last_updated(db_tables))
+      req(is_active(), sel_fhir_version(), sel_vendor(), sel_validation_group())
+      list(sort(sel_fhir_version()), sel_vendor(), sel_validation_group(), get_endpoint_last_updated(db_tables))
     })
 
   # Renders an empty validation result count chart when no data available
@@ -407,7 +409,7 @@ validationsmodule <- function(
       labs(x = "", y = "") +
       theme(axis.text.x = element_blank(),
             axis.text.y = element_blank(), axis.ticks = element_blank()) +
-      annotate("text", label = "There are no validation results for the endpoints\nthat pass the selected filtering criteia", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+      annotate("text", label = "There are no validation results for the endpoints\nthat pass the selected filtering criteria", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
   })
 
   cap_stat_icon <- function(fhir_version) {

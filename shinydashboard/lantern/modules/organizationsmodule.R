@@ -68,7 +68,7 @@ organizationsmodule <- function(
   # Helper function to determine if all FHIR versions are selected
   is_all_fhir_versions_selected <- reactive({
     current_selection <- sel_fhir_version()
-    all_available <- app$distinct_fhir_version_list_no_capstat()
+    all_available <- shared_distinct_fhir_version_list(TRUE)
 
     # If either is NULL, we can't compare
     if (is.null(current_selection) || is.null(all_available)) {
@@ -94,7 +94,6 @@ organizationsmodule <- function(
     count_query_str <- "
       WITH base_data AS (
         SELECT
-          org_id,
           organization_name,
           identifier_types_html as identifier_type,
           identifier_values_html as identifier_value,
@@ -192,7 +191,7 @@ organizationsmodule <- function(
 
     # Add GROUP BY to match the data query exactly
     count_query_str <- paste0(count_query_str, "
-      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, org_url, url
+      GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
     ) counted_results")
 
     # Execute count query
@@ -345,10 +344,11 @@ organizationsmodule <- function(
 
     # Add GROUP BY, ordering and pagination
     query_str <- paste0(query_str, "
-      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, org_url, url
+      GROUP BY organization_name, identifier_type, identifier_value, address, org_url, url
       ORDER BY (organization_name ~ '[A-Za-z]') DESC,
       organization_name ASC,
-      org_id
+      MIN(org_id),
+      identifier_type, identifier_value, address, org_url, url
       LIMIT {limit} OFFSET {offset}")
     params$limit <- limit
     params$offset <- offset
@@ -514,8 +514,9 @@ organizationsmodule <- function(
 
     # Add GROUP BY and ordering
     query_str <- paste0(query_str, "
-      GROUP BY org_id, organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
-      ORDER BY organization_name, org_id")
+      GROUP BY organization_name, identifier_type, identifier_value, address, fhir_endpoint_url
+      ORDER BY organization_name, MIN(org_id),
+      identifier_type, identifier_value, address, fhir_endpoint_url")
 
     # Execute query
     if (length(params) > 0) {

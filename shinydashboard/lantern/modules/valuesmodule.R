@@ -247,6 +247,7 @@ valuesmodule <- function(
 
   # Pie chart of the percent of the endpoints that use the given field
   output$values_chart_plot <-  renderCachedPlot({
+      req(nrow(percent_used_chart()) > 0)
       ggplot(percent_used_chart(), aes(x = "", y = value, fill = group)) +
       geom_col(width = 0.8) +
       geom_bar(stat = "identity") +
@@ -273,7 +274,8 @@ valuesmodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), sel_capstat_values())
+      req(is_active(), sel_fhir_version(), sel_vendor(), sel_capstat_values())
+      list(sort(sel_fhir_version()), sel_vendor(), sel_capstat_values(), get_endpoint_last_updated(db_tables))
     }
   )
 
@@ -285,9 +287,11 @@ valuesmodule <- function(
       # Turns the plot into a Pie Chart
       coord_polar("y", start = 0) +
       # Change Legend label
-      labs(fill = "Includes a Value \nfor the Given Field") +
+      labs(fill = "Includes a Value \nfor the Given Field",
+           title = "There are no values for the selected field in the endpoints\nthat pass the selected filtering criteria") +
       # Increase label size
-      theme(legend.text = element_text(size = 20),
+      theme(plot.title = element_text(colour = "red", size = 16, hjust = 0.5),
+            legend.text = element_text(size = 20),
             legend.title = element_text(size = 20),
             # remove axes labels
             axis.text = element_blank(),

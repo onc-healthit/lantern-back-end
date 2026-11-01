@@ -6,18 +6,6 @@ library(lubridate)
 
 library(glue)
 
-# Get the Endpoint export table and clean up for UI
-# Note: the app-wide refresh cadence (time_until_next_run() / the "updater" reactiveTimer) lives
-# in global.R -- it used to be duplicated here as a second, independently-scoped reactiveTimer
-# that fired on a different (non-daily) cadence, which was dead/confusing and risked triggering
-# app_fetcher() outside the intended nightly schedule. That copy has been removed; global.R's
-# updater is the single source of the refresh trigger.
-get_endpoint_export_tbl <- function(db_tables) {
-  endpoint_export_tbl <- db_tables$endpoint_export_mv %>%
-    collect()
-  endpoint_export_tbl
-}
-
 get_endpoint_organization_list <- function(endpoint) {
   splitString <- strsplit(endpoint, "&&")[[1]]
     endpoint_name <- splitString[1]
@@ -258,7 +246,7 @@ get_vendor_list <- function(endpoint_export_tbl) {
 # Shared WHERE-clause text builder for get_fhir_resource_by_op() and get_fhir_resource_by_op_count()
 # below -- both filter mv_resource_interactions identically, differing only in whether they return
 # the grouped (resource_type, fhir_version) rows or a count of them.
-build_fhir_resource_by_op_where_clause <- function(operations_vec, vendor_name, search_query) {
+build_fhir_resource_by_op_where_clause <- function(operations_vec, search_query) {
   clause <- "WHERE fhir_version IN ({fhir_versions_vec*})
             AND resource_type IN ({resource_types_vec*})"
 
@@ -267,13 +255,10 @@ build_fhir_resource_by_op_where_clause <- function(operations_vec, vendor_name, 
     clause <- paste0(clause, " AND operations @> ARRAY[{operations_vec*}]")
   }
 
-  # "All Developers" is a UI sentinel, not a value stored in this materialized view.
-  # Only constrain vendor_name when the user selected a specific developer.
-  if (length(vendor_name) == 1 &&
-      !is.na(vendor_name[[1]]) &&
-      vendor_name[[1]] != ui_special_values$ALL_DEVELOPERS) {
-    clause <- paste0(clause, " AND vendor_name = {vendor_name}")
-  }
+  # Always filter on vendor_name: mv_resource_interactions already holds pre-aggregated rows whose
+  # vendor_name is 'All Developers' (see dbsetup.sql), so skipping this filter for the "All
+  # Developers" selection would sum those rows together with every per-vendor row.
+  clause <- paste0(clause, " AND vendor_name = {vendor_name}")
 
   # Add search filter if present
   if (!is.null(search_query) && search_query != "") {
@@ -293,7 +278,7 @@ get_fhir_resource_by_op <- function(db_connection, operations_vec, fhir_versions
     "SELECT resource_type as type, fhir_version, SUM(endpoint_count) as n
             FROM mv_resource_interactions
             ",
-    build_fhir_resource_by_op_where_clause(operations_vec, vendor_name, search_query),
+    build_fhir_resource_by_op_where_clause(operations_vec, search_query),
     " GROUP BY (resource_type, fhir_version)
             ORDER BY resource_type, fhir_version"
   )
@@ -318,7 +303,7 @@ get_fhir_resource_by_op_count <- function(db_connection, operations_vec, fhir_ve
 
   query_str <- paste0(
     "SELECT COUNT(*) as count FROM (SELECT resource_type, fhir_version FROM mv_resource_interactions ",
-    build_fhir_resource_by_op_where_clause(operations_vec, vendor_name, search_query),
+    build_fhir_resource_by_op_where_clause(operations_vec, search_query),
     " GROUP BY (resource_type, fhir_version)) grouped"
   )
 
@@ -603,19 +588,26 @@ get_capability_and_smart_response <- function(db_connection, endpointURL, reques
 
 }
 
+# The export rows for one endpoint, filtered in SQL instead of in an in-memory copy of the whole
+# export. A missing (NA) version or vendor matches no rows, as it did with the in-memory filter.
+get_endpoint_export_rows <- function(endpointURL, requestedFhirVersion, vendorName) {
+  db_tables$endpoint_export_mv %>%
+    filter(url == !!endpointURL,
+           requested_fhir_version == !!requestedFhirVersion,
+           vendor_name == !!vendorName) %>%
+    collect()
+}
+
 get_details_page_metrics <- function(endpointURL, requestedFhirVersion, vendorName) {
-  res <- app$endpoint_export_tbl() %>%
-    filter(url == endpointURL) %>%
-    filter(requested_fhir_version == requestedFhirVersion) %>%
-    filter(vendor_name == vendorName) %>%
+  res <- get_endpoint_export_rows(endpointURL, requestedFhirVersion, vendorName) %>%
     distinct(url, http_response, smart_http_response, errors, cap_stat_exists, availability) %>%
     mutate(status = if_else(http_response == 200, "ACTIVE", "INACTIVE")) %>%
     mutate(errors = if_else(errors == "", "None", errors)) %>%
     mutate(availability = availability * 100) %>%
-    left_join(app$http_response_code_tbl() %>% select(code, label),
+    left_join(http_response_codes %>% select(code, label),
           by = c("http_response" = "code")) %>%
       mutate(http_response = if_else(http_response == 200, paste(http_response, "-", label), paste(http_response, "-", label))) %>%
-      left_join(app$http_response_code_tbl() %>% select(code, label),
+      left_join(http_response_codes %>% select(code, label),
           by = c("smart_http_response" = "code")) %>%
           mutate(smart_http_response = if_else(smart_http_response == 200, paste(smart_http_response, "-", label.y), paste(smart_http_response, "-", label.y)))
   res
@@ -623,16 +615,12 @@ get_details_page_metrics <- function(endpointURL, requestedFhirVersion, vendorNa
 }
 
 get_details_page_info <- function(endpointURL, requestedFhirVersion, vendorName, db_connection) {
-    res <- app$endpoint_export_tbl() %>%
-          filter(url == endpointURL) %>%
-          filter(requested_fhir_version == requestedFhirVersion) %>%
-          filter(vendor_name == vendorName) %>%
+    export_rows <- get_endpoint_export_rows(endpointURL, requestedFhirVersion, vendorName)
+
+    res <- export_rows %>%
           distinct(url, fhir_version, vendor_name, software_name, software_version, software_releasedate, format, info_created, info_updated)
 
-    resListSource <- app$endpoint_export_tbl() %>%
-          filter(url == endpointURL) %>%
-          filter(requested_fhir_version == requestedFhirVersion) %>%
-          filter(vendor_name == vendorName) %>%
+    resListSource <- export_rows %>%
           distinct(list_source)
 
     security_query <- glue_sql("SELECT
@@ -680,39 +668,69 @@ get_details_page_info <- function(endpointURL, requestedFhirVersion, vendorName,
     res
 }
 
-safe_execute <- function(name, expr) {
-  tryCatch({
-    eval(expr)
-  }, error = function(e) {
-    message(paste("Error caught in ", name, ": ", e$message))
+# Process-wide cache for lists derived from the endpoint export (dropdown choices). Each entry is
+# stamped with get_endpoint_last_updated(), which scripts/refresh_materialized_views.sh changes
+# last. A read compares the stamp (one one-row query) and rebuilds only when it has changed, so a
+# refresh is picked up on the next use without any scheduled re-fetch. If a rebuild fails, the last
+# good value (or `fallback`) is returned so a database error can't blank a filter bar.
+shared_data_cache <- new.env(parent = emptyenv())
+
+cached_by_last_updated <- function(name, build, fallback = list()) {
+  stamp <- tryCatch(get_endpoint_last_updated(db_tables), error = function(e) NULL)
+  if (length(stamp) != 1) {
+    stamp <- NULL
+  }
+  entry <- shared_data_cache[[name]]
+  if (!is.null(entry) && (is.null(stamp) || identical(entry$stamp, stamp))) {
+    return(entry$value)
+  }
+  value <- tryCatch(build(), error = function(e) {
+    message("Error rebuilding ", name, ": ", conditionMessage(e))
+    NULL
   })
+  if (is.null(value)) {
+    return(if (is.null(entry)) fallback else entry$value)
+  }
+  if (!is.null(stamp)) {
+    shared_data_cache[[name]] <- list(stamp = stamp, value = value)
+  }
+  value
 }
 
+# The distinct (fhir_version, vendor_name) pairs in the endpoint export. This is all the dropdown
+# list builders above need, so the whole export is no longer pulled into memory for them.
+fetch_export_filter_values <- function() {
+  db_tables$endpoint_export_mv %>%
+    distinct(fhir_version, vendor_name) %>%
+    collect()
+}
 
-# A plain function rather than a reactive() -- it's always invoked imperatively (app_fetcher())
-# from within an observeEvent, never read as a reactive dependency, so wrapping it in reactive()
-# only added a side-effecting reactive (database_fetch(0) below) with none of reactive()'s actual
-# caching/dependency-tracking benefit.
-app_fetcher <- function() {
-  message("app_fetcher ***************************************")
-  start_time <- Sys.time()
-  safe_execute("app$endpoint_export_tbl", app$endpoint_export_tbl(get_endpoint_export_tbl(db_tables)))
-  safe_execute("app$fhir_version_list_no_capstat", app$fhir_version_list_no_capstat(get_fhir_version_list(app$endpoint_export_tbl(), TRUE)))
-  safe_execute("app$fhir_version_list", app$fhir_version_list(get_fhir_version_list(app$endpoint_export_tbl(), FALSE)))
-  safe_execute("app$distinct_fhir_version_list_no_capstat", app$distinct_fhir_version_list_no_capstat(get_distinct_fhir_version_list_no_capstat(app$endpoint_export_tbl())))
-  safe_execute("app$distinct_fhir_version_list", app$distinct_fhir_version_list(get_distinct_fhir_version_list(app$endpoint_export_tbl())))
-  safe_execute("app$vendor_list", app$vendor_list(get_vendor_list(app$endpoint_export_tbl())))
-  safe_execute("app$http_response_code_tbl", app$http_response_code_tbl(
-    read_csv(here(root, "http_codes.csv"), col_types = cols(code = "i")) %>%
-    mutate(code_chr = as.character(code))
-  ))
-  safe_execute("app$zip_to_zcta", app$zip_to_zcta(read_csv(here(root, "zipcode_zcta.csv"), col_types = cols(zipcode = "c", zcta = "c"))))
-  safe_execute("app$security_code_list", app$security_code_list(
-    tbl(db_connection, "mv_get_security_endpoints") %>% distinct(code) %>% collect() %>% pull(code)
-  ))
-  safe_execute("app$last_updated", app$last_updated(get_endpoint_last_updated(db_tables)))
-  end_time <- Sys.time()
-  time_difference <- as.numeric(difftime(end_time, start_time, units = "secs"))
-  message("app_fetcher execution time: &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& ", time_difference, "seconds\n")
-  database_fetch(0)
+shared_vendor_list <- function() {
+  cached_by_last_updated("vendor_list",
+    function() get_vendor_list(fetch_export_filter_values()),
+    fallback = list("All Developers" = ui_special_values$ALL_DEVELOPERS))
+}
+
+shared_fhir_version_list <- function(no_cap_stat) {
+  cached_by_last_updated(paste0("fhir_version_list_", no_cap_stat),
+    function() get_fhir_version_list(fetch_export_filter_values(), no_cap_stat))
+}
+
+shared_distinct_fhir_version_list <- function(no_cap_stat) {
+  cached_by_last_updated(paste0("distinct_fhir_version_list_", no_cap_stat),
+    function() {
+      if (no_cap_stat) {
+        get_distinct_fhir_version_list_no_capstat(fetch_export_filter_values())
+      } else {
+        get_distinct_fhir_version_list(fetch_export_filter_values())
+      }
+    })
+}
+
+shared_security_code_list <- function() {
+  cached_by_last_updated("security_code_list",
+    function() {
+      tbl(db_connection, "mv_get_security_endpoints") %>% distinct(code) %>% collect() %>% pull(code)
+    },
+    fallback = character(0))
 }

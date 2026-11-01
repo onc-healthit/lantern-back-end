@@ -10,7 +10,7 @@ function(input, output, session) { #nolint
 
   # Trigger this observer every time the session changes, which is on first load of page, and switch tab to tab stored in url
   observeEvent(session, {
-    message(sprintf("I am in observe session  *********************************** %s", database_fetch()))
+    message("I am in observe session  ***********************************")
     query <- parseQueryString(session$clientData$url_search)
     if (!is.null(query[["tab"]]) && (toString(query[["tab"]]) %in% c("dashboard_tab", "endpoints_tab", "resource_tab", "organizations_tab", "implementation_tab", "fields_tab", "profile_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "security_tab", "smartresponse_tab", "about_tab", "contacts_tab", "developerfeedback_tab"))) {
       current_tab <- toString(query[["tab"]])
@@ -19,20 +19,6 @@ function(input, output, session) { #nolint
       updateQueryString(paste0("?tab=", input$side_menu), mode = "push")
     }
   }, priority = 100)
-
-  observeEvent(database_fetch, {
-    message(sprintf("I am in observe event *********************************** %s", database_fetch()))
-    if (database_fetch() == 1) {
-      message("I am inside observe event ***********************************")
-      show_modal_spinner(
-        spin = "double-bounce",
-        color = "#112446",
-        text = "Please Wait, Lantern is fetching the most up-to-date data")
-      app_fetcher()
-      database_fetch(0)
-      remove_modal_spinner()
-    }
-  }, priority = 90)
 
   # Trigger this observer every time side_menu changes, and change the url to contain the new tab name
   observeEvent(input$side_menu, {
@@ -60,10 +46,85 @@ function(input, output, session) { #nolint
       }
   }, ignoreInit = TRUE)
 
+  # Staged tab switch so a tab change renders in three separate flushes:
+  #   1. heading   - output$page_title reads input$side_menu directly (nothing else in the flush)
+  #   2. filters   - filters_tab() is updated one timer tick later, which fires every filter renderUI
+  #   3. data      - data_tab() is updated once the browser confirms the new filter bar is in place
+  #                  (input$filters_rendered, sent by www/js/staged-render.js), so modules never
+  #                  compute with the previous tab's filter values. Module reactives gate on it via
+  #                  active_tab, so tables/graphs only start computing after the filters are out.
+  # Tabs without a filter bar (see filter_bar_tabs) skip the wait and open stage 3 on the short
+  # timer. A long fallback timer opens stage 3 if the acknowledgement never arrives (lost event,
+  # JS error, reconnect) so a tab can't be left without data.
+  # R is single-threaded and Shiny sends outputs per flush, so without this a slow table blocks the
+  # heading and filters from being sent. filters_tab is intentionally NOT cleared on a tab change,
+  # so the previous tab's filter bar stays put until stage 2 swaps it, rather than blanking first.
+  filters_tab <- reactiveVal(NULL)
+  data_tab <- reactiveVal(NULL)
+  staging_active <- reactiveVal(FALSE)
+  staging_state <- new.env(parent = emptyenv())
+  staging_state$ticks <- 0L
+  staging_state$awaiting <- FALSE
+  staging_state$token <- 0L
+  stage_delay_ms <- 30
+  stage_ack_fallback_ms <- 1000
+
+  # Tabs whose filter bar is built by output$show_filters (must match show_filter below).
+  filter_bar_tabs <- c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
+
+  finish_data_stage <- function(tab) {
+    staging_state$awaiting <- FALSE
+    data_tab(tab)
+    staging_active(FALSE)
+  }
+
+  observeEvent(input$side_menu, {
+    data_tab(NULL)
+    staging_state$ticks <- 0L
+    staging_state$awaiting <- FALSE
+    staging_active(TRUE)
+  })
+
+  observe({
+    req(staging_active())
+    ticks <- staging_state$ticks
+    staging_state$ticks <- ticks + 1L
+    # tick 0 runs in the click's own flush (heading only); later ticks run in their own flushes.
+    isolate({
+      tab <- input$side_menu
+      if (ticks == 1L) {
+        filters_tab(tab)
+        if (tab %in% filter_bar_tabs) {
+          # Tell the browser which render to acknowledge; a stale ack from an earlier tab
+          # carries an older token and is ignored below.
+          staging_state$token <- staging_state$token + 1L
+          staging_state$awaiting <- TRUE
+          session$sendCustomMessage("filters_expected", staging_state$token)
+        }
+      } else if (ticks >= 2L) {
+        # Non-bar tabs reach here on the short timer; bar tabs only if the ack never came.
+        finish_data_stage(tab)
+      }
+    })
+    invalidateLater(if (isTRUE(staging_state$awaiting)) stage_ack_fallback_ms else stage_delay_ms, session)
+  })
+
+  observeEvent(input$filters_rendered, {
+    if (isTRUE(staging_state$awaiting) && identical(as.integer(input$filters_rendered), staging_state$token)) {
+      finish_data_stage(input$side_menu)
+    }
+  })
+
+  filters_tab_in <- function(tabs) {
+    tab <- filters_tab()
+    !is.null(tab) && tab %in% tabs
+  }
+
   callModule(
         dashboard,
         "dashboard_page",
-        reactive(input$httpvendor))
+        reactive(input$httpvendor),
+        reactive(identical(data_tab(), "dashboard_tab")))
 
   # Expand normalized FHIR versions (e.g., "4.4.0") to include short DB forms (e.g., "4.4", "4")
   expanded_fhir_version <- reactive({
@@ -71,16 +132,15 @@ function(input, output, session) { #nolint
     expand_fhir_versions_for_db(input$fhir_version)
   })
 
-  # Each page module is registered exactly once per session, immediately, rather than being
-  # re-registered on every database_fetch toggle. Re-running callModule() on a repeatable event
-  # (as this used to do) stacks a brand-new set of observers/outputs for every module on top of
-  # the previous set each time it fires, since Shiny never tears down the old ones -- across a
-  # long-running session (nightly refreshes) this causes duplicate observers to pile up, which is
-  # what produced the "header cycles through past tabs" symptom when switching tabs quickly. The
-  # modules' own reactives already depend on the app$* reactiveVals that app_fetcher() populates,
-  # so registering them once, before the first fetch completes, is safe -- they will simply
-  # re-compute once that data becomes available.
-  active_tab <- reactive(input$side_menu)
+  # Each page module is registered exactly once per session, immediately. Re-running callModule()
+  # on a repeatable event stacks a brand-new set of observers/outputs for every module on top of
+  # the previous set each time it fires, since Shiny never tears down the old ones, which is what
+  # produced the "header cycles through past tabs" symptom when switching tabs quickly. The
+  # modules' own reactives are gated on is_active(), which is reset on every tab switch, so they
+  # re-read the database each time their tab is opened and pick up a data refresh.
+  # Gated on the data stage (see the staged tab switch above) so module data work starts only
+  # after the heading and filters have been sent.
+  active_tab <- reactive(data_tab())
 
   callModule(
     endpointsmodule,
@@ -209,7 +269,9 @@ function(input, output, session) { #nolint
     ))
   })
 
-  show_http_vendor_filter <- reactive(input$side_menu %in% c("dashboard_tab"))
+  # Every show_* reactive below reads filters_tab() (stage 2), not input$side_menu, so the filter
+  # UI renders in the flush after the heading.
+  show_http_vendor_filter <- reactive(filters_tab_in("dashboard_tab"))
 
   page_name_list <- list(
      "dashboard_tab" = "Current Endpoint Metrics",
@@ -248,49 +310,47 @@ function(input, output, session) { #nolint
   ))})
 
 
-  show_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab", "organizations_tab", "resource_tab", "implementation_tab", "fields_tab", "security_tab", "smartresponse_tab", "values_tab", "capabilitystatementsize_tab", "validations_tab", "profile_tab", "contacts_tab")
-  )
+  show_filter <- reactive(filters_tab_in(filter_bar_tabs))
 
   fhir_version_no_capstat <- reactive(
-    input$side_menu %in% c("endpoints_tab", "smartresponse_tab", "validations_tab")
+    filters_tab_in(c("endpoints_tab", "smartresponse_tab", "validations_tab"))
   )
 
   show_availability_filter <- reactive(
-    input$side_menu %in% c("endpoints_tab")
+    filters_tab_in("endpoints_tab")
   )
 
   show_source_filter <- reactive(
-    input$side_menu %in% c("organizations_tab")
+    filters_tab_in("organizations_tab")
   )
 
   show_validations_filter <- reactive(
-    input$side_menu %in% c("validations_tab")
+    filters_tab_in("validations_tab")
   )
 
-  show_has_contact_filter <- reactive(input$side_menu %in% c("contacts_tab"))
+  show_has_contact_filter <- reactive(filters_tab_in("contacts_tab"))
 
-  show_resource_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
+  show_resource_checkbox <- reactive(filters_tab_in("resource_tab"))
 
-  show_profiles_filters <- reactive(input$side_menu %in% c("profile_tab"))
+  show_profiles_filters <- reactive(filters_tab_in("profile_tab"))
 
-  show_operation_checkbox <- reactive(input$side_menu %in% c("resource_tab"))
+  show_operation_checkbox <- reactive(filters_tab_in("resource_tab"))
 
-  show_resource_tab_popup <- reactive(input$side_menu %in% c("resource_tab"))
+  show_resource_tab_popup <- reactive(filters_tab_in("resource_tab"))
 
-  show_value_filter <- reactive(input$side_menu %in% c("values_tab"))
+  show_value_filter <- reactive(filters_tab_in("values_tab"))
 
-  show_security_filter <- reactive(input$side_menu %in% c("security_tab"))
+  show_security_filter <- reactive(filters_tab_in("security_tab"))
 
   show_confidence_filter <- reactive(FALSE)
 
-  # Coalesce rapid sidebar changes so the heading does not render every intermediate tab title.
-  # This is intentionally limited to the heading: the selected tab and its content still update
-  # immediately, while the title publishes once the short burst of clicks has settled.
-  page_name <- debounce(
-    reactive(page_name_list[[input$side_menu]]),
-    millis = 200
-  )
+  # The heading reads input$side_menu directly (stage 1). Everything else in the tab switch is
+  # deferred to later flushes (see the staged tab switch near the top), so the heading is sent
+  # before any filter or data work starts, and rapid clicks no longer need a debounce.
+  page_name <- reactive({
+    req(input$side_menu)
+    page_name_list[[input$side_menu]]
+  })
 
   output$htmlFooter <- renderUI({
     if (input$side_menu %in% c("about_tab")) {
@@ -311,7 +371,7 @@ function(input, output, session) { #nolint
     if (input$fhirversion_selectall == 0) {
       return(NULL)
     } else {
-      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list_no_capstat()), selected = isolate(app$distinct_fhir_version_list_no_capstat()))
+      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = shared_fhir_version_list(TRUE), selected = shared_distinct_fhir_version_list(TRUE))
     }
   })
 
@@ -319,41 +379,34 @@ function(input, output, session) { #nolint
     if (input$fhirversion_removeall == 0) {
       return(NULL)
     } else {
-      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = isolate(app$fhir_version_list_no_capstat()))
+      updatePickerInput(session, inputId = "fhir_version", label = "FHIR Version:", choices = shared_fhir_version_list(TRUE))
     }
   })
 
-  # Preserve compatible non-developer selections across a filter-bar re-render. The Developer
-  # dropdown intentionally keeps its original per-tab behavior below: normal tabs reset to
-  # "All Developers", while tabs that do not offer that choice select their first developer.
-  # Active-tab guards on the modules prevent those expected input resets from running queries for
-  # inactive tabs.
-  preserve_or_default <- function(current, choices, default) {
-    valid_choices <- as.character(unlist(choices, use.names = FALSE))
-    if (!is.null(current) && length(current) > 0 && all(as.character(current) %in% valid_choices)) {
-      current
-    } else {
-      default
-    }
-  }
-
+  # Filters are not preserved across tabs: every tab switch rebuilds the filter bar with each
+  # filter at its default (Developer is "All Developers", or the first developer on tabs that do
+  # not offer that choice). Active-tab guards on the modules prevent those expected input resets
+  # from running queries for inactive tabs.
   output$show_filters <- renderUI({
+    # Depend on the staged tab so the bar is rebuilt (and reset) on every tab switch, even when
+    # the new tab needs the same set of filters as the previous one.
+    filters_tab()
     if (show_filter()) {
       if (fhir_version_no_capstat()) {
-        fhir_choices <- isolate(app$fhir_version_list_no_capstat())
-        fhir_selected <- preserve_or_default(isolate(input$fhir_version), fhir_choices, isolate(app$distinct_fhir_version_list_no_capstat()))
+        fhir_choices <- shared_fhir_version_list(TRUE)
+        fhir_selected <- shared_distinct_fhir_version_list(TRUE)
         fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = fhir_choices, selected = fhir_selected, options = list(`multiple-separator` = " | ", size = 5))
         fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = fhir_choices, selected = fhir_selected, options = list(`multiple-separator` = " | ", size = 5))
       } else {
-        fhir_choices <- isolate(app$fhir_version_list())
-        fhir_selected <- preserve_or_default(isolate(input$fhir_version), fhir_choices, isolate(app$distinct_fhir_version_list()))
+        fhir_choices <- shared_fhir_version_list(FALSE)
+        fhir_selected <- shared_distinct_fhir_version_list(FALSE)
         fhirDropdown <- pickerInput(inputId = "fhir_version", label = "FHIR Version:", multiple = TRUE, choices = fhir_choices, selected = fhir_selected, options = list(`multiple-separator` = " | ", size = 5))
-        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = isolate(app$fhir_version_list_no_capstat()), selected = preserve_or_default(isolate(input$fhir_version), isolate(app$fhir_version_list_no_capstat()), isolate(app$distinct_fhir_version_list_no_capstat())), options = list(`multiple-separator` = " | ", size = 5))
+        fhirDropdown_noLabel <- pickerInput(inputId = "fhir_version", multiple = TRUE, choices = shared_fhir_version_list(TRUE), selected = shared_distinct_fhir_version_list(TRUE), options = list(`multiple-separator` = " | ", size = 5))
       }
       # Special handling for specific tabs
-      if (input$side_menu %in% c("capabilitystatementsize_tab", "fields_tab", "profile_tab", "values_tab")) {
+      if (filters_tab_in(c("capabilitystatementsize_tab", "fields_tab", "profile_tab", "values_tab"))) {
         # Get vendor list without "All Developers"
-        vendor_choices <- app$vendor_list()
+        vendor_choices <- shared_vendor_list()
         vendor_choices_filtered <- vendor_choices[names(vendor_choices) != "All Developers"]
 
         # Set default to first actual developer
@@ -362,18 +415,18 @@ function(input, output, session) { #nolint
         developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = vendor_choices_filtered, selected = default_vendor, size = 1, selectize = FALSE)
       } else {
         # Normal behavior for other tabs
-        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = app$vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
+        developerDropdown <- selectInput(inputId = "vendor", label = "Developer:", choices = shared_vendor_list(), selected = ui_special_values$ALL_DEVELOPERS, size = 1, selectize = FALSE)
       }
       availability_choices <- list("0-100", "0", "50-100", "75-100", "95-100", "99-100", "100")
-      availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = availability_choices, selected = preserve_or_default(isolate(input$availability), availability_choices, "0-100"), size = 1, selectize = FALSE)
+      availabilityDropdown <- selectInput(inputId = "availability", label = "Availability Percentage:", choices = availability_choices, selected = "0-100", size = 1, selectize = FALSE)
       validation_choices <- c("All Groups", validation_group_names)
-      validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = validation_choices, selected = preserve_or_default(isolate(input$validation_group), validation_choices, "All Groups"), size = 1, selectize = FALSE)
+      validationsDropdown <- selectInput(inputId = "validation_group", label = "Validation Group", choices = validation_choices, selected = "All Groups", size = 1, selectize = FALSE)
       confidence_choices <- c("97-100", "98-100", "99-100", "100")
-      confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = confidence_choices, selected = preserve_or_default(isolate(input$match_confidence), confidence_choices, "97-100"), size = 1, selectize = FALSE)
+      confidenceDropdown <- selectInput(inputId = "match_confidence", label = "Match Confidence:", choices = confidence_choices, selected = "97-100", size = 1, selectize = FALSE)
       contact_choices <- c("True", "False", "Any")
-      contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = contact_choices, selected = preserve_or_default(isolate(input$has_contact), contact_choices, "Any"), size = 1, selectize = FALSE)
+      contactDropdown <- selectInput(inputId = "has_contact", label = "Has Contact Data:", choices = contact_choices, selected = "Any", size = 1, selectize = FALSE)
       chpl_choices <- c("CHPL", "State Medicaid", "Payer", "Other", "All")
-      chplDropdown <- selectInput(inputId = "is_chpl", label = "Source:", choices = chpl_choices, selected = preserve_or_default(isolate(input$is_chpl), chpl_choices, "All"), size = 1, selectize = FALSE)
+      chplDropdown <- selectInput(inputId = "is_chpl", label = "Source:", choices = chpl_choices, selected = "All", size = 1, selectize = FALSE)
       if (show_availability_filter()) {
         fluidRow(
           column(width = 3,
@@ -457,7 +510,7 @@ function(input, output, session) { #nolint
           selectInput(
             inputId = "httpvendor",
             label = "Developer:",
-            choices = app$vendor_list(),
+            choices = shared_vendor_list(),
             selected = ui_special_values$ALL_DEVELOPERS,
             selectize = FALSE
           )
@@ -527,9 +580,9 @@ function(input, output, session) { #nolint
 
   output$show_security_filter <- renderUI({
     if (show_security_filter()) {
-      # Cached at refresh time in app$security_code_list (see app_fetcher()) instead of
-      # re-querying mv_get_security_endpoints inline on every renderUI cycle this output fires.
-      security_codes <- app$security_code_list()
+      # Cached by shared_security_code_list() (rebuilt when the data's last_updated changes)
+      # instead of re-querying mv_get_security_endpoints inline on every renderUI cycle.
+      security_codes <- shared_security_code_list()
 
       fluidRow(
         column(width = 4,
@@ -725,7 +778,7 @@ function(input, output, session) { #nolint
 
   # Resets the display if the user is navigating to this page
   observe({
-    req(input$side_menu)
+    req(filters_tab())
     if (show_operation_checkbox()) {
       updateSelectInput(session, "operations",
             label = "Click in the box below to add or remove operations:",
@@ -925,13 +978,19 @@ observeEvent(input$show_organization_modal, {
 
 # Sub-tabs of the endpoint modal whose data has been requested. Only the Details tab (visible on
 # open) is loaded eagerly; the data reactives for every other sub-tab call modal_tab_loaded() so
-# their queries only run once the user actually opens that sub-tab. Reset on every popup so a
-# newly opened endpoint never shows (or computes) another endpoint's sub-tab data.
+# their queries only run once the user actually opens that sub-tab. Reset when a modal finishes
+# closing (input$modal_closed, from www/js/modal-state.js) rather than when the next popup opens,
+# so the reset never lands in the same flush as the new endpoint. Correctness doesn't depend on
+# it: every sub-tab reactive reads current_endpoint(), so a new endpoint never shows old data.
 loaded_modal_tabs <- reactiveVal("Details")
 
 modal_tab_loaded <- function(tab) {
   req(tab %in% loaded_modal_tabs())
 }
+
+observeEvent(input$modal_closed, {
+  loaded_modal_tabs("Details")
+})
 
 observeEvent(input$endpoint_modal_tabset, {
   loaded <- loaded_modal_tabs()
@@ -1332,7 +1391,7 @@ endpoint_http_over_time_raw <- reactive({
 
 endpoint_http_responses <- reactive({
   res <- endpoint_http_over_time_raw() %>%
-  left_join(app$http_response_code_tbl(), by = c("http_response" = "code")) %>%
+  left_join(http_response_codes, by = c("http_response" = "code")) %>%
   mutate(http_response = paste(http_response, "-", label)) %>%
   select(date, http_response)
   res
@@ -1341,7 +1400,7 @@ endpoint_http_responses <- reactive({
 endpoint_http_codes_table <- reactive({
   res <- endpoint_http_over_time_raw()
 
-  http_code_table <- app$http_response_code_tbl() %>%
+  http_code_table <- http_response_codes %>%
   inner_join(res, by = c("code" = "http_response")) %>%
   distinct(code, label) %>%
   mutate(row_num = row_number()) %>%
@@ -1493,8 +1552,6 @@ output$endpoint_http_response_table <- reactable::renderReactable({
 
   ### Endpoint Popup Modal ###
   observeEvent(input$endpoint_popup, {
-    # Start every popup with only the Details tab loaded (see loaded_modal_tabs above).
-    loaded_modal_tabs("Details")
     endpoint <- current_endpoint()
     showModal(modalDialog(
       title = "Endpoint Details",
