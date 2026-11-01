@@ -698,16 +698,17 @@ developerfeedbackmodule <- function(
   # ignoreInit = FALSE ensures the dropdown is populated correctly on first render,
   # replacing the need for a separate initialization observe().
   observeEvent(input$org_source_filter, {
-    req(app$vendor_list(), length(chpl_vendor_names()) > 0)
+    vendor_list <- shared_vendor_list()
+    req(vendor_list, length(chpl_vendor_names()) > 0)
     chpl_names <- chpl_vendor_names()
     source_val <- input$org_source_filter
 
     if (source_val == "CHPL Certified API Developers") {
-      filtered_vendors <- app$vendor_list()[names(app$vendor_list()) %in% c("All Developers", chpl_names)]
+      filtered_vendors <- vendor_list[names(vendor_list) %in% c("All Developers", chpl_names)]
     } else if (source_val == "Non-CHPL") {
-      filtered_vendors <- app$vendor_list()[!(names(app$vendor_list()) %in% chpl_names) | names(app$vendor_list()) == "All Developers"]
+      filtered_vendors <- vendor_list[!(names(vendor_list) %in% chpl_names) | names(vendor_list) == "All Developers"]
     } else {
-      filtered_vendors <- app$vendor_list()
+      filtered_vendors <- vendor_list
     }
 
     updateSelectInput(session, "vendor_filter", choices = filtered_vendors, selected = "All Developers")
@@ -990,8 +991,12 @@ developerfeedbackmodule <- function(
     get_filtered_org_data()
   })
 
+  # Derived from filtered_org_data() in R instead of re-issuing the same query against
+  # mv_organization_quality a second time with an extra WHERE clause -- the issue flags are
+  # already present in the "SELECT *" result above.
   problematic_orgs <- reactive({
-    get_filtered_org_data(issues_only = TRUE)
+    filtered_org_data() %>%
+      filter(!has_valid_identifiers | !has_valid_name | !has_valid_address)
   })
 
   format_org_data_for_csv <- function(data) {

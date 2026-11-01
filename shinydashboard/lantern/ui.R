@@ -249,6 +249,12 @@ ui <- dashboardPage(
     uiOutput("htmlFooter"),
     
     # Load accessibility script with defer and async
-    tags$script(src = "js/accessibility.js", defer = TRUE, async = TRUE)
+    tags$script(src = "js/accessibility.js", defer = TRUE, async = TRUE),
+
+    # Acknowledges filter-bar renders to the server for the staged tab switch (see server.R)
+    tags$script(src = "js/staged-render.js"),
+
+    # Reports modal closes to the server so the endpoint modal's lazy sub-tabs reset on close
+    tags$script(src = "js/modal-state.js")
   )
 )

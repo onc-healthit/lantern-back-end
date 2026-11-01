@@ -1,5 +1,6 @@
 # Database connection functions
 library(RPostgres)
+library(pool)
 # Read database connection information from .Renviron file
 # If doing local development: you can readRenviron("../.env")
 # and set the db_config$host = "localhost"
@@ -13,9 +14,13 @@ db_config <- list("dbname" = Sys.getenv("LANTERN_DBNAME"),
 
 db_config$host <- ifelse(Sys.getenv("HOME") == "/home/shiny", db_config$host, "localhost")
 
-# Connect to the Lantern database
+# Connect to the Lantern database via a connection pool rather than a single shared connection.
+# A single RPostgres connection is not safe for concurrent use, so with one dbConnect() shared by
+# every session, one user's slow/large query serializes and blocks every other user's requests.
+# dbPool() hands out a separate pooled connection per query and dbplyr's tbl()/collect() work
+# transparently against a pool object, so no query-site changes are needed elsewhere in the app.
 db_connection <-
-  dbConnect(
+  dbPool(
     RPostgres::Postgres(),
     dbname = db_config$dbname,
     host = db_config$host, # i.e. 'ec2-54-83-201-96.compute-1.amazonaws.com'
@@ -23,6 +28,10 @@ db_connection <-
     user = db_config$user,
     password = db_config$password
 )
+
+onStop(function() {
+  poolClose(db_connection)
+})
 
 # Make connections to the various lantern tables
 db_tables <- list(

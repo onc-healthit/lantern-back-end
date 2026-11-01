@@ -9,7 +9,7 @@ capabilitystatementsize_UI <- function(id) {
   tagList(
     fluidRow(
       column(width = 8,
-        plotOutput(ns("cap_stat_size_plot")),
+        uiOutput(ns("cap_stat_size_plot_ui")),
         htmlOutput(ns("notes_text"))
       ),
         column(width = 4,
@@ -25,7 +25,8 @@ capabilitystatementsizemodule <- function(
     output,
     session,
     sel_fhir_version,
-    sel_vendor
+    sel_vendor,
+    is_active
 ) {
   ns <- session$ns
 
@@ -34,7 +35,7 @@ capabilitystatementsizemodule <- function(
     current_fhir <- sel_fhir_version()
     current_vendor <- sel_vendor()
 
-    req(current_fhir, current_vendor)
+    req(current_fhir, current_vendor, is_active())
 
     # Get filtered data from the materialized view function
     res <- get_cap_stat_sizes(
@@ -71,7 +72,30 @@ capabilitystatementsizemodule <- function(
     res
   })
 
+  output$cap_stat_size_plot_ui <- renderUI({
+    if (nrow(selected_fhir_endpoints()) != 0) {
+      tagList(
+        plotOutput(ns("cap_stat_size_plot"))
+      )
+    } else {
+      tagList(
+        plotOutput(ns("cap_stat_size_empty_plot"))
+      )
+    }
+  })
+
+  output$cap_stat_size_empty_plot <- renderPlot({
+    ggplot() +
+      labs(x = "FHIR Version",
+           y = "Size (Bytes)",
+           title = "CapabilityStatement / Conformance Sizes by Developer and FHIR Version") +
+      theme(axis.text.x = element_blank(),
+            axis.text.y = element_blank(), axis.ticks = element_blank()) +
+      annotate("text", label = "There are no CapabilityStatement / Conformance resources stored for the endpoints\nthat pass the selected filtering criteria", x = 1, y = 2, size = 4.5, colour = "red", hjust = 0.5)
+  }, res = 72)
+
   output$cap_stat_size_plot <- renderCachedPlot({
+   req(nrow(selected_fhir_endpoints()) > 0)
    ggplot(selected_fhir_endpoints(), aes(fhir_version, size)) +
    geom_boxplot(aes(fill = factor(vendor_name))) +
    scale_y_continuous(labels = scales::comma) +
@@ -83,7 +107,8 @@ capabilitystatementsizemodule <- function(
     res = 72,
     cache = "app",
     cacheKeyExpr = {
-      list(sel_fhir_version(), sel_vendor(), now("UTC"))
+      req(is_active(), sel_fhir_version(), sel_vendor())
+      list(sort(sel_fhir_version()), sel_vendor(), get_endpoint_last_updated(db_tables))
     })
 
   output$notes_text <- renderUI({
