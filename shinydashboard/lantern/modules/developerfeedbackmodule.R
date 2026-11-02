@@ -943,7 +943,7 @@ developerfeedbackmodule <- function(
     vendor_clause <- if (current_vendor == "All Developers") {
       ""
     } else {
-      glue::glue_sql("vendor_names_array && ARRAY[{vendor}]", vendor = current_vendor, .con = db_connection)
+      glue::glue_sql("q.vendor_names_array && ARRAY[{vendor}]", vendor = current_vendor, .con = db_connection)
     }
 
     # Build the source clause using the same shared_list_sources join the existing MVs use,
@@ -952,14 +952,14 @@ developerfeedbackmodule <- function(
       paste0(
         "EXISTS (",
         "  SELECT 1 FROM shared_list_sources sls",
-        "  WHERE sls.developer_name = ANY(mv_organization_quality.vendor_names_array)",
+        "  WHERE sls.developer_name = ANY(q.vendor_names_array)",
         ")"
       )
     } else if (!is.null(source_val) && source_val == "Non-CHPL") {
       paste0(
         "NOT EXISTS (",
         "  SELECT 1 FROM shared_list_sources sls",
-        "  WHERE sls.developer_name = ANY(mv_organization_quality.vendor_names_array)",
+        "  WHERE sls.developer_name = ANY(q.vendor_names_array)",
         ")"
       )
     } else {
@@ -967,19 +967,45 @@ developerfeedbackmodule <- function(
     }
 
     issue_clause <- if (issues_only) {
-      "(NOT has_valid_identifiers OR NOT has_valid_name OR NOT has_valid_address)"
+      "(NOT q.has_valid_identifiers OR NOT q.has_valid_name OR NOT q.has_valid_address)"
     } else {
       ""
     }
 
     where_parts <- Filter(nchar, c(as.character(vendor_clause), source_clause, issue_clause))
     where_str   <- if (length(where_parts) > 0) paste("WHERE", paste(where_parts, collapse = " AND ")) else ""
+
+    # Match the Organizations CSV row definition: records with identical exported
+    # organization details are one row even when multiple developers publish them.
+    # Keep every associated developer name on that consolidated row.
     data_query  <- glue::glue_sql(
       paste(
-        "SELECT *,",
-        "COALESCE(NULLIF(array_to_string(vendor_names_array, CHR(10)), ''), 'Unknown') AS developer_names",
-        "FROM mv_organization_quality",
-        where_str
+        "WITH filtered_org_data AS (",
+        "  SELECT q.*",
+        "  FROM mv_organization_quality q",
+        where_str,
+        "), consolidated_org_data AS (",
+        "  SELECT",
+        "    MIN(fd.org_id) AS representative_org_id,",
+        "    COALESCE(",
+        "      NULLIF(string_agg(DISTINCT developer.developer_name, CHR(10) ORDER BY developer.developer_name), ''),",
+        "      'Unknown'",
+        "    ) AS developer_names",
+        "  FROM filtered_org_data fd",
+        "  JOIN mv_organizations_final f USING (org_id)",
+        "  LEFT JOIN LATERAL unnest(fd.vendor_names_array) AS developer(developer_name) ON TRUE",
+        "  GROUP BY",
+        "    f.organization_name,",
+        "    f.identifier_types_csv,",
+        "    f.identifier_values_csv,",
+        "    f.addresses_csv,",
+        "    f.endpoint_urls_csv",
+        ")",
+        "SELECT fd.*, consolidated.developer_names",
+        "FROM consolidated_org_data consolidated",
+        "JOIN filtered_org_data fd",
+        "  ON fd.org_id = consolidated.representative_org_id",
+        "ORDER BY fd.organization_name, fd.org_id"
       ),
       .con = db_connection
     )
